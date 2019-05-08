@@ -8,9 +8,7 @@ public class RenderStars : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (star != null){
-            Instantiate(star, transform.position, transform.rotation);
-        }
+        renderStars();
     }
 
     // Update is called once per frame
@@ -18,4 +16,18 @@ public class RenderStars : MonoBehaviour
     {
 
     }
+
+    void renderStars()
+    {
+        if (star != null)
+        {
+            for (int i = 0; i < 1000; i++) {
+                Vector3 newPos = Random.onUnitSphere * 50;
+ 
+                GameObject starObject = Instantiate(star, newPos, transform.rotation);
+                starObject.transform.LookAt(transform);
+            }
+       }
+    }
+
 }
