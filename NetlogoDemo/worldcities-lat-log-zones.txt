@@ -1,0 +1,72 @@
+city_ascii	lat	lng	country	time zone
+Alert	82.4833	-62.25	Nunavut, Canada	-5
+Ankara	39.9272	32.8644	Turkey	3
+Astana	51.1811	71.4278	Kazakhstan	6
+Athens	37.9833	23.7333	Greece	2
+Bairin Zuoqi	43.9837	119.1834	China	8
+Beirut	33.872	35.5097	Lebanon	2
+Berlin	52.5218	13.4015	Germany	1
+Bogota	4.5964	-74.0833	Colombia	-5
+Boston	42.3189	-71.0838	Massachusetts, USA	-5
+Brasilia	-15.7833	-47.9161	Brazil	-3
+Buenos Aires	-34.6025	-58.3975	Argentina	-3
+Cape Town	-33.92	18.435	South Africa	2
+Caribou	46.8662	-67.9919	Maine, USA	-5
+Coral Gables	25.7037	-80.2715	Florida, USA	-5
+Dar es Salaam	-6.8	39.2683	Tanzania	3
+Denver	39.7621	-104.8759	Colorado, USA	-7
+Fairbanks	64.8353	-147.6533	Alaska, USA	-9
+Gombe	10.2904	11.17	Nigeria	1
+Greenwich	51.476852	0.0	United Kingdom	0
+Hammerfest	70.6613	23.688	Norway	1
+Hanoi	21.0333	105.85	Vietnam	7
+Harare	-17.8178	31.0447	Zimbabwe	2
+Helena	46.5963	-112.0196	Montana, USA	-6
+Honolulu	21.3293	-157.846	Hawaii, USA	-10
+Houston	29.7871	-95.3936	Texas, USA	-6
+Islamabad	33.7	73.1666	Pakistan	5
+Jakarta	-6.1744	106.8294	Indonesia	7
+Kathmandu	27.7167	85.3166	Nepal	5.75
+Lima	-12.048	-77.0501	Peru	5
+Liverpool	53.416	-2.918	United Kingdom	0
+Logan	41.7403	-111.8418	Utah, USA	-6
+Lome	6.1319	1.2228	Togo	0
+London	51.5	-0.1167	United Kingdom	0
+Madrid	40.4	-3.6834	Spain	1
+Majuro	7.103	171.38	Marshall Islands	12
+Manhattan	40.7834	-73.9662	New York, USA	-5
+Manila	14.6042	120.9822	Philippines	8
+Mexico City	19.4424	-99.131	Mexico	-6
+Montevideo	-34.858	-56.1711	Uruguay	-3
+Moscow	55.7522	37.6155	Russia	3
+Mumbai	19.017	72.857	India	5.5
+Nuuk	64.1983	-51.7327	Greenland	-3
+Omaha	41.2634	-96.0453	Nebraska, USA	-6
+Paris	48.8667	2.3333	France	1
+Perth	-31.955	115.84	Australia	8
+Phnom Penh	11.55	104.9166	Cambodia	7
+Port-au-Prince	18.541	-72.336	Haiti	-5
+Portland	45.5372	-122.65	Oregon, USA	-8
+Quito	-0.215	-78.5001	Ecuador	-5
+Rangoon	16.7834	96.1667	Burma	6.5
+Riyadh	24.6408	46.7727	Saudi Arabia	3
+Rome	41.896	12.4833	Italy	2
+San Francisco	37.7561	-122.4429	California, USA	-8
+Santiago	-33.45	-70.667	Chile	-3
+Seoul	37.5663	126.9997	South Korea	9
+Suez	30.005	32.5499	Egypt	2
+Sydney	-33.92	151.1852	Australia	12
+Taipei	25.0358	121.5683	Taiwan	8
+Thunder Bay	48.4462	-89.275	Ontario, Canada	-5
+Tokyo	35.685	139.7514	Japan	9
+Tripoli	32.8925	13.18	Libya	2
+Ulaanbaatar	47.9167	106.9166	Mongolia	8
+Uppsala	59.85	17.6333	Sweden	1
+Urbana	40.1106	-88.1972	Illinois, USA	-6
+Vancouver	49.2734	-123.1216	British Columbia, Canada	-8
+Vilnius	54.6834	25.3166	Lithuania	2
+Warsaw	52.25	21	Poland	1
+Washington	38.9047	-77.0163	DC, USA	-5
+Wellington	-41.3	174.7833	New Zealand	13
+Windhoek	-22.57	17.0835	Namibia	2
+Xian	34.275	108.895	China	8

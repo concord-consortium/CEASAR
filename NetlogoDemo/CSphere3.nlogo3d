@@ -1,0 +1,1701 @@
+;CSphere2 - program to test the algorithms for creating a digital celestial sphere program
+;Nathan Kimball, Concord Consortium
+
+;Celesital sphere is a geocentric system. The stars and all heavenly objects move around the fixed earth.
+;It can show an equitorial system (RA, Dec) or an horizon system (Altitude, Azimuth), Azimuth with North=0
+;  for a specific time and place.
+
+breed [ stars star ]
+breed [ markers marker]
+breed [cities city]
+
+stars-own [
+  ID                  ;right now, this is a sequence of characters that combines Bayer and Flamsteed star id
+  Constellation       ;univeral 3-character constellation abbrievation
+  RA                  ;right ascension in decimal hours
+  Dec                 ;declanation in degrees, positive for northern, negative for southern, 0 to 90
+  Dist                ;star distance in parsecs
+  Mag                 ;apparent magnitude (smallest numbers, e.g., negative numbers, are the brightest)
+  Alt                 ;Altitude
+  Azm                 ;Azimuth
+]
+
+markers-own [         ;these turtle variables identify where the marker icon should be
+  RA                  ;right ascension in decimal hours
+  Dec                 ;declanaton in degrees
+]
+cities-own [ name lat lng country tzone ]
+
+globals [
+  ;sphere-radius
+  constellation-list
+  bright-colors
+  constellation-colors
+  city-list
+  selected-stars                    ;an agent subset of stars with magnitude magnitude greater than the set value, etc.
+  days-to-start-of-month-ordinary
+  days-to-start-of-month-leap
+  days-per-month-ordinary
+  days-per-month-leap
+  month-strings
+  set-latitude
+  set-longitude
+  set-coordinate-system
+  axis
+  north-pole
+  south-pole
+  vernal-equinox
+]
+
+to setup
+  ca
+  set-default-shape stars "star"
+  set constellation-list []
+  set city-list []
+  set constellation-colors []
+  set bright-colors [ 15 25 35 45 55 65 75 85 95 105 115 125 135 ]  ;numbers that correspond to solid colors in the netlogo pallet
+  set days-to-start-of-month-ordinary [ 0 31 59 90 120 151 181 212 243 273 304 334 ]  ;for turning day number into a date
+  set days-to-start-of-month-leap     [ 0 31 60 91 121 152 182 213 244 274 305 335 ]  ; ditto
+  set days-per-month-ordinary [ 31 28 31 30 31 30 31 31 30 31 30 31 ]
+  set days-per-month-leap [ 31 29 31 30 31 30 31 31 30 31 30 31 ]
+  set month-strings [ "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec" ]
+  ;set north-pole create-north-pole-marker north-pole
+  set coordinate-system "Equitorial"
+  set set-coordinate-system ""
+  import-data
+
+  import-cities
+  set-constellation-colors
+  define-selected-stars
+
+  set north-pole create-north-pole-marker north-pole
+  set south-pole create-south-pole-marker south-pole
+  set vernal-equinox create-vernal-equinox-marker vernal-equinox
+  set-cartesian-coordinates
+  display-constellations
+  set-equitorial-coordinates
+  ;create-marker-breed
+  ifelse show-celestial-poles? [ask markers [set hidden? true]][ask markers [set hidden? false]]
+;  draw-axes
+  setxyz 25 0 15
+  setxyz Observ-X Observ-Y Observ-Z
+  facexyz 0 0 0 ;29
+  set year 2019
+  set location "Greenwich"
+  reset-ticks
+end
+
+to go
+  every 0.2 [
+    set UT-decimal-24-hr UT-decimal-24-hr + time-delta
+    if UT-decimal-24-hr >= 24.0
+      [
+        set UT-decimal-24-hr (UT-decimal-24-hr - 24.0)
+        set UT-day-number UT-day-number + 1
+      ]
+    if UT-day-number > (days-in-year year)
+      [set UT-day-number 1 set year year + 1 ]
+
+    set-cartesian-coordinates
+  ]
+  tick
+end
+
+to set-cartesian-coordinates
+
+  if coordinate-system != set-coordinate-system and coordinate-system = "Equitorial"
+  [
+    clear-drawing
+    set-equitorial-coordinates
+    draw-axis true
+    set set-coordinate-system "Equitorial"
+    stop
+  ]
+  if coordinate-system != set-coordinate-system and coordinate-system = "Horizon"
+  [
+    clear-drawing ;this erases drawn pole lines, etc.
+    equ-to-horiz-agents selected-stars (GST-to-LST (UT-to-GST-2000 UT-day-number year UT-decimal-24-hr) longitude) latitude
+    set set-coordinate-system "Horizon"
+    draw-axis true
+  ]
+  if coordinate-system = "Horizon"
+  [
+    equ-to-horiz-agents selected-stars (GST-to-LST (UT-to-GST-2000 UT-day-number year UT-decimal-24-hr) longitude) latitude
+    ask selected-stars [
+      ifelse (Alt < 0 and visible-stars-only?)
+        [set hidden? true]
+        [set hidden? false]
+      if Constellation = "UMi"
+        [set hidden? false]
+      if Constellation = "marker"
+      [ set hidden? false]
+    ]
+  ]
+end
+
+
+to-report time-delta   ;reports an interval of time in decimal hours
+  if (advance-time-by = "Day") [ report 24.0 ]
+  if (advance-time-by = "Hour") [ report 1.0 ]  ;1/24 of a day
+  if (advance-time-by = "15 Minutes") [ report 0.25 ] ;1/4 of an hour
+  if (advance-time-by = "Minute" ) [ report 0.0167 ]
+end
+
+to show-above-horizon
+    ask selected-stars [
+      ifelse Alt < 0
+        [set hidden? true]
+        [set hidden? false]
+  ]
+end
+
+to toggle-coordinate-system
+  clear-drawing ;this erases drawn pole lines, etc.
+  ifelse (coordinate-system = "Equitorial")
+  [
+    set coordinate-system "Horizon"
+    equ-to-horiz-agents selected-stars (GST-to-LST (UT-to-GST-2000 UT-day-number year UT-decimal-24-hr) longitude) latitude
+  ]
+  [
+    set coordinate-system "Equitorial"
+    set-equitorial-coordinates
+  ]
+
+  set set-coordinate-system coordinate-system
+  draw-axis true
+end
+
+
+to display-constellations
+  define-selected-stars      ;creates a subset of all stars corresponding to the cutoffs of magnitude
+  ifelse (show-constellation = "All")
+    [show-constellation-colors]             ;color all constellations
+  [ifelse (show-constellation = "None")
+    [ask selected-stars [set color white]]           ;turn them all white
+    [
+      let idx 0
+      while [ idx < length constellation-colors ] ;this loops until selected constellation and its associated color is found, and turns the stars in the constellation that color
+      [
+        let color-pair item idx constellation-colors
+        if (show-constellation = first color-pair) [ ask selected-stars with [Constellation = show-constellation] [set color last color-pair] stop]
+        set idx idx + 1
+      ]
+    ]
+  ]
+ ; ask north-pole [ set hidden? true]
+end
+
+to import-data
+  let f "HYG-for-import-4.txt"
+  ifelse (file-exists? f)
+    [ file-open f ]
+    [ user-message (word "Can't find the data file named " f "!") stop] ;stop jumps out
+  let trash file-read-line                               ;read the header line and discard
+  ;print trash
+  while [not file-at-end? ]
+  [
+    ;print (word "len: " length ss " space: " (member? " " ss) " tab " (member? "\t" ss) " newline " (member? "\n" ss))
+    create-stars 1 [
+      let s file-read-line   ;the netlogo file-read function was not able to process the individual elements of the file, so we process it by line
+      ;print s
+      let ls process-line s
+      set Constellation  item 0 ls
+      set constellation-list lput Constellation constellation-list ;keep a seperate list of all the constellations
+      set ID item 1 ls
+      set RA read-from-string item 2 ls
+      set Dec read-from-string item 3 ls
+      set Dist read-from-string item 4 ls
+      set Mag read-from-string item 5 ls
+      set color white
+;      set size  (5 - Mag) * star-size-factor
+;      set ycor Equ-2-Cart-y sphere-radius RA Dec
+;      set xcor Equ-2-Cart-x sphere-radius RA Dec
+;      set zcor Equ-2-Cart-z sphere-radius Dec
+      set hidden? true
+    ]
+  ]
+  file-close
+  set constellation-list remove-duplicates constellation-list ;reduce the constellation list to uniquie names and order it
+  set constellation-list sort constellation-list
+end
+
+to-report process-line [ line ]
+  let one-line []                    ;this list get filled with the file-read-line data broken into pieces, and is reported by the procedure
+  let p 0
+  while [length line > 0]
+  [
+    ifelse member? "\t" line
+    [
+      set p position  "\t" line
+      ifelse (p != false)           ;peal off each term that is separated by a tab character and put it in a list
+      [
+        let subs substring line 0 p
+        ;print subs
+        set one-line lput subs one-line
+        set line remove (word subs "\t") line   ;remove the term once the data is put into the one-line list
+      ]
+      [
+        user-message "unexpected result processing data string"
+      ]
+    ]
+    [  ;this is the "else" of ifelse member? "\t" line; it takes care of the last term in the string after which there is no tab character
+       set one-line lput line one-line
+       ;print line
+       set line ""
+    ]
+  ]
+ report one-line
+end
+
+to import-cities
+  let f "worldcities-lat-log-zones.txt"
+  ifelse (file-exists? f)
+    [ file-open f ]
+    [ user-message "Can't find the data file!" stop]
+  let trash file-read-line                               ;read the header line and discard
+  ;print trash
+  while [not file-at-end? ]
+  [
+    create-cities 1 [ ;here we use breed cities just as data structure. Until we have an Earth, they won't be displayed
+      let s file-read-line   ;the netlogo file-read function was not able to process the individual elements of the file, so we process it by line
+      ;print s
+      let ls process-line s  ;process-line returns a list of the data for each city
+      set name item 0 ls                 ;city name
+      set city-list lput name city-list  ;keep a seperate list of all the cities
+      set lat read-from-string item 1 ls ;city latitude
+      set lng read-from-string item 2 ls ;city longitude
+      set country item 3 ls              ;country name
+      set tzone read-from-string item 4 ls  ;time zone, plus or minus from UTC-0 Greenwich
+      set color white
+      set shape "dot"
+       set ycor Equ-2-Cart-y (sphere-radius - 7) lng lat ;if un-hidden, these points will show a sphere of dots that represents the cities on a globe inside the celestial sphere
+       set xcor Equ-2-Cart-x (sphere-radius - 7) lng lat
+       set zcor Equ-2-Cart-z (sphere-radius - 7) lat
+      set hidden? true
+    ]
+  ]
+  file-close
+  ;print city-list
+end
+
+to set-equitorial-coordinates
+  ask stars [
+      set xcor Equ-2-Cart-x sphere-radius RA Dec
+      set ycor Equ-2-Cart-y sphere-radius RA Dec
+      set zcor Equ-2-Cart-z sphere-radius Dec
+  ]
+end
+
+;functions to transform equitorial coordinates (RA, Dec) to Cartesian (x, y, z) for the celestial sphere for plotting in the 3D space.
+to-report Equ-2-Cart-x [ radius-in RA-in Dec-in ]
+  report radius-in * (cos (RA-in * 15)) * cos (Dec-in) ;RA in hours, so multiply RA by 15 deg/hr
+end
+
+to-report Equ-2-Cart-y [ radius-in RA-in Dec-in ]
+  report radius-in * (sin (RA-in * 15)) * cos (Dec-in)
+end
+
+to-report Equ-2-Cart-z [ radius-in Dec-in ]
+  report radius-in * (sin Dec-in)
+end
+
+to define-selected-stars  ;filter all stars to the ones being displayed at any one time
+  ask stars [set hidden? true]
+  set selected-stars stars with [Mag <= max-magnitude]
+  ask selected-stars [set size (5 - Mag) * star-size-factor ]
+  ask selected-stars [set hidden? false]
+end
+
+to-report star-size-factor  ;just to put star size on a 1 - 10 scale
+  report star-size / 20
+end
+
+to set-constellation-colors  ;assigns random colors to each constellation by making a 2 element list of [constellsation color] then put each of these in a list
+  let len length bright-colors
+  foreach constellation-list  [ x -> set constellation-colors lput (list x (item (random len) bright-colors)) constellation-colors ]
+end
+
+to show-constellation-colors ;set the color of each constellation according to the random colors assigned
+  foreach constellation-colors [ x -> ask selected-stars with [Constellation = first x] [set color last x]]
+end
+
+to draw-equator-and-ecliptic
+    create-markers 1 [
+    set label "Celestial Equator"
+    set color yellow
+    set label-color yellow
+    set shape "dot"
+    set color yellow
+    set size 1
+    set pen-size 3
+    set hidden? true
+    ;set pitch 90
+    set heading 0
+    set roll 90
+    set Dec 0.0
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius) 0 0
+    set ycor Equ-2-Cart-y (sphere-radius) 0 0
+    set zcor Equ-2-Cart-z (sphere-radius) 0
+    pen-down
+    repeat 360 [ arc-forward-by-angle 1 sphere-radius ]
+    pen-up
+    ;set hidden? true
+    die
+  ]
+
+  create-markers 1 [
+    set label "Ecliptic"
+    set label-color red
+    set shape "default"
+    set color red
+    set size 1
+    set color red
+    set pen-size 3
+    set pitch 23.5
+    set heading 0
+    set roll 90
+    set Dec 0.0
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius) 0 0
+    set ycor Equ-2-Cart-y (sphere-radius) 0 0
+    set zcor Equ-2-Cart-z (sphere-radius) 0
+    pen-down
+    repeat 360 [ arc-forward-by-angle 1 sphere-radius ]   ;draw the ecliptic
+    pen-up
+    repeat 90 [ arc-forward-by-angle 1 sphere-radius ]    ;park the marker at the solstice to see the label better
+    set hidden? true
+  ]
+end
+
+to create-marker-breed
+  create-markers 1 [
+    set label "NCP"  ;north celestial pole
+    set label-color red
+    set shape "arrow"
+    set size 2
+    set pitch 90
+    set Dec 89.9
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius + 1) 0 90
+    set ycor Equ-2-Cart-y (sphere-radius + 1) 0 90
+    set zcor Equ-2-Cart-z (sphere-radius + 1) 90
+  ]
+    create-markers 1 [
+    set label "SCP"    ;south celestial pole
+    set label-color red
+    set shape "arrow"
+    set size 2
+    set pitch -90.0
+    set Dec -89.9
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius + 1) 0 -90
+    set ycor Equ-2-Cart-y (sphere-radius + 1) 0 -90
+    set zcor Equ-2-Cart-z (sphere-radius + 1) -90
+  ]
+  create-markers 1 [
+    set label "VE"  ;vernal equinox
+    set label-color red
+    set shape "dot"
+    set size 1
+    set pitch -90.0
+    set Dec 0.0
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius) 0 0
+    set ycor Equ-2-Cart-y (sphere-radius) 0 0
+    set zcor Equ-2-Cart-z (sphere-radius) 0
+  ]
+
+    create-markers 1 [
+    set label "Celestial Equator"
+    set color yellow
+    set label-color yellow
+    set shape "dot"
+    set color yellow
+    set size 1
+    set pen-size 3
+    set hidden? true
+    ;set pitch 90
+    set heading 0
+    set roll 90
+    set Dec 0.0
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius) 0 0
+    set ycor Equ-2-Cart-y (sphere-radius) 0 0
+    set zcor Equ-2-Cart-z (sphere-radius) 0
+    pen-down
+    repeat 360 [ arc-forward-by-angle 1 sphere-radius ]
+    pen-up
+    ;set hidden? true
+    die
+  ]
+
+  create-markers 1 [
+    set label "Ecliptic"
+    set label-color red
+    set shape "default"
+    set color red
+    set size 1
+    set color red
+    set pen-size 3
+    set pitch 23.5
+    set heading 0
+    set roll 90
+    set Dec 0.0
+    set RA 0.0
+    set xcor Equ-2-Cart-x (sphere-radius) 0 0
+    set ycor Equ-2-Cart-y (sphere-radius) 0 0
+    set zcor Equ-2-Cart-z (sphere-radius) 0
+    pen-down
+    repeat 360 [ arc-forward-by-angle 1 sphere-radius ]   ;draw the ecliptic
+    pen-up
+    repeat 90 [ arc-forward-by-angle 1 sphere-radius ]    ;park the marker at the solstice to see the label better
+    set hidden? true
+  ]
+end
+
+
+
+;this procedure from "Spherical Path Example 3D" in the Models Library
+to arc-forward-by-angle [angle radius] ;; turtle procedure
+  ;; turn to face the next point we're going to
+  tilt-down angle / 2
+  ;; calculate the distance we'll have to move forward
+  ;; in order to stay on the circle. Go there.
+  fd 2 * radius * sin (angle / 2)
+  ;; turn to face tangent to the circle
+  tilt-down angle / 2
+end
+
+to draw-axes
+  create-turtles 1 [ set shape "line"
+          set heading 90
+          set color red
+          set size world-width
+;          stamp
+;          die
+  ]
+  create-turtles 1 [ set shape "line"
+          set color yellow
+          set heading 0
+          set size world-height
+;          stamp
+;          die
+  ]
+  create-turtles 1 [ set shape "line"
+          set pitch 90
+          set color blue
+          set size world-depth
+;          stamp
+;          die
+  ]
+  ask patch (max-pxcor - 2) 0 0 [ set plabel "North" ]
+  ask patch 0 (max-pycor - 2) 0 [ set plabel "West" ]
+  ask patch 0 0 max-pzcor [ set plabel "z-axis" ]
+  ask patch (min-pxcor + 2) 0 0 [ set plabel "South" ]
+  ask patch 0 (min-pycor + 2) 0 [ set plabel "East" ]
+  ask patch 0 0 min-pzcor [ set plabel "z-axis" ]
+end
+
+to-report create-north-pole-marker [ p ]
+    create-stars 1 [
+    set RA 0
+    set Dec 90.0
+    set Mag -2.0                           ;this ensures it's included in the selected star set
+    set ID "North Pole Marker"
+    set color violet
+    set Constellation "marker"
+    set label "NCP"
+    set hidden? false
+    set shape "circle"
+    set heading 0
+    set pitch 90
+    set xcor Equ-2-Cart-x (sphere-radius + 2) RA Dec
+    set ycor Equ-2-Cart-y (sphere-radius + 2) RA Dec
+    set zcor Equ-2-Cart-z (sphere-radius + 2) Dec
+    set p self
+  ]
+  report p
+end
+
+to-report create-south-pole-marker [ p ]
+    create-stars 1 [
+    set RA 0
+    set Dec -90.0
+    set Mag -2.0                           ;this ensures it's included in the selected star set
+    set ID "South Pole Marker"
+    set color violet
+    set Constellation "marker"
+    set label "SCP"
+    set hidden? false
+    set shape "circle"
+    set heading 0
+    set pitch -90
+    set xcor Equ-2-Cart-x (sphere-radius + 2) RA Dec
+    set ycor Equ-2-Cart-y (sphere-radius + 2) RA Dec
+    set zcor Equ-2-Cart-z (sphere-radius + 2) Dec
+    set p self
+  ]
+  report p
+end
+
+
+to-report create-vernal-equinox-marker [ p ]
+    create-stars 1 [
+    set RA 0
+    set Dec 0.0
+    set Mag -2.0                          ;this ensures it's included in the selected star set
+    set ID "Vernal Equinox Marker"
+    set Constellation "marker"
+    set label "VE"
+    set hidden? false
+    set shape "circle"
+;    set heading 100
+;    set pitch 0
+    set xcor Equ-2-Cart-x (sphere-radius) RA Dec
+    set ycor Equ-2-Cart-y (sphere-radius) RA Dec
+    set zcor Equ-2-Cart-z (sphere-radius) Dec
+    set p self
+  ]
+  report p
+end
+
+to draw-axis [ draw? ]   ;erase does not seem to work!
+  let pen no-turtles
+  ask south-pole [ hatch 1 [set pen self]]
+  ifelse draw?
+  [ ask pen [facexyz 0 0 0 pen-down forward (sphere-radius * 2) die] ]
+  [ ask pen [facexyz 0 0 0 set pen-size 20 pen-down pen-erase forward (sphere-radius * 2) die] ]
+end
+
+
+to-report create-axis [ ax ]  ;instead of drawing the axis (with erase not working), use a line turtle.
+  create-turtles 1 [
+    set shape "line"
+    set size 2 * sphere-radius + 2
+    set pitch 90
+    set label "North Pole"
+    set color green
+    set ax self
+  ]
+  report ax
+end
+
+
+
+;;Time functions
+
+to-report is-leap-year? [ yr ] ;Oct 14, 1582 is the start of the gregorian calendar
+  ifelse (yr <= 1582)          ;so, before that date use the Julian method of calculation of leap year,
+  [                            ;this works for years B.C. using negative dates--the year before 1 A.D. is 0 and -1 is the next year before that
+    if (yr mod 4 = 0) [report true]   ;for Julian calendar, every 4th year is a leap year
+    report false
+  ]
+  [                            ;after that date, use the gregorian way to figure leap year
+    if (yr mod 400 = 0) [report true]      ;1600 and 2000 are leap years
+    if (yr mod 4 = 0) and (yr mod 100 != 0) [ report true]   ;but 1800 and 1900 are not and every other 4th year are leap years
+    report false                                             ; all others are not
+  ]
+end
+
+to-report days-in-year [ yr ]
+  report ifelse-value is-leap-year? yr [366][365]
+end
+
+to-report month-day [ day-num yr ] ;convert day number to a two-element list of [ month-number, UT-day-number ]
+  let day-list []                  ;variables to hold the correct data lists depending on if a leap year or not
+  let month-list []                ; ditto
+  ifelse (is-leap-year? yr)
+    [
+       set day-list days-to-start-of-month-leap    ;data are set in setup procedure
+       set month-list days-per-month-leap          ; ditto
+    ]
+    [
+       set day-list days-to-start-of-month-ordinary
+       set month-list days-per-month-ordinary
+    ]
+  let iter 0   ;iterates through the months
+  loop
+  [
+    let date-diff day-num - (item iter day-list)  ;from the list of num of days to the beginning of each month, subtract the day num and see if the difference is less than the number of days in the next month
+    if (date-diff <= (item iter month-list)) [report list (iter + 1) date-diff] ;report a numeric [month day] list and jump out of the loop and the procedure
+    set iter iter + 1
+  ]
+end
+
+to-report month-day-string [month-day-pair]
+  report (word (item ((first month-day-pair) - 1) month-strings) " " last month-day-pair)
+end
+
+to-report date-to-day-number [ M D Y ] ;takes date as month number (Jan=1), day of month, and year (for calculating leap years); returns a number between 1 and 365 or 366 (leap year)
+  let day-list ifelse-value is-leap-year? Y [ days-to-start-of-month-leap ][ days-to-start-of-month-ordinary ]
+  report (item (M - 1) day-list) + D
+end
+
+to-report time-string [ decimal-24 ]  ;receives an 24 hour value with a fractional part down to the 1/100ths
+  let ender ifelse-value (decimal-24 < 12.00) [" AM"][" PM"]
+  if decimal-24 = 0.0 [set ender " Midnight"]
+  if decimal-24 = 12.00 [set ender " Noon"]
+  let hr int decimal-24
+  let frac decimal-24 - hr
+  if hr > 12 [set hr hr - 12]  ;we are using a 12 hour clock
+  let minutes frac * 60
+  let whole-minutes int minutes
+  let frac-secs minutes - whole-minutes
+  let seconds frac-secs * 60
+  let whole-seconds int seconds              ;for this, just go to the accuracy of seconds
+  let hr-str (word hr)
+  if (length hr-str = 1) [ set hr-str (word "0" hr-str)]  ;prepend a "0" if only one digit for each unit
+  let min-str (word whole-minutes)
+  if (length min-str = 1) [ set min-str (word "0" min-str) ]
+  let sec-str (word whole-seconds)
+  if (length sec-str = 1) [ set sec-str (word "0" sec-str) ]
+  report (word hr-str ":" min-str ":" sec-str ender)
+end
+
+;location-string reporter is designed to be used in the Location monitor. It get called automatically by NetLogo a few times a second.
+;in addition to provide in lat/long string it maintains the other UI variables and sets the "set-lat, set-long" variables so we
+;can freely move between the slider settings and the location (city) setting
+to-report location-string [ place ] ;"place" is a string from the list under the "location" Chooser
+  if (place = "Lat/Long from Slider")
+    [
+      set set-latitude latitude
+      set set-longitude longitude
+      report (word "latitude = " latitude  " longitude = " longitude)
+    ]
+  ;if moving the slider when there is a city set
+  if (place != "Lat/Long from Slider") and (set-latitude != latitude) or (set-longitude != longitude)
+    [
+      set set-latitude latitude
+      set set-longitude longitude
+      set location "Lat/Long from Slider"
+      report (word "latitude = " latitude  " longitude = " longitude)
+    ]
+  ;adjusting for a new city setting
+  if place != "Lat/Long from Slider"
+    [
+      ifelse any? cities with [ name = place ]
+        [
+          let cty cities with [name = place ]
+          ifelse (count cty) = 1
+          [
+            ask cty [set latitude lat set longitude lng ]
+            set set-latitude latitude set set-longitude longitude
+            report (word "latitude = " latitude  " longitude = " longitude)
+          ]
+          [
+            report (word "city count found: " count cty)  ;coding error checking
+          ]
+      ]
+      [
+        report "city not found"      ;coding error checking
+      ]
+  ]
+
+end
+
+to-report decimal-day [ decimal-24 ]  ;given the time in hours with fractional hours, reports the fraction of a day
+  report decimal-24 / 24
+end
+
+to-report time-to-decimal-hours [ H-24 M S ] ;input hours using a 24 hour clock, minutes, seconds
+  report H-24 + (M / 60) + (S / 3600)
+end
+
+to-report time-to-decimal-days [ H-24 M S ]
+  report decimal-day time-to-decimal-hours H-24 M S
+end
+
+to-report time-to-seconds [ H-24 M S ]
+  report (H-24 * 3600) + (M * 60) + S
+end
+
+to-report decimal-hours-to-H-M-S [ decimal-hr-24 ]
+  let hrs int decimal-hr-24
+  let min-frac (decimal-hr-24 - hrs) * 60
+  let mins int min-frac
+  let sec-frac (min-frac - mins) * 60
+  let secs sec-frac
+  report (list hrs mins secs)
+end
+
+to-report hr-min-sec-string [ h-m-s-list ]
+  report (word (first h-m-s-list) "h " (item 1 h-m-s-list) "m " (precision 2 last h-m-s-list) "s")
+end
+
+to-report decimal-hours-to-H-M-S-string [ decimal-hr-24 ]
+  let l decimal-hours-to-H-M-S decimal-hr-24
+  report hr-min-sec-string l
+end
+
+
+to-report julian-day [ M D Y ] ;month, day, year; NOTE: to include the time of day add the decimal-24 time value to the D parameter
+  if (M = 1 or M = 2)          ;this function gives the number of days that have occured since noon on 4713 B.C. on the Greenwich meridian
+  [
+      set Y Y - 1
+      set M M + 12    ;january and february become the 13th and 14th day of the previous year for calculation purposes
+  ]
+  let A int (Y / 100)
+  let B 0
+  if Y > 1582 [ set B 2 - A + int (A / 4)]
+  report int (365.25 * (Y + 4716)) + int (30.6001 * (M + 1)) + D + B - 1524.5
+end
+
+to-report julian-date-to-greenwich-calendar-date [ JD  ]
+  let jd-plus JD + 0.5
+  let I floor jd-plus
+  let F jd-plus - I
+  let A 0
+  let B 0
+  ifelse (I > 2299160)
+    [
+      set A floor (I - 1867216.250) / 26524.25
+      set B I + A - floor (A / 4) + 1
+    ]
+    [
+      set B I
+    ]
+  let C B + 1524
+  let D floor ((C - 122.1) / 365.25)
+  let E1 floor (365.25 * D)
+  let G floor( (C - E1) / 30.6001 )
+  let day C - E1 + F - floor(30.001 * G)
+  let month 0
+  ifelse (G < 15.5) [ set month G - 1 ][ set month G - 13 ]
+  let yr 0
+  ifelse (month > 2.5) [ set year D - 4716 ][ set year D - 4715 ]
+  report (list month day yr)
+end
+
+;convert universal time to Greenwich siderial time. Info from: Peter Duffett-Smith, Practical Astronomy with your Calculator (1988)
+to-report UT-to-GST [ day-num yr UT-hr UT-min UT-sec ] ;input the day of the year, the year, and the 24-hr decimal value of the time
+  let m-d-pair month-day day-num yr
+  let JD julian-day (first m-d-pair) (last m-d-pair) yr
+  let T (JD - 2451545.0) / 36525
+  let sidereal-0 6.697374558 + T * (2400.051336 + (T * 0.000025862))     ;siderial time at midnight in Greenwich
+  ;let siderial-raw siderial-0 + (UT * 1.00273790935)      ;adjustment for the time of day if other than midnight
+  let factor int (abs sidereal-0 / 24)
+  let sidereal-raw ifelse-value (sidereal-0 > 0) [ sidereal-0 - (factor * 24) ] [ sidereal-0 + (factor * 24) ] ;put the value in the range of 0 - 24 hours
+  let UT time-to-decimal-hours UT-hr UT-min UT-sec
+  let sidereal sidereal-raw + (UT * 1.00273790935)
+  ;print (word "JD: " JD " T: " T " sidereal-0: " sidereal-0  " sidereal-raw: " sidereal-raw " UT: " UT " factor: " factor " sidereal: " sidereal )
+  set factor int (abs sidereal / 24) ;adjust the range again to 0 - 24 hours
+  set sidereal ifelse-value (sidereal > 0) [ sidereal - (factor * 24) ] [ sidereal + (factor * 24) ]  ;adjust to be in the range of 0 to 24 hours
+  report sidereal
+end
+
+;same as above, just different input format
+to-report UT-to-GST-2 [ day-num yr decimal-hr-24 ]
+  let time-list decimal-hours-to-H-M-S decimal-hr-24
+  let H first time-list
+  let M item 1 time-list
+  let S last time-list
+  report UT-to-GST day-num yr H M S
+end
+
+;second method to compute GST based on epoch 2000. Info from: https://aa.usno.navy.mil/faq/docs/GAST.php
+to-report UT-to-GST-2000 [ day-num yr time-decimal-24 ]
+  let m-d-pair month-day day-num yr
+  let JD-0 julian-day (first m-d-pair) (last m-d-pair) yr ;this is for 0h UT (so the time of day is not included)
+  let JD JD-0 + time-decimal-24 / 24
+  let D JD - 2451545.0
+  let D-0 JD - 2451545.0
+  let T D / 36525     ;this is the number of centuries since 2000 (a pretty small value for most common times)
+  let GST 6.697374558 + D-0 * 0.06570982441908 + time-decimal-24 * 1.00273790935 ; + T^2 omit this term
+  let factor int (abs GST / 24)
+  set GST ifelse-value (GST > 0) [ GST - (factor * 24) ] [ GST + (factor * 24) ]
+  report GST
+end
+
+;convert greenwich siderial time (GST) to local siderial time (LST), reports time in 24 hour decimal format
+to-report GST-to-LST [ gst long ] ;takes decimal GST and longitude of the location (does not take civil adjustments and daylight savings into account)
+  let direction ifelse-value (long >= 0)[ 1 ][ -1 ] ;longitudes west are negative
+  let offset abs(long) / 15                         ;convert degrees of longitude to hours
+  let lst-raw gst + (direction * offset)            ;add the degrees east or west of greenwich, including direction
+  let plus-or-minus-24 0                            ;adjust to be in the range of 0 - 24 hours
+  ifelse (lst-raw >= 24)
+    [set plus-or-minus-24 24 ]
+    [if lst-raw < 0 [ set plus-or-minus-24 -24 ] ]
+  let lst lst-raw - plus-or-minus-24                ;plus-or-minus-24 is either 0, 24 or -24
+  report lst                                        ;in 24 hour decimal format
+end
+
+;to-report local-civil-time [ UT-time zone ]  ;not sure we'll need this
+;
+;  report Ut-time + zone
+;
+;end
+
+to-report lat-lon-zone-list [ city-string ]   ;report a three element list of latitude, longitude, and time zone
+  let c ""
+  ask cities with [name = city-string ][set c (list lat lng tzone)]
+  report c
+end
+
+to-report time-zone
+  if (location = "Lat/Long from Slider")
+    [report floor (longitude / 15 )]              ;jump out
+  report last (lat-lon-zone-list location)
+end
+
+to-report UT-to-local-date-and-time [ UT-time M D Y zone ]  ;reports a list of UT day number and UT time
+  let LCT UT-time + zone                        ;local civil time
+  let LJD (julian-day M D Y) + (LCT / 25)
+  let local-cal-date julian-date-to-greenwich-calendar-date LJD
+  let local-cal-day floor local-cal-date
+  let local-civil-time (local-cal-date - local-cal-day) * 24
+  report (list LJD local-civil-time)
+end
+;;direct conversion functions
+
+;inputs: lst is Local Siderial Time in decimal hours and alpha is right ascension of the object of interest in decimal hours
+to-report hour-angle [ lst alpha ]
+  let HA lst - alpha
+  if HA < 0 [set HA HA + 24]      ;if hour angle is negative add 24 hours
+  report HA                       ;hour angle in decimal hours
+end
+
+;convert equitorial coordinates (RA/Dec) to horizon (altitude/azimuth), reports a list of (alt, Azm)
+;inputs lst=local sidereal time, phi=observers latitude, RA-in=right ascension in decimal hours, Dec-in=declination in degrees
+to-report equ-to-horiz [ lst phi RA-in Dec-in ]
+    let H hour-angle lst RA-in   ;hour angle in decimal hours
+    let Hd H * 15        ;hour angle in decimal degrees ; phi should already be in decimal degrees
+    let sin-alt ((sin Dec) * (sin phi)) + ((cos Dec) * (cos phi) * (cos Hd))
+    let altitude asin sin-alt                                                       ;altitude
+    ;show (word "sin a: " sin-alt " a: " alt)
+    let cos-Azimuth ((sin Dec) - ((sin phi) * sin-alt)) / ((cos phi) * (cos altitude))
+    ;show (word "cos A: " cos-Azm)
+    let Azimuth-raw acos cos-Azimuth
+    let Azimuth 0                                                                  ;azimuth
+    let sin-H sin Hd
+    ifelse sin-H < 0 [set Azimuth Azimuth-raw][set Azimuth 360 - Azimuth-raw]
+    report (list altitude Azimuth)
+end
+
+;coverts a set of stars (or star-like turtles) from RA/Dec to Altitude/Azimuth (north = 0)
+to equ-to-horiz-agents [ agents lst phi ] ;input agents=objects to transform, lst=local siderial time, phi=observers latitude
+
+  ask agents [
+    let H hour-angle lst RA   ;hour angle in decimal hours, inputs should be in decimal hours, too.
+    let Hd H * 15             ;hour angle in decimal degrees; phi (latitude) should already be in decimal degrees
+    let sin-altitude ((sin Dec) * (sin phi)) + ((cos Dec) * (cos phi) * (cos Hd))
+    let altitude asin sin-altitude
+    ;show (word "sin a: " sin-alt " a: " alt)
+    let cos-Azimuth ((sin Dec) - ((sin phi) * sin-altitude)) / ((cos phi) * (cos altitude))
+    ;show (word "cos A: " cos-Azimuth)
+    let Azimuth-raw acos cos-Azimuth
+    let Azimuth 0
+    let sin-H sin Hd           ;be sure to take the sine of hour angle in *decimal degrees*
+    ifelse sin-H < 0 [set Azimuth Azimuth-raw][set Azimuth (360 - Azimuth-raw)]
+    set Alt altitude
+    set Azm Azimuth
+    set xcor Horiz-2-Cart-x sphere-radius Azimuth altitude ;Azimuth in degrees, but input needs decimal hours so divide by 15
+    set ycor Horiz-2-Cart-y sphere-radius Azimuth altitude
+    set zcor Horiz-2-Cart-z sphere-radius altitude
+  ]
+end
+
+;functions to translate horizon coordinates (Altitude, Azimuth) to Cartesian (x, y, z) for the celestial sphere for plotting in the 3D space.
+to-report Horiz-2-Cart-x [ r Az al ]
+  report r * (cos Az) * (cos al) ;RA in hours, so multiply RA by 15 deg/hr
+end
+
+to-report Horiz-2-Cart-y [ r Az al ]
+  report r * (cos al) * (sin Az) * -1
+end
+
+to-report Horiz-2-Cart-z [ r al ]
+  report r * (sin al)
+end
+
+
+
+;;matrix multiply functions, TBD
+
+to matrix-mult [ A-mat agents ] ;A-mat is the 3x3 transform matrix stated as a 1-D list, a, b, c, d, e, f, g, h
+    ;v is the 1x3 column vector that specified the point to be transformed stated as x, y, z
+    ;agents are the turtle elements to be transformed
+    ;the output is a 1x3 vector, the transformed point, m, n, p which are then appled directly to the agents
+  let a first A-mat
+  let b item 1 A-mat
+  let c item 2 A-mat
+  let d item 3 A-mat
+  let ee item 4 A-mat  ;need "ee" as "e" is a keyword in NetLogo
+  let f item 5 A-mat
+  let g item 6 A-mat
+  let h item 7 A-mat
+  let i last A-mat
+
+
+
+end
+@#$#@#$#@
+GRAPHICS-WINDOW
+0
+0
+439
+460
+-1
+-1
+13.0
+1
+10
+1
+1
+1
+0
+1
+1
+1
+-16
+16
+-16
+16
+-16
+16
+1
+1
+1
+ticks
+30.0
+
+BUTTON
+15
+16
+79
+49
+Setup
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+102
+13
+240
+58
+show-constellation
+show-constellation
+"All" "None" "And" "Ant" "Aps" "Aql" "Aqr" "Ara" "Ari" "Aur" "Boo" "CMa" "CMi" "CVn" "Cae" "Cam" "Cap" "Car" "Cas" "Cen" "Cep" "Cet" "Cha" "Cir" "Cnc" "Col" "Com" "CrA" "CrB" "Crt" "Cru" "Crv" "Cyg" "Del" "Dor" "Dra" "Equ" "Eri" "For" "Gem" "Gru" "Her" "Hor" "Hya" "Hyi" "Ind" "LMi" "Lac" "Leo" "Lep" "Lib" "Lup" "Lyn" "Lyr" "Mon" "Mus" "Nor" "Oct" "Oph" "Ori" "Pav" "Peg" "Per" "Phe" "Pic" "PsA" "Psc" "Pup" "Pyx" "Ret" "Scl" "Sco" "Sct" "Ser" "Sex" "Sge" "Sgr" "Tau" "Tel" "TrA" "Tri" "Tuc" "UMa" "UMi" "Vel" "Vir" "Vol" "Vul"
+0
+
+BUTTON
+267
+13
+338
+46
+Display
+display-constellations
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+548
+112
+720
+145
+max-magnitude
+max-magnitude
+-1
+4.6
+3.5
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+654
+76
+746
+109
+star-size
+star-size
+1
+10
+3.5
+0.5
+1
+NIL
+HORIZONTAL
+
+SWITCH
+365
+12
+537
+45
+show-celestial-poles?
+show-celestial-poles?
+0
+1
+-1000
+
+SLIDER
+100
+123
+348
+156
+UT-day-number
+UT-day-number
+1
+days-in-year year
+193.0
+1
+1
+NIL
+HORIZONTAL
+
+INPUTBOX
+16
+123
+89
+183
+year
+2019.0
+1
+0
+Number
+
+MONITOR
+367
+111
+482
+156
+Date (UT)
+month-day-string month-day UT-day-number year
+17
+1
+11
+
+BUTTON
+16
+198
+79
+231
+Run
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+101
+173
+352
+206
+UT-decimal-24-hr
+UT-decimal-24-hr
+0
+23.99
+1.8206000000000793
+0.005
+1
+NIL
+HORIZONTAL
+
+MONITOR
+368
+161
+484
+206
+Time (UT)
+time-string UT-decimal-24-hr
+17
+1
+11
+
+MONITOR
+369
+212
+486
+257
+Julian Day
+julian-day (first month-day (UT-day-number + (decimal-day UT-decimal-24-hr))  year) (last month-day (UT-day-number + (decimal-day UT-decimal-24-hr)) year) year
+6
+1
+11
+
+MONITOR
+497
+158
+609
+203
+Sidereal Time
+UT-to-GST-2 UT-day-number year UT-decimal-24-hr
+6
+1
+11
+
+MONITOR
+625
+158
+741
+203
+Sidereal Time
+decimal-hours-to-H-M-S-string UT-to-GST-2 UT-day-number year UT-decimal-24-hr
+17
+1
+11
+
+MONITOR
+496
+211
+613
+256
+Sidereal Time 2000
+UT-to-GST-2000 UT-day-number year UT-decimal-24-hr
+6
+1
+11
+
+MONITOR
+624
+212
+741
+257
+Sidereal Time 2000
+decimal-hours-to-H-M-S-string UT-to-GST-2000 UT-day-number year UT-decimal-24-hr
+17
+1
+11
+
+SLIDER
+548
+76
+654
+109
+sphere-radius
+sphere-radius
+4
+15
+11.0
+1
+1
+NIL
+HORIZONTAL
+
+INPUTBOX
+547
+11
+604
+71
+Observ-X
+25.0
+1
+0
+Number
+
+INPUTBOX
+604
+11
+658
+71
+Observ-Y
+0.0
+1
+0
+Number
+
+INPUTBOX
+657
+11
+712
+71
+Observ-Z
+20.0
+1
+0
+Number
+
+SLIDER
+100
+289
+347
+322
+latitude
+latitude
+-90
+90
+37.7561
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+100
+333
+349
+366
+longitude
+longitude
+-180
+180
+-122.4429
+0.01
+1
+NIL
+HORIZONTAL
+
+CHOOSER
+100
+235
+352
+280
+location
+location
+"Lat/Long from Slider" "Alert" "Ankara" "Astana" "Athens" "Bairin Zuoqi" "Beirut" "Berlin" "Bogota" "Boston" "Brasilia" "Buenos Aires" "Cape Town" "Caribou" "Coral Gables" "Dar es Salaam" "Denver" "Fairbanks" "Gombe" "Greenwich" "Hammerfest" "Hanoi" "Harare" "Helena" "Honolulu" "Houston" "Islamabad" "Jakarta" "Kathmandu" "Lima" "Liverpool" "Logan" "Lome" "London" "Madrid" "Majuro" "Manhattan" "Manila" "Mexico City" "Montevideo" "Moscow" "Mumbai" "Nuuk" "Omaha" "Paris" "Perth" "Phnom Penh" "Port-au-Prince" "Portland" "Quito" "Rangoon" "Riyadh" "Rome" "San Francisco" "Santiago" "Seoul" "Suez" "Sydney" "Taipei" "Thunder Bay" "Tokyo" "Tripoli" "Ulaanbaatar" "Uppsala" "Urbana" "Vancouver" "Vilnius" "Warsaw" "Washington" "Wellington" "Windhoek" "Xian"
+53
+
+MONITOR
+102
+378
+350
+423
+Location
+location-string location
+17
+1
+11
+
+MONITOR
+372
+378
+488
+423
+Local Siderial Time
+GST-to-LST (UT-to-GST-2000 UT-day-number year UT-decimal-24-hr) longitude
+6
+1
+11
+
+BUTTON
+268
+68
+341
+101
+Convert
+toggle-coordinate-system
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+103
+65
+241
+110
+coordinate-system
+coordinate-system
+"Equitorial" "Horizon"
+1
+
+CHOOSER
+4
+250
+96
+295
+advance-time-by
+advance-time-by
+"Day" "Hour" "15 Minutes" "Minute"
+3
+
+SWITCH
+365
+54
+537
+87
+visible-stars-only?
+visible-stars-only?
+0
+1
+-1000
+
+@#$#@#$#@
+## WHAT IS IT?
+
+(a general understanding of what the model is trying to show or explain)
+
+## HOW IT WORKS
+
+(what rules the agents use to create the overall behavior of the model)
+
+## HOW TO USE IT
+
+(how to use the model, including a description of each of the items in the Interface tab)
+
+## THINGS TO NOTICE
+
+(suggested things for the user to notice while running the model)
+
+## THINGS TO TRY
+
+(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+
+## EXTENDING THE MODEL
+
+(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+
+## NETLOGO FEATURES
+
+(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+
+## RELATED MODELS
+
+(models in the NetLogo Models Library and elsewhere which are of related interest)
+
+## CREDITS AND REFERENCES
+
+(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+@#$#@#$#@
+default
+true
+0
+Polygon -7500403 true true 150 5 40 250 150 205 260 250
+
+airplane
+true
+0
+Polygon -7500403 true true 150 0 135 15 120 60 120 105 15 165 15 195 120 180 135 240 105 270 120 285 150 270 180 285 210 270 165 240 180 180 285 195 285 165 180 105 180 60 165 15
+
+arrow
+true
+0
+Polygon -7500403 true true 150 0 0 150 105 150 105 293 195 293 195 150 300 150
+
+box
+false
+0
+Polygon -7500403 true true 150 285 285 225 285 75 150 135
+Polygon -7500403 true true 150 135 15 75 150 15 285 75
+Polygon -7500403 true true 15 75 15 225 150 285 150 135
+Line -16777216 false 150 285 150 135
+Line -16777216 false 150 135 15 75
+Line -16777216 false 150 135 285 75
+
+bug
+true
+0
+Circle -7500403 true true 96 182 108
+Circle -7500403 true true 110 127 80
+Circle -7500403 true true 110 75 80
+Line -7500403 true 150 100 80 30
+Line -7500403 true 150 100 220 30
+
+butterfly
+true
+0
+Polygon -7500403 true true 150 165 209 199 225 225 225 255 195 270 165 255 150 240
+Polygon -7500403 true true 150 165 89 198 75 225 75 255 105 270 135 255 150 240
+Polygon -7500403 true true 139 148 100 105 55 90 25 90 10 105 10 135 25 180 40 195 85 194 139 163
+Polygon -7500403 true true 162 150 200 105 245 90 275 90 290 105 290 135 275 180 260 195 215 195 162 165
+Polygon -16777216 true false 150 255 135 225 120 150 135 120 150 105 165 120 180 150 165 225
+Circle -16777216 true false 135 90 30
+Line -16777216 false 150 105 195 60
+Line -16777216 false 150 105 105 60
+
+car
+false
+0
+Polygon -7500403 true true 300 180 279 164 261 144 240 135 226 132 213 106 203 84 185 63 159 50 135 50 75 60 0 150 0 165 0 225 300 225 300 180
+Circle -16777216 true false 180 180 90
+Circle -16777216 true false 30 180 90
+Polygon -16777216 true false 162 80 132 78 134 135 209 135 194 105 189 96 180 89
+Circle -7500403 true true 47 195 58
+Circle -7500403 true true 195 195 58
+
+circle
+false
+0
+Circle -7500403 true true 0 0 300
+
+circle 2
+false
+0
+Circle -7500403 true true 0 0 300
+Circle -16777216 true false 30 30 240
+
+cow
+false
+0
+Polygon -7500403 true true 200 193 197 249 179 249 177 196 166 187 140 189 93 191 78 179 72 211 49 209 48 181 37 149 25 120 25 89 45 72 103 84 179 75 198 76 252 64 272 81 293 103 285 121 255 121 242 118 224 167
+Polygon -7500403 true true 73 210 86 251 62 249 48 208
+Polygon -7500403 true true 25 114 16 195 9 204 23 213 25 200 39 123
+
+cylinder
+false
+0
+Circle -7500403 true true 0 0 300
+
+dot
+false
+0
+Circle -7500403 true true 90 90 120
+
+face happy
+false
+0
+Circle -7500403 true true 8 8 285
+Circle -16777216 true false 60 75 60
+Circle -16777216 true false 180 75 60
+Polygon -16777216 true false 150 255 90 239 62 213 47 191 67 179 90 203 109 218 150 225 192 218 210 203 227 181 251 194 236 217 212 240
+
+face neutral
+false
+0
+Circle -7500403 true true 8 7 285
+Circle -16777216 true false 60 75 60
+Circle -16777216 true false 180 75 60
+Rectangle -16777216 true false 60 195 240 225
+
+face sad
+false
+0
+Circle -7500403 true true 8 8 285
+Circle -16777216 true false 60 75 60
+Circle -16777216 true false 180 75 60
+Polygon -16777216 true false 150 168 90 184 62 210 47 232 67 244 90 220 109 205 150 198 192 205 210 220 227 242 251 229 236 206 212 183
+
+fish
+false
+0
+Polygon -1 true false 44 131 21 87 15 86 0 120 15 150 0 180 13 214 20 212 45 166
+Polygon -1 true false 135 195 119 235 95 218 76 210 46 204 60 165
+Polygon -1 true false 75 45 83 77 71 103 86 114 166 78 135 60
+Polygon -7500403 true true 30 136 151 77 226 81 280 119 292 146 292 160 287 170 270 195 195 210 151 212 30 166
+Circle -16777216 true false 215 106 30
+
+flag
+false
+0
+Rectangle -7500403 true true 60 15 75 300
+Polygon -7500403 true true 90 150 270 90 90 30
+Line -7500403 true 75 135 90 135
+Line -7500403 true 75 45 90 45
+
+flower
+false
+0
+Polygon -10899396 true false 135 120 165 165 180 210 180 240 150 300 165 300 195 240 195 195 165 135
+Circle -7500403 true true 85 132 38
+Circle -7500403 true true 130 147 38
+Circle -7500403 true true 192 85 38
+Circle -7500403 true true 85 40 38
+Circle -7500403 true true 177 40 38
+Circle -7500403 true true 177 132 38
+Circle -7500403 true true 70 85 38
+Circle -7500403 true true 130 25 38
+Circle -7500403 true true 96 51 108
+Circle -16777216 true false 113 68 74
+Polygon -10899396 true false 189 233 219 188 249 173 279 188 234 218
+Polygon -10899396 true false 180 255 150 210 105 210 75 240 135 240
+
+house
+false
+0
+Rectangle -7500403 true true 45 120 255 285
+Rectangle -16777216 true false 120 210 180 285
+Polygon -7500403 true true 15 120 150 15 285 120
+Line -16777216 false 30 120 270 120
+
+leaf
+false
+0
+Polygon -7500403 true true 150 210 135 195 120 210 60 210 30 195 60 180 60 165 15 135 30 120 15 105 40 104 45 90 60 90 90 105 105 120 120 120 105 60 120 60 135 30 150 15 165 30 180 60 195 60 180 120 195 120 210 105 240 90 255 90 263 104 285 105 270 120 285 135 240 165 240 180 270 195 240 210 180 210 165 195
+Polygon -7500403 true true 135 195 135 240 120 255 105 255 105 285 135 285 165 240 165 195
+
+line
+true
+0
+Line -7500403 true 150 0 150 300
+
+line half
+true
+0
+Line -7500403 true 150 0 150 150
+
+pentagon
+false
+0
+Polygon -7500403 true true 150 15 15 120 60 285 240 285 285 120
+
+person
+false
+0
+Circle -7500403 true true 110 5 80
+Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Rectangle -7500403 true true 127 79 172 94
+Polygon -7500403 true true 195 90 240 150 225 180 165 105
+Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+plant
+false
+0
+Rectangle -7500403 true true 135 90 165 300
+Polygon -7500403 true true 135 255 90 210 45 195 75 255 135 285
+Polygon -7500403 true true 165 255 210 210 255 195 225 255 165 285
+Polygon -7500403 true true 135 180 90 135 45 120 75 180 135 210
+Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
+Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
+Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
+Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
+
+sheep
+false
+15
+Circle -1 true true 203 65 88
+Circle -1 true true 70 65 162
+Circle -1 true true 150 105 120
+Polygon -7500403 true false 218 120 240 165 255 165 278 120
+Circle -7500403 true false 214 72 67
+Rectangle -1 true true 164 223 179 298
+Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
+Circle -1 true true 3 83 150
+Rectangle -1 true true 65 221 80 296
+Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
+Polygon -7500403 true false 276 85 285 105 302 99 294 83
+Polygon -7500403 true false 219 85 210 105 193 99 201 83
+
+square
+false
+0
+Rectangle -7500403 true true 30 30 270 270
+
+square 2
+false
+0
+Rectangle -7500403 true true 30 30 270 270
+Rectangle -16777216 true false 60 60 240 240
+
+star
+false
+0
+Polygon -7500403 true true 151 1 185 108 298 108 207 175 242 282 151 216 59 282 94 175 3 108 116 108
+
+target
+false
+0
+Circle -7500403 true true 0 0 300
+Circle -16777216 true false 30 30 240
+Circle -7500403 true true 60 60 180
+Circle -16777216 true false 90 90 120
+Circle -7500403 true true 120 120 60
+
+tree
+false
+0
+Circle -7500403 true true 118 3 94
+Rectangle -6459832 true false 120 195 180 300
+Circle -7500403 true true 65 21 108
+Circle -7500403 true true 116 41 127
+Circle -7500403 true true 45 90 120
+Circle -7500403 true true 104 74 152
+
+triangle
+false
+0
+Polygon -7500403 true true 150 30 15 255 285 255
+
+triangle 2
+false
+0
+Polygon -7500403 true true 150 30 15 255 285 255
+Polygon -16777216 true false 151 99 225 223 75 224
+
+truck
+false
+0
+Rectangle -7500403 true true 4 45 195 187
+Polygon -7500403 true true 296 193 296 150 259 134 244 104 208 104 207 194
+Rectangle -1 true false 195 60 195 105
+Polygon -16777216 true false 238 112 252 141 219 141 218 112
+Circle -16777216 true false 234 174 42
+Rectangle -7500403 true true 181 185 214 194
+Circle -16777216 true false 144 174 42
+Circle -16777216 true false 24 174 42
+Circle -7500403 false true 24 174 42
+Circle -7500403 false true 144 174 42
+Circle -7500403 false true 234 174 42
+
+turtle
+true
+0
+Polygon -10899396 true false 215 204 240 233 246 254 228 266 215 252 193 210
+Polygon -10899396 true false 195 90 225 75 245 75 260 89 269 108 261 124 240 105 225 105 210 105
+Polygon -10899396 true false 105 90 75 75 55 75 40 89 31 108 39 124 60 105 75 105 90 105
+Polygon -10899396 true false 132 85 134 64 107 51 108 17 150 2 192 18 192 52 169 65 172 87
+Polygon -10899396 true false 85 204 60 233 54 254 72 266 85 252 107 210
+Polygon -7500403 true true 119 75 179 75 209 101 224 135 220 225 175 261 128 261 81 224 74 135 88 99
+
+wheel
+false
+0
+Circle -7500403 true true 3 3 294
+Circle -16777216 true false 30 30 240
+Line -7500403 true 150 285 150 15
+Line -7500403 true 15 150 285 150
+Circle -7500403 true true 120 120 60
+Line -7500403 true 216 40 79 269
+Line -7500403 true 40 84 269 221
+Line -7500403 true 40 216 269 79
+Line -7500403 true 84 40 221 269
+
+wolf
+false
+0
+Polygon -16777216 true false 253 133 245 131 245 133
+Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
+Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
+
+x
+false
+0
+Polygon -7500403 true true 270 75 225 30 30 225 75 270
+Polygon -7500403 true true 30 75 75 30 270 225 225 270
+@#$#@#$#@
+NetLogo 3D 6.0.4
+@#$#@#$#@
+need-to-manually-make-preview-for-this-model
+@#$#@#$#@
+@#$#@#$#@
+@#$#@#$#@
+@#$#@#$#@
+default
+0.0
+-0.2 0 0.0 1.0
+0.0 1 1.0 0.0
+0.2 0 0.0 1.0
+link direction
+true
+0
+Line -7500403 true 150 150 90 180
+Line -7500403 true 150 150 210 180
+@#$#@#$#@
+0
+@#$#@#$#@
