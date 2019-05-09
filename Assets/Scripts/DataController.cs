@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DataController : MonoBehaviour
 {
     public TextAsset starData;
     public TextAsset cityData;
+
+    [SerializeField]
+    private float radius = 50;
+    [SerializeField]
+    private float magnitudeScale = 0.5f;
 
     [SerializeField]
     private List<Star> allStars;
@@ -41,13 +47,24 @@ public class DataController : MonoBehaviour
 
         if (dataStarPrefab != null && allStars != null && allStars.Count > 0)
         {
+            // get magnitudes and normalize between 1 and 5 to scale stars
+            var minMag = allStars.Min(s => s.Mag);
+            var maxMag = allStars.Max(s => s.Mag);
+            Debug.Log(minMag + " " + maxMag);
+
             foreach (Star dataStar in allStars)
             {
-                GameObject starObject = Instantiate(dataStarPrefab, Random.onUnitSphere * 50, Quaternion.identity);
-                starObject.transform.LookAt(transform);
+                GameObject starObject = Instantiate(dataStarPrefab, this.transform.position, Quaternion.identity);
                 StarComponent newStar = starObject.GetComponent<StarComponent>();
                 newStar.starData = dataStar;
                 starObject.name = dataStar.Constellation;
+                starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+
+                // rescale for magnitude
+                var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
+                Vector3 magScale = starObject.transform.localScale * magScaleValue;
+                starObject.transform.localScale = magScale;
+                starObject.transform.LookAt(this.transform);
             }
         }
     }
