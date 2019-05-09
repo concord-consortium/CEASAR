@@ -24,9 +24,11 @@ public class Star
     // functions to transform equitorial coordinates(RA, Dec) to Cartesian(x, y, z) for the celestial sphere for plotting in the 3D space.
     public Vector3 CalculateEquitorialPosition(float radius)
     {
-        var xPos = radius * (Mathf.Cos(this.RA * 15)) * Mathf.Cos(this.Dec); // RA in hours, so multiply RA by 15 deg / hr
-        var yPos = radius * (Mathf.Sin(this.RA * 15)) * Mathf.Cos(this.Dec);
-        var zPos = radius * (Mathf.Sin(this.Dec));
+        float radianRA = this.RA * 15 * Mathf.Deg2Rad;
+        float radianDec = this.Dec * Mathf.Deg2Rad;
+        var xPos = radius * (Mathf.Cos(radianRA) * Mathf.Cos(radianDec)); // RA in hours, so multiply RA by 15 deg / hr
+        var yPos = radius * (Mathf.Sin(radianRA)) * Mathf.Cos(radianDec);
+        var zPos = radius * (Mathf.Sin(radianDec));
         return new Vector3(xPos, yPos, zPos);
     }
 }
