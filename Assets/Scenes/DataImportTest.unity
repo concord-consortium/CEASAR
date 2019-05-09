@@ -325,6 +325,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: cb4425a57d4217a4886f011902b5d47b, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
+  dataStarPrefab: {fileID: 6014762654321764643, guid: b515e417f57a1443fa55ce2b4d302e92,
+    type: 3}
 --- !u!4 &1678296830
 Transform:
   m_ObjectHideFlags: 0
