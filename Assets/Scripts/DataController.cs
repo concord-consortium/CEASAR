@@ -50,22 +50,38 @@ public class DataController : MonoBehaviour
             // get magnitudes and normalize between 1 and 5 to scale stars
             var minMag = allStars.Min(s => s.Mag);
             var maxMag = allStars.Max(s => s.Mag);
-            Debug.Log(minMag + " " + maxMag);
+            var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
+            Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
 
-            foreach (Star dataStar in allStars)
+            foreach (string constellation in constellations)
             {
-                GameObject starObject = Instantiate(dataStarPrefab, this.transform.position, Quaternion.identity);
-                StarComponent newStar = starObject.GetComponent<StarComponent>();
-                newStar.starData = dataStar;
-                starObject.name = dataStar.Constellation;
-                starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
+                GameObject constellationContainer = new GameObject();
+                constellationContainer.name = constellation;
+                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 
-                // rescale for magnitude
-                var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
-                Vector3 magScale = starObject.transform.localScale * magScaleValue;
-                starObject.transform.localScale = magScale;
-                starObject.transform.LookAt(this.transform);
+                foreach (Star dataStar in starsInConstellation)
+                {
+                    GameObject starObject = Instantiate(dataStarPrefab, this.transform.position, Quaternion.identity);
+                    StarComponent newStar = starObject.GetComponent<StarComponent>();
+                    newStar.starData = dataStar;
+                    starObject.name = dataStar.Constellation;
+                    starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+
+                    // rescale for magnitude
+                    var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
+                    Vector3 magScale = starObject.transform.localScale * magScaleValue;
+                    starObject.transform.localScale = magScale;
+                    starObject.transform.LookAt(this.transform);
+
+                    // not yet working
+                    // starObject.GetComponent<Renderer>().material.color = constellationColor;
+
+                    // group by constellation
+                    starObject.transform.parent = constellationContainer.transform;
+                }
             }
+
         }
     }
 
