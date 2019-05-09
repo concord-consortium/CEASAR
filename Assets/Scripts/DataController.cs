@@ -58,7 +58,7 @@ public class DataController : MonoBehaviour
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
                 GameObject constellationContainer = new GameObject();
                 constellationContainer.name = constellation;
-                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.8f, 1f);
 
                 foreach (Star dataStar in starsInConstellation)
                 {
@@ -74,8 +74,8 @@ public class DataController : MonoBehaviour
                     starObject.transform.localScale = magScale;
                     starObject.transform.LookAt(this.transform);
 
-                    // not yet working
-                    // starObject.GetComponent<Renderer>().material.color = constellationColor;
+                    // color by constellation
+                    starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", constellationColor);
 
                     // group by constellation
                     starObject.transform.parent = constellationContainer.transform;
