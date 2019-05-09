@@ -97,7 +97,7 @@ LightmapSettings:
     m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -327,7 +327,7 @@ MonoBehaviour:
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 50
   magnitudeScale: 0.5
-  dataStarPrefab: {fileID: 6014762654321764643, guid: b515e417f57a1443fa55ce2b4d302e92,
+  starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
 --- !u!4 &1678296830
 Transform:
