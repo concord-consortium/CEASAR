@@ -58,7 +58,7 @@ public class DataController : MonoBehaviour
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
                 GameObject constellationContainer = new GameObject();
                 constellationContainer.name = constellation;
-                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.8f, 1f);
+                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
 
                 foreach (Star dataStar in starsInConstellation)
                 {

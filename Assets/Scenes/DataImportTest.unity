@@ -155,8 +155,8 @@ Camera:
   m_GameObject: {fileID: 436278070}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -196,13 +196,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 436278070}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: 0, y: 80, z: -80}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!1 &582919235
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,6 +325,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: cb4425a57d4217a4886f011902b5d47b, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
+  radius: 50
+  magnitudeScale: 0.5
   dataStarPrefab: {fileID: 6014762654321764643, guid: b515e417f57a1443fa55ce2b4d302e92,
     type: 3}
 --- !u!4 &1678296830
