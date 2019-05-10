@@ -9,6 +9,8 @@ public class ConstellationsManager : MonoBehaviour
     private float maxScale = 100f;
     private float minScale = .025f;
     private float rotateSpeed = 10f;
+    private float autoRotateSpeed = 1f;
+    private bool rotating = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +21,7 @@ public class ConstellationsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        handleAutoRotation();
     }
 
     public void MoveLeft()
@@ -104,5 +106,27 @@ public class ConstellationsManager : MonoBehaviour
     public void RotateZAxisBack()
     {
         this.transform.Rotate(Vector3.back, rotateSpeed * Time.deltaTime);
+    }
+
+    public void ToggleAutoRotate()
+    {
+        rotating = !rotating;
+    }
+
+    private void handleAutoRotation() 
+    {
+        if (rotating)
+        {
+            this.transform.Rotate(Vector3.right, autoRotateSpeed * Time.deltaTime);
+            this.transform.Rotate(Vector3.back, autoRotateSpeed * Time.deltaTime);
+            this.transform.Rotate(Vector3.down, autoRotateSpeed * Time.deltaTime);
+        }
+    }
+
+    public void Reset()
+    {
+        this.transform.position = new Vector3(0, 0, 0f);
+        this.transform.localScale = new Vector3(1f, 1f, 1f);
+        this.transform.rotation = Quaternion.identity;
     }
 }
