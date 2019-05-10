@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -29,7 +28,7 @@ public class DataController : MonoBehaviour
         private set { allCities = value; }
     }
 
-    public GameObject dataStarPrefab;
+    public GameObject starPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -45,24 +44,28 @@ public class DataController : MonoBehaviour
             Debug.Log(allCities.Count + " cities imported");
         }
 
-        if (dataStarPrefab != null && allStars != null && allStars.Count > 0)
+        if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
             var minMag = allStars.Min(s => s.Mag);
             var maxMag = allStars.Max(s => s.Mag);
             var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
+            GameObject allConstellations = new GameObject();
+            allConstellations.name = "Constellations";
 
             foreach (string constellation in constellations)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
                 GameObject constellationContainer = new GameObject();
                 constellationContainer.name = constellation;
+                constellationContainer.transform.parent = allConstellations.transform;
+
                 Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
 
                 foreach (Star dataStar in starsInConstellation)
                 {
-                    GameObject starObject = Instantiate(dataStarPrefab, this.transform.position, Quaternion.identity);
+                    GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
                     starObject.name = dataStar.Constellation;
