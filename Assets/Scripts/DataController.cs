@@ -27,6 +27,7 @@ public class DataController : MonoBehaviour
         get { return allCities; }
         private set { allCities = value; }
     }
+    public bool showHorizonView = false;
 
     public GameObject starPrefab;
     public GameObject allConstellations;
@@ -68,7 +69,14 @@ public class DataController : MonoBehaviour
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
                     starObject.name = dataStar.Constellation;
-                    starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                    if (showHorizonView)
+                    {
+                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, 0, 0);
+                    }
+                    else
+                    {
+                        starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                    }
 
                     // rescale for magnitude
                     var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
