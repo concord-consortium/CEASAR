@@ -80,11 +80,15 @@ public class Star
         }
         Alt = altitude; // should now be in radians
 
-
+        if (float.IsNaN(Alt)) Alt = 0;
+        if (float.IsNaN(Azm)) Azm = 0;
         var xPos = radius * (Mathf.Cos(Azm)) * (Mathf.Cos(Alt)); // ; RA in hours, so multiply RA by 15 deg / hr
         var zPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)) * -1);
         var yPos = radius * Mathf.Sin(Alt);
 
+        if (float.IsNaN(xPos)){
+            Debug.Log(Azm + " " + Alt);
+        }
         return new Vector3(xPos, yPos, zPos);
 
     }

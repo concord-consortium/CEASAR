@@ -32,6 +32,11 @@ public class DataController : MonoBehaviour
     public GameObject starPrefab;
     public GameObject allConstellations;
 
+    private float simulationHour = 0f;
+    public float simulationTimeScale = 0.001f;
+
+    public List<string> cities;
+    private City currentCity;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +49,8 @@ public class DataController : MonoBehaviour
         {
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
+            cities = allCities.Select(c => c.Name).ToList();
+            currentCity = allCities.Where(c => c.Name == "Boston").FirstOrDefault();
         }
 
         if (starPrefab != null && allStars != null && allStars.Count > 0)
@@ -91,13 +98,17 @@ public class DataController : MonoBehaviour
                     starObject.transform.parent = constellationContainer.transform;
                 }
             }
-
         }
     }
 
-    // Update is called once per frame
     void Update()
-    {
-
+    {  
+        if (showHorizonView){
+            simulationHour += simulationTimeScale;
+            foreach (StarComponent starObject in GameObject.FindObjectsOfType<StarComponent>()){
+                starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, System.DateTime.Now.Hour + simulationHour, currentCity.Lat);
+                starObject.transform.LookAt(this.transform);
+            }
+        }
     }
 }
