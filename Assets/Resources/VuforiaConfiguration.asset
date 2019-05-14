@@ -9,18 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2067402452, guid: bab6fa851cf5a1a4bba3cec5f191cb8e, type: 3}
+  m_Script: {fileID: -2067402452, guid: 8a9a760f95896c34689febc965510927, type: 3}
   m_Name: VuforiaConfiguration
   m_EditorClassIdentifier: 
   vuforia:
     vuforiaLicenseKey: 
-    ufoLicenseKey: QVNLbGNTZi8vLy8vQUFBQUtQV0xiL1VLZmtEMHJsSWdKWGxHMXUwWFJNbGFsRHlLVFF3bGRkbUhzZTZ4dGZqTkxpa1k1VHZKdW9pdHVoNE1sNnh6SVZXOFNFcVF3QnVXWGNRTWd5Mm5xMVZHMGFxUmsxc0pMcWJ4MEdxQ251VCs4azVMeXFuL0FMMFpFWm1MeGlLTzRTUlNOVnB4clA3cFdKUGQyUFRiNytFeVFuMmptUFpmd25nS3B5MDZuYXh6V0hVZ3RFeVM4TlFya3JtcVdiUkt2a0d6NHRpMzZOa0xYcFFadCsxekFsMExpRGg3UDZtQytySTdnOWxDNmU5RlZPazJLdFpmSHd3c01ETU5QbW5lS0YyUmk1V283Qm1GZzNSRktQRWJUbkdTSmtqeFVKR3JWTUpUci80VGc3VFpoWXRnVDJvT2xaZDZpZXZiRzh6M3cwZnUvbmhjVHN5ZFJ2cG9Zc0tBMG5vSXI0QW5sYkQvV0NQRXBkZzg=
+    ufoLicenseKey: QWJZSHpyNy8vLy8vQUFBQUtKS0RkT3FCdEVlcHNoR1ROdktPcjVpT25TdkVRQUJqNmJEREY0eUt0WFMzVmtMZjhRMnJXL21rRkw5QW1ObCt4UC9Fc1l2bWJVMHVTUHBsZVh5c2Z4UzNMTVNTSmlPZ1E0emcyMDRVZjZKeExCeVp6YjFUOTY3ZFFHRXhNWFRlUlVPOWEzSTNZTTFzK0tyNWdXVDV0OTRhREdSUTFtcEJjQ1hvOGk2MFRDSFUzT3paL2RjRmNITEw2TEdxVVZuQVBjdktuQ09ieTFrT2g0VzlVWDAvM1BadTNueDJyeEwyMWVJZ2xPT1d1TlRUanN3OHBLNnhjditlOHNQYloyV1liYWw0TzB6cVFIM1kyYVJ6TE9ELzFsZkM4S3NsZEEwRnJ6VElzalpVNmJrL3AwNy9WT2NWakt0MUtySzdJbWRVMGE5OHI2cTBnNk9WZlNpcmNvZ1l1ZmI3dmcrTXNrcm1XSlFlUVpJZFRCNEw=
     delayedInitialization: 0
     cameraDeviceModeSetting: -1
-    maxSimultaneousImageTargets: 1
+    maxSimultaneousImageTargets: 4
     maxSimultaneousObjectTargets: 1
     useDelayedLoadingObjectTargets: 0
-    version: 8.1.7
+    version: 8.1.2
     eulaAcceptedVersions: '{"Values":["8.1"]}'
   digitalEyewear:
     cameraOffset: 0.06
@@ -48,13 +48,14 @@ MonoBehaviour:
   videoBackground:
     clippingMode: 0
     numDivisions: 2
-    videoBackgroundShader: {fileID: 0}
-    matteShader: {fileID: 0}
+    videoBackgroundShader: {fileID: 4800000, guid: f40623b353e2f1943b1b3ba42975db7a,
+      type: 3}
+    matteShader: {fileID: 15310, guid: 0000000000000000f000000000000000, type: 0}
     videoBackgroundEnabled: 1
   deviceTracker:
     autoInitTracker: 0
     autoStartTracker: 0
-    trackingMode: 1
+    trackingMode: 0
     posePrediction: 0
     modelCorrectionMode: 0
     modelTransformEnabled: 0
