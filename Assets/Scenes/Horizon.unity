@@ -247,7 +247,7 @@ MonoBehaviour:
   showHorizonView: 1
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
-  simulationTimeScale: 0.001
+  simulationTimeScale: 10
   cities: []
 --- !u!4 &632034534
 Transform:
