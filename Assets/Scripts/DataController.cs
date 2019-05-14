@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class DataController : MonoBehaviour
 {
@@ -32,8 +33,9 @@ public class DataController : MonoBehaviour
     public GameObject starPrefab;
     public GameObject allConstellations;
 
-    private float simulationHour = 0f;
-    public float simulationTimeScale = 0.001f;
+    private float simulationTime = 0f;
+    private DateTime simulationStartTime = DateTime.Now;
+    public float simulationTimeScale = 10f;
 
     public List<string> cities;
     private City currentCity;
@@ -61,6 +63,9 @@ public class DataController : MonoBehaviour
             var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
 
+
+            double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
+
             foreach (string constellation in constellations)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
@@ -68,7 +73,7 @@ public class DataController : MonoBehaviour
                 constellationContainer.name = constellation;
                 constellationContainer.transform.parent = allConstellations.transform;
 
-                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+                Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
 
                 foreach (Star dataStar in starsInConstellation)
                 {
@@ -78,7 +83,7 @@ public class DataController : MonoBehaviour
                     starObject.name = dataStar.Constellation;
                     if (showHorizonView)
                     {
-                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, 0, 0);
+                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);
                     }
                     else
                     {
@@ -101,12 +106,16 @@ public class DataController : MonoBehaviour
         }
     }
 
-    void Update()
-    {  
-        if (showHorizonView){
-            simulationHour += simulationTimeScale;
-            foreach (StarComponent starObject in GameObject.FindObjectsOfType<StarComponent>()){
-                starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, System.DateTime.Now.Hour + simulationHour, currentCity.Lat);
+    void FixedUpdate()
+    {
+        if (showHorizonView)
+        {
+            simulationTime += simulationTimeScale;
+
+            var lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            foreach (StarComponent starObject in FindObjectsOfType<StarComponent>())
+            {
+                starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
                 starObject.transform.LookAt(this.transform);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 public class Star
 {
@@ -34,9 +35,9 @@ public class Star
     }
 
     // inputs: localSiderialTime is in decimal hours and alpha is right ascension of the object of interest in decimal hours
-    private float hourAngle(float localSiderialTime, float alpha)
+    private float hourAngle(double localSiderialTime, float alpha)
     {
-        var HA = localSiderialTime - alpha;
+        float HA = (float)localSiderialTime - alpha;
         if (HA < 0)
         {
             HA = HA + 24; // if hour angle is negative add 24 hours
@@ -54,13 +55,13 @@ public class Star
     }
 
     // calculate the position of stars at a point on Earth
-    public Vector3 CalculateHorizonPosition(float radius, float localSiderialTime, float observerLatitude)
+    public Vector3 CalculateHorizonPosition(float radius, double currentSiderialTime, float observerLatitude)
     {
         // convert all things to Radians for Unity
         float radianLatitude = Mathf.Deg2Rad * observerLatitude;
 
         // convert from RA/Dec to Altitude/Azimuth (north = 0)
-        float h = hourAngle(localSiderialTime, RA);
+        float h = hourAngle(currentSiderialTime, RA);
         float radianHDegreesPerHour = h * 15 * Mathf.Deg2Rad;
 
         float sinAltitude = (Mathf.Sin(radianDec) * Mathf.Sin(radianLatitude)) + (Mathf.Cos(radianDec) * Mathf.Cos(radianLatitude) * Mathf.Cos(radianHDegreesPerHour));
@@ -86,7 +87,8 @@ public class Star
         var zPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)) * -1);
         var yPos = radius * Mathf.Sin(Alt);
 
-        if (float.IsNaN(xPos)){
+        if (float.IsNaN(xPos))
+        {
             Debug.Log(Azm + " " + Alt);
         }
         return new Vector3(xPos, yPos, zPos);
