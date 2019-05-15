@@ -42,6 +42,7 @@ public class DataController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (allConstellations == null) allConstellations = new GameObject();
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text);
