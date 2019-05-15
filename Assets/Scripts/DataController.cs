@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class DataController : MonoBehaviour
 {
@@ -27,10 +28,17 @@ public class DataController : MonoBehaviour
         get { return allCities; }
         private set { allCities = value; }
     }
+    public bool showHorizonView = false;
 
     public GameObject starPrefab;
     public GameObject allConstellations;
 
+    private float simulationTime = 0f;
+    private DateTime simulationStartTime = DateTime.Now;
+    public float simulationTimeScale = 10f;
+
+    public List<string> cities;
+    private City currentCity;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +51,8 @@ public class DataController : MonoBehaviour
         {
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
+            cities = allCities.Select(c => c.Name).ToList();
+            currentCity = allCities.Where(c => c.Name == "Boston").FirstOrDefault();
         }
 
         if (starPrefab != null && allStars != null && allStars.Count > 0)
@@ -53,6 +63,9 @@ public class DataController : MonoBehaviour
             var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
 
+
+            double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
+
             foreach (string constellation in constellations)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
@@ -60,7 +73,7 @@ public class DataController : MonoBehaviour
                 constellationContainer.name = constellation;
                 constellationContainer.transform.parent = allConstellations.transform;
 
-                Color constellationColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+                Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
 
                 foreach (Star dataStar in starsInConstellation)
                 {
@@ -68,7 +81,14 @@ public class DataController : MonoBehaviour
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
                     starObject.name = dataStar.Constellation;
-                    starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                    if (showHorizonView)
+                    {
+                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);
+                    }
+                    else
+                    {
+                        starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                    }
 
                     // rescale for magnitude
                     var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
@@ -83,13 +103,21 @@ public class DataController : MonoBehaviour
                     starObject.transform.parent = constellationContainer.transform;
                 }
             }
-
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (showHorizonView)
+        {
+            simulationTime += simulationTimeScale;
 
+            var lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            foreach (StarComponent starObject in FindObjectsOfType<StarComponent>())
+            {
+                starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
+                starObject.transform.LookAt(this.transform);
+            }
+        }
     }
 }
