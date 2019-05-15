@@ -29,6 +29,7 @@ public class DataController : MonoBehaviour
     }
 
     public GameObject starPrefab;
+    public GameObject allConstellations;
 
     // Start is called before the first frame update
     void Start()
@@ -51,8 +52,6 @@ public class DataController : MonoBehaviour
             var maxMag = allStars.Max(s => s.Mag);
             var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
-            GameObject allConstellations = new GameObject();
-            allConstellations.name = "Constellations";
 
             foreach (string constellation in constellations)
             {
