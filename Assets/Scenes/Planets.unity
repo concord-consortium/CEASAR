@@ -135,14 +135,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 187837873}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2ec2b96de5640e42a622fc3064f1c80, type: 3}
+  m_Script: {fileID: 11500000, guid: fe629fa3086dd48aa8c63d06514fe080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Target: {fileID: 1361481108}
-  m_AutoTargetPlayer: 1
-  m_UpdateType: 0
-  m_RotationRange: {x: 0, y: 0}
-  m_FollowSpeed: 1
+  target: {fileID: 1361481108}
 --- !u!1001 &195282825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -233,7 +229,7 @@ PrefabInstance:
     - target: {fileID: 1731728374922572235, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
       propertyPath: m_Type
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1731728374922572235, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
@@ -243,7 +239,7 @@ PrefabInstance:
     - target: {fileID: 1731728374922572235, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
       propertyPath: m_Intensity
-      value: 10000
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1731728374922572234, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
@@ -292,7 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 210744112}
   - component: {fileID: 210744111}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -315,9 +311,13 @@ MonoBehaviour:
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 500
   magnitudeScale: 1
+  showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
+  allConstellations: {fileID: 0}
   colorByConstellation: 0
+  simulationTimeScale: 10
+  cities: []
 --- !u!4 &210744112
 Transform:
   m_ObjectHideFlags: 0
@@ -350,7 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d9f5603c3f3413bb2407e772b2ba03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orbitSpeed: 100
+  orbitSpeed: -100
   orbitCenter: {fileID: 1361481108}
   orbitRadius: 1.5
 --- !u!114 &509298536
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6691d2df1a4c4403e9f69c1a7f2e7e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: -10
 --- !u!1 &564414523
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6691d2df1a4c4403e9f69c1a7f2e7e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: -10
 --- !u!114 &1361481110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d9f5603c3f3413bb2407e772b2ba03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orbitSpeed: 10
+  orbitSpeed: -10
   orbitCenter: {fileID: 1156681620}
   orbitRadius: 100
 --- !u!1001 &99094877454357010
@@ -520,6 +520,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Earth
+      objectReference: {fileID: 0}
+    - target: {fileID: 99094878849280716, guid: 2ea5d449ebbc14fdaab52748ee79d25a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 99094878849280752, guid: 2ea5d449ebbc14fdaab52748ee79d25a,
         type: 3}
@@ -589,6 +594,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Moon
+      objectReference: {fileID: 0}
+    - target: {fileID: 4558564313004885982, guid: e3125ffca64f542c18ec0ff778d7b8fe,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4558564313004885970, guid: e3125ffca64f542c18ec0ff778d7b8fe,
         type: 3}
