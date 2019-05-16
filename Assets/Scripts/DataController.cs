@@ -32,6 +32,7 @@ public class DataController : MonoBehaviour
 
     public GameObject starPrefab;
     public GameObject allConstellations;
+    public bool colorByConstellation = true;
 
     private float simulationTime = 0f;
     private DateTime simulationStartTime = DateTime.Now;
@@ -98,7 +99,10 @@ public class DataController : MonoBehaviour
                     starObject.transform.LookAt(this.transform);
 
                     // color by constellation
-                    starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", constellationColor);
+                    if (colorByConstellation == true)
+                    {
+                        starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", constellationColor);
+                    }
 
                     // group by constellation
                     starObject.transform.parent = constellationContainer.transform;
