@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Horizon.unity
     guid: 6ec7fba65a6414c468715111e0beb325
+  - enabled: 1
+    path: Assets/Scenes/Planets.unity
+    guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
   m_configObjects: {}
