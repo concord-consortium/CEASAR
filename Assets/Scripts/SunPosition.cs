@@ -36,7 +36,7 @@ public class SunPosition : MonoBehaviour
             //var sun = Instantiate(sunModel, transform.position + (Vector3.forward * 20), Quaternion.identity);
             //sun.transform.position = new Vector3((12 - i) * 10, (float)solarPosition.Altitude, sun.transform.position.z);
 
-            Vector3 p = transform.position + (Vector3.forward * 20);
+            Vector3 p = transform.position - (Vector3.forward * 20);
             p.x = (12 - i) * 10;
             p.y = (float)solarPosition.Altitude;
             points.Add(p);
@@ -58,7 +58,7 @@ public class SunPosition : MonoBehaviour
             renderSunArc();
         }
         var solarPosition = CalculateSunPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
-        if (sun != null) sun.transform.position = new Vector3((12 - DateTime.Now.Hour) * 10, (float)solarPosition.Altitude, transform.position.z + 20);
+        if (sun != null) sun.transform.position = new Vector3((12 - DateTime.Now.Hour) * 10, (float)solarPosition.Altitude, transform.position.z - 20);
     }
 
     /// <summary>

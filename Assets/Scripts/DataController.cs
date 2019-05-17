@@ -139,9 +139,12 @@ public class DataController : MonoBehaviour
         }
         if (showHorizonView)
         {
-            simulationTime += simulationTimeScale;
-
-            var lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            double lst = DateTime.Now.ToSiderealTime();
+            if (simulationTimeScale > 0)
+            {
+                simulationTime += simulationTimeScale;
+                lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            }
             foreach (StarComponent starObject in FindObjectsOfType<StarComponent>())
             {
                 starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
