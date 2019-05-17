@@ -10,6 +10,9 @@ public class SunPosition : MonoBehaviour
 
     public Material lineMaterial;
     private LineRenderer sunArcLine;
+    int secondsInADay = 24 * 60 * 60;
+    int desiredLineNodeCount = 120;
+    float xScale = 0.005f;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,9 +30,10 @@ public class SunPosition : MonoBehaviour
         if (sunArcLine != null) Destroy(sunArcLine);
         sunArcLine = gameObject.AddComponent<LineRenderer>();
         List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < 24; i++)
+        DateTime midnight = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+        for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
-            DateTime t = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, i, 0, 0);
+            DateTime t = midnight.AddSeconds(i); // DateTime t1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, i / 10, 0, 0);
             var solarPosition = CalculateSunPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng);
             // var x = (Mathf.Tan((float)solarPosition.Azimuth * Mathf.Deg2Rad * 0.5f)) / solarPosition.Altitude;
 
@@ -37,7 +41,7 @@ public class SunPosition : MonoBehaviour
             //sun.transform.position = new Vector3((12 - i) * 10, (float)solarPosition.Altitude, sun.transform.position.z);
 
             Vector3 p = transform.position - (Vector3.forward * 20);
-            p.x = (12 - i) * 10;
+            p.x = calculateX(i); //((secondsInADay / 2) - i) * xScale;
             p.y = (float)solarPosition.Altitude;
             points.Add(p);
 
@@ -58,9 +62,14 @@ public class SunPosition : MonoBehaviour
             renderSunArc();
         }
         var solarPosition = CalculateSunPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
-        if (sun != null) sun.transform.position = new Vector3((12 - DateTime.Now.Hour) * 10, (float)solarPosition.Altitude, transform.position.z - 20);
-    }
+        var timeOfDay = DateTime.Now.TimeOfDay.TotalSeconds;
 
+        if (sun != null) sun.transform.position = new Vector3(calculateX((float)timeOfDay), (float)solarPosition.Altitude, transform.position.z - 20);
+    }
+    float calculateX(float secondsInCurrentDay)
+    {
+        return ((secondsInADay / 2) - secondsInCurrentDay) * xScale;
+    }
     /// <summary>
     /// Calculates the sun position. calculates the suns "position" based on a 
     /// given date and time in local time, latitude and longitude 
