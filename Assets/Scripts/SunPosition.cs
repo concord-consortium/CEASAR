@@ -13,6 +13,7 @@ public class SunPosition : MonoBehaviour
     int secondsInADay = 24 * 60 * 60;
     int desiredLineNodeCount = 60;
     float xScale = 0.005f;
+    float radius = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,25 +34,17 @@ public class SunPosition : MonoBehaviour
         DateTime midnight = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
-            DateTime t = midnight.AddSeconds(i); // DateTime t1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, i / 10, 0, 0);
+            DateTime t = midnight.AddSeconds(i);
             var solarPosition = CalculateSunPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng);
-            //(Mathf.Tan(Mathf.Deg2Rad * (float)solarPosition.Azimuth) / (Mathf.Deg2Rad * solarPosition.Altitude));
-
-            //var sun = Instantiate(sunModel, transform.position + (Vector3.forward * 20), Quaternion.identity);
-            //sun.transform.position = new Vector3((12 - i) * 10, (float)solarPosition.Altitude, sun.transform.position.z);
-
-            Vector3 p = transform.position - (Vector3.forward * 20);
-            p.x = calculateX((float)solarPosition.Azimuth); //((secondsInADay / 2) - i) * xScale;
-            p.y = (float)solarPosition.Altitude;
-            points.Add(p);
+            points.Add(solarPosToWorld(solarPosition));
 
             Debug.LogFormat("Result ==> Time: {0}, Altitude: {1}, Azimuth :{2}", t.ToShortTimeString(), solarPosition.Altitude, solarPosition.Azimuth);
         }
         sunArcLine.positionCount = points.Count;
         sunArcLine.SetPositions(points.ToArray());
         sunArcLine.material = lineMaterial;
-        sunArcLine.startWidth = 0.1f;
-        sunArcLine.endWidth = 0.1f;
+        sunArcLine.startWidth = 0.2f;
+        sunArcLine.endWidth = 0.2f;
     }
     // Update is called once per frame
     void Update()
@@ -62,14 +55,23 @@ public class SunPosition : MonoBehaviour
             renderSunArc();
         }
         var solarPosition = CalculateSunPosition(DateTime.UtcNow, dataController.currentCity.Lat, dataController.currentCity.Lng);
-        var timeOfDay = DateTime.Now.TimeOfDay.TotalSeconds;
 
-        if (sun != null) sun.transform.position = new Vector3(calculateX((float)solarPosition.Azimuth), (float)solarPosition.Altitude, transform.position.z - 20);
+        if (sun != null) sun.transform.position = solarPosToWorld(solarPosition);
+    }
+    Vector3 solarPosToWorld(SolarPosition pos)
+    {
+        Vector3 p = transform.position - (Vector3.forward * radius * 0.5f);
+        p.x = calculateX((float)pos.Azimuth); //((secondsInADay / 2) - i) * xScale;
+        p.y = calculateY((float)pos.Altitude);//(float)solarPosition.Altitude;
+        return p;
     }
     float calculateX(float azimuth)
     {
-        return 100 * Mathf.Sin(Mathf.Deg2Rad * azimuth);
-        //return ((secondsInADay / 2) - secondsInCurrentDay) * xScale;
+        return radius * Mathf.Sin(azimuth);
+    }
+    float calculateY(float altitude)
+    {
+        return radius * Mathf.Sin(altitude);
     }
     /// <summary>
     /// Calculates the sun position. calculates the suns "position" based on a 
@@ -170,7 +172,7 @@ public class SunPosition : MonoBehaviour
         // Azimut  
         //Console.WriteLine("Azimuth: " + azimuth * Rad2Deg);  
 
-        return new SolarPosition { Altitude = altitude * Mathf.Rad2Deg, Azimuth = azimuth * Mathf.Rad2Deg };
+        return new SolarPosition { Altitude = altitude, Azimuth = azimuth };
     }
     double CorrectAngle(double angleInRadians)
     {
