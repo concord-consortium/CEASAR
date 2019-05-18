@@ -11,7 +11,7 @@ public class SunPosition : MonoBehaviour
     public Material lineMaterial;
     private LineRenderer sunArcLine;
     int secondsInADay = 24 * 60 * 60;
-    int desiredLineNodeCount = 120;
+    int desiredLineNodeCount = 60;
     float xScale = 0.005f;
     // Start is called before the first frame update
     void Start()
@@ -35,13 +35,13 @@ public class SunPosition : MonoBehaviour
         {
             DateTime t = midnight.AddSeconds(i); // DateTime t1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, i / 10, 0, 0);
             var solarPosition = CalculateSunPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng);
-            // var x = (Mathf.Tan((float)solarPosition.Azimuth * Mathf.Deg2Rad * 0.5f)) / solarPosition.Altitude;
+            //(Mathf.Tan(Mathf.Deg2Rad * (float)solarPosition.Azimuth) / (Mathf.Deg2Rad * solarPosition.Altitude));
 
             //var sun = Instantiate(sunModel, transform.position + (Vector3.forward * 20), Quaternion.identity);
             //sun.transform.position = new Vector3((12 - i) * 10, (float)solarPosition.Altitude, sun.transform.position.z);
 
             Vector3 p = transform.position - (Vector3.forward * 20);
-            p.x = calculateX(i); //((secondsInADay / 2) - i) * xScale;
+            p.x = calculateX((float)solarPosition.Azimuth); //((secondsInADay / 2) - i) * xScale;
             p.y = (float)solarPosition.Altitude;
             points.Add(p);
 
@@ -66,9 +66,10 @@ public class SunPosition : MonoBehaviour
 
         if (sun != null) sun.transform.position = new Vector3(calculateX((float)timeOfDay), (float)solarPosition.Altitude, transform.position.z - 20);
     }
-    float calculateX(float secondsInCurrentDay)
+    float calculateX(float azimuth)
     {
-        return ((secondsInADay / 2) - secondsInCurrentDay) * xScale;
+        return 100 * Mathf.Sin(Mathf.Deg2Rad * azimuth);
+        //return ((secondsInADay / 2) - secondsInCurrentDay) * xScale;
     }
     /// <summary>
     /// Calculates the sun position. calculates the suns "position" based on a 
