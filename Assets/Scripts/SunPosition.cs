@@ -61,10 +61,10 @@ public class SunPosition : MonoBehaviour
             currentCity = dataController.currentCity;
             renderSunArc();
         }
-        var solarPosition = CalculateSunPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
+        var solarPosition = CalculateSunPosition(DateTime.UtcNow, dataController.currentCity.Lat, dataController.currentCity.Lng);
         var timeOfDay = DateTime.Now.TimeOfDay.TotalSeconds;
 
-        if (sun != null) sun.transform.position = new Vector3(calculateX((float)timeOfDay), (float)solarPosition.Altitude, transform.position.z - 20);
+        if (sun != null) sun.transform.position = new Vector3(calculateX((float)solarPosition.Azimuth), (float)solarPosition.Altitude, transform.position.z - 20);
     }
     float calculateX(float azimuth)
     {
