@@ -49,7 +49,7 @@ public class Star
     public Vector3 CalculateEquitorialPosition(float radius)
     {
         var xPos = radius * (Mathf.Cos(radianRA) * Mathf.Cos(radianDec));
-        var zPos = radius * (Mathf.Sin(radianRA)) * Mathf.Cos(radianDec); // netlogo vs unity z vs y up
+        var zPos = radius * (Mathf.Sin(radianRA)) * Mathf.Cos(radianDec);
         var yPos = radius * (Mathf.Sin(radianDec));
         return new Vector3(xPos, yPos, zPos);
     }
@@ -83,8 +83,8 @@ public class Star
 
         if (float.IsNaN(Alt)) Alt = 0;
         if (float.IsNaN(Azm)) Azm = 0;
-        var xPos = radius * (Mathf.Cos(Azm)) * (Mathf.Cos(Alt)); // ; RA in hours, so multiply RA by 15 deg / hr
-        var zPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)) * -1);
+        var zPos = radius * (Mathf.Cos(Azm)) * (Mathf.Cos(Alt)); // ; RA in hours, so multiply RA by 15 deg / hr
+        var xPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)));
         var yPos = radius * Mathf.Sin(Alt);
 
         if (float.IsNaN(xPos))

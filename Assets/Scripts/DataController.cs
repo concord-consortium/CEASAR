@@ -39,11 +39,17 @@ public class DataController : MonoBehaviour
     public float simulationTimeScale = 10f;
 
     public List<string> cities;
-    private City currentCity;
+
+    public string SelectedCity;
+    public City currentCity;
     // Start is called before the first frame update
     void Start()
     {
-        if (allConstellations == null) allConstellations = new GameObject();
+        if (allConstellations == null)
+        {
+            allConstellations = new GameObject();
+            allConstellations.name = "Constellations";
+        }
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text);
@@ -54,7 +60,12 @@ public class DataController : MonoBehaviour
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
-            currentCity = allCities.Where(c => c.Name == "Boston").FirstOrDefault();
+            if (string.IsNullOrEmpty(SelectedCity))
+            {
+                SelectedCity = "Boston";
+            }
+            currentCity = allCities.Where(c => c.Name == SelectedCity).FirstOrDefault();
+            SelectedCity = currentCity.Name;
         }
 
         if (starPrefab != null && allStars != null && allStars.Count > 0)
@@ -113,11 +124,27 @@ public class DataController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (SelectedCity != currentCity.Name)
+        {
+            // verify a valid city was entered
+            var newCity = allCities.Where(c => c.Name == SelectedCity).First();
+            if (newCity != null)
+            {
+                currentCity = newCity;
+            }
+            else
+            {
+                SelectedCity = currentCity.Name;
+            }
+        }
         if (showHorizonView)
         {
-            simulationTime += simulationTimeScale;
-
-            var lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            double lst = DateTime.Now.ToSiderealTime();
+            if (simulationTimeScale > 0)
+            {
+                simulationTime += simulationTimeScale;
+                lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+            }
             foreach (StarComponent starObject in FindObjectsOfType<StarComponent>())
             {
                 starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
