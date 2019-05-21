@@ -87,6 +87,7 @@ public class DataController : MonoBehaviour
 
             double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
 
+            constellations.Sort();
             if (constellationDropdown)
             {
                 constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellations, "all");
