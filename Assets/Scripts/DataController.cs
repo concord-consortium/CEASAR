@@ -43,6 +43,7 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
     public GameObject cityDropdown;
+    public GameObject constellationDropdown;
 
     // Start is called before the first frame update
     void Start()
@@ -86,6 +87,11 @@ public class DataController : MonoBehaviour
 
             double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
 
+            if (constellationDropdown)
+            {
+                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellations, "all");
+            }
+
             foreach (string constellation in constellations)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
@@ -120,10 +126,14 @@ public class DataController : MonoBehaviour
                     if (colorByConstellation == true)
                     {
                         starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", constellationColor);
+                        newStar.starColor = constellationColor;
                     }
 
                     // group by constellation
                     starObject.transform.parent = constellationContainer.transform;
+
+                    // tag it
+                    starObject.tag = "Star";
                 }
             }
         }
@@ -165,4 +175,19 @@ public class DataController : MonoBehaviour
         SelectedCity = newCity;
     }
 
+    public void ChangeConstellationHighlight(string highlightConstellation)
+    {
+        foreach(GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
+        {
+            if(starObject.name == highlightConstellation || highlightConstellation == "all")
+            {
+                Color starColor = starObject.GetComponent<StarComponent>().starColor;
+                starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", starColor);
+            }
+            else
+            {
+                starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", Color.white);
+            }
+        }
+    }
 }
