@@ -42,6 +42,8 @@ public class DataController : MonoBehaviour
 
     public string SelectedCity;
     public City currentCity;
+    public GameObject cityDropdown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,6 +68,11 @@ public class DataController : MonoBehaviour
             }
             currentCity = allCities.Where(c => c.Name == SelectedCity).FirstOrDefault();
             SelectedCity = currentCity.Name;
+
+            if (cityDropdown)
+            {
+                cityDropdown.GetComponent<CityDropdown>().InitCityNames(cities, SelectedCity);
+            }
         }
 
         if (starPrefab != null && allStars != null && allStars.Count > 0)
@@ -152,4 +159,10 @@ public class DataController : MonoBehaviour
             }
         }
     }
+
+    public void ChangeCity(string newCity)
+    {
+        SelectedCity = newCity;
+    }
+
 }
