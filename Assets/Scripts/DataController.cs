@@ -126,7 +126,7 @@ public class DataController : MonoBehaviour
                     // color by constellation
                     if (colorByConstellation == true)
                     {
-                        starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", constellationColor);
+                        changeStarColor(starObject, constellationColor);
                         newStar.starColor = constellationColor;
                     }
 
@@ -138,6 +138,12 @@ public class DataController : MonoBehaviour
                 }
             }
         }
+    }
+    void changeStarColor(GameObject starObject, Color nextColor)
+    {
+        // if using LWRP shader
+        starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", nextColor);
+        starObject.GetComponent<Renderer>().material.color = nextColor;
     }
 
     void FixedUpdate()
@@ -178,16 +184,16 @@ public class DataController : MonoBehaviour
 
     public void ChangeConstellationHighlight(string highlightConstellation)
     {
-        foreach(GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
+        foreach (GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
         {
-            if(starObject.name == highlightConstellation || highlightConstellation == "all")
+            if (starObject.name == highlightConstellation || highlightConstellation == "all")
             {
                 Color starColor = starObject.GetComponent<StarComponent>().starColor;
-                starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", starColor);
+                changeStarColor(starObject, starColor);
             }
             else
             {
-                starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", Color.white);
+                changeStarColor(starObject, Color.white);
             }
         }
     }
