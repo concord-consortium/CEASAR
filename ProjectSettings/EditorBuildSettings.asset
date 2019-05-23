@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/LoadSim.unity
-    guid: ea8bcf295027215428aedd9b48bbd92b
+    path: Assets/Scenes/ARPlanets.unity
+    guid: a2b0d60b5ca16465b93124b84f9b10ce
   - enabled: 1
     path: Assets/Scenes/Stars.unity
     guid: faff0818eabc04885abbe66a8ff2406b
