@@ -31,7 +31,10 @@ public class DataController : MonoBehaviour
     public bool showHorizonView = false;
 
     public GameObject starPrefab;
+    public GameObject markerPrefab;
     public GameObject allConstellations;
+    public GameObject allMarkers;
+    public Material markerMaterial;
     public bool colorByConstellation = true;
 
     private float simulationTime = 0f;
@@ -44,6 +47,11 @@ public class DataController : MonoBehaviour
     public City currentCity;
     public GameObject cityDropdown;
     public GameObject constellationDropdown;
+
+    private Color colorOrange = new Color(255f/255f, 106f/255f, 0f/255f);
+    private Color colorGreen = new Color(76f/255f, 255f/255f, 0f/255f);
+    private Color colorBlue = new Color(0f/255f, 148f/255f, 255f/255f);
+    private float markerLineWidth = .035f;
 
     // Start is called before the first frame update
     void Start()
@@ -76,6 +84,8 @@ public class DataController : MonoBehaviour
             }
         }
 
+        double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
+
         if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
@@ -83,9 +93,6 @@ public class DataController : MonoBehaviour
             var maxMag = allStars.Max(s => s.Mag);
             var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
-
-
-            double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
 
             constellations.Sort();
             if (constellationDropdown)
@@ -138,7 +145,77 @@ public class DataController : MonoBehaviour
                 }
             }
         }
+
+        if (markerPrefab != null)
+        {
+            AddMarker("NCP", 0f, 90f, localSiderialTime, colorOrange);
+            AddMarker("SCP", 0f, -90f, localSiderialTime, colorOrange);
+            AddMarker("VE", 0f, 0f, localSiderialTime, colorGreen);
+            AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
+            AddLineMarker("poleLine", colorOrange, GameObject.Find("NCP"), GameObject.Find("SCP"), markerLineWidth);
+        }
     }
+
+    void AddMarker(string name, float RA, float dec, double lst, Color color)
+    {
+        Marker marker = new Marker(name, RA, dec);
+        GameObject markerObject = Instantiate(markerPrefab, this.transform.position, Quaternion.identity);
+        markerObject.transform.parent = allMarkers.transform;
+        MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
+        newMarker.label.text = name;
+        newMarker.markerData = marker;
+        markerObject.name = name;
+        changeStarColor(markerObject, color);
+        if (showHorizonView)
+        {
+            markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(radius, lst, 0);
+        }
+        else
+        {
+            markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(radius);
+        }
+    }
+
+    void AddCircumferenceMarker(string name, Color color, float lineWidth)
+    {
+        GameObject circumferenceObject = new GameObject();
+        circumferenceObject.name = name;
+        circumferenceObject.transform.parent = allMarkers.transform;
+        int segments = 360;
+        LineRenderer lineRendererCircle = circumferenceObject.AddComponent<LineRenderer>();
+        lineRendererCircle.useWorldSpace = false;
+        lineRendererCircle.startWidth = lineWidth;
+        lineRendererCircle.endWidth = lineWidth;
+        lineRendererCircle.positionCount = segments + 1;
+        lineRendererCircle.material = markerMaterial;
+        lineRendererCircle.material.color = color;
+
+        int pointCount = segments + 1; // add extra point to make startpoint and endpoint the same to close the circle
+        Vector3[] points = new Vector3[pointCount];
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            float rad = Mathf.Deg2Rad * (i * 360f / segments);
+            points[i] = new Vector3(Mathf.Sin(rad) * radius, 0, Mathf.Cos(rad) * radius);
+        }
+
+        lineRendererCircle.SetPositions(points);
+    }
+
+    void AddLineMarker(string name, Color color, GameObject go1, GameObject go2, float lineWidth)
+    {
+        GameObject lineObject = new GameObject();
+        lineObject.name = name;
+        lineObject.transform.parent = allMarkers.transform;
+        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+        lineRenderer.SetWidth(lineWidth, lineWidth);
+        lineRenderer.useWorldSpace = false;
+        lineRenderer.SetPosition(0, new Vector3(go1.transform.position.x, go1.transform.position.y, go1.transform.position.z));
+        lineRenderer.SetPosition(1, new Vector3(go2.transform.position.x, go2.transform.position.y, go2.transform.position.z));
+        lineRenderer.material = markerMaterial;
+        lineRenderer.material.color = color;
+    }
+
     void changeStarColor(GameObject starObject, Color nextColor)
     {
         // if using LWRP shader
