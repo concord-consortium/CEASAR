@@ -156,15 +156,15 @@ public class DataController : MonoBehaviour
         }
     }
 
-    void AddMarker(string name, float RA, float dec, double lst, Color color)
+    void AddMarker(string markerName, float RA, float dec, double lst, Color color)
     {
-        Marker marker = new Marker(name, RA, dec);
+        Marker marker = new Marker(markerName, RA, dec);
         GameObject markerObject = Instantiate(markerPrefab, this.transform.position, Quaternion.identity);
         markerObject.transform.parent = allMarkers.transform;
         MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
-        newMarker.label.text = name;
+        newMarker.label.text = markerName;
         newMarker.markerData = marker;
-        markerObject.name = name;
+        markerObject.name = markerName;
         changeStarColor(markerObject, color);
         if (showHorizonView)
         {
@@ -176,10 +176,10 @@ public class DataController : MonoBehaviour
         }
     }
 
-    void AddCircumferenceMarker(string name, Color color, float lineWidth)
+    void AddCircumferenceMarker(string markerName, Color color, float lineWidth)
     {
         GameObject circumferenceObject = new GameObject();
-        circumferenceObject.name = name;
+        circumferenceObject.name = markerName;
         circumferenceObject.transform.parent = allMarkers.transform;
         int segments = 360;
         LineRenderer lineRendererCircle = circumferenceObject.AddComponent<LineRenderer>();
@@ -202,10 +202,10 @@ public class DataController : MonoBehaviour
         lineRendererCircle.SetPositions(points);
     }
 
-    void AddLineMarker(string name, Color color, GameObject go1, GameObject go2, float lineWidth)
+    void AddLineMarker(string markerName, Color color, GameObject go1, GameObject go2, float lineWidth)
     {
         GameObject lineObject = new GameObject();
-        lineObject.name = name;
+        lineObject.name = markerName;
         lineObject.transform.parent = allMarkers.transform;
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.SetWidth(lineWidth, lineWidth);
