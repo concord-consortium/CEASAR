@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConstellationsManager : MonoBehaviour
+public class CelestialSphereManager : MonoBehaviour
 {
     private float moveSpeed = .1f;
-    private float scaleSpeed = 2f;
+    private float scaleSpeed = 5f;
     private float maxScale = 100f;
     private float minScale = .025f;
     private float rotateSpeed = 10f;
     private float autoRotateSpeed = 1f;
     private bool rotating = false;
+    public GameObject markers;
 
     // Start is called before the first frame update
     void Start()
@@ -108,12 +109,24 @@ public class ConstellationsManager : MonoBehaviour
         this.transform.Rotate(Vector3.back, rotateSpeed * Time.deltaTime);
     }
 
+    public void ToggleMarkerVisibility()
+    {
+        if (markers.activeSelf)
+        {
+            markers.SetActive(false);
+        }
+        else
+        {
+            markers.SetActive(true);
+        }
+    }
+
     public void ToggleAutoRotate()
     {
         rotating = !rotating;
     }
 
-    private void handleAutoRotation() 
+    private void handleAutoRotation()
     {
         if (rotating)
         {
