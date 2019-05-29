@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using System;
+using TMPro;
 
 public class DataController : MonoBehaviour
 {
@@ -52,6 +53,14 @@ public class DataController : MonoBehaviour
     private Color colorGreen = new Color(76f/255f, 255f/255f, 0f/255f);
     private Color colorBlue = new Color(0f/255f, 148f/255f, 255f/255f);
     private float markerLineWidth = .035f;
+
+    private bool userSpecifiedDateTime = false;
+    private int userYear = 2019;
+    private int userHour = 0;
+    private int userMin = 0;
+    private int userDay = 1;
+    private DateTime userStartDateTime = new DateTime(2019, 1, 1);
+    public TextMeshProUGUI currentDateTimeText;
 
     // Start is called before the first frame update
     void Start()
@@ -240,7 +249,17 @@ public class DataController : MonoBehaviour
         }
         if (showHorizonView)
         {
-            double lst = DateTime.Now.ToSiderealTime();
+            double lst;
+            if (userSpecifiedDateTime)
+            {
+                lst = userStartDateTime.ToSiderealTime();
+                currentDateTimeText.text = userStartDateTime.ToString();
+            }
+            else
+            {
+                lst = DateTime.Now.ToSiderealTime();
+                currentDateTimeText.text = DateTime.Now.ToString();
+            }
             if (simulationTimeScale > 0)
             {
                 simulationTime += simulationTimeScale;
@@ -273,5 +292,38 @@ public class DataController : MonoBehaviour
                 changeStarColor(starObject, Color.white);
             }
         }
+    }
+
+    public void ToggleUserTime()
+    {
+        userSpecifiedDateTime = !userSpecifiedDateTime;
+    }
+
+    public void ChangeYear(string newYear)
+    {
+        userYear = int.Parse(newYear);
+        updateUserDateTime();
+    }
+
+    public void ChangeDay(float newDay)
+    {
+        userDay = (int) newDay;
+        updateUserDateTime();
+    }
+
+    public void ChangeHour(float newHour)
+    {
+        userHour = (int) Mathf.Floor(newHour);
+        userMin = (int) ((newHour % 1) * 60.0f);
+        updateUserDateTime();
+    }
+
+    private void updateUserDateTime()
+    {
+        DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1);
+        calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
+        calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
+        calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
+        userStartDateTime = calculatedStartDateTime;
     }
 }
