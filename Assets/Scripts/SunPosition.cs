@@ -28,8 +28,14 @@ public class SunPosition : MonoBehaviour
     }
     void renderSunArc()
     {
-        if (sunArcLine != null) Destroy(sunArcLine);
-        sunArcLine = gameObject.AddComponent<LineRenderer>();
+        if (sunArcLine == null)
+        {
+            sunArcLine = gameObject.AddComponent<LineRenderer>();
+        }
+        else
+        {
+            sunArcLine.positionCount = 0;
+        }
         List<Vector3> points = new List<Vector3>();
         DateTime midnight = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
