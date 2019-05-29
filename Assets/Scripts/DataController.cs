@@ -59,7 +59,7 @@ public class DataController : MonoBehaviour
     private int userHour = 0;
     private int userMin = 0;
     private int userDay = 1;
-    private DateTime userStartDateTime = new DateTime(2019, 1, 1);
+    private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     public TextMeshProUGUI currentDateTimeText;
 
     // Start is called before the first frame update
@@ -253,12 +253,12 @@ public class DataController : MonoBehaviour
             if (userSpecifiedDateTime)
             {
                 lst = userStartDateTime.ToSiderealTime();
-                currentDateTimeText.text = userStartDateTime.ToString();
+                currentDateTimeText.text = userStartDateTime.ToString() + " (UTC)";
             }
             else
             {
                 lst = DateTime.Now.ToSiderealTime();
-                currentDateTimeText.text = DateTime.Now.ToString();
+                currentDateTimeText.text = DateTime.UtcNow.ToString() + " (UTC)";
             }
             if (simulationTimeScale > 0)
             {
@@ -270,6 +270,18 @@ public class DataController : MonoBehaviour
                 starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
                 starObject.transform.LookAt(this.transform);
             }
+        }
+    }
+
+    public DateTime CurrentSimUniversalTime()
+    {
+        if (userSpecifiedDateTime)
+        {
+            return userStartDateTime;
+        }
+        else
+        {
+            return DateTime.UtcNow;
         }
     }
 
@@ -320,7 +332,7 @@ public class DataController : MonoBehaviour
 
     private void updateUserDateTime()
     {
-        DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1);
+        DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
