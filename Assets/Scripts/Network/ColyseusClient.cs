@@ -17,6 +17,9 @@ public class ColyseusClient : MonoBehaviour
     public InputField m_EndpointField;
     public Text m_IdText, m_SessionIdText;
 
+    public GameObject userAvatar;
+
+    // here's where we can set up 4-digit pins for a collab room
     public string roomName = "demo";
 
     protected Client client;
@@ -98,6 +101,7 @@ public class ColyseusClient : MonoBehaviour
         {
             Debug.Log("Joined room successfully.");
             m_SessionIdText.text = "sessionId: " + room.SessionId;
+            Instantiate(userAvatar);
 
             room.State.entities.OnAdd += OnEntityAdd;
             room.State.entities.OnRemove += OnEntityRemove;
