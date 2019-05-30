@@ -38,4 +38,17 @@ public class ConstellationDropdown : MonoBehaviour
         }
         dropdown.value = initialValue;
     }
+
+    public void UpdateConstellationSelection(string currentConstellation)
+    {
+        // Get dropdown reference in case InitConstellationNames is called before Start
+        dropdown = GetComponent<TMP_Dropdown>();
+        List<TMP_Dropdown.OptionData> dropdownOptions = dropdown.options;
+        int dropdownValue = dropdownOptions.FindIndex(el => el.text == currentConstellation);
+        if (dropdownValue < 0)
+        {
+            dropdownValue = 0;
+        }
+        dropdown.SetValueWithoutNotify(dropdownValue);
+    }
 }

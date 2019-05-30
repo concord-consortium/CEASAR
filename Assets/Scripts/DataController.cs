@@ -62,6 +62,8 @@ public class DataController : MonoBehaviour
     private DateTime userStartDateTime = new DateTime(2019, 1, 1);
     public TextMeshProUGUI currentDateTimeText;
 
+    public GameObject starInfoPanel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -292,6 +294,7 @@ public class DataController : MonoBehaviour
                 changeStarColor(starObject, Color.white);
             }
         }
+        constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
     }
 
     public void ToggleUserTime()
@@ -325,5 +328,12 @@ public class DataController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
         userStartDateTime = calculatedStartDateTime;
+    }
+
+    public void ChangeStarSelection(GameObject selectedStar)
+    {
+        StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
+        starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XByerFlamsteed, starComponent.starData.Mag.ToString(), starComponent.starData.Constellation);
+        starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
     }
 }

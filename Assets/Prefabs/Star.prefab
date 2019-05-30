@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 22333839492306704}
   - component: {fileID: 7213639894394273738}
   - component: {fileID: 5188296271615159055}
+  - component: {fileID: 5714522309841809801}
   m_Layer: 12
   m_Name: Star
   m_TagString: Untagged
@@ -88,7 +89,7 @@ MeshCollider:
   m_GameObject: {fileID: 6932068629898470833}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 14
@@ -105,3 +106,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1094d9664cb2749dda30b438c8141a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  starColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!135 &5714522309841809801
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6932068629898470833}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
