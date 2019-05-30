@@ -5,17 +5,19 @@ public class StarComponent : MonoBehaviour
     public Star starData;
     public Color starColor;
 
-    private GameObject dataController;
+    private GameObject dataControllerObj;
+    private DataController dataController;
 
     private Vector3 initialScale;
 
     private bool pulse = false;
     private float pulseSpeed = 5f;
-
+    private float maxScaleFactor = 2f;
 
     void Start()
     {
-        dataController = GameObject.Find("DataController");
+        dataControllerObj = GameObject.Find("DataController");
+        dataController = dataControllerObj.GetComponent<DataController>();
         initialScale = transform.localScale;
     }
 
@@ -24,7 +26,7 @@ public class StarComponent : MonoBehaviour
         if (pulse)
         {
             float currScale = transform.localScale.x;
-            if (currScale > initialScale.x * 2f || currScale < initialScale.x)
+            if (currScale > initialScale.x * maxScaleFactor || currScale < initialScale.x)
             {
                 pulseSpeed *= -1f;
             }
@@ -35,11 +37,11 @@ public class StarComponent : MonoBehaviour
 
     void OnMouseDown()
     {
-        dataController.GetComponent<DataController>().ChangeConstellationHighlight(starData.Constellation);
+        dataController.ChangeConstellationHighlight(starData.Constellation);
     }
     void OnMouseOver()
     {
-        dataController.GetComponent<DataController>().ChangeStarSelection(this.gameObject);
+        dataController.ChangeStarSelection(this.gameObject);
         pulse = true;
     }
 

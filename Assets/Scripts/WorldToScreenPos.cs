@@ -20,16 +20,18 @@ public class WorldToScreenPos : MonoBehaviour
     public void UpdatePosition(GameObject target)
     {
         // Calculate *screen* position
-        Vector2 canvasPos;
         Vector2 screenPoint = Camera.main.WorldToScreenPoint(target.transform.position);
 
         // Offset position below object (in world space)
         float UIscale = canvasRect.localScale.x;
-        Vector2 offsetPos = new Vector2(screenPoint.x + 90f * UIscale, screenPoint.y - 55f * UIscale);
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        Vector2 offsetPos = new Vector2(screenPoint.x + rectTransform.rect.width * UIscale * .40f,
+                                        screenPoint.y - rectTransform.rect.height * UIscale * .55f * UIscale);
 
         // Convert screen position to Canvas / RectTransform space <- leave camera null if Screen Space Overlay
+        Vector2 canvasPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, offsetPos, null, out canvasPos);
 
-        this.transform.localPosition = canvasPos;
+        transform.localPosition = canvasPos;
     }
 }

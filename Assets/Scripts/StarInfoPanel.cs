@@ -36,16 +36,14 @@ public class StarInfoPanel : MonoBehaviour
         }
     }
 
-    public void UpdateStarInfoPanel(string XByerFlamsteed, string mag, string constellation)
+    public void UpdateStarInfoPanel(string XByerFlamsteed, string magnitude, string constellation)
     {
         if (isEnabled && !gameObject.activeSelf)
         {
             gameObject.SetActive(true);
         }
         starXByerFlamsteedText.text = "ID: " + XByerFlamsteed;
-        starMagText.text = "Mag: " + mag;
+        starMagText.text = "Mag: " + magnitude;
         starConstellationText.text = "Const: " + constellation;
-
     }
-
 }
