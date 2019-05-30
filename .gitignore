@@ -34,3 +34,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+ceasar-colyseus/data
+ceasar-colyseus/node_modules
