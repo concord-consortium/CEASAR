@@ -26,7 +26,7 @@ public class WorldToScreenPos : MonoBehaviour
         float UIscale = canvasRect.localScale.x;
         RectTransform rectTransform = GetComponent<RectTransform>();
         Vector2 offsetPos = new Vector2(screenPoint.x + rectTransform.rect.width * UIscale * .40f,
-                                        screenPoint.y - rectTransform.rect.height * UIscale * .55f * UIscale);
+                                        screenPoint.y - rectTransform.rect.height * UIscale * .40f);
 
         // Convert screen position to Canvas / RectTransform space <- leave camera null if Screen Space Overlay
         Vector2 canvasPos;

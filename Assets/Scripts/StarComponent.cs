@@ -17,7 +17,10 @@ public class StarComponent : MonoBehaviour
     void Start()
     {
         dataControllerObj = GameObject.Find("DataController");
-        dataController = dataControllerObj.GetComponent<DataController>();
+        if (dataControllerObj)
+        {
+            dataController = dataControllerObj.GetComponent<DataController>();
+        }
         initialScale = transform.localScale;
     }
 
@@ -37,11 +40,17 @@ public class StarComponent : MonoBehaviour
 
     void OnMouseDown()
     {
-        dataController.ChangeConstellationHighlight(starData.Constellation);
+        if (dataController)
+        {
+            dataController.ChangeConstellationHighlight(starData.Constellation);
+        }
     }
     void OnMouseOver()
     {
-        dataController.ChangeStarSelection(this.gameObject);
+        if (dataController)
+        {
+            dataController.ChangeStarSelection(this.gameObject);
+        }
         pulse = true;
     }
 
