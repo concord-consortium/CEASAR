@@ -68,7 +68,7 @@ public class ColyseusClient : MonoBehaviour
         var friends = await client.Auth.GetFriends();
 
         // Update username
-        client.Auth.Username = "Jake";
+        client.Auth.Username = "MyUsername";
         await client.Auth.Save();
 
         client.OnOpen += (object sender, EventArgs e) =>
@@ -196,25 +196,27 @@ public class ColyseusClient : MonoBehaviour
     {
         // Setup room first state
         Debug.Log("State has been updated!");
+        Debug.Log(e.State);
     }
 
     void OnEntityAdd(object sender, KeyValueEventArgs<Entity, string> item)
     {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
         Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y);
 
-        cube.transform.position = new Vector3(item.Value.x, item.Value.y, 0);
-
+        Vector3 pos = new Vector3(item.Value.x, item.Value.y, 0);
+        GameObject remotePlayerAvatar = Instantiate(userAvatar, pos, Quaternion.identity);
+        Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+        remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
         // add "player" to map of players
-        entities.Add(item.Value, cube);
+        entities.Add(item.Value, remotePlayerAvatar);
     }
 
     void OnEntityRemove(object sender, KeyValueEventArgs<Entity, string> item)
     {
-        GameObject cube;
-        entities.TryGetValue(item.Value, out cube);
-        Destroy(cube);
+        GameObject playerAvatar;
+        entities.TryGetValue(item.Value, out playerAvatar);
+        Destroy(playerAvatar);
 
         entities.Remove(item.Value);
     }
@@ -222,12 +224,12 @@ public class ColyseusClient : MonoBehaviour
 
     void OnEntityMove(object sender, KeyValueEventArgs<Entity, string> item)
     {
-        GameObject cube;
-        entities.TryGetValue(item.Value, out cube);
+        GameObject playerAvatar;
+        entities.TryGetValue(item.Value, out playerAvatar);
 
         Debug.Log(item.Value.x);
 
-        cube.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
+        playerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
     }
 
     void OnApplicationQuit()
