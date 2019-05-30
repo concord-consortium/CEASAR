@@ -14,11 +14,11 @@ public class SceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("4") || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown("q"))
         {
             LoadPreviousScene();
         }
-        else if (Input.GetKeyDown("6") || Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown("w"))
         {
             LoadNextScene();
         }
