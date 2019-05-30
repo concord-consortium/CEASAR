@@ -28,8 +28,14 @@ public class SunPosition : MonoBehaviour
     }
     void renderSunArc()
     {
-        if (sunArcLine != null) Destroy(sunArcLine);
-        sunArcLine = gameObject.AddComponent<LineRenderer>();
+        if (sunArcLine == null)
+        {
+            sunArcLine = gameObject.AddComponent<LineRenderer>();
+        }
+        else
+        {
+            sunArcLine.positionCount = 0;
+        }
         List<Vector3> points = new List<Vector3>();
         DateTime midnight = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
@@ -54,7 +60,7 @@ public class SunPosition : MonoBehaviour
             currentCity = dataController.currentCity;
             renderSunArc();
         }
-        var solarPosition = CalculateSunPosition(DateTime.UtcNow, dataController.currentCity.Lat, dataController.currentCity.Lng);
+        var solarPosition = CalculateSunPosition(dataController.CurrentSimUniversalTime(), dataController.currentCity.Lat, dataController.currentCity.Lng);
 
         if (sun != null) sun.transform.position = solarPosToWorld(solarPosition);
     }
@@ -74,13 +80,13 @@ public class SunPosition : MonoBehaviour
         return radius * Mathf.Sin(altitude);
     }
     /// <summary>
-    /// Calculates the sun position. calculates the suns "position" based on a 
-    /// given date and time in local time, latitude and longitude 
-    /// expressed in decimal degrees.It is based on the method 
-    /// found here: 
-    /// http://www.astro.uio.no/~bgranslo/aares/calculate.html 
+    /// Calculates the sun position. calculates the suns "position" based on a
+    /// given date and time in local time, latitude and longitude
+    /// expressed in decimal degrees.It is based on the method
+    /// found here:
+    /// http://www.astro.uio.no/~bgranslo/aares/calculate.html
     /// The calculation is only satisfiably correct for dates in
-    /// the range March 1 1900 to February 28 2100. 
+    /// the range March 1 1900 to February 28 2100.
     /// </summary>
     /// <returns>The sun position.</returns>
     /// <param name="dateTime">Time and date in local time</param>
@@ -89,10 +95,10 @@ public class SunPosition : MonoBehaviour
     SolarPosition CalculateSunPosition(
        DateTime dateTime, float latitude, float longitude)
     {
-        // Convert to UTC  
+        // Convert to UTC
         dateTime = dateTime.ToUniversalTime();
 
-        // Number of days from J2000.0.  
+        // Number of days from J2000.0.
         double julianDate = 366 * dateTime.Year -
             (int)((7.0 / 4.0) * (dateTime.Year +
             (int)((dateTime.Month + 9.0) / 12.0))) +
@@ -101,7 +107,7 @@ public class SunPosition : MonoBehaviour
 
         double julianCenturies = julianDate / 36525.0;
 
-        // Sidereal Time  
+        // Sidereal Time
         double siderealTimeHours = 6.6974 + 2400.0013 * julianCenturies;
 
         double siderealTimeUT = siderealTimeHours +
@@ -109,11 +115,11 @@ public class SunPosition : MonoBehaviour
 
         double siderealTime = siderealTimeUT * 15 + longitude;
 
-        // Refine to number of days (fractional) to specific time.  
+        // Refine to number of days (fractional) to specific time.
         julianDate += dateTime.TimeOfDay.TotalHours / 24.0;
         julianCenturies = julianDate / 36525.0;
 
-        // Solar Coordinates  
+        // Solar Coordinates
         double meanLongitude = CorrectAngle(Mathf.Deg2Rad *
             (280.466 + 36000.77 * julianCenturies));
 
@@ -128,7 +134,7 @@ public class SunPosition : MonoBehaviour
 
         double obliquity = (23.439 - 0.013 * julianCenturies) * Mathf.Deg2Rad;
 
-        // Right Ascension  
+        // Right Ascension
         double rightAscension = Math.Atan2(
             Math.Cos(obliquity) * Math.Sin(elipticalLongitude),
             Math.Cos(elipticalLongitude));
@@ -136,7 +142,7 @@ public class SunPosition : MonoBehaviour
         double declination = Math.Asin(
             Math.Sin(rightAscension) * Math.Sin(obliquity));
 
-        // Horizontal Coordinates  
+        // Horizontal Coordinates
         double hourAngle = CorrectAngle(siderealTime * Mathf.Deg2Rad) - rightAscension;
 
         if (hourAngle > Math.PI)
@@ -148,8 +154,8 @@ public class SunPosition : MonoBehaviour
             Math.Sin(declination) + Math.Cos(latitude * Mathf.Deg2Rad) *
             Math.Cos(declination) * Math.Cos(hourAngle));
 
-        // Nominator and denominator for calculating Azimuth  
-        // angle. Needed to test which quadrant the angle is in.  
+        // Nominator and denominator for calculating Azimuth
+        // angle. Needed to test which quadrant the angle is in.
         double aziNom = -Math.Sin(hourAngle);
         double aziDenom =
             Math.Tan(declination) * Math.Cos(latitude * Mathf.Deg2Rad) -
@@ -157,20 +163,20 @@ public class SunPosition : MonoBehaviour
 
         double azimuth = Math.Atan(aziNom / aziDenom);
 
-        if (aziDenom < 0) // In 2nd or 3rd quadrant  
+        if (aziDenom < 0) // In 2nd or 3rd quadrant
         {
             azimuth += Math.PI;
         }
-        else if (aziNom < 0) // In 4th quadrant  
+        else if (aziNom < 0) // In 4th quadrant
         {
             azimuth += 2 * Math.PI;
         }
 
-        // Altitude  
-        // Console.WriteLine("Altitude: " + altitude * Rad2Deg);  
+        // Altitude
+        // Console.WriteLine("Altitude: " + altitude * Rad2Deg);
 
-        // Azimut  
-        //Console.WriteLine("Azimuth: " + azimuth * Rad2Deg);  
+        // Azimut
+        //Console.WriteLine("Azimuth: " + azimuth * Rad2Deg);
 
         return new SolarPosition { Altitude = altitude, Azimuth = azimuth };
     }
