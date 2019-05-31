@@ -5173,7 +5173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starData: {fileID: 4900000, guid: cb4425a57d4217a4886f011902b5d47b, type: 3}
+  starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 75
   magnitudeScale: 0.5
