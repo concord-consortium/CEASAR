@@ -40,23 +40,26 @@ public class StarComponent : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (dataController)
+        if (dataController && dataController.starInfoPanel)
         {
             dataController.ChangeConstellationHighlight(starData.Constellation);
         }
     }
     void OnMouseOver()
     {
-        if (dataController)
+        if (dataController && dataController.starInfoPanel)
         {
             dataController.ChangeStarSelection(this.gameObject);
+            pulse = true;
         }
-        pulse = true;
     }
 
     void OnMouseExit()
     {
-        pulse = false;
-        transform.localScale = initialScale;
+        if (dataController && dataController.starInfoPanel)
+        {
+            pulse = false;
+            transform.localScale = initialScale;
+        }
     }
 }

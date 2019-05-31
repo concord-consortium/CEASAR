@@ -344,10 +344,13 @@ public class DataController : MonoBehaviour
 
     public void ChangeStarSelection(GameObject selectedStar)
     {
-        StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-        starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XByerFlamsteed,
-                                                                        starComponent.starData.Mag.ToString(),
-                                                                        starComponent.starData.Constellation);
-        starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
+        if (starInfoPanel)
+        {
+            StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
+            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XByerFlamsteed,
+                                                                            starComponent.starData.Mag.ToString(),
+                                                                            starComponent.starData.Constellation);
+            starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
+        }
     }
 }
