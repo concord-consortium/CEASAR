@@ -18,7 +18,7 @@ public class ColyseusClient : MonoBehaviour
     public Text m_IdText, m_SessionIdText;
 
     public GameObject userAvatar;
-
+    private GameObject playerAvatar;
     // here's where we can set up 4-digit pins for a collab room
     public string roomName = "demo";
 
@@ -75,6 +75,8 @@ public class ColyseusClient : MonoBehaviour
         {
             /* Update Demo UI */
             m_IdText.text = "id: " + client.Id;
+            Debug.Log("joning room");
+            JoinRoom();
         };
         client.OnError += (sender, e) => Debug.LogError(e.Message);
         client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
@@ -101,7 +103,7 @@ public class ColyseusClient : MonoBehaviour
         {
             Debug.Log("Joined room successfully.");
             m_SessionIdText.text = "sessionId: " + room.SessionId;
-            Instantiate(userAvatar);
+            playerAvatar = Instantiate(userAvatar);
 
             room.State.entities.OnAdd += OnEntityAdd;
             room.State.entities.OnRemove += OnEntityRemove;
@@ -148,6 +150,7 @@ public class ColyseusClient : MonoBehaviour
 
     void LeaveRoom()
     {
+        Debug.Log("closing connection");
         room.Leave(false);
 
         // Destroy player entities
@@ -157,6 +160,10 @@ public class ColyseusClient : MonoBehaviour
         }
 
         entities.Clear();
+        // closing client connection
+        m_IdText.text = "disconnected";
+        client.Close();
+        Destroy(playerAvatar);
     }
 
     void GetAvailableRooms()
