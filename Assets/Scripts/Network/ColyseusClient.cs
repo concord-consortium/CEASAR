@@ -27,6 +27,8 @@ public class ColyseusClient : MonoBehaviour
 
     protected IndexedDictionary<Entity, GameObject> entities = new IndexedDictionary<Entity, GameObject>();
 
+    public TMPro.TMP_Text debugMessages;
+
     // Use this for initialization
     IEnumerator Start()
     {
@@ -85,7 +87,29 @@ public class ColyseusClient : MonoBehaviour
 
     void JoinRoom()
     {
-        room = client.Join<State>(roomName, new Dictionary<string, object>()
+        bool canJoinExisting = false;
+        string availableRoomID = "";
+        client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
+        {
+            Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
+            canJoinExisting = roomsAvailable.Length > 0;
+            for (var i = 0; i < roomsAvailable.Length; i++)
+            {
+                Debug.Log("roomId: " + roomsAvailable[i].roomId);
+                Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
+                Debug.Log("clients: " + roomsAvailable[i].clients);
+                Debug.Log("metadata: " + roomsAvailable[i].metadata);
+
+                if (canJoinExisting && i == 0)
+                {
+                    availableRoomID = roomsAvailable[i].roomId;
+                }
+            }
+
+
+        });
+        string roomToJoin = canJoinExisting ? availableRoomID : roomName;
+        room = client.Join<State>(roomToJoin, new Dictionary<string, object>()
         {
             { "create", true }
         });
@@ -250,6 +274,21 @@ public class ColyseusClient : MonoBehaviour
         if (client != null)
         {
             client.Close();
+        }
+    }
+
+    void showLog(string text, bool clear)
+    {
+        if (debugMessages != null)
+        {
+            if (clear)
+            {
+                debugMessages.SetText(text);
+            }
+            else
+            {
+                debugMessages.SetText(debugMessages.text + "\n" + text);
+            }
         }
     }
 }
