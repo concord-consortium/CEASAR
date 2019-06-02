@@ -25,7 +25,7 @@ public class ColyseusClient : MonoBehaviour
     protected Client client;
     protected Room<State> room;
 
-    protected IndexedDictionary<Entity, GameObject> entities = new IndexedDictionary<Entity, GameObject>();
+    protected IndexedDictionary<Player, GameObject> players = new IndexedDictionary<Player, GameObject>();
 
     public TMPro.TMP_Text debugMessages;
 
@@ -37,7 +37,7 @@ public class ColyseusClient : MonoBehaviour
 
         m_JoinButton.onClick.AddListener(JoinRoom);
         m_ReJoinButton.onClick.AddListener(ReJoinRoom);
-        m_SendMessageButton.onClick.AddListener(SendMessage);
+        m_SendMessageButton.onClick.AddListener(SendNetworkMessage);
         m_LeaveButton.onClick.AddListener(LeaveRoom);
         m_GetAvailableRoomsButton.onClick.AddListener(GetAvailableRooms);
 
@@ -77,7 +77,7 @@ public class ColyseusClient : MonoBehaviour
         {
             /* Update Demo UI */
             m_IdText.text = "id: " + client.Id;
-            Debug.Log("joning room");
+            Debug.Log("joining room");
             JoinRoom();
         };
         client.OnError += (sender, e) => Debug.LogError(e.Message);
@@ -128,10 +128,11 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("Joined room successfully.");
             m_SessionIdText.text = "sessionId: " + room.SessionId;
             playerAvatar = Instantiate(userAvatar);
+            playerAvatar.name = "localPlayer_";
 
-            room.State.entities.OnAdd += OnEntityAdd;
-            room.State.entities.OnRemove += OnEntityRemove;
-            room.State.entities.OnChange += OnEntityMove;
+            room.State.players.OnAdd += OnPlayerAdd;
+            room.State.players.OnRemove += OnPlayerRemove;
+            room.State.players.OnChange += OnPlayerMove;
 
             PlayerPrefs.SetString("sessionId", room.SessionId);
             PlayerPrefs.Save();
@@ -163,9 +164,9 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("Joined room successfully.");
             m_SessionIdText.text = "sessionId: " + room.SessionId;
 
-            room.State.entities.OnAdd += OnEntityAdd;
-            room.State.entities.OnRemove += OnEntityRemove;
-            room.State.entities.OnChange += OnEntityMove;
+            room.State.players.OnAdd += OnPlayerAdd;
+            room.State.players.OnRemove += OnPlayerRemove;
+            room.State.players.OnChange += OnPlayerMove;
         };
 
         room.OnStateChange += OnStateChangeHandler;
@@ -177,13 +178,13 @@ public class ColyseusClient : MonoBehaviour
         Debug.Log("closing connection");
         room.Leave(false);
 
-        // Destroy player entities
-        foreach (KeyValuePair<Entity, GameObject> entry in entities)
+        // Destroy player players
+        foreach (KeyValuePair<Player, GameObject> entry in players)
         {
             Destroy(entry.Value);
         }
 
-        entities.Clear();
+        players.Clear();
         // closing client connection
         m_IdText.text = "disconnected";
         client.Close();
@@ -205,11 +206,11 @@ public class ColyseusClient : MonoBehaviour
         });
     }
 
-    void SendMessage()
+    void SendNetworkMessage()
     {
         if (room != null)
         {
-            room.Send("move_right");
+            room.Send("message");
         }
         else
         {
@@ -219,8 +220,9 @@ public class ColyseusClient : MonoBehaviour
 
     void OnMessage(object sender, MessageEventArgs e)
     {
-        var message = (IndexedDictionary<string, object>)e.Message;
-        Debug.Log(message);
+        Debug.Log(e.Message);
+        //var message = (IndexedDictionary<string, object>)e.Message;
+
     }
 
     void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
@@ -230,7 +232,7 @@ public class ColyseusClient : MonoBehaviour
         Debug.Log(e.State);
     }
 
-    void OnEntityAdd(object sender, KeyValueEventArgs<Entity, string> item)
+    void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
     {
 
         Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y);
@@ -239,28 +241,29 @@ public class ColyseusClient : MonoBehaviour
         GameObject remotePlayerAvatar = Instantiate(userAvatar, pos, Quaternion.identity);
         Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
         remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+        remotePlayerAvatar.name = "remotePlayer_";
         // add "player" to map of players
-        entities.Add(item.Value, remotePlayerAvatar);
+        players.Add(item.Value, remotePlayerAvatar);
     }
 
-    void OnEntityRemove(object sender, KeyValueEventArgs<Entity, string> item)
+    void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
     {
-        GameObject playerAvatar;
-        entities.TryGetValue(item.Value, out playerAvatar);
-        Destroy(playerAvatar);
+        GameObject remotePlayerAvatar;
+        players.TryGetValue(item.Value, out remotePlayerAvatar);
+        Destroy(remotePlayerAvatar);
 
-        entities.Remove(item.Value);
+        players.Remove(item.Value);
     }
 
 
-    void OnEntityMove(object sender, KeyValueEventArgs<Entity, string> item)
+    void OnPlayerMove(object sender, KeyValueEventArgs<Player, string> item)
     {
-        GameObject playerAvatar;
-        entities.TryGetValue(item.Value, out playerAvatar);
+        GameObject remotePlayerAvatar;
+        players.TryGetValue(item.Value, out remotePlayerAvatar);
 
         Debug.Log(item.Value.x);
 
-        playerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
+        remotePlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
     }
 
     void OnApplicationQuit()

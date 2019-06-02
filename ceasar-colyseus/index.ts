@@ -5,7 +5,7 @@ import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 import socialRoutes from "@colyseus/social/express"
 
-import { MyRoom } from "./MyRoom";
+import { CeasarRoom } from "./CeasarRoom";
 
 const port = Number(process.env.PORT || 2567);
 const app = express()
@@ -15,7 +15,7 @@ const server = http.createServer(app);
 const gameServer = new Server({ server });
 
 // register your room handlers
-gameServer.register('demo', MyRoom);
+gameServer.register('demo', CeasarRoom);
 
 // register @colyseus/social routes
 app.use("/", socialRoutes);

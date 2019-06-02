@@ -4,8 +4,17 @@ Based on `create-colyseus-app`
 ## :crossed_swords: Usage
 If this is the first time running the app, run `npm install`
 
-Start MongoDB: `mongod --dbpath=data`
-Start server: `npm start`
+Start MongoDB:
+
+`mongod --dbpath=data`
+
+Start server:
+
+`npm start`
+
+To regenerate the schema for the room:
+
+`npx schema-codegen CeasarRoom.ts --csharp --output ../Assets/Scripts/Network/`
 
 ## Structure
 
