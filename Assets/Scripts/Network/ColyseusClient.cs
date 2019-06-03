@@ -66,12 +66,12 @@ public class ColyseusClient : MonoBehaviour
          */
         client = new Client(endpoint);
 
-        await client.Auth.Login();
-        var friends = await client.Auth.GetFriends();
+        //await client.Auth.Login();
+        //var friends = await client.Auth.GetFriends();
 
-        // Update username
-        client.Auth.Username = "MyUsername";
-        await client.Auth.Save();
+        //// Update username
+        //client.Auth.Username = "MyUsername";
+        //await client.Auth.Save();
 
         client.OnOpen += (object sender, EventArgs e) =>
         {

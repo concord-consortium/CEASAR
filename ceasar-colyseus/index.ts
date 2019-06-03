@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
-import socialRoutes from "@colyseus/social/express"
 
 import { CeasarRoom } from "./CeasarRoom";
 
@@ -16,9 +15,6 @@ const gameServer = new Server({ server });
 
 // register your room handlers
 gameServer.register('ceasar', CeasarRoom);
-
-// register @colyseus/social routes
-app.use("/", socialRoutes);
 
 // register colyseus monitor AFTER registering your room handlers
 app.use("/colyseus", monitor(gameServer));

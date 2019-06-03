@@ -5,7 +5,6 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "ts-node index.ts",
-    "start-mongodb": "mongod --dbpath=data",
     "loadtest": "colyseus-loadtest loadtest/example.ts --room my_room --numClients 2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,11 +24,9 @@
   "dependencies": {
     "@colyseus/monitor": "^0.10.0",
     "@colyseus/schema": "^0.4.34",
-    "@colyseus/social": "^0.10.2",
     "colyseus": "^0.10.7",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "express-jwt": "^5.3.1",
-    "mongodb": "^3.2.6"
+    "express-jwt": "^5.3.1"
   }
 }
