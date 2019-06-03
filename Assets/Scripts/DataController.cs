@@ -13,6 +13,8 @@ public class DataController : MonoBehaviour
     private float radius = 50;
     [SerializeField]
     private float magnitudeScale = 0.5f;
+    [SerializeField]
+    private float magnitudeThreshold = 4.5f;
 
     [SerializeField]
     private List<Star> allStars;
@@ -49,6 +51,7 @@ public class DataController : MonoBehaviour
     public GameObject cityDropdown;
     public GameObject constellationDropdown;
 
+    private Color unnamedColor = new Color(128f/255f, 128f/255f, 128f/255f);
     private Color colorOrange = new Color(255f/255f, 106f/255f, 0f/255f);
     private Color colorGreen = new Color(76f/255f, 255f/255f, 0f/255f);
     private Color colorBlue = new Color(0f/255f, 148f/255f, 255f/255f);
@@ -115,17 +118,18 @@ public class DataController : MonoBehaviour
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
                 GameObject constellationContainer = new GameObject();
-                constellationContainer.name = constellation;
+                constellationContainer.name = constellation.Trim() == "" ? "no-const" : constellation;
                 constellationContainer.transform.parent = allConstellations.transform;
 
                 Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+                if (constellation.Trim() == "") constellationColor = unnamedColor;
 
                 foreach (Star dataStar in starsInConstellation)
                 {
                     GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
-                    starObject.name = dataStar.Constellation;
+                    starObject.name = constellation.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
                     {
                         starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);
@@ -153,6 +157,12 @@ public class DataController : MonoBehaviour
 
                     // tag it
                     starObject.tag = "Star";
+
+                    // show or hide based on magnitude threshold
+                    if (dataStar.Mag > magnitudeThreshold)
+                    {
+                        showStar(starObject, false);
+                    }
                 }
             }
         }
@@ -165,6 +175,14 @@ public class DataController : MonoBehaviour
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
             AddLineMarker("poleLine", colorOrange, GameObject.Find("NCP"), GameObject.Find("SCP"), markerLineWidth);
         }
+    }
+
+    void showStar(GameObject starObject, bool show)
+    {
+        Renderer rend = starObject.GetComponent<Renderer>();
+        Collider coll = starObject.GetComponent<Collider>();
+        rend.enabled = show;
+        coll.enabled = show;
     }
 
     void AddMarker(string markerName, float RA, float dec, double lst, Color color)
@@ -351,6 +369,15 @@ public class DataController : MonoBehaviour
                                                                             starComponent.starData.Mag.ToString(),
                                                                             starComponent.starData.Constellation);
             starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
+        }
+    }
+
+    public void UpdateMagnitudeThreshold(float newVal)
+    {
+        magnitudeThreshold = newVal;
+        foreach (GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
+        {
+            showStar(starObject, starObject.GetComponent<StarComponent>().starData.Mag < magnitudeThreshold);
         }
     }
 }
