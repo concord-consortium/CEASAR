@@ -4,18 +4,17 @@
   "description": "npm init template for bootstraping an empty Colyseus project",
   "main": "lib/index.js",
   "scripts": {
-    "start": "mongod --dbpath=data & ts-node index.ts",
-    "start-ws": "ts-node index.ts",
+    "start": "ts-node index.ts",
     "start-mongodb": "mongod --dbpath=data",
     "loadtest": "colyseus-loadtest loadtest/example.ts --room my_room --numClients 2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "UNLICENSED",
+  "license": "",
   "bugs": {
-    "url": "https://github.com/colyseus/create-colyseus/issues"
+    "url": "https://github.com/colyseus/ceasar-colyseus/issues"
   },
-  "homepage": "https://github.com/colyseus/create-colyseus#readme",
+  "homepage": "https://github.com/colyseus/ceasar-colyseus#readme",
   "devDependencies": {
     "@colyseus/loadtest": "^0.10.1",
     "@types/cors": "^2.8.5",
