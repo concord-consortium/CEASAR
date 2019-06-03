@@ -14,7 +14,7 @@ public static class DataImport
                 if (values.Length == 11)
                 {
                     int Hip = int.Parse(values[0]);
-                    string constellation = values[1];
+                    string Constellation = values[1];
                     string ProperName = values[2];
                     string XByerFlamsteed = values[3];
                     float RA = float.Parse(values[4]);
@@ -25,7 +25,7 @@ public static class DataImport
                     string Spectrum = values[9];
                     float ColorIndex = 0.0f;
                     float.TryParse(values[10], out ColorIndex);
-                    Star star = new Star(Hip, constellation, ProperName, XByerFlamsteed, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
+                    Star star = new Star(Hip, Constellation, ProperName, XByerFlamsteed, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
                 }
