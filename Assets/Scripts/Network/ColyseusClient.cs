@@ -56,8 +56,9 @@ public class ColyseusClient : MonoBehaviour
     {
         /*
          * Get Colyseus endpoint from InputField
+         *  for localhost use ws://localhost:2567/        
          */
-        string endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? "ws://localhost:2567" : m_EndpointField.text;
+        string endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? "ws://calm-meadow-14344.herokuapp.com" : m_EndpointField.text;
 
         Debug.Log("Connecting to " + endpoint);
 
