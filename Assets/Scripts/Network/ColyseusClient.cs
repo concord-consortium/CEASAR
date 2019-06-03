@@ -17,10 +17,10 @@ public class ColyseusClient : MonoBehaviour
     public InputField m_EndpointField;
     public Text m_IdText, m_SessionIdText;
 
-    public GameObject userAvatar;
-    private GameObject playerAvatar;
-    // here's where we can set up 4-digit pins for a collab room
-    public string roomName = "demo";
+    public GameObject avatar;
+    private GameObject localPlayerAvatar;
+    // todo: set up 4-digit pins for a collab room
+    public string roomName = "ceasar";
 
     protected Client client;
     protected Room<State> room;
@@ -127,8 +127,6 @@ public class ColyseusClient : MonoBehaviour
         {
             Debug.Log("Joined room successfully.");
             m_SessionIdText.text = "sessionId: " + room.SessionId;
-            playerAvatar = Instantiate(userAvatar);
-            playerAvatar.name = "localPlayer_";
 
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
@@ -188,7 +186,7 @@ public class ColyseusClient : MonoBehaviour
         // closing client connection
         m_IdText.text = "disconnected";
         client.Close();
-        Destroy(playerAvatar);
+        if (localPlayerAvatar) Destroy(localPlayerAvatar);
     }
 
     void GetAvailableRooms()
@@ -235,15 +233,23 @@ public class ColyseusClient : MonoBehaviour
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
     {
 
-        Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y);
+        Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y + " playerId:" + item.Key);
 
         Vector3 pos = new Vector3(item.Value.x, item.Value.y, 0);
-        GameObject remotePlayerAvatar = Instantiate(userAvatar, pos, Quaternion.identity);
-        Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-        remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-        remotePlayerAvatar.name = "remotePlayer_";
-        // add "player" to map of players
-        players.Add(item.Value, remotePlayerAvatar);
+        if (item.Key == room.SessionId)
+        {
+            localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            localPlayerAvatar.name = "localPlayer_";
+        }
+        else
+        {
+            GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+            remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+            remotePlayerAvatar.name = "remotePlayer_";
+            // add "player" to map of players
+            players.Add(item.Value, remotePlayerAvatar);
+        }
     }
 
     void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
@@ -278,6 +284,10 @@ public class ColyseusClient : MonoBehaviour
         {
             client.Close();
         }
+    }
+    void instantiatePlayer(Player p)
+    {
+        Debug.Log(p);
     }
 
     void showLog(string text, bool clear)

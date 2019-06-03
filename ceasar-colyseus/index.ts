@@ -15,7 +15,7 @@ const server = http.createServer(app);
 const gameServer = new Server({ server });
 
 // register your room handlers
-gameServer.register('demo', CeasarRoom);
+gameServer.register('ceasar', CeasarRoom);
 
 // register @colyseus/social routes
 app.use("/", socialRoutes);

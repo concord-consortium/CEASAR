@@ -1041,9 +1041,8 @@ MonoBehaviour:
   m_EndpointField: {fileID: 1955286714}
   m_IdText: {fileID: 723164516}
   m_SessionIdText: {fileID: 1265101542}
-  userAvatar: {fileID: 8894973834532404471, guid: f2ed9c5a162c9413a80a675d8d657522,
-    type: 3}
-  roomName: demo
+  avatar: {fileID: 8894973834532404471, guid: f2ed9c5a162c9413a80a675d8d657522, type: 3}
+  roomName: ceasar
   debugMessages: {fileID: 1683041453}
 --- !u!4 &701562118
 Transform:
