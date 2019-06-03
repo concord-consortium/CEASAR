@@ -307,10 +307,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starData: {fileID: 4900000, guid: cb4425a57d4217a4886f011902b5d47b, type: 3}
+  starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 500
   magnitudeScale: 1
+  magnitudeThreshold: 4.5
   showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
@@ -324,6 +325,8 @@ MonoBehaviour:
   SelectedCity: 
   cityDropdown: {fileID: 0}
   constellationDropdown: {fileID: 0}
+  currentDateTimeText: {fileID: 0}
+  starInfoPanel: {fileID: 0}
 --- !u!4 &210744112
 Transform:
   m_ObjectHideFlags: 0
