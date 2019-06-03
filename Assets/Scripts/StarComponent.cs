@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
+ using UnityEngine.EventSystems;
 
 public class StarComponent : MonoBehaviour
 {
@@ -40,14 +41,14 @@ public class StarComponent : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (dataController && dataController.starInfoPanel)
+        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
         {
             dataController.ChangeConstellationHighlight(starData.Constellation);
         }
     }
     void OnMouseOver()
     {
-        if (dataController && dataController.starInfoPanel)
+        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
         {
             dataController.ChangeStarSelection(this.gameObject);
             pulse = true;
@@ -56,7 +57,7 @@ public class StarComponent : MonoBehaviour
 
     void OnMouseExit()
     {
-        if (dataController && dataController.starInfoPanel)
+        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
         {
             pulse = false;
             transform.localScale = initialScale;

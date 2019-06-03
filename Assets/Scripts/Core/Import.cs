@@ -7,18 +7,25 @@ public static class DataImport
         List<Star> stars = new List<Star>();
         foreach (var line in splitToLines(sourceData))
         {
-            if (!line.StartsWith("Constellation"))
+            if (!line.StartsWith("Hip"))
             {
                 string[] values = line.Split('\t');
-                if (values.Length == 6)
+
+                if (values.Length == 11)
                 {
-                    string constellation = values[0];
-                    string XByerFlamsteed = values[1];
-                    float RA = float.Parse(values[2]);
-                    float Dec = float.Parse(values[3]);
-                    float Dist = float.Parse(values[4]);
-                    float Mag = float.Parse(values[5]);
-                    Star star = new Star(constellation, XByerFlamsteed, RA, Dec, Dist, Mag);
+                    int Hip = int.Parse(values[0]);
+                    string Constellation = values[1];
+                    string ProperName = values[2];
+                    string XByerFlamsteed = values[3];
+                    float RA = float.Parse(values[4]);
+                    float Dec = float.Parse(values[5]);
+                    float Dist = float.Parse(values[6]);
+                    float Mag = float.Parse(values[7]);
+                    float AbsMag = float.Parse(values[8]);
+                    string Spectrum = values[9];
+                    float ColorIndex = 0.0f;
+                    float.TryParse(values[10], out ColorIndex);
+                    Star star = new Star(Hip, Constellation, ProperName, XByerFlamsteed, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
                 }

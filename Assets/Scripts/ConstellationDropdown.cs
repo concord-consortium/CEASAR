@@ -30,8 +30,10 @@ public class ConstellationDropdown : MonoBehaviour
     {
         // Get dropdown reference in case InitConstellationNames is called before Start
         dropdown = GetComponent<TMP_Dropdown>();
+        constellationNames.Remove("");
         dropdown.AddOptions(constellationNames);
         int initialValue = constellationNames.IndexOf(currentConstellation);
+
         if (initialValue < 0)
         {
             initialValue = 0;
