@@ -5535,7 +5535,7 @@ MonoBehaviour:
   starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 75
-  magnitudeScale: 0.5
+  magnitudeScale: 0.3
   magnitudeThreshold: 4.5
   showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
