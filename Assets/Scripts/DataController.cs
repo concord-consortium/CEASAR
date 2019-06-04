@@ -36,13 +36,17 @@ public class DataController : MonoBehaviour
     public GameObject starPrefab;
     public GameObject markerPrefab;
     public GameObject allConstellations;
+    private StarComponent[] allStarComponents;
     public GameObject allMarkers;
     public Material markerMaterial;
     public bool colorByConstellation = true;
 
-    private float simulationTime = 0f;
     private DateTime simulationStartTime = DateTime.Now;
+    private DateTime currentSimulationTime = DateTime.Now;
     public float simulationTimeScale = 10f;
+    private bool userSpecifiedDateTime = false;
+    private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    private bool runSimulation = false;
 
     public List<string> cities;
 
@@ -56,14 +60,6 @@ public class DataController : MonoBehaviour
     private Color colorGreen = new Color(76f/255f, 255f/255f, 0f/255f);
     private Color colorBlue = new Color(0f/255f, 148f/255f, 255f/255f);
     private float markerLineWidth = .035f;
-
-    private bool userSpecifiedDateTime = false;
-    private int userYear = 2019;
-    private int userHour = 0;
-    private int userMin = 0;
-    private int userDay = 1;
-    private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-    public TextMeshProUGUI currentDateTimeText;
 
     public GameObject starInfoPanel;
 
@@ -79,6 +75,7 @@ public class DataController : MonoBehaviour
         {
             allStars = DataImport.ImportStarData(starData.text);
             Debug.Log(allStars.Count + " stars imported");
+            allStarComponents = new StarComponent[allStars.Count];
         }
         if (cityData != null)
         {
@@ -99,7 +96,7 @@ public class DataController : MonoBehaviour
         }
 
         double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
-
+        int starCount = 0;
         if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
@@ -151,6 +148,9 @@ public class DataController : MonoBehaviour
                         changeStarColor(starObject, constellationColor);
                         newStar.starColor = constellationColor;
                     }
+
+                    allStarComponents[starCount] = newStar;
+                    starCount++;
 
                     // group by constellation
                     starObject.transform.parent = constellationContainer.transform;
@@ -272,24 +272,31 @@ public class DataController : MonoBehaviour
             double lst;
             if (userSpecifiedDateTime)
             {
-                lst = userStartDateTime.ToSiderealTime();
-                currentDateTimeText.text = userStartDateTime.ToString() + " (UTC)";
+                if (simulationTimeScale > 0 && runSimulation)
+                {
+                    currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
+                }
+                else
+                {
+                    currentSimulationTime = userStartDateTime;
+                }
+                lst = currentSimulationTime.ToSiderealTime();
             }
             else
             {
                 lst = DateTime.Now.ToSiderealTime();
-                currentDateTimeText.text = DateTime.UtcNow.ToString() + " (UTC)";
             }
-            if (simulationTimeScale > 0)
+
+            // use an array for speed of access, only update if visible
+            for(int i = 0; i < allStarComponents.Length; i++)
             {
-                simulationTime += simulationTimeScale;
-                lst = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).AddSeconds(simulationTime).ToSiderealTime();
+                if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
+                {
+                    allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
+                    allStarComponents[i].transform.LookAt(this.transform);
+                }
             }
-            foreach (StarComponent starObject in FindObjectsOfType<StarComponent>())
-            {
-                starObject.gameObject.transform.position = starObject.starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-                starObject.transform.LookAt(this.transform);
-            }
+
         }
     }
 
@@ -297,7 +304,7 @@ public class DataController : MonoBehaviour
     {
         if (userSpecifiedDateTime)
         {
-            return userStartDateTime;
+            return currentSimulationTime;
         }
         else
         {
@@ -305,7 +312,7 @@ public class DataController : MonoBehaviour
         }
     }
 
-    public void ChangeCity(string newCity)
+    public void SetSelectedCity(string newCity)
     {
         SelectedCity = newCity;
     }
@@ -327,39 +334,6 @@ public class DataController : MonoBehaviour
         constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
     }
 
-    public void ToggleUserTime()
-    {
-        userSpecifiedDateTime = !userSpecifiedDateTime;
-    }
-
-    public void ChangeYear(string newYear)
-    {
-        userYear = int.Parse(newYear);
-        updateUserDateTime();
-    }
-
-    public void ChangeDay(float newDay)
-    {
-        userDay = (int) newDay;
-        updateUserDateTime();
-    }
-
-    public void ChangeHour(float newHour)
-    {
-        userHour = (int) Mathf.Floor(newHour);
-        userMin = (int) ((newHour % 1) * 60.0f);
-        updateUserDateTime();
-    }
-
-    private void updateUserDateTime()
-    {
-        DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
-        calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
-        calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
-        userStartDateTime = calculatedStartDateTime;
-    }
-
     public void ChangeStarSelection(GameObject selectedStar)
     {
         if (starInfoPanel)
@@ -372,12 +346,36 @@ public class DataController : MonoBehaviour
         }
     }
 
-    public void UpdateMagnitudeThreshold(float newVal)
+    public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
         foreach (GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
         {
             showStar(starObject, starObject.GetComponent<StarComponent>().starData.Mag < magnitudeThreshold);
         }
+    }
+
+    public void ToggleUserTime()
+    {
+        userSpecifiedDateTime = !userSpecifiedDateTime;
+    }
+    public void ToggleRunSimulation()
+    {
+        runSimulation = !runSimulation;
+        if (runSimulation)
+        {
+            currentSimulationTime = userStartDateTime;
+        }
+    }
+
+    public void SetUserStartDateTime(DateTime newStartDateTime)
+    {
+        userStartDateTime = newStartDateTime;
+    }
+
+
+    public void SetSimulationTimeScale(float newVal)
+    {
+        simulationTimeScale = newVal;
     }
 }
