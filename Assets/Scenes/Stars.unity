@@ -1658,8 +1658,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1124937507}
-        m_MethodName: UpdateMagnitudeThreshold
-        m_Mode: 0
+        m_MethodName: SetMagnitudeThreshold
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
