@@ -349,9 +349,9 @@ public class DataController : MonoBehaviour
     public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
-        foreach (GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
+        for(int i = 0; i < allStarComponents.Length; i++)
         {
-            showStar(starObject, starObject.GetComponent<StarComponent>().starData.Mag < magnitudeThreshold);
+            showStar(allStarComponents[i].gameObject, allStarComponents[i].gameObject.GetComponent<StarComponent>().starData.Mag < magnitudeThreshold);
         }
     }
 

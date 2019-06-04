@@ -1659,7 +1659,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 1124937507}
         m_MethodName: SetMagnitudeThreshold
-        m_Mode: 4
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5551,7 +5551,6 @@ MonoBehaviour:
   SelectedCity: 
   cityDropdown: {fileID: 0}
   constellationDropdown: {fileID: 2053479767}
-  currentDateTimeText: {fileID: 0}
   starInfoPanel: {fileID: 1959898805}
 --- !u!114 &1124937508
 MonoBehaviour:
