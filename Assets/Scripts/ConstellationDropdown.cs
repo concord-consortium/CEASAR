@@ -28,11 +28,12 @@ public class ConstellationDropdown : MonoBehaviour
 
     public void InitConstellationNames(List<string> constellationNames, string currentConstellation)
     {
+        var options = new List<string>(constellationNames);
         // Get dropdown reference in case InitConstellationNames is called before Start
         dropdown = GetComponent<TMP_Dropdown>();
-        constellationNames.Remove("");
-        dropdown.AddOptions(constellationNames);
-        int initialValue = constellationNames.IndexOf(currentConstellation);
+        options.Remove("");
+        dropdown.AddOptions(options);
+        int initialValue = options.IndexOf(currentConstellation);
 
         if (initialValue < 0)
         {
