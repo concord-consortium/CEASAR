@@ -105,10 +105,10 @@ public class DataController : MonoBehaviour
                 cityDropdown.GetComponent<CityDropdown>().InitCityNames(cities, SelectedCity);
             }
         }
-		if (constellationAbbrData != null)
-		{
-		    allConstellationAbbrs = DataImport.ImportConstellationAbbreviationData(constellationAbbrData.text);
-		}
+        if (constellationAbbrData != null)
+        {
+            allConstellationAbbrs = DataImport.ImportConstellationAbbreviationData(constellationAbbrData.text);
+        }
 
 
         double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
