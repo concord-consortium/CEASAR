@@ -12,13 +12,7 @@ using GameDevWare.Serialization;
 public class ColyseusClient : MonoBehaviour
 {
     public System.Random rng = new System.Random();
-    // UI Buttons are attached through Unity Inspector
-    public Button m_ConnectButton, m_JoinButton, m_ReJoinButton, m_SendMessageButton, m_LeaveButton, m_GetAvailableRoomsButton;
-    public InputField m_EndpointField;
-    public Text m_IdText, m_SessionIdText;
 
-    public GameObject avatar;
-    private GameObject localPlayerAvatar;
     // todo: set up 4-digit pins for a collab room
     public string roomName = "ceasar";
 
@@ -35,15 +29,6 @@ public class ColyseusClient : MonoBehaviour
     // Use this for initialization
     IEnumerator Start()
     {
-        /* Demo UI */
-        m_ConnectButton.onClick.AddListener(ConnectToServer);
-
-        m_JoinButton.onClick.AddListener(JoinRoom);
-        m_ReJoinButton.onClick.AddListener(ReJoinRoom);
-        m_SendMessageButton.onClick.AddListener(SendNetworkMessage);
-        m_LeaveButton.onClick.AddListener(LeaveRoom);
-        m_GetAvailableRoomsButton.onClick.AddListener(GetAvailableRooms);
-
         /* Always call Recv if Colyseus connection is open */
         while (true)
         {
@@ -73,17 +58,7 @@ public class ColyseusClient : MonoBehaviour
     //        }
     //    }
     //}
-    private void choosePlayerName()
-    {
-        TextAsset colorList = Resources.Load("colors") as TextAsset;
-        TextAsset animalList = Resources.Load("animals") as TextAsset;
-        string[] colors = colorList.text.Split('\n');
-        string[] animals = animalList.text.Split('\n');
 
-        localPlayerName = colors[rng.Next(colors.Length - 1)] + animals[rng.Next(animals.Length - 1)] + rng.Next(999);
-        Debug.Log(localPlayerName);
-
-    }
 
     void ConnectToServer()
     {
@@ -93,8 +68,8 @@ public class ColyseusClient : MonoBehaviour
          */
         if (client == null || string.IsNullOrEmpty(localPlayerName))
         {
-            if (string.IsNullOrEmpty(localPlayerName))
-                choosePlayerName();
+            //if (string.IsNullOrEmpty(localPlayerName))
+            //choosePlayerName();
             string _localEndpoint = "ws://localhost:2567/";
             string _remoteEndpoint = "ws://calm-meadow-14344.herokuapp.com";
             string endpoint = _localEndpoint;  //string.IsNullOrEmpty(m_EndpointField.text) ? "ws://calm-meadow-14344.herokuapp.com" : m_EndpointField.text;
@@ -116,7 +91,7 @@ public class ColyseusClient : MonoBehaviour
             client.OnOpen += (object sender, EventArgs e) =>
             {
                 /* Update Demo UI */
-                m_IdText.text = "id: " + client.Id;
+                //m_IdText.text = "id: " + client.Id;
                 Debug.Log("joining room");
                 JoinRoom();
             };
@@ -167,7 +142,7 @@ public class ColyseusClient : MonoBehaviour
         room.OnJoin += (sender, e) =>
         {
             Debug.Log("Joined room successfully.");
-            m_SessionIdText.text = "sessionId: " + room.SessionId;
+            //m_SessionIdText.text = "sessionId: " + room.SessionId;
 
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
@@ -201,7 +176,7 @@ public class ColyseusClient : MonoBehaviour
         room.OnJoin += (sender, e) =>
         {
             Debug.Log("Joined room successfully.");
-            m_SessionIdText.text = "sessionId: " + room.SessionId;
+            //m_SessionIdText.text = "sessionId: " + room.SessionId;
 
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
@@ -225,9 +200,9 @@ public class ColyseusClient : MonoBehaviour
 
         players.Clear();
         // closing client connection
-        m_IdText.text = "disconnected";
+        //m_IdText.text = "disconnected";
         client.Close();
-        if (localPlayerAvatar) Destroy(localPlayerAvatar);
+        //if (localPlayerAvatar) Destroy(localPlayerAvatar);
         localPlayerName = "";
         ShowClientList();
     }
@@ -289,28 +264,28 @@ public class ColyseusClient : MonoBehaviour
         Vector3 pos = new Vector3(item.Value.x, item.Value.y, 0);
         if (item.Key == room.SessionId)
         {
-            localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            localPlayerAvatar.name = "localPlayer_";
+            //localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            //localPlayerAvatar.name = "localPlayer_";
         }
         else
         {
-            GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-            remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            remotePlayerAvatar.name = "remotePlayer_";
-            // add "player" to map of players
-            players.Add(item.Value, remotePlayerAvatar);
+            //GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            //Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+            //remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+            //remotePlayerAvatar.name = "remotePlayer_";
+            //// add "player" to map of players
+            //players.Add(item.Value, remotePlayerAvatar);
         }
         ShowClientList();
     }
 
     void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
     {
-        GameObject remotePlayerAvatar;
-        players.TryGetValue(item.Value, out remotePlayerAvatar);
-        Destroy(remotePlayerAvatar);
+        //GameObject remotePlayerAvatar;
+        //players.TryGetValue(item.Value, out remotePlayerAvatar);
+        //Destroy(remotePlayerAvatar);
 
-        players.Remove(item.Value);
+        //players.Remove(item.Value);
         ShowClientList();
     }
 
@@ -321,14 +296,14 @@ public class ColyseusClient : MonoBehaviour
         players.TryGetValue(item.Value, out remotePlayerAvatar);
 
         Debug.Log(item.Value.x);
-        if (remotePlayerAvatar)
-        {
-            remotePlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
-        }
-        else
-        {
-            localPlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
-        }
+        //if (remotePlayerAvatar)
+        //{
+        //    remotePlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
+        //}
+        //else
+        //{
+        //    localPlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
+        //}
     }
 
     void OnApplicationQuit()
