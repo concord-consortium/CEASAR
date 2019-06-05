@@ -848,6 +848,7 @@ GameObject:
   m_Component:
   - component: {fileID: 701562118}
   - component: {fileID: 701562117}
+  - component: {fileID: 701562119}
   m_Layer: 0
   m_Name: NetworkController
   m_TagString: Untagged
@@ -868,8 +869,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConnectButton: {fileID: 422741806}
-  m_JoinButton: {fileID: 713899201}
-  m_ReJoinButton: {fileID: 1680914683}
   m_SendMessageButton: {fileID: 2112419174}
   m_LeaveButton: {fileID: 1707144744}
   m_GetAvailableRoomsButton: {fileID: 1385919825}
@@ -894,6 +893,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &701562119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701562116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1fb4f0ca880486ab13254747428623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomName: ceasar
 --- !u!1 &713899197
 GameObject:
   m_ObjectHideFlags: 0
@@ -2684,10 +2696,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starData: {fileID: 4900000, guid: cb4425a57d4217a4886f011902b5d47b, type: 3}
+  starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   radius: 100
-  magnitudeScale: 0.5
+  magnitudeScale: 0.2
+  magnitudeThreshold: 4.5
   showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
@@ -2696,13 +2709,12 @@ MonoBehaviour:
   allConstellations: {fileID: 0}
   allMarkers: {fileID: 1033360222}
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
-  colorByConstellation: 1
+  colorByConstellation: 0
   simulationTimeScale: 10
   cities: []
   SelectedCity: 
   cityDropdown: {fileID: 0}
   constellationDropdown: {fileID: 0}
-  currentDateTimeText: {fileID: 0}
   starInfoPanel: {fileID: 0}
 --- !u!4 &1951783642
 Transform:

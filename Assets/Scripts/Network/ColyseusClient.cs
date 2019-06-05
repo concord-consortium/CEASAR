@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Text;
 using Colyseus;
 using Colyseus.Schema;
 
@@ -18,10 +19,9 @@ public class ColyseusClient : MonoBehaviour
 
     protected Client client;
     protected Room<State> room;
+    private NetworkController networkController;
 
-    protected IndexedDictionary<Player, GameObject> players = new IndexedDictionary<Player, GameObject>();
-
-    public TMPro.TMP_Text debugMessages;
+    protected List<Player> players = new List<Player>();
 
     private string localPlayerName = "";
 
@@ -29,6 +29,7 @@ public class ColyseusClient : MonoBehaviour
     // Use this for initialization
     IEnumerator Start()
     {
+        networkController = GetComponent<NetworkController>();
         /* Always call Recv if Colyseus connection is open */
         while (true)
         {
@@ -60,26 +61,16 @@ public class ColyseusClient : MonoBehaviour
     //}
 
 
-    void ConnectToServer()
+    public void ConnectToServer(string serverEndpoint, string username)
     {
-        /*
-         * Get Colyseus endpoint from InputField
-         *  for localhost use ws://localhost:2567/        
-         */
         if (client == null || string.IsNullOrEmpty(localPlayerName))
         {
-            //if (string.IsNullOrEmpty(localPlayerName))
-            //choosePlayerName();
-            string _localEndpoint = "ws://localhost:2567/";
-            string _remoteEndpoint = "ws://calm-meadow-14344.herokuapp.com";
-            string endpoint = _localEndpoint;  //string.IsNullOrEmpty(m_EndpointField.text) ? "ws://calm-meadow-14344.herokuapp.com" : m_EndpointField.text;
+            Debug.Log("Connecting to " + serverEndpoint);
+            if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
-            Debug.Log("Connecting to " + endpoint);
+            // Connect to Colyeus Server
 
-            /*
-             * Connect into Colyeus Server
-             */
-            client = new Client(endpoint);
+            client = new Client(serverEndpoint);
 
             //await client.Auth.Login();
             //var friends = await client.Auth.GetFriends();
@@ -90,8 +81,6 @@ public class ColyseusClient : MonoBehaviour
 
             client.OnOpen += (object sender, EventArgs e) =>
             {
-                /* Update Demo UI */
-                //m_IdText.text = "id: " + client.Id;
                 Debug.Log("joining room");
                 JoinRoom();
             };
@@ -99,6 +88,10 @@ public class ColyseusClient : MonoBehaviour
             client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
             StartCoroutine(client.Connect());
         }
+    }
+    public void Disconnect()
+    {
+        LeaveRoom();
     }
 
     void JoinRoom()
@@ -142,7 +135,6 @@ public class ColyseusClient : MonoBehaviour
         room.OnJoin += (sender, e) =>
         {
             Debug.Log("Joined room successfully.");
-            //m_SessionIdText.text = "sessionId: " + room.SessionId;
 
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
@@ -192,19 +184,13 @@ public class ColyseusClient : MonoBehaviour
         Debug.Log("closing connection");
         room.Leave(false);
 
-        // Destroy player players
-        foreach (KeyValuePair<Player, GameObject> entry in players)
-        {
-            Destroy(entry.Value);
-        }
-
         players.Clear();
         // closing client connection
         //m_IdText.text = "disconnected";
         client.Close();
         //if (localPlayerAvatar) Destroy(localPlayerAvatar);
         localPlayerName = "";
-        ShowClientList();
+        GetClientList();
     }
 
     void GetAvailableRooms()
@@ -221,20 +207,21 @@ public class ColyseusClient : MonoBehaviour
             }
         });
     }
-    void ShowClientList()
+    public string GetClientList()
     {
-        debugMessages.text = "Connected clients: \n";
-        debugMessages.text += localPlayerName + "\n";
-        foreach (var player in players)
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("Connected clients:");
+        foreach (Player p in players)
         {
-            debugMessages.text += player.Key.username + "\n";
+            sb.AppendLine(p.username);
         }
+        return sb.ToString();
     }
-    void SendNetworkMessage()
+    public void SendNetworkMessage(string message)
     {
         if (room != null)
         {
-            room.Send("message");
+            room.Send(message);
         }
         else
         {
@@ -258,52 +245,19 @@ public class ColyseusClient : MonoBehaviour
 
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
     {
-
-        Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y + " playerId:" + item.Key + " playerName:" + item.Value.username);
-
-        Vector3 pos = new Vector3(item.Value.x, item.Value.y, 0);
-        if (item.Key == room.SessionId)
-        {
-            //localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            //localPlayerAvatar.name = "localPlayer_";
-        }
-        else
-        {
-            //GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            //Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-            //remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            //remotePlayerAvatar.name = "remotePlayer_";
-            //// add "player" to map of players
-            //players.Add(item.Value, remotePlayerAvatar);
-        }
-        ShowClientList();
+        if (!players.Contains(item.Value)) players.Add(item.Value);
+        networkController.OnPlayerAdd(item.Value, item.Key == room.SessionId);
     }
 
     void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
     {
-        //GameObject remotePlayerAvatar;
-        //players.TryGetValue(item.Value, out remotePlayerAvatar);
-        //Destroy(remotePlayerAvatar);
-
-        //players.Remove(item.Value);
-        ShowClientList();
+        if (players.Contains(item.Value)) players.Remove(item.Value);
+        networkController.OnPlayerRemove(item.Value);
     }
-
 
     void OnPlayerMove(object sender, KeyValueEventArgs<Player, string> item)
     {
-        GameObject remotePlayerAvatar;
-        players.TryGetValue(item.Value, out remotePlayerAvatar);
-
-        Debug.Log(item.Value.x);
-        //if (remotePlayerAvatar)
-        //{
-        //    remotePlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
-        //}
-        //else
-        //{
-        //    localPlayerAvatar.transform.Translate(new Vector3(item.Value.x, item.Value.y, 0));
-        //}
+        networkController.OnPlayerMove(item.Value);
     }
 
     void OnApplicationQuit()
@@ -317,25 +271,6 @@ public class ColyseusClient : MonoBehaviour
         if (client != null)
         {
             client.Close();
-        }
-    }
-    void instantiatePlayer(Player p)
-    {
-        Debug.Log(p);
-    }
-
-    void showLog(string text, bool clear)
-    {
-        if (debugMessages != null)
-        {
-            if (clear)
-            {
-                debugMessages.SetText(text);
-            }
-            else
-            {
-                debugMessages.SetText(debugMessages.text + "\n" + text);
-            }
         }
     }
 }
