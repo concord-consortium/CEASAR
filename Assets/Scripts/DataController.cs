@@ -55,10 +55,10 @@ public class DataController : MonoBehaviour
     public GameObject cityDropdown;
     public GameObject constellationDropdown;
 
-    private Color unnamedColor = new Color(128f/255f, 128f/255f, 128f/255f);
-    private Color colorOrange = new Color(255f/255f, 106f/255f, 0f/255f);
-    private Color colorGreen = new Color(76f/255f, 255f/255f, 0f/255f);
-    private Color colorBlue = new Color(0f/255f, 148f/255f, 255f/255f);
+    private Color unnamedColor = new Color(128f / 255f, 128f / 255f, 128f / 255f);
+    private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
+    private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
+    private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     private float markerLineWidth = .035f;
 
     public GameObject starInfoPanel;
@@ -110,7 +110,6 @@ public class DataController : MonoBehaviour
             {
                 constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellations, "all");
             }
-
             foreach (string constellation in constellations)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
@@ -141,12 +140,12 @@ public class DataController : MonoBehaviour
                     Vector3 magScale = starObject.transform.localScale * magScaleValue;
                     starObject.transform.localScale = magScale;
                     starObject.transform.LookAt(this.transform);
-
+                    // Eventually store constellation color and observed star color separately
+                    newStar.SetStarColor(constellationColor, Color.white);
                     // color by constellation
                     if (colorByConstellation == true)
                     {
-                        changeStarColor(starObject, constellationColor);
-                        newStar.starColor = constellationColor;
+                        Utils.GetInstance().SetObjectColor(starObject, constellationColor);
                     }
 
                     allStarComponents[starCount] = newStar;
@@ -154,9 +153,6 @@ public class DataController : MonoBehaviour
 
                     // group by constellation
                     starObject.transform.parent = constellationContainer.transform;
-
-                    // tag it
-                    starObject.tag = "Star";
 
                     // show or hide based on magnitude threshold
                     if (dataStar.Mag > magnitudeThreshold)
@@ -194,7 +190,8 @@ public class DataController : MonoBehaviour
         newMarker.label.text = markerName;
         newMarker.markerData = marker;
         markerObject.name = markerName;
-        changeStarColor(markerObject, color);
+        Utils.GetInstance().SetObjectColor(markerObject, color);
+
         if (showHorizonView)
         {
             markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(radius, lst, 0);
@@ -237,19 +234,13 @@ public class DataController : MonoBehaviour
         lineObject.name = markerName;
         lineObject.transform.parent = allMarkers.transform;
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-        lineRenderer.SetWidth(lineWidth, lineWidth);
+        lineRenderer.startWidth = lineWidth;
+        lineRenderer.endWidth = lineWidth;
         lineRenderer.useWorldSpace = false;
         lineRenderer.SetPosition(0, new Vector3(go1.transform.position.x, go1.transform.position.y, go1.transform.position.z));
         lineRenderer.SetPosition(1, new Vector3(go2.transform.position.x, go2.transform.position.y, go2.transform.position.z));
         lineRenderer.material = markerMaterial;
         lineRenderer.material.color = color;
-    }
-
-    void changeStarColor(GameObject starObject, Color nextColor)
-    {
-        // if using LWRP shader
-        starObject.GetComponent<Renderer>().material.SetColor("_BaseColor", nextColor);
-        starObject.GetComponent<Renderer>().material.color = nextColor;
     }
 
     void FixedUpdate()
@@ -288,7 +279,7 @@ public class DataController : MonoBehaviour
             }
 
             // use an array for speed of access, only update if visible
-            for(int i = 0; i < allStarComponents.Length; i++)
+            for (int i = 0; i < allStarComponents.Length; i++)
             {
                 if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
                 {
@@ -323,12 +314,14 @@ public class DataController : MonoBehaviour
         {
             if (starObject.name == highlightConstellation || highlightConstellation == "all")
             {
-                Color starColor = starObject.GetComponent<StarComponent>().starColor;
-                changeStarColor(starObject, starColor);
+                Color constellationColor = starObject.GetComponent<StarComponent>().constellationColor;
+
+                Utils.GetInstance().SetObjectColor(starObject, constellationColor);
             }
             else
             {
-                changeStarColor(starObject, Color.white);
+                Color starColor = starObject.GetComponent<StarComponent>().starColor;
+                Utils.GetInstance().SetObjectColor(starObject, starColor);
             }
         }
         constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
@@ -349,7 +342,7 @@ public class DataController : MonoBehaviour
     public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
-        for(int i = 0; i < allStarComponents.Length; i++)
+        for (int i = 0; i < allStarComponents.Length; i++)
         {
             showStar(allStarComponents[i].gameObject, allStarComponents[i].starData.Mag < magnitudeThreshold);
         }
