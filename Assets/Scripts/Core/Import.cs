@@ -11,23 +11,24 @@ public static class DataImport
             {
                 string[] values = line.Split('\t');
 
-                if (values.Length == 13)
+                if (values.Length == 14)
                 {
                     int Hip = int.Parse(values[0]);
-                    string Constellation = values[1];
-                    string ProperName = values[2];
-                    string XBayerFlamsteed = values[3];
-                    string Flamsteed = values[4];
-                    string Bayer = values[5];
-                    float RA = float.Parse(values[6]);
-                    float Dec = float.Parse(values[7]);
-                    float Dist = float.Parse(values[8]);
-                    float Mag = float.Parse(values[9]);
-                    float AbsMag = float.Parse(values[10]);
-                    string Spectrum = values[11];
+                    string ConstellationAbbr = values[1];
+                    string ConstellationFull = values[2];
+                    string ProperName = values[3];
+                    string XBayerFlamsteed = values[4];
+                    string FlamsteedDes = values[5];
+                    string BayerDes = values[6];
+                    float RA = float.Parse(values[7]);
+                    float Dec = float.Parse(values[8]);
+                    float Dist = float.Parse(values[9]);
+                    float Mag = float.Parse(values[10]);
+                    float AbsMag = float.Parse(values[11]);
+                    string Spectrum = values[12];
                     float ColorIndex = 0.0f;
-                    float.TryParse(values[12], out ColorIndex);
-                    Star star = new Star(Hip, Constellation, ProperName, XBayerFlamsteed, Flamsteed, Bayer, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
+                    float.TryParse(values[13], out ColorIndex);
+                    Star star = new Star(Hip, ConstellationAbbr, ConstellationFull, ProperName, XBayerFlamsteed, FlamsteedDes, BayerDes, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
                 }
@@ -56,26 +57,6 @@ public static class DataImport
             }
         }
         return cities;
-    }
-
-    public static List<ConstellationAbbr> ImportConstellationAbbreviationData(string sourceData)
-    {
-        List<ConstellationAbbr> constellations = new List<ConstellationAbbr>();
-        foreach (var line in splitToLines(sourceData))
-        {
-            if (!line.StartsWith("ShortName"))
-            {
-                string[] values = line.Split('\t');
-                if (values.Length == 2)
-                {
-                    ConstellationAbbr constellation = new ConstellationAbbr();
-                    constellation.ShortName = values[0];
-                    constellation.FullName = values[1];
-                    constellations.Add(constellation);
-                }
-            }
-        }
-        return constellations;
     }
 
     private static IEnumerable<string> splitToLines(this string input)
