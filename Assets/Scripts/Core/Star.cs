@@ -102,8 +102,7 @@ public class Marker : CelestialSphereItem
 
 public class Star : CelestialSphereItem
 {
-    public string ID; //right now, this is a sequence of characters that combines Bayer and Flamsteed star id
-    public int Hip;
+    public int Hipparcos;
     public string Constellation; //univeral 3-character constellation abbrievation
     public string ProperName;
 
@@ -116,14 +115,18 @@ public class Star : CelestialSphereItem
     // other properties for a star
     public float size;
 
-    public string XByerFlamsteed;
+    public string XBayerFlamsteed; // this is a sequence of characters that combines Bayer and Flamsteed star id
+    public string BayerDesignation;
+    public string FlamsteedDesignation;
 
-    public Star(int Hip, string Constellation, string ProperName, string XBFlamsteed, float RA, float Dec, float Dist, float Mag, float AbsMag, string Spectrum, float ColorIndex)
+    public Star(int Hip, string Constellation, string ProperName, string XBFlamsteed, string Flamsteed, string Bayer, float RA, float Dec, float Dist, float Mag, float AbsMag, string Spectrum, float ColorIndex)
     {
-        this.Hip = Hip;
+        this.Hipparcos = Hip;
         this.Constellation = Constellation;
         this.ProperName = ProperName;
-        this.XByerFlamsteed = XBFlamsteed;
+        this.XBayerFlamsteed = XBFlamsteed;
+        this.FlamsteedDesignation = Flamsteed.Length > 0 ? Flamsteed + " " +  Constellation : "";
+        this.BayerDesignation = Bayer.Length > 0 ? Bayer + " " +  Constellation : "";
         this.RA = RA;
         this.radianRA = RA * 15 * Mathf.Deg2Rad; // RA in hours, so multiply RA by 15 deg / hr
         this.Dec = Dec;

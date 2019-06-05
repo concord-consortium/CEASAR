@@ -8,6 +8,7 @@ public class DataController : MonoBehaviour
 {
     public TextAsset starData;
     public TextAsset cityData;
+    public TextAsset constellationAbbrData;
 
     [SerializeField]
     private float radius = 50;
@@ -31,6 +32,16 @@ public class DataController : MonoBehaviour
         get { return allCities; }
         private set { allCities = value; }
     }
+
+    [SerializeField]
+    private List<ConstellationAbbr> allConstellationAbbrs;
+    public List<ConstellationAbbr> AllConstellationAbbrs
+    {
+        get { return allConstellationAbbrs; }
+        private set { allConstellationAbbrs = value; }
+    }
+
+
     public bool showHorizonView = false;
 
     public GameObject starPrefab;
@@ -94,6 +105,11 @@ public class DataController : MonoBehaviour
                 cityDropdown.GetComponent<CityDropdown>().InitCityNames(cities, SelectedCity);
             }
         }
+		if (constellationAbbrData != null)
+		{
+		    allConstellationAbbrs = DataImport.ImportConstellationAbbreviationData(constellationAbbrData.text);
+		}
+
 
         double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
         int starCount = 0;
@@ -332,7 +348,7 @@ public class DataController : MonoBehaviour
         if (starInfoPanel)
         {
             StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XByerFlamsteed,
+            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XBayerFlamsteed,
                                                                             starComponent.starData.Mag.ToString(),
                                                                             starComponent.starData.Constellation);
             starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
