@@ -9,9 +9,9 @@ public class NetworkController : MonoBehaviour
 {
     public System.Random rng = new System.Random();
     // UI Buttons are attached through Unity Inspector
-    public Button m_ConnectButton, m_SendMessageButton, m_LeaveButton, m_GetAvailableRoomsButton;
+    public Button connectButton, leaveButton, clientListButton;
     public InputField m_EndpointField;
-    public Text m_IdText, m_SessionIdText;
+    public Text connectionStatusText;
 
     public GameObject avatar;
     private GameObject localPlayerAvatar;
@@ -33,11 +33,8 @@ public class NetworkController : MonoBehaviour
 
         client = GetComponent<ColyseusClient>();
         /* Demo UI */
-        m_ConnectButton.onClick.AddListener(ConnectToServer);
-
-        m_SendMessageButton.onClick.AddListener(SendNetworkMessage);
-        m_LeaveButton.onClick.AddListener(Disconnect);
-
+        connectButton.onClick.AddListener(ConnectToServer);
+        leaveButton.onClick.AddListener(Disconnect);
     }
 
     private void choosePlayerName()
@@ -63,9 +60,9 @@ public class NetworkController : MonoBehaviour
             if (string.IsNullOrEmpty(localPlayerName))
                 choosePlayerName();
             string _localEndpoint = "ws://localhost:2567/";
-            string _remoteEndpoint = "ws://calm-meadow-14344.herokuapp.com";
+            string _remoteEndpoint = "wss://calm-meadow-14344.herokuapp.com";
 #if UNITY_EDITOR
-            string endpoint = _localEndpoint;
+            string endpoint = _remoteEndpoint; //_localEndpoint;
 #else
             string endpoint = _remoteEndpoint; 
 #endif
@@ -86,7 +83,7 @@ public class NetworkController : MonoBehaviour
         }
 
         // closing client connection
-        m_IdText.text = "disconnected";
+        connectionStatusText.text = "Disconnected";
 
         if (localPlayerAvatar) Destroy(localPlayerAvatar);
         localPlayerName = "";
@@ -112,6 +109,7 @@ public class NetworkController : MonoBehaviour
         {
             localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
             localPlayerAvatar.name = "localPlayer_" + player.username;
+            connectionStatusText.text = "Connected as " + player.username;
         }
         else
         {

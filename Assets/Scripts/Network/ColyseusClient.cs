@@ -168,8 +168,6 @@ public class ColyseusClient : MonoBehaviour
         room.OnJoin += (sender, e) =>
         {
             Debug.Log("Joined room successfully.");
-            //m_SessionIdText.text = "sessionId: " + room.SessionId;
-
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
             room.State.players.OnChange += OnPlayerMove;
@@ -183,14 +181,10 @@ public class ColyseusClient : MonoBehaviour
     {
         Debug.Log("closing connection");
         room.Leave(false);
-
+        localPlayerName = "";
         players.Clear();
         // closing client connection
-        //m_IdText.text = "disconnected";
         client.Close();
-        //if (localPlayerAvatar) Destroy(localPlayerAvatar);
-        localPlayerName = "";
-        GetClientList();
     }
 
     void GetAvailableRooms()
@@ -231,8 +225,7 @@ public class ColyseusClient : MonoBehaviour
 
     void OnMessage(object sender, MessageEventArgs e)
     {
-        Debug.Log(e.Message);
-        //var message = (IndexedDictionary<string, object>)e.Message;
+        Debug.Log(e.Message);       //var message = (IndexedDictionary<string, object>)e.Message;
 
     }
 
