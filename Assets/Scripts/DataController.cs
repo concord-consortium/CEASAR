@@ -31,6 +31,7 @@ public class DataController : MonoBehaviour
         get { return allCities; }
         private set { allCities = value; }
     }
+
     public bool showHorizonView = false;
 
     public GameObject starPrefab;
@@ -332,7 +333,7 @@ public class DataController : MonoBehaviour
         if (starInfoPanel)
         {
             StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XByerFlamsteed,
+            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XBayerFlamsteed,
                                                                             starComponent.starData.Mag.ToString(),
                                                                             starComponent.starData.Constellation);
             starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);

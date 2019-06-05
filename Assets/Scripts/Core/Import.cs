@@ -11,21 +11,26 @@ public static class DataImport
             {
                 string[] values = line.Split('\t');
 
-                if (values.Length == 11)
+                if (values.Length == 16)
                 {
                     int Hip = int.Parse(values[0]);
-                    string Constellation = values[1];
-                    string ProperName = values[2];
-                    string XByerFlamsteed = values[3];
-                    float RA = float.Parse(values[4]);
-                    float Dec = float.Parse(values[5]);
-                    float Dist = float.Parse(values[6]);
-                    float Mag = float.Parse(values[7]);
-                    float AbsMag = float.Parse(values[8]);
-                    string Spectrum = values[9];
+                    string ConstellationAbbr = values[1];
+                    string ConstellationFull = values[2];
+                    string ProperName = values[3];
+                    string XBayerFlamsteed = values[4];
+                    string FlamsteedDes = values[5];
+                    string BayerDes = values[6];
+                    float RA = float.Parse(values[7]);
+                    float RadianRA = float.Parse(values[8]);
+                    float Dec = float.Parse(values[9]);
+                    float RadianDec = float.Parse(values[10]);
+                    float Dist = float.Parse(values[11]);
+                    float Mag = float.Parse(values[12]);
+                    float AbsMag = float.Parse(values[13]);
+                    string Spectrum = values[14];
                     float ColorIndex = 0.0f;
-                    float.TryParse(values[10], out ColorIndex);
-                    Star star = new Star(Hip, Constellation, ProperName, XByerFlamsteed, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
+                    float.TryParse(values[15], out ColorIndex);
+                    Star star = new Star(Hip, ConstellationAbbr, ConstellationFull, ProperName, XBayerFlamsteed, FlamsteedDes, BayerDes, RA, RadianRA, Dec, RadianDec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
                 }
@@ -55,6 +60,7 @@ public static class DataImport
         }
         return cities;
     }
+
     private static IEnumerable<string> splitToLines(this string input)
     {
         if (input == null)

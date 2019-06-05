@@ -45,6 +45,7 @@ public class StarComponent : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
         {
             dataController.ChangeConstellationHighlight(starData.Constellation);
+            Debug.Log("(BD=" + starData.BayerDesignation + "),(FD=" + starData.FlamsteedDesignation + "),(ConstShort=" + starData.Constellation + "),(ConstFull=" + starData.ConstellationFullName + ")");
         }
     }
     void OnMouseOver()
