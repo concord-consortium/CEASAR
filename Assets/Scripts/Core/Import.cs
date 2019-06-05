@@ -11,7 +11,7 @@ public static class DataImport
             {
                 string[] values = line.Split('\t');
 
-                if (values.Length == 14)
+                if (values.Length == 16)
                 {
                     int Hip = int.Parse(values[0]);
                     string ConstellationAbbr = values[1];
@@ -21,14 +21,16 @@ public static class DataImport
                     string FlamsteedDes = values[5];
                     string BayerDes = values[6];
                     float RA = float.Parse(values[7]);
-                    float Dec = float.Parse(values[8]);
-                    float Dist = float.Parse(values[9]);
-                    float Mag = float.Parse(values[10]);
-                    float AbsMag = float.Parse(values[11]);
-                    string Spectrum = values[12];
+                    float RadianRA = float.Parse(values[8]);
+                    float Dec = float.Parse(values[9]);
+                    float RadianDec = float.Parse(values[10]);
+                    float Dist = float.Parse(values[11]);
+                    float Mag = float.Parse(values[12]);
+                    float AbsMag = float.Parse(values[13]);
+                    string Spectrum = values[14];
                     float ColorIndex = 0.0f;
-                    float.TryParse(values[13], out ColorIndex);
-                    Star star = new Star(Hip, ConstellationAbbr, ConstellationFull, ProperName, XBayerFlamsteed, FlamsteedDes, BayerDes, RA, Dec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
+                    float.TryParse(values[15], out ColorIndex);
+                    Star star = new Star(Hip, ConstellationAbbr, ConstellationFull, ProperName, XBayerFlamsteed, FlamsteedDes, BayerDes, RA, RadianRA, Dec, RadianDec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
                 }

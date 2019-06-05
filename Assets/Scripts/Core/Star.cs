@@ -120,7 +120,7 @@ public class Star : CelestialSphereItem
     public string BayerDesignation;
     public string FlamsteedDesignation;
 
-    public Star(int Hip, string ConstellationAbbr, string ConstellationFull, string ProperName, string XBFlamsteed, string FlamsteedDes, string BayerDes, float RA, float Dec, float Dist, float Mag, float AbsMag, string Spectrum, float ColorIndex)
+    public Star(int Hip, string ConstellationAbbr, string ConstellationFull, string ProperName, string XBFlamsteed, string FlamsteedDes, string BayerDes, float RA,  float RadianRA, float Dec, float RadianDec, float Dist, float Mag, float AbsMag, string Spectrum, float ColorIndex)
     {
         this.Hipparcos = Hip;
         this.Constellation = ConstellationAbbr;
@@ -130,9 +130,9 @@ public class Star : CelestialSphereItem
         this.FlamsteedDesignation = FlamsteedDes;
         this.BayerDesignation = BayerDes;
         this.RA = RA;
-        this.radianRA = RA * 15 * Mathf.Deg2Rad; // RA in hours, so multiply RA by 15 deg / hr
+        this.radianRA = RadianRA; //(RA * 15 * Mathf.Deg2Rad) RA in hours, so multiply RA by 15 deg / hr
         this.Dec = Dec;
-        this.radianDec = this.Dec * Mathf.Deg2Rad;
+        this.radianDec = RadianDec; //(Dec * Mathf.Deg2Rad)
         this.Dist = Dist;
         this.Mag = Mag;
         this.AbsMag = AbsMag;
