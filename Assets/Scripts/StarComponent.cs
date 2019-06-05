@@ -1,10 +1,11 @@
-﻿ using UnityEngine;
- using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class StarComponent : MonoBehaviour
 {
     public Star starData;
     public Color starColor;
+    public Color constellationColor;
 
     private GameObject dataControllerObj;
     private DataController dataController;
@@ -62,5 +63,14 @@ public class StarComponent : MonoBehaviour
             pulse = false;
             transform.localScale = initialScale;
         }
+    }
+
+    public void SetStarColor(Color constellationColor, Color starColor)
+    {
+        // Store star color - not yet using real values
+        this.starColor = starColor;
+        // Store constellation color
+        this.constellationColor = constellationColor;
+
     }
 }
