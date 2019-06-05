@@ -351,7 +351,7 @@ public class DataController : MonoBehaviour
         magnitudeThreshold = newVal;
         for(int i = 0; i < allStarComponents.Length; i++)
         {
-            showStar(allStarComponents[i].gameObject, allStarComponents[i].gameObject.GetComponent<StarComponent>().starData.Mag < magnitudeThreshold);
+            showStar(allStarComponents[i].gameObject, allStarComponents[i].starData.Mag < magnitudeThreshold);
         }
     }
 
