@@ -1,17 +1,8 @@
 ﻿using System;
 using UnityEngine;
-public class Utils
+public static class Utils
 {
-    protected Utils()
-    {
-    }
-    private static Utils instance;
-    public static Utils GetInstance()
-    {
-        return instance ?? (instance = new Utils());
-    }
-
-    public void SetObjectColor(GameObject go, Color newColor)
+    public static void SetObjectColor(GameObject go, Color newColor)
     {
         Mesh mesh = go.GetComponent<MeshFilter>().mesh;
         if (mesh)

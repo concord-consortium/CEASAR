@@ -145,7 +145,7 @@ public class DataController : MonoBehaviour
                     // color by constellation
                     if (colorByConstellation == true)
                     {
-                        Utils.GetInstance().SetObjectColor(starObject, constellationColor);
+                        Utils.SetObjectColor(starObject, constellationColor);
                     }
 
                     allStarComponents[starCount] = newStar;
@@ -190,7 +190,7 @@ public class DataController : MonoBehaviour
         newMarker.label.text = markerName;
         newMarker.markerData = marker;
         markerObject.name = markerName;
-        Utils.GetInstance().SetObjectColor(markerObject, color);
+        Utils.SetObjectColor(markerObject, color);
 
         if (showHorizonView)
         {
@@ -316,12 +316,12 @@ public class DataController : MonoBehaviour
             {
                 Color constellationColor = starObject.GetComponent<StarComponent>().constellationColor;
 
-                Utils.GetInstance().SetObjectColor(starObject, constellationColor);
+                Utils.SetObjectColor(starObject, constellationColor);
             }
             else
             {
                 Color starColor = starObject.GetComponent<StarComponent>().starColor;
-                Utils.GetInstance().SetObjectColor(starObject, starColor);
+                Utils.SetObjectColor(starObject, starColor);
             }
         }
         constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
