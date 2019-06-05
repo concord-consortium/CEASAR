@@ -22,7 +22,7 @@ public class CityDropdown : MonoBehaviour
     {
         if (dataController)
         {
-            dataController.GetComponent<DataController>().ChangeCity(change.captionText.text);
+            dataController.GetComponent<DataController>().SetSelectedCity(change.captionText.text);
         }
     }
 
