@@ -1543,8 +1543,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
-  constellationAbbrData: {fileID: 4900000, guid: 7c4b1121b92892f4cb596f310b53222c,
-    type: 3}
   radius: 100
   magnitudeScale: 0.5
   magnitudeThreshold: 4.5
