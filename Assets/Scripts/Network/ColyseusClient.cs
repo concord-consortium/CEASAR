@@ -32,24 +32,15 @@ public class ColyseusClient : MonoBehaviour
         get { return client != null; }
     }
     private string endpoint;
-    private float heartbeatInterval = 5;
-    // Use this for initialization
-    IEnumerator Start()
-    {
-        networkController = GetComponent<NetworkController>();
-        /* Always call Recv if Colyseus connection is open */
-        while (true)
-        {
-            if (client != null)
-            {
-                client.Recv();
-            }
-            yield return 0;
-        }
-    }
+    private float heartbeatInterval = 10;
+
+    private int retries = 0;
+    private int maxRetries = 3;
+    private float retryInterval = 1.0f;
+
     private void Update()
     {
-        if (localPlayer != null && client.Id != null)
+        if (client != null && localPlayer != null && client.Id != null)
         {
             lastUpdate += Time.deltaTime;
             if (lastUpdate > heartbeatInterval)
@@ -66,13 +57,27 @@ public class ColyseusClient : MonoBehaviour
             }
         }
     }
-
+    IEnumerator ListenToServer()
+    {
+        while (true)
+        {
+            if (client != null)
+            {
+                /* Always call Recv if Colyseus connection is open */
+                client.Recv();
+            }
+            yield return 0;
+        }
+    }
 
     public void ConnectToServer(string serverEndpoint, string username)
     {
+        networkController = GetComponent<NetworkController>();
         if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
+            StartCoroutine(ListenToServer());
             connecting = true;
+            networkController.ServerStatusMessage = "Connecting...";
             Debug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
@@ -90,16 +95,44 @@ public class ColyseusClient : MonoBehaviour
             client.OnOpen += (object sender, EventArgs e) =>
             {
                 Debug.Log("joining room");
+                networkController.ServerStatusMessage = "Joining Room...";
                 JoinRoom();
             };
-            client.OnError += (sender, e) => Debug.LogError(e.Message);
+
+            client.OnError += (sender, e) =>
+            {
+                Debug.LogError(e.Message);
+                networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
+                string oldName = localPlayerName;
+                Disconnect();
+                StartCoroutine(ConnectRetry(endpoint, oldName));
+            };
             client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
             StartCoroutine(client.Connect());
+        }
+
+    }
+    IEnumerator ConnectRetry(string endpoint, string name)
+    {
+        yield return new WaitForSeconds(retryInterval);
+        if (retries < maxRetries)
+        {
+            // try to reconnect
+            ConnectToServer(endpoint, name);
+            retries++;
         }
     }
     public void Disconnect()
     {
         LeaveRoom();
+        localPlayerName = "";
+        players.Clear();
+        // closing client connection
+        client.Close();
+        connecting = false;
+        client = null;
+        StopCoroutine(ListenToServer());
+        networkController.ServerStatusMessage = "Disconnected.";
     }
 
     void JoinRoom()
@@ -139,9 +172,10 @@ public class ColyseusClient : MonoBehaviour
         room.OnError += (sender, e) =>
         {
             Debug.LogError(e.Message);
+            networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
             string oldName = localPlayerName;
-            LeaveRoom();
-            ConnectToServer(endpoint, oldName);
+            Disconnect();
+            StartCoroutine(ConnectRetry(endpoint, oldName));
         };
         room.OnJoin += (sender, e) =>
         {
@@ -192,12 +226,7 @@ public class ColyseusClient : MonoBehaviour
     {
         Debug.Log("closing connection");
         room.Leave(false);
-        localPlayerName = "";
-        players.Clear();
-        // closing client connection
-        client.Close();
-        connecting = false;
-        client = null;
+
     }
 
     void GetAvailableRooms()
@@ -245,8 +274,8 @@ public class ColyseusClient : MonoBehaviour
     void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
     {
         // Setup room first state
-        Debug.Log("State has been updated!");
-        Debug.Log(e.State);
+        // Debug.Log("State has been updated!");
+        // Debug.Log(e.State);
     }
 
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
@@ -255,6 +284,7 @@ public class ColyseusClient : MonoBehaviour
         if (item.Key == room.SessionId)
         {
             localPlayer = item.Value;
+            networkController.ServerStatusMessage = "Connected as " + item.Value.username;
         }
         networkController.OnPlayerAdd(item.Value, item.Key == room.SessionId);
     }

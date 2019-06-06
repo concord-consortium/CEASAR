@@ -33,6 +33,11 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
+    public string ServerStatusMessage
+    {
+        set { if (connectionStatusText) connectionStatusText.text = value; }
+    }
+
     // Need this so the network UI persists across scenes
     private void Awake()
     {
@@ -103,7 +108,6 @@ public class NetworkController : MonoBehaviour
         }
 
         // closing client connection
-        connectionStatusText.text = "Disconnected";
 
         if (localPlayerAvatar) Destroy(localPlayerAvatar);
         debugMessages.text = "";
@@ -131,7 +135,6 @@ public class NetworkController : MonoBehaviour
             Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = "localPlayer_" + player.username;
-            connectionStatusText.text = "Connected as " + player.username;
         }
         else
         {
