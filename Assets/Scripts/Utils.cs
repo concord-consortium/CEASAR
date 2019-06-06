@@ -20,3 +20,18 @@ public static class Utils
         }
     }
 }
+public static class StringExtensions
+{
+    public static string FirstCharToUpper(this string input)
+    {
+        switch (input)
+        {
+            case null: throw new ArgumentNullException(nameof(input));
+            case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
+            default:
+                char[] a = input.ToCharArray();
+                a[0] = char.ToUpper(a[0]);
+                return new string(a);
+        }
+    }
+}
