@@ -44,7 +44,7 @@ public class SunPosition : MonoBehaviour
             var solarPosition = CalculateSunPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng);
             points.Add(solarPosToWorld(solarPosition));
 
-            Debug.LogFormat("Result ==> Time: {0}, Altitude: {1}, Azimuth :{2}", t.ToShortTimeString(), solarPosition.Altitude, solarPosition.Azimuth);
+            // Debug.LogFormat("Result ==> Time: {0}, Altitude: {1}, Azimuth :{2}", t.ToShortTimeString(), solarPosition.Altitude, solarPosition.Azimuth);
         }
         sunArcLine.positionCount = points.Count;
         sunArcLine.SetPositions(points.ToArray());

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 using System.Collections.Generic;
 using GameDevWare.Serialization;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
@@ -14,11 +15,12 @@ public class NetworkController : MonoBehaviour
     public Text connectionStatusText;
 
     public GameObject avatar;
+    private Player localPlayer;
     private GameObject localPlayerAvatar;
     // todo: set up 4-digit pins for a collab room
     public string roomName = "ceasar";
 
-    protected ColyseusClient client;
+    protected ColyseusClient colyseusClient;
 
     protected IndexedDictionary<Player, GameObject> players = new IndexedDictionary<Player, GameObject>();
 
@@ -27,14 +29,41 @@ public class NetworkController : MonoBehaviour
     private string localPlayerName = "";
 
     private float lastUpdate;
-    // Use this for initialization
+
+    public bool autoConnect = false;
+    public List<string> scenesWithAvatars;
+
+    // Need this so the network UI persists across scenes
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     void Start()
     {
-
-        client = GetComponent<ColyseusClient>();
+        colyseusClient = GetComponent<ColyseusClient>();
         /* Demo UI */
         connectButton.onClick.AddListener(ConnectToServer);
         leaveButton.onClick.AddListener(Disconnect);
+
+        if (autoConnect)
+        {
+            ConnectToServer();
+        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        if (scenesWithAvatars.Contains(scene.name))
+        {
+            OnPlayerAdd(localPlayer, true);
+            foreach (Player p in players.Keys)
+            {
+                OnPlayerAdd(p, false);
+            }
+        }
     }
 
     private void choosePlayerName()
@@ -55,7 +84,7 @@ public class NetworkController : MonoBehaviour
          * Get Colyseus endpoint from InputField
          *  for localhost use ws://localhost:2567/        
          */
-        if (client == null || string.IsNullOrEmpty(localPlayerName))
+        if (!colyseusClient.IsConnected)
         {
             if (string.IsNullOrEmpty(localPlayerName))
                 choosePlayerName();
@@ -68,13 +97,12 @@ public class NetworkController : MonoBehaviour
 #endif
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
-            Debug.Log("Connecting to " + endpoint);
-            client.ConnectToServer(endpoint, localPlayerName);
+            colyseusClient.ConnectToServer(endpoint, localPlayerName);
         }
     }
     void Disconnect()
     {
-        client.Disconnect();
+        colyseusClient.Disconnect();
 
         // Destroy player game objects
         foreach (KeyValuePair<Player, GameObject> entry in players)
@@ -86,13 +114,12 @@ public class NetworkController : MonoBehaviour
         connectionStatusText.text = "Disconnected";
 
         if (localPlayerAvatar) Destroy(localPlayerAvatar);
-        localPlayerName = "";
-        debugMessages.text = client.GetClientList();
+        debugMessages.text = "";
     }
 
     void SendNetworkMessage()
     {
-        client.SendNetworkMessage("message");
+        colyseusClient.SendNetworkMessage("message");
     }
 
     void OnMessage(string message)
@@ -107,6 +134,7 @@ public class NetworkController : MonoBehaviour
         Vector3 pos = new Vector3(player.x, player.y, 0);
         if (isLocal)
         {
+            localPlayer = player;
             localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
             localPlayerAvatar.name = "localPlayer_" + player.username;
             connectionStatusText.text = "Connected as " + player.username;
@@ -118,9 +146,16 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             // add "player" to map of players
-            players.Add(player, remotePlayerAvatar);
+            if (!players.ContainsKey(player))
+            {
+                players.Add(player, remotePlayerAvatar);
+            }
+            else
+            {
+                players[player] = remotePlayerAvatar;
+            }
         }
-        debugMessages.text = client.GetClientList();
+        debugMessages.text = colyseusClient.GetClientList();
     }
 
     public void OnPlayerRemove(Player player)
@@ -130,7 +165,7 @@ public class NetworkController : MonoBehaviour
         Destroy(remotePlayerAvatar);
 
         players.Remove(player);
-        debugMessages.text = client.GetClientList();
+        debugMessages.text = colyseusClient.GetClientList();
     }
 
 

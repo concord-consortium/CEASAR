@@ -26,6 +26,11 @@ public class ColyseusClient : MonoBehaviour
     private string localPlayerName = "";
 
     private float lastUpdate;
+    private bool connecting = false;
+    public bool IsConnected
+    {
+        get { return client != null; }
+    }
     // Use this for initialization
     IEnumerator Start()
     {
@@ -63,8 +68,9 @@ public class ColyseusClient : MonoBehaviour
 
     public void ConnectToServer(string serverEndpoint, string username)
     {
-        if (client == null || string.IsNullOrEmpty(localPlayerName))
+        if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
+            connecting = true;
             Debug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
@@ -185,6 +191,8 @@ public class ColyseusClient : MonoBehaviour
         players.Clear();
         // closing client connection
         client.Close();
+        connecting = false;
+        client = null;
     }
 
     void GetAvailableRooms()
