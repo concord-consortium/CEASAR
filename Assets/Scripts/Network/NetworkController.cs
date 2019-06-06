@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-
+using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
@@ -8,7 +9,6 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
 {
-    public System.Random rng = new System.Random();
     // UI Buttons are attached through Unity Inspector
     public Button connectButton, leaveButton, clientListButton;
     public InputField m_EndpointField;
@@ -66,18 +66,6 @@ public class NetworkController : MonoBehaviour
         }
     }
 
-    private void choosePlayerName()
-    {
-        TextAsset colorList = Resources.Load("colors") as TextAsset;
-        TextAsset animalList = Resources.Load("animals") as TextAsset;
-        string[] colors = colorList.text.Split('\n');
-        string[] animals = animalList.text.Split('\n');
-
-        localPlayerName = colors[rng.Next(colors.Length - 1)] + animals[rng.Next(animals.Length - 1)] + rng.Next(999);
-        Debug.Log(localPlayerName);
-
-    }
-
     void ConnectToServer()
     {
         /*
@@ -87,7 +75,11 @@ public class NetworkController : MonoBehaviour
         if (!colyseusClient.IsConnected)
         {
             if (string.IsNullOrEmpty(localPlayerName))
-                choosePlayerName();
+            {
+                SimulationManager manager = SimulationManager.GetInstance();
+                localPlayerName = manager.GenerateUsername();
+                Debug.Log(localPlayerName);
+            }
             string _localEndpoint = "ws://localhost:2567/";
             string _remoteEndpoint = "wss://calm-meadow-14344.herokuapp.com";
 #if UNITY_EDITOR
@@ -142,7 +134,8 @@ public class NetworkController : MonoBehaviour
         else
         {
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+            Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
+            //Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             // add "player" to map of players

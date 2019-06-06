@@ -14,6 +14,22 @@ public class SimulationManagerComponent : MonoBehaviour
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
+
+        TextAsset colorList = Resources.Load("colors") as TextAsset;
+        TextAsset animalList = Resources.Load("animals") as TextAsset;
+        string[] colorsFull = colorList.text.Split('\n');
+        List<string> colors = new List<string>();
+        List<Color> colorValues = new List<Color>();
+        foreach (string c in colorsFull)
+        {
+            colors.Add(c.Split(':')[0]);
+            Color color;
+            ColorUtility.TryParseHtmlString(c.Split(':')[1], out color);
+            colorValues.Add(color);
+        }
+        manager.ColorNames = colors;
+        manager.ColorValues = colorValues;
+        manager.AnimalNames = animalList.text.Split('\n');
     }
     private void Start()
     {
