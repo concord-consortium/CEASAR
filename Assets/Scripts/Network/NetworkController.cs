@@ -128,6 +128,8 @@ public class NetworkController : MonoBehaviour
         {
             localPlayer = player;
             localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
+            localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = "localPlayer_" + player.username;
             connectionStatusText.text = "Connected as " + player.username;
         }
@@ -135,7 +137,6 @@ public class NetworkController : MonoBehaviour
         {
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
             Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
-            //Color playerColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             // add "player" to map of players
