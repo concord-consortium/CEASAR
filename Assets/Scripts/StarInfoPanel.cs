@@ -2,26 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text;
 
 public class StarInfoPanel : MonoBehaviour
 {
-    public TextMeshProUGUI starXByerFlamsteedText;
-    public TextMeshProUGUI starMagText;
-    public TextMeshProUGUI starConstellationText;
+    public TextMeshProUGUI starInfoText;
 
     private bool isEnabled = true;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public void setEnabled(bool enabled)
     {
@@ -36,14 +23,19 @@ public class StarInfoPanel : MonoBehaviour
         }
     }
 
-    public void UpdateStarInfoPanel(string XByerFlamsteed, string magnitude, string constellation)
+    public void UpdateStarInfoPanel(Star starData)
     {
         if (isEnabled && !gameObject.activeSelf)
         {
             gameObject.SetActive(true);
         }
-        starXByerFlamsteedText.text = "ID: " + XByerFlamsteed;
-        starMagText.text = "Mag: " + magnitude;
-        starConstellationText.text = "Const: " + constellation;
+        StringBuilder description = new StringBuilder();
+        description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
+        description.Append("Hipparcos #: ").AppendLine(starData.Hipparcos.ToString());
+        description.Append("Bayer Des: ").AppendLine(starData.BayerDesignation.Length > 0 ? starData.BayerDesignation : "N/A");
+        description.Append("Flamsteed Des: ").AppendLine(starData.FlamsteedDesignation.Length > 0 ? starData.FlamsteedDesignation : "N/A");
+        description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
+        description.Append("m: ").AppendLine(starData.Mag.ToString());
+        starInfoText.text = description.ToString();
     }
 }

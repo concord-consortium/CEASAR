@@ -9,12 +9,8 @@ public class StarComponent : MonoBehaviour
 
     private GameObject dataControllerObj;
     private DataController dataController;
-
-    private Vector3 initialScale;
-
-    private bool pulse = false;
-    private float pulseSpeed = 5f;
-    private float maxScaleFactor = 2f;
+    private GameObject mainUIControllerObj;
+    private MainUIController mainUIController;
 
     void Start()
     {
@@ -23,46 +19,21 @@ public class StarComponent : MonoBehaviour
         {
             dataController = dataControllerObj.GetComponent<DataController>();
         }
-        initialScale = transform.localScale;
-    }
-
-    void Update()
-    {
-        if (pulse)
+        mainUIControllerObj = GameObject.Find("MainUI");
+        if (mainUIControllerObj)
         {
-            float currScale = transform.localScale.x;
-            if (currScale > initialScale.x * maxScaleFactor || currScale < initialScale.x)
-            {
-                pulseSpeed *= -1f;
-            }
-            currScale += pulseSpeed * Time.deltaTime;
-            transform.localScale = new Vector3(currScale, currScale, currScale);
+            mainUIController = mainUIControllerObj.GetComponent<MainUIController>();
         }
     }
 
     void OnMouseDown()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
+        if (!EventSystem.current.IsPointerOverGameObject()
+            && mainUIController && mainUIController.starInfoPanel
+            && dataController)
         {
             dataController.ChangeConstellationHighlight(starData.Constellation);
-            Debug.Log("(BD=" + starData.BayerDesignation + "),(FD=" + starData.FlamsteedDesignation + "),(ConstShort=" + starData.Constellation + "),(ConstFull=" + starData.ConstellationFullName + ")");
-        }
-    }
-    void OnMouseOver()
-    {
-        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
-        {
-            dataController.ChangeStarSelection(this.gameObject);
-            pulse = true;
-        }
-    }
-
-    void OnMouseExit()
-    {
-        if (!EventSystem.current.IsPointerOverGameObject() && dataController && dataController.starInfoPanel)
-        {
-            pulse = false;
-            transform.localScale = initialScale;
+            mainUIController.ChangeStarSelection(this.gameObject);
         }
     }
 

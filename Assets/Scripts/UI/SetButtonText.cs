@@ -8,7 +8,7 @@ public class SetButtonText : MonoBehaviour
     public TextMeshProUGUI buttonText;
     public string initialText = "";
     public string changeText = "";
-    int counter = 0;
+
     // Start is called before the first frame update
     void Start()
     {

@@ -6,18 +6,35 @@ using TMPro;
 
 public class MainUIController : MonoBehaviour
 {
+    // main control panel where we slot tools
+    public GameObject controlPanel;
+
+    // date and time controls
     private int userYear = 2019;
     private int userHour = 0;
     private int userMin = 0;
     private int userDay = 1;
     public TextMeshProUGUI currentDateTimeText;
 
+    // star selection controls
+    public GameObject starInfoPanel;
+
     public DataController dataController;
+
+    private Vector2 initialPosition;
+    private Vector2 hiddenPosition;
+    private Vector2 targetPosition;
+    private bool movingControlPanel = false;
+    private float speed = 750.0f;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
+        initialPosition = controlPanelRect.anchoredPosition;
+        float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
+        hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
+        targetPosition = initialPosition;
     }
 
     // Update is called once per frame
@@ -27,6 +44,32 @@ public class MainUIController : MonoBehaviour
         {
             currentDateTimeText.text = dataController.CurrentSimUniversalTime().ToString() + " (UTC)";
         }
+
+        // Move our position a step closer to the target.
+        if (movingControlPanel)
+        {
+            float step =  speed * Time.deltaTime; // calculate distance to move
+            Vector2 currentPos = controlPanel.GetComponent<RectTransform>().anchoredPosition;
+            Vector2 newPos = Vector3.MoveTowards(currentPos, targetPosition, step);
+            controlPanel.GetComponent<RectTransform>().anchoredPosition = newPos;
+            if (Vector2.Distance(newPos, targetPosition) < 0.001f)
+            {
+                movingControlPanel = false;
+            }
+        }
+    }
+
+    public void ToggleShowControlPanel()
+    {
+        if (targetPosition == initialPosition)
+        {
+            targetPosition = hiddenPosition;
+        }
+        else
+        {
+            targetPosition = initialPosition;
+        }
+        movingControlPanel = true;
     }
 
     public void ChangeYear(string newYear)
@@ -55,5 +98,15 @@ public class MainUIController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
         dataController.SetUserStartDateTime(calculatedStartDateTime);
+    }
+
+    public void ChangeStarSelection(GameObject selectedStar)
+    {
+        if (starInfoPanel)
+        {
+            StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
+            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData);
+            starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
+        }
     }
 }
