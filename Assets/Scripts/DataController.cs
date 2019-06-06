@@ -62,8 +62,6 @@ public class DataController : MonoBehaviour
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     private float markerLineWidth = .035f;
 
-    public GameObject starInfoPanel;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -326,18 +324,6 @@ public class DataController : MonoBehaviour
             }
         }
         constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
-    }
-
-    public void ChangeStarSelection(GameObject selectedStar)
-    {
-        if (starInfoPanel)
-        {
-            StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData.XBayerFlamsteed,
-                                                                            starComponent.starData.Mag.ToString(),
-                                                                            starComponent.starData.Constellation);
-            starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
-        }
     }
 
     public void SetMagnitudeThreshold(float newVal)
