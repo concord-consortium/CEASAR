@@ -25,7 +25,8 @@ public class SimulationManager
     {
         int colorIndex = rng.Next(ColorNames.Count - 1);
         int animalIndex = rng.Next(AnimalNames.Length - 1);
-        return ColorNames[colorIndex].FirstCharToUpper() + AnimalNames[animalIndex].FirstCharToUpper() + rng.Next(999);
+        string randomNumber = rng.Next(999).ToString();
+        return ColorNames[colorIndex].FirstCharToUpper() + AnimalNames[animalIndex].FirstCharToUpper() + randomNumber;
     }
 
     // We can find out the color value from the username

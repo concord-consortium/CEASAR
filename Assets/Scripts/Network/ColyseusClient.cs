@@ -226,7 +226,6 @@ public class ColyseusClient : MonoBehaviour
     {
         Debug.Log("closing connection");
         room.Leave(false);
-
     }
 
     void GetAvailableRooms()

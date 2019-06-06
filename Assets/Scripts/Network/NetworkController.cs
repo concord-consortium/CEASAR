@@ -195,4 +195,11 @@ public class NetworkController : MonoBehaviour
             localPlayerAvatar.transform.Translate(new Vector3(player.x, player.y, 0));
         }
     }
+
+    // called when the game is terminated
+    void OnDisable()
+    {
+        Debug.Log("OnDisable");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 }
