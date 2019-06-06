@@ -13,6 +13,7 @@ public class NetworkController : MonoBehaviour
     public Button connectButton, leaveButton, clientListButton;
     public InputField m_EndpointField;
     public Text connectionStatusText;
+    private string _connectionStatusMessage;
 
     public GameObject avatar;
     private Player localPlayer;
@@ -35,7 +36,20 @@ public class NetworkController : MonoBehaviour
 
     public string ServerStatusMessage
     {
-        set { if (connectionStatusText) connectionStatusText.text = value; }
+        set
+        {
+            _connectionStatusMessage = value;
+            if (connectionStatusText) connectionStatusText.text = value;
+        }
+    }
+    public void NetworkPanelToggled(bool active)
+    {
+        if (active)
+        {
+            // refresh connection status
+            ServerStatusMessage = _connectionStatusMessage;
+            debugMessages.text = colyseusClient.GetClientList();
+        }
     }
 
     // Need this so the network UI persists across scenes
