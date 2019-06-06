@@ -22,7 +22,7 @@ public class ColyseusClient : MonoBehaviour
     private NetworkController networkController;
 
     protected List<Player> players = new List<Player>();
-
+    private Player localPlayer;
     private string localPlayerName = "";
 
     private float lastUpdate;
@@ -31,6 +31,8 @@ public class ColyseusClient : MonoBehaviour
     {
         get { return client != null; }
     }
+    private string endpoint;
+    private float heartbeatInterval = 5;
     // Use this for initialization
     IEnumerator Start()
     {
@@ -45,25 +47,25 @@ public class ColyseusClient : MonoBehaviour
             yield return 0;
         }
     }
-    //private void Update()
-    //{
-    //    if (localPlayerAvatar != null && client.Id != null)
-    //    {
-    //        lastUpdate += Time.deltaTime;
-    //        if (lastUpdate > 0.2)
-    //        {
-    //            // send update
-    //            var pos = 0.01;
-    //            if (localPlayerAvatar.transform.position.x > 5) pos *= -1;
-    //            room.Send(new Dictionary<string, object>()
-    //                {
-    //                    {"x", pos }
-    //                }
-    //            );
-    //            lastUpdate = 0;
-    //        }
-    //    }
-    //}
+    private void Update()
+    {
+        if (localPlayer != null && client.Id != null)
+        {
+            lastUpdate += Time.deltaTime;
+            if (lastUpdate > heartbeatInterval)
+            {
+                // send update
+                room.Send(new Dictionary<string, object>()
+                    {
+                        {"posX", localPlayer.x },
+                        {"posY", localPlayer.y },
+                        {"message", "heartbeat"}
+                    }
+                );
+                lastUpdate = 0;
+            }
+        }
+    }
 
 
     public void ConnectToServer(string serverEndpoint, string username)
@@ -75,7 +77,7 @@ public class ColyseusClient : MonoBehaviour
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
             // Connect to Colyeus Server
-
+            endpoint = serverEndpoint;
             client = new Client(serverEndpoint);
 
             //await client.Auth.Login();
@@ -137,6 +139,9 @@ public class ColyseusClient : MonoBehaviour
         room.OnError += (sender, e) =>
         {
             Debug.LogError(e.Message);
+            string oldName = localPlayerName;
+            LeaveRoom();
+            ConnectToServer(endpoint, oldName);
         };
         room.OnJoin += (sender, e) =>
         {
@@ -247,6 +252,10 @@ public class ColyseusClient : MonoBehaviour
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
     {
         if (!players.Contains(item.Value)) players.Add(item.Value);
+        if (item.Key == room.SessionId)
+        {
+            localPlayer = item.Value;
+        }
         networkController.OnPlayerAdd(item.Value, item.Key == room.SessionId);
     }
 
