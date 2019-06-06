@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text;
 
 public class StarInfoPanel : MonoBehaviour
 {
@@ -28,25 +29,13 @@ public class StarInfoPanel : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
-        string description = "";
-        description += "Name: ";
-        description += starData.ProperName.Length > 0 ? starData.ProperName : "N/A";
-        description += "\n";
-        description += "Hipparcos #: ";
-        description += starData.Hipparcos.ToString();
-        description += "\n";
-        description += "Bayer Des.: ";
-        description += starData.BayerDesignation.Length > 0 ? starData.BayerDesignation : "N/A";
-        description += "\n";
-        description += "Flamsteed Des.: ";
-        description += starData.FlamsteedDesignation.Length > 0 ? starData.FlamsteedDesignation : "N/A";;
-        description += "\n";
-        description += "Constellation: ";
-        description += starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A";
-        description += "\n";
-        description += "m: ";
-        description += starData.Mag.ToString();
-        description += "\n";
-        starInfoText.text = description;
+        StringBuilder description = new StringBuilder();
+        description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
+        description.Append("Hipparcos #: ").AppendLine(starData.Hipparcos.ToString());
+        description.Append("Bayer Des: ").AppendLine(starData.BayerDesignation.Length > 0 ? starData.BayerDesignation : "N/A");
+        description.Append("Flamsteed Des: ").AppendLine(starData.FlamsteedDesignation.Length > 0 ? starData.FlamsteedDesignation : "N/A");
+        description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
+        description.Append("m: ").AppendLine(starData.Mag.ToString());
+        starInfoText.text = description.ToString();
     }
 }
