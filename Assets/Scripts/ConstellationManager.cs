@@ -11,9 +11,9 @@ public class ConstellationManager : MonoBehaviour
         constellations.Add(constellation);
     }
 
-	public Constellation GetConstellation(string cname)
+	public Constellation GetConstellation(string cFullName)
 	{
-		int index = constellations.FindIndex(el => el.constellationNameAbbr == cname);
+		int index = constellations.FindIndex(el => el.constellationNameAbbr == cFullName);
         if (index < 0)
         {
             return constellations[index];
@@ -24,12 +24,12 @@ public class ConstellationManager : MonoBehaviour
         }
 	}
 
-	public void HighlightSingleConstellation(string cname)
+	public void HighlightSingleConstellation(string cFullName)
 	{
         foreach (Constellation constellation in constellations)
         {
-            constellation.Highlight(constellation.constellationNameAbbr == cname);
-            constellation.ShowConstellationLines(constellation.constellationNameAbbr == cname);
+            constellation.Highlight(constellation.constellationNameFull == cFullName);
+            constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName);
         }
 	}
 
@@ -42,11 +42,11 @@ public class ConstellationManager : MonoBehaviour
         }
 	}
 
-	public void ShowSingleConstellation(string cname)
+	public void ShowSingleConstellation(string cFullName)
 	{
         foreach (Constellation constellation in constellations)
         {
-            constellation.ShowConstellationLines(constellation.constellationNameAbbr == cname);
+            constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName);
         }
 	}
 

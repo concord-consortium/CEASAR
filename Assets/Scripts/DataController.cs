@@ -72,6 +72,12 @@ public class DataController : MonoBehaviour
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     private float markerLineWidth = .035f;
 
+    private class ConstellationNamePair
+    {
+        public string shortName;
+        public string fullName;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -117,37 +123,39 @@ public class DataController : MonoBehaviour
             // get magnitudes and normalize between 1 and 5 to scale stars
             var minMag = allStars.Min(s => s.Mag);
             var maxMag = allStars.Max(s => s.Mag);
-            var constellationNames = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
+            var constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
+            var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair{shortName = s.First().Constellation, fullName = s.First().ConstellationFullName}));
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
-            constellationNames.Sort();
+            constellationFullNames.Sort();
             if (constellationDropdown)
             {
-                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellationNames, "all");
+                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellationFullNames, "all");
             }
-            foreach (string constellationName in constellationNames)
+            foreach (ConstellationNamePair constellationName in constellationNames)
             {
-                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName).ToList();
+                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName.shortName).ToList();
 
                 GameObject constellationContainer = Instantiate(constellationPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                constellationContainer.name = constellationName.Trim() == "" ? "no-const" : constellationName;
+                constellationContainer.name = constellationName.shortName.Trim() == "" ? "no-const" : constellationName.shortName;
                 constellationContainer.transform.parent = allConstellations.transform;
                 Constellation constellation = constellationContainer.GetComponent<Constellation>();
-                constellation.constellationNameAbbr = constellationName;
+                constellation.constellationNameAbbr = constellationName.shortName;
+                constellation.constellationNameFull = constellationName.fullName;
                 foreach (ConstellationConnection conn in allConstellationConnections)
                 {
-                    if (conn.constellationNameAbbr == constellationName) constellation.AddConstellationConnection(conn);
+                    if (conn.constellationNameAbbr == constellationName.shortName) constellation.AddConstellationConnection(conn);
                 }
 
                 Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-                if (constellationName.Trim() == "") constellationColor = unnamedColor;
+                if (constellationName.shortName.Trim() == "") constellationColor = unnamedColor;
 
                 foreach (Star dataStar in starsInConstellation)
                 {
                     GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
-                    starObject.name = constellationName.Trim() == "" ? "no-const" : dataStar.Constellation;
+                    starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
                     {
                         starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);

@@ -70,8 +70,8 @@ public class Constellation : MonoBehaviour
                     }
                     else
                     {
-                        if (startIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.startStarHipId);
-                        if (endIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.endStarHipId);
+                        // if (startIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.startStarHipId);
+                        // if (endIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.endStarHipId);
                     }
                 }
             }
