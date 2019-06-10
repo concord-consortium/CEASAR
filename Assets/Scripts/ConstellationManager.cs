@@ -26,7 +26,7 @@ public class ConstellationManager : MonoBehaviour
 
 	public void HighlightSingleConstellation(string cname)
 	{
-        foreach (var constellation in constellations)
+        foreach (Constellation constellation in constellations)
         {
             constellation.Highlight(constellation.constellationNameAbbr == cname);
             constellation.ShowConstellationLines(constellation.constellationNameAbbr == cname);
@@ -35,7 +35,7 @@ public class ConstellationManager : MonoBehaviour
 
     public void HighlightAllConstellations(bool highlight)
 	{
-        foreach (var constellation in constellations)
+        foreach (Constellation constellation in constellations)
         {
             constellation.Highlight(highlight);
             constellation.ShowConstellationLines(highlight);
@@ -44,7 +44,7 @@ public class ConstellationManager : MonoBehaviour
 
 	public void ShowSingleConstellation(string cname)
 	{
-        foreach (var constellation in constellations)
+        foreach (Constellation constellation in constellations)
         {
             constellation.ShowConstellationLines(constellation.constellationNameAbbr == cname);
         }
@@ -52,7 +52,7 @@ public class ConstellationManager : MonoBehaviour
 
     public void ShowAllConstellations()
 	{
-        foreach (var constellation in constellations)
+        foreach (Constellation constellation in constellations)
         {
             constellation.ShowConstellationLines(true);
         }
