@@ -7,33 +7,34 @@ public class StarComponent : MonoBehaviour
     public Color starColor;
     public Color constellationColor;
 
-    private GameObject dataControllerObj;
-    private DataController dataController;
     private GameObject mainUIControllerObj;
     private MainUIController mainUIController;
+    private GameObject constManagerObj;
+    private ConstellationManager constManager;
 
     void Start()
     {
-        dataControllerObj = GameObject.Find("DataController");
-        if (dataControllerObj)
-        {
-            dataController = dataControllerObj.GetComponent<DataController>();
-        }
         mainUIControllerObj = GameObject.Find("MainUI");
         if (mainUIControllerObj)
         {
             mainUIController = mainUIControllerObj.GetComponent<MainUIController>();
+        }
+        constManagerObj = GameObject.Find("Constellations");
+        if (constManagerObj)
+        {
+            constManager = constManagerObj.GetComponent<ConstellationManager>();
         }
     }
 
     void OnMouseDown()
     {
         if (!EventSystem.current.IsPointerOverGameObject()
-            && mainUIController && mainUIController.starInfoPanel
-            && dataController)
+            && mainUIController && mainUIController.starInfoPanel)
         {
-            dataController.ChangeConstellationHighlight(starData.Constellation);
+            //dataController.ChangeConstellationHighlight(starData.Constellation);
+            constManager.HighlightSingleConstellation(starData.Constellation);
             mainUIController.ChangeStarSelection(this.gameObject);
+            mainUIController.ChangeConstellationHighlight(starData.Constellation);
         }
     }
 
