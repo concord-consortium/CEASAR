@@ -26,6 +26,7 @@ public class MainUIController : MonoBehaviour
     private Vector2 targetPosition;
     private bool movingControlPanel = false;
     private float speed = 750.0f;
+    public GameObject constellationDropdown;
 
     // Start is called before the first frame update
     void Start()
@@ -109,4 +110,13 @@ public class MainUIController : MonoBehaviour
             starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
         }
     }
+
+    public void ChangeConstellationHighlight(string highlightConstellation)
+    {
+        if (constellationDropdown)
+        {
+            constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
+        }
+    }
+
 }
