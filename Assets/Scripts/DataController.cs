@@ -79,6 +79,7 @@ public class DataController : MonoBehaviour
         {
             allConstellations = new GameObject();
             allConstellations.name = "Constellations";
+            allConstellations.AddComponent<ConstellationManager>();
         }
         if (starData != null)
         {
