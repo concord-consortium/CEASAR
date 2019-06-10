@@ -69,14 +69,15 @@ public static class DataImport
             if (!line.StartsWith("Constellation"))
             {
                 string[] values = line.Split('\t');
-                if (values.Length > 3)
+                if (values.Length > 4)
                 {
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (i > 1 && (i - 1) % 2 == 0)
+                        if (i > 2 && i % 2 == 0)
                         {
                             ConstellationConnection connection = new ConstellationConnection();
                             connection.constellationNameAbbr = values[0];
+                            connection.constellationNameFull = values[1];
                             connection.startStarHipId = int.Parse(values[i - 1]);
                             connection.endStarHipId = int.Parse(values[i]);
                             connections.Add(connection);
