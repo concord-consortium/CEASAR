@@ -2418,6 +2418,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
+  constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
+    type: 3}
   radius: 100
   magnitudeScale: 0.5
   magnitudeThreshold: 4.5
@@ -2426,6 +2428,7 @@ MonoBehaviour:
     type: 3}
   markerPrefab: {fileID: 0}
   allConstellations: {fileID: 0}
+  constellationPrefab: {fileID: 0}
   allMarkers: {fileID: 0}
   markerMaterial: {fileID: 0}
   colorByConstellation: 1
@@ -5000,6 +5003,7 @@ MonoBehaviour:
   currentDateTimeText: {fileID: 1258505138}
   starInfoPanel: {fileID: 0}
   dataController: {fileID: 632034533}
+  constellationDropdown: {fileID: 0}
 --- !u!114 &1400361425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7975,6 +7979,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6812761768960165590, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.39215687
+      objectReference: {fileID: 0}
     - target: {fileID: 1022071030, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_textInfo.characterCount
       value: 0
@@ -7994,11 +8003,6 @@ PrefabInstance:
     - target: {fileID: 1022071030, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_textInfo.pageCount
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6812761768960165590, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0.39215687
       objectReference: {fileID: 0}
     - target: {fileID: 377002813272700814, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
         type: 3}

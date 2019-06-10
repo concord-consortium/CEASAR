@@ -875,7 +875,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7402039d3243e045a67690577879a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataController: {fileID: 1124937507}
   starInfoText: {fileID: 1934563259}
 --- !u!114 &212893351
 MonoBehaviour:
@@ -1679,6 +1678,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 300780004}
+  - component: {fileID: 300780003}
   m_Layer: 0
   m_Name: Constellations
   m_TagString: Untagged
@@ -1686,6 +1686,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &300780003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300780002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cce9446f210e7814da78a11da86cc140, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &300780004
 Transform:
   m_ObjectHideFlags: 0
@@ -4495,6 +4507,7 @@ MonoBehaviour:
   currentDateTimeText: {fileID: 0}
   starInfoPanel: {fileID: 212893348}
   dataController: {fileID: 1124937507}
+  constellationDropdown: {fileID: 2053479767}
 --- !u!1 &834455921
 GameObject:
   m_ObjectHideFlags: 0
@@ -6027,6 +6040,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
+  constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
+    type: 3}
   radius: 75
   magnitudeScale: 0.3
   magnitudeThreshold: 4.5
@@ -6036,6 +6051,7 @@ MonoBehaviour:
   markerPrefab: {fileID: 6573323492524558324, guid: ad05b391ad6bf294ea8e7e587f0713ca,
     type: 3}
   allConstellations: {fileID: 300780002}
+  constellationPrefab: {fileID: 0}
   allMarkers: {fileID: 499112420}
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   colorByConstellation: 1
@@ -6044,7 +6060,6 @@ MonoBehaviour:
   SelectedCity: 
   cityDropdown: {fileID: 0}
   constellationDropdown: {fileID: 2053479767}
-  starInfoPanel: {fileID: 0}
 --- !u!114 &1124937508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10978,7 +10993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8db177fa29efa469b76c3774b31f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataController: {fileID: 1124937504}
+  constellationManager: {fileID: 300780002}
 --- !u!114 &2053479770
 MonoBehaviour:
   m_ObjectHideFlags: 0
