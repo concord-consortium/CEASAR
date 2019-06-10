@@ -186,6 +186,7 @@ public class DataController : MonoBehaviour
                 }
                 allConstellations.GetComponent<ConstellationManager>().AddConstellation(constellation);
             }
+            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationManager>().HighlightAllConstellations(true);
         }
 
         if (markerPrefab != null)
