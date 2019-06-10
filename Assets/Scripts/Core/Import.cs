@@ -66,18 +66,18 @@ public static class DataImport
         List<ConstellationConnection> connections = new List<ConstellationConnection>();
         foreach (var line in splitToLines(sourceData))
         {
-            if (!line.StartsWith("Constellation"))
+            if (!line.StartsWith("ConstellationID"))
             {
                 string[] values = line.Split('\t');
-                if (values.Length > 4)
+                if (values.Length >= 6)
                 {
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (i > 2 && i % 2 == 0)
+                        if (i > 4 && (i - 1) % 2 == 0 && (values[0])[0] != '.')
                         {
                             ConstellationConnection connection = new ConstellationConnection();
-                            connection.constellationNameAbbr = values[0];
-                            connection.constellationNameFull = values[1];
+                            connection.constellationNameAbbr = values[1];
+                            connection.constellationNameFull = values[2];
                             connection.startStarHipId = int.Parse(values[i - 1]);
                             connection.endStarHipId = int.Parse(values[i]);
                             connections.Add(connection);
