@@ -653,7 +653,8 @@ MonoBehaviour:
     type: 3}
   markerPrefab: {fileID: 0}
   allConstellations: {fileID: 0}
-  constellationPrefab: {fileID: 0}
+  constellationPrefab: {fileID: 309918465546778449, guid: 5f8788d5211448f4e99b39b1c46445b9,
+    type: 3}
   allMarkers: {fileID: 0}
   markerMaterial: {fileID: 0}
   colorByConstellation: 0
