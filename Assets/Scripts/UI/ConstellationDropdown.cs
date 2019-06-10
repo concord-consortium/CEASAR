@@ -6,7 +6,7 @@ using TMPro;
 
 public class ConstellationDropdown : MonoBehaviour
 {
-    public GameObject dataController;
+    public GameObject constellationManager;
     TMP_Dropdown dropdown;
 
     void Start()
@@ -20,9 +20,20 @@ public class ConstellationDropdown : MonoBehaviour
 
     void DropdownValueChanged(TMP_Dropdown change)
     {
-        if (dataController)
+        if (constellationManager)
         {
-            dataController.GetComponent<DataController>().ChangeConstellationHighlight(change.captionText.text);
+            if (change.captionText.text == "all")
+            {
+                constellationManager.GetComponent<ConstellationManager>().HighlightAllConstellations(true);
+            }
+            else if (change.captionText.text == "None")
+            {
+                constellationManager.GetComponent<ConstellationManager>().HighlightAllConstellations(false);
+            }
+            else
+            {
+                constellationManager.GetComponent<ConstellationManager>().HighlightSingleConstellation(change.captionText.text);
+            }
         }
     }
 
