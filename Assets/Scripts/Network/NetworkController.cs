@@ -11,7 +11,8 @@ using System.Text;
 public class NetworkController : MonoBehaviour
 {
     // UI Buttons are attached through Unity Inspector
-    public Button connectButton, leaveButton, clientListButton;
+    public Button connectButton;
+    public TMPro.TMP_Text connectButtonText;
     public InputField m_EndpointField;
     public Text connectionStatusText;
     private string _connectionStatusMessage;
@@ -37,12 +38,19 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
+    public bool IsConnected
+    {
+        get { return colyseusClient != null && colyseusClient.IsConnected; }
+    }
+
     public string ServerStatusMessage
     {
         set
         {
             _connectionStatusMessage = value;
             if (connectionStatusText) connectionStatusText.text = value;
+            if (connectButtonText && IsConnected) connectButtonText.text = "Disconnect";
+            if (connectButtonText && !IsConnected) connectButtonText.text = "Connect";
         }
     }
     public void NetworkPanelToggled(bool active)
@@ -66,7 +74,6 @@ public class NetworkController : MonoBehaviour
         colyseusClient = GetComponent<ColyseusClient>();
         /* Demo UI */
         connectButton.onClick.AddListener(ConnectToServer);
-        leaveButton.onClick.AddListener(Disconnect);
 
         if (autoConnect)
         {
@@ -94,7 +101,7 @@ public class NetworkController : MonoBehaviour
          * Get Colyseus endpoint from InputField
          *  for localhost use ws://localhost:2567/        
          */
-        if (!colyseusClient.IsConnected)
+        if (!IsConnected)
         {
             if (string.IsNullOrEmpty(localPlayerName))
             {
@@ -113,6 +120,11 @@ public class NetworkController : MonoBehaviour
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localPlayerName);
+        }
+        else if (IsConnected) Disconnect();
+        else
+        {
+            Debug.Log("Already disconnected");
         }
     }
     void Disconnect()

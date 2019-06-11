@@ -29,7 +29,7 @@ public class ColyseusClient : MonoBehaviour
     private bool connecting = false;
     public bool IsConnected
     {
-        get { return client != null; }
+        get { return client != null && room != null; }
     }
     private string endpoint;
     private float heartbeatInterval = 10;
@@ -37,6 +37,8 @@ public class ColyseusClient : MonoBehaviour
     private int retries = 0;
     private int maxRetries = 3;
     private float retryInterval = 1.0f;
+
+    private IEnumerator clientConnectionCoroutine;
 
     private void Update()
     {
@@ -75,7 +77,16 @@ public class ColyseusClient : MonoBehaviour
         networkController = GetComponent<NetworkController>();
         if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
-            StartCoroutine(ListenToServer());
+            if (clientConnectionCoroutine == null) clientConnectionCoroutine = ListenToServer();
+            try
+            {
+                StopCoroutine(clientConnectionCoroutine);
+            }
+            finally
+            {
+                StartCoroutine(clientConnectionCoroutine);
+            }
+
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
             Debug.Log("Connecting to " + serverEndpoint);
@@ -124,14 +135,31 @@ public class ColyseusClient : MonoBehaviour
     }
     public void Disconnect()
     {
-        LeaveRoom();
-        localPlayerName = "";
-        players.Clear();
-        // closing client connection
-        client.Close();
-        connecting = false;
-        client = null;
-        StopCoroutine(ListenToServer());
+        if (IsConnected)
+        {
+            LeaveRoom();
+            localPlayerName = "";
+            if (players != null)
+            {
+                players.Clear();
+            }
+        }
+        if (client != null)
+        {
+            // closing client connection
+            client.Close();
+            connecting = false;
+            client = null;
+        }
+        try
+        {
+            StopCoroutine(clientConnectionCoroutine);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("Attempted to close Network connection but encountered an issue: " + e.Message);
+        }
+        networkController = GetComponent<NetworkController>();
         networkController.ServerStatusMessage = "Disconnected.";
     }
 
@@ -172,6 +200,7 @@ public class ColyseusClient : MonoBehaviour
         room.OnError += (sender, e) =>
         {
             Debug.LogError(e.Message);
+            networkController = GetComponent<NetworkController>();
             networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
             string oldName = localPlayerName;
             Disconnect();
@@ -225,7 +254,11 @@ public class ColyseusClient : MonoBehaviour
     void LeaveRoom()
     {
         Debug.Log("closing connection");
-        room.Leave(false);
+        if (room != null)
+        {
+            room.Leave(false);
+        }
+
     }
 
     void GetAvailableRooms()
@@ -244,13 +277,20 @@ public class ColyseusClient : MonoBehaviour
     }
     public string GetClientList()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine("Connected clients:");
-        foreach (Player p in players)
+        if (players != null)
         {
-            sb.AppendLine(p.username);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Connected clients:");
+            foreach (Player p in players)
+            {
+                sb.AppendLine(p.username);
+            }
+            return sb.ToString();
         }
-        return sb.ToString();
+        else
+        {
+            return "";
+        }
     }
     public void SendNetworkMessage(string message)
     {
@@ -300,39 +340,36 @@ public class ColyseusClient : MonoBehaviour
 
     public void SendMovement(NetworkTransform t)
     {
-        room.Send(new Dictionary<string, object>()
+        if (IsConnected)
+        {
+            room.Send(new Dictionary<string, object>()
                     {
                         {"transform", t },
                         {"message", "movement"}
                     }
-                );
+                    );
+        }
     }
     public void SendInteraction(Vector3 pos, Quaternion rot, Color color)
     {
-        NetworkTransform t = new NetworkTransform();
-        t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
-        Vector3 r = rot.eulerAngles;
-        t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
-        room.Send(new Dictionary<string, object>()
+        if (IsConnected)
+        {
+            NetworkTransform t = new NetworkTransform();
+            t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
+            Vector3 r = rot.eulerAngles;
+            t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
+            room.Send(new Dictionary<string, object>()
                     {
                         {"transform", t },
                         {"color", color.ToString()},
                         {"message", "interaction"}
                     }
-                );
+                    );
+        }
     }
 
     void OnApplicationQuit()
     {
-        // Make sure client will disconnect from the server
-        if (room != null)
-        {
-            room.Leave();
-        }
-
-        if (client != null)
-        {
-            client.Close();
-        }
+        Disconnect();
     }
 }
