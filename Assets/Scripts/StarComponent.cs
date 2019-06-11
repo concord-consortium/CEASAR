@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StarComponent : MonoBehaviour
+public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
 {
     public Star starData;
     public Color starColor;
@@ -9,22 +9,34 @@ public class StarComponent : MonoBehaviour
 
     private MainUIController mainUIController;
     private ConstellationsController constellationsController;
+    private Vector3 initialScale;
+    private float scaleFactor = 1.5f;
 
     void Start()
     {
         mainUIController = FindObjectOfType<MainUIController>();
         constellationsController = FindObjectOfType<ConstellationsController>();
+        initialScale = transform.localScale;
     }
 
-    void OnMouseDown()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (!EventSystem.current.IsPointerOverGameObject()
-            && mainUIController && mainUIController.starInfoPanel)
+        if (mainUIController && mainUIController.starInfoPanel)
         {
             if (constellationsController) constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
             mainUIController.ChangeStarSelection(this.gameObject);
             mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        transform.localScale = initialScale * scaleFactor;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        transform.localScale = initialScale;
     }
 
     public void SetStarColor(Color constellationColor, Color starColor)
