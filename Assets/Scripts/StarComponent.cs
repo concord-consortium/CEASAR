@@ -21,7 +21,7 @@ public class StarComponent : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject()
             && mainUIController && mainUIController.starInfoPanel)
         {
-            constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
+            if (constellationsController) constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
             mainUIController.ChangeStarSelection(this.gameObject);
             mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
         }
