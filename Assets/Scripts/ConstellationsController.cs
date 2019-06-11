@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConstellationManager : MonoBehaviour
+public class ConstellationsController : MonoBehaviour
 {
     List<Constellation> constellations = new List<Constellation>();
 

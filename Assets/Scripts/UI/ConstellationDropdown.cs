@@ -6,11 +6,12 @@ using TMPro;
 
 public class ConstellationDropdown : MonoBehaviour
 {
-    public GameObject constellationManager;
+    ConstellationsController constellationsController;
     TMP_Dropdown dropdown;
 
     void Start()
     {
+        constellationsController = FindObjectOfType<ConstellationsController>();
         dropdown = GetComponent<TMP_Dropdown>();
         //Add listener for when the value of the Dropdown changes, to take action
         dropdown.onValueChanged.AddListener(delegate {
@@ -20,19 +21,19 @@ public class ConstellationDropdown : MonoBehaviour
 
     void DropdownValueChanged(TMP_Dropdown change)
     {
-        if (constellationManager)
+        if (constellationsController)
         {
             if (change.captionText.text == "all")
             {
-                constellationManager.GetComponent<ConstellationManager>().HighlightAllConstellations(true);
+                constellationsController.HighlightAllConstellations(true);
             }
             else if (change.captionText.text == "None")
             {
-                constellationManager.GetComponent<ConstellationManager>().HighlightAllConstellations(false);
+                constellationsController.HighlightAllConstellations(false);
             }
             else
             {
-                constellationManager.GetComponent<ConstellationManager>().HighlightSingleConstellation(change.captionText.text);
+                constellationsController.HighlightSingleConstellation(change.captionText.text);
             }
         }
     }

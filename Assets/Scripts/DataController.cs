@@ -66,7 +66,6 @@ public class DataController : MonoBehaviour
     public GameObject cityDropdown;
     public GameObject constellationDropdown;
 
-    private Color unnamedColor = new Color(128f / 255f, 128f / 255f, 128f / 255f);
     private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
@@ -85,7 +84,7 @@ public class DataController : MonoBehaviour
         {
             allConstellations = new GameObject();
             allConstellations.name = "Constellations";
-            allConstellations.AddComponent<ConstellationManager>();
+            allConstellations.AddComponent<ConstellationsController>();
         }
         if (starData != null)
         {
@@ -148,7 +147,7 @@ public class DataController : MonoBehaviour
                 }
 
                 Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-                if (constellationName.shortName.Trim() == "") constellationColor = unnamedColor;
+                if (constellationName.shortName.Trim() == "") constellationColor = Color.white;
 
                 foreach (Star dataStar in starsInConstellation)
                 {
@@ -192,9 +191,9 @@ public class DataController : MonoBehaviour
                     }
                     constellation.AddStar(starObject);
                 }
-                allConstellations.GetComponent<ConstellationManager>().AddConstellation(constellation);
+                allConstellations.GetComponent<ConstellationsController>().AddConstellation(constellation);
             }
-            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationManager>().HighlightAllConstellations(true);
+            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationsController>().HighlightAllConstellations(true);
         }
 
         if (markerPrefab != null)
