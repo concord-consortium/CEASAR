@@ -22,5 +22,11 @@ public class Player : Schema {
 
 	[Type(4, "number")]
 	public float y = 0;
+
+	[Type(5, "ref", typeof(NetworkTransform))]
+	public NetworkTransform playerPosition = new NetworkTransform();
+
+	[Type(6, "ref", typeof(NetworkTransform))]
+	public NetworkTransform interactionTarget = new NetworkTransform();
 }
 

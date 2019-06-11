@@ -20,6 +20,8 @@ public class SimulationManager
     public List<string> ColorNames = new List<string>();
     public List<Color> ColorValues = new List<Color>();
 
+    public Color LocalPlayerColor = Color.white;
+
     // Random color (capitalized), random animal (capitalized), random number
     public string GenerateUsername()
     {
