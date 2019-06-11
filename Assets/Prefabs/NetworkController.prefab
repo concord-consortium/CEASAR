@@ -2075,9 +2075,11 @@ MonoBehaviour:
   m_EndpointField: {fileID: 2549443974321892131}
   connectionStatusText: {fileID: 2549443975923022077}
   avatar: {fileID: 8894973834532404471, guid: f2ed9c5a162c9413a80a675d8d657522, type: 3}
+  interactionIndicator: {fileID: 3837293221611235267, guid: bea5abd67e7974abb8b55180a88d1311,
+    type: 3}
   roomName: ceasar
   debugMessages: {fileID: 2549443974602230068}
-  autoConnect: 1
+  autoConnect: 0
   scenesWithAvatars:
   - NetworkTest
 --- !u!114 &2549443975885674654

@@ -19,6 +19,25 @@ public static class Utils
             mesh.colors = colors;
         }
     }
+    public static bool CompareNetworkTransform(NetworkTransform oldT, NetworkTransform newT)
+    {
+        if ((oldT.position.x != newT.position.x) ||
+               (oldT.position.y != newT.position.y) ||
+                (oldT.position.z != newT.position.z) ||
+                 (oldT.rotation.x != newT.rotation.x) ||
+                  (oldT.rotation.y != newT.rotation.y) ||
+                   (oldT.rotation.z != newT.rotation.z) ||
+                    (oldT.rotation.w != newT.rotation.w)) return true;
+        return false;
+    }
+    public static Vector3 NetworkPosToPosition(NetworkPosition pos)
+    {
+        return new Vector3(pos.x, pos.y, pos.x);
+    }
+    public static Quaternion NetworkRotToRotation(NetworkRotation rot)
+    {
+        return new Quaternion(rot.x, rot.y, rot.x, rot.w);
+    }
 }
 public static class StringExtensions
 {

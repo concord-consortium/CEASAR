@@ -9,11 +9,15 @@ public class InteractionDetect : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     int layerMask;
+    SimulationManager manager;
+    NetworkController network;
     // Start is called before the first frame update
     void Start()
     {
         camera = GetComponent<Camera>();
         layerMask = LayerMask.GetMask("Earth");
+        manager = SimulationManager.GetInstance();
+        network = FindObjectOfType<NetworkController>();
     }
 
     // Update is called once per frame
@@ -30,22 +34,12 @@ public class InteractionDetect : MonoBehaviour
             // Do something with the object that was hit by the raycast.
             if (Input.GetMouseButtonDown(0))
             {
-                if (indicator)
-                {
-                    GameObject indicatorObj = Instantiate(indicator, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
-                    StartCoroutine(selfDestruct(indicatorObj));
-                }
+                manager = SimulationManager.GetInstance();
+                network = FindObjectOfType<NetworkController>();
+                network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
             }
         }
     }
 
-    IEnumerator selfDestruct(GameObject indicatorObj)
-    {
-        yield return new WaitForSeconds(3.0f);
-        if (indicatorObj)
-        {
-            Destroy(indicatorObj);
-        }
-    }
 
 }

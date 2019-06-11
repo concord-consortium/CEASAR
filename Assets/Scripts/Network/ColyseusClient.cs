@@ -183,7 +183,7 @@ public class ColyseusClient : MonoBehaviour
 
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerMove;
+            room.State.players.OnChange += OnPlayerChange;
 
             PlayerPrefs.SetString("sessionId", room.SessionId);
             PlayerPrefs.Save();
@@ -215,7 +215,7 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("Joined room successfully.");
             room.State.players.OnAdd += OnPlayerAdd;
             room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerMove;
+            room.State.players.OnChange += OnPlayerChange;
         };
 
         room.OnStateChange += OnStateChangeHandler;
@@ -266,15 +266,13 @@ public class ColyseusClient : MonoBehaviour
 
     void OnMessage(object sender, MessageEventArgs e)
     {
-        Debug.Log(e.Message);       //var message = (IndexedDictionary<string, object>)e.Message;
-
+        Debug.Log(e.Message);
     }
 
     void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
     {
         // Setup room first state
-        // Debug.Log("State has been updated!");
-        // Debug.Log(e.State);
+        // serialize room state for persistence?
     }
 
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
@@ -294,9 +292,33 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerRemove(item.Value);
     }
 
-    void OnPlayerMove(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
     {
-        networkController.OnPlayerMove(item.Value);
+        Debug.Log(sender + " " + item.Key);
+        networkController.OnPlayerChange(item.Key, item.Value);
+    }
+
+    public void SendMovement(NetworkTransform t)
+    {
+        room.Send(new Dictionary<string, object>()
+                    {
+                        {"transform", t },
+                        {"message", "movement"}
+                    }
+                );
+    }
+    public void SendInteraction(Vector3 pos, Quaternion rot, Color color)
+    {
+        NetworkTransform t = new NetworkTransform();
+        t.position = new NetworkPosition { x = pos.x, y = pos.y, z = pos.z };
+        t.rotation = new NetworkRotation { x = rot.x, y = rot.y, z = rot.z, w = rot.w };
+        room.Send(new Dictionary<string, object>()
+                    {
+                        {"transform", t },
+                        {"color", color.ToString()},
+                        {"message", "interaction"}
+                    }
+                );
     }
 
     void OnApplicationQuit()

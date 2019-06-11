@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
+using System.Text;
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
@@ -18,6 +19,8 @@ public class NetworkController : MonoBehaviour
     public GameObject avatar;
     private Player localPlayer;
     private GameObject localPlayerAvatar;
+    public GameObject interactionIndicator;
+
     // todo: set up 4-digit pins for a collab room
     public string roomName = "ceasar";
 
@@ -97,12 +100,13 @@ public class NetworkController : MonoBehaviour
             {
                 SimulationManager manager = SimulationManager.GetInstance();
                 localPlayerName = manager.GenerateUsername();
+                manager.LocalPlayerColor = manager.GetColorForUsername(localPlayerName);
                 Debug.Log(localPlayerName);
             }
             string _localEndpoint = "ws://localhost:2567/";
             string _remoteEndpoint = "wss://calm-meadow-14344.herokuapp.com";
 #if UNITY_EDITOR
-            string endpoint = _remoteEndpoint; //_localEndpoint;
+            string endpoint = _localEndpoint;
 #else
             string endpoint = _remoteEndpoint; 
 #endif
@@ -139,14 +143,14 @@ public class NetworkController : MonoBehaviour
 
     public void OnPlayerAdd(Player player, bool isLocal)
     {
-        Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username);
+        Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username + " playerId: " + player.id);
 
         Vector3 pos = new Vector3(player.x, player.y, 0);
         if (isLocal)
         {
             localPlayer = player;
             localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
-            Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
+            Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = "localPlayer_" + player.username;
         }
@@ -180,22 +184,77 @@ public class NetworkController : MonoBehaviour
     }
 
 
-    public void OnPlayerMove(Player player)
+    public void OnPlayerChange(string playerId, Player updatedPlayer)
     {
-        GameObject remotePlayerAvatar;
-        players.TryGetValue(player, out remotePlayerAvatar);
+        bool isLocal = playerId == localPlayer.id;
+        bool isKnownPlayer = players.Keys.Contains(updatedPlayer);   // ToList().First(p => p.id == playerId);
+        string knownPlayerName = isKnownPlayer ? updatedPlayer.username : "unknown";
 
-        Debug.Log(player.x);
-        if (remotePlayerAvatar)
+        Debug.Log("player id " + playerId + " is local: " + isLocal + " isKnown: " + knownPlayerName);
+
+        Player knownPlayer = players.Keys.ToList().Find(p => p.id == playerId);
+
+        bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
+        bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
+
+        Debug.Log(interactionUpdate + " " + movementUpdate);
+
+        GameObject remotePlayerAvatar;
+        players.TryGetValue(updatedPlayer, out remotePlayerAvatar);
+        if (isLocal)
         {
-            remotePlayerAvatar.transform.Translate(new Vector3(player.x, player.y, 0));
+            Debug.Log("self update");
         }
-        else
+        else if (knownPlayer != null)
         {
-            localPlayerAvatar.transform.Translate(new Vector3(player.x, player.y, 0));
+            if (interactionUpdate)
+            {
+                Debug.Log("Interaction update: " + updatedPlayer.interactionTarget);
+                Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
+                Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
+                ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
+            }
+            else if (movementUpdate)
+            {
+                Debug.Log("Movement update: " + updatedPlayer.x);
+                if (remotePlayerAvatar)
+                {
+
+                    remotePlayerAvatar.transform.Translate(new Vector3(updatedPlayer.x, updatedPlayer.y, 0));
+                }
+                else
+                {
+                    localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.x, updatedPlayer.y, 0));
+                }
+            }
         }
+
+    }
+    public void ShowInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
+    {
+        if (interactionIndicator)
+        {
+            GameObject indicatorObj = Instantiate(interactionIndicator, pos, rot);
+            Utils.SetObjectColor(indicatorObj, playerColor);
+            StartCoroutine(selfDestruct(indicatorObj));
+        }
+        if (isLocal)
+        {
+            // now need to broadcast to remotes
+            colyseusClient.SendInteraction(pos, rot, playerColor);
+
+        }
+
     }
 
+    IEnumerator selfDestruct(GameObject indicatorObj)
+    {
+        yield return new WaitForSeconds(3.0f);
+        if (indicatorObj)
+        {
+            Destroy(indicatorObj);
+        }
+    }
     // called when the game is terminated
     void OnDisable()
     {
