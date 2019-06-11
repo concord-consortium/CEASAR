@@ -8,10 +8,10 @@
 using Colyseus.Schema;
 
 public class NetworkTransform : Schema {
-	[Type(0, "ref", typeof(NetworkPosition))]
-	public NetworkPosition position = new NetworkPosition();
+	[Type(0, "ref", typeof(NetworkVector3))]
+	public NetworkVector3 position = new NetworkVector3();
 
-	[Type(1, "ref", typeof(NetworkRotation))]
-	public NetworkRotation rotation = new NetworkRotation();
+	[Type(1, "ref", typeof(NetworkVector3))]
+	public NetworkVector3 rotation = new NetworkVector3();
 }
 

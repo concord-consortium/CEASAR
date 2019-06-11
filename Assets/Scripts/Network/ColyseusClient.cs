@@ -272,7 +272,7 @@ public class ColyseusClient : MonoBehaviour
     void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
     {
         // Setup room first state
-        // serialize room state for persistence?
+        // This is where we might capture current state and save/load
     }
 
     void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
@@ -310,8 +310,9 @@ public class ColyseusClient : MonoBehaviour
     public void SendInteraction(Vector3 pos, Quaternion rot, Color color)
     {
         NetworkTransform t = new NetworkTransform();
-        t.position = new NetworkPosition { x = pos.x, y = pos.y, z = pos.z };
-        t.rotation = new NetworkRotation { x = rot.x, y = rot.y, z = rot.z, w = rot.w };
+        t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
+        Vector3 r = rot.eulerAngles;
+        t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
         room.Send(new Dictionary<string, object>()
                     {
                         {"transform", t },

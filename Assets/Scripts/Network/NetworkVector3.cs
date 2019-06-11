@@ -7,7 +7,7 @@
 
 using Colyseus.Schema;
 
-public class NetworkPosition : Schema {
+public class NetworkVector3 : Schema {
 	[Type(0, "number")]
 	public float x = 0;
 

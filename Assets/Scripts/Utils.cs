@@ -26,17 +26,16 @@ public static class Utils
                 (oldT.position.z != newT.position.z) ||
                  (oldT.rotation.x != newT.rotation.x) ||
                   (oldT.rotation.y != newT.rotation.y) ||
-                   (oldT.rotation.z != newT.rotation.z) ||
-                    (oldT.rotation.w != newT.rotation.w)) return true;
+                   (oldT.rotation.z != newT.rotation.z)) return true;
         return false;
     }
-    public static Vector3 NetworkPosToPosition(NetworkPosition pos)
+    public static Vector3 NetworkPosToPosition(NetworkVector3 pos)
     {
         return new Vector3(pos.x, pos.y, pos.x);
     }
-    public static Quaternion NetworkRotToRotation(NetworkRotation rot)
+    public static Quaternion NetworkRotToRotation(NetworkVector3 rot)
     {
-        return new Quaternion(rot.x, rot.y, rot.x, rot.w);
+        return Quaternion.Euler(rot.x, rot.y, rot.z);
     }
 }
 public static class StringExtensions
