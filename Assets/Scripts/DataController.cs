@@ -8,6 +8,7 @@ public class DataController : MonoBehaviour
 {
     public TextAsset starData;
     public TextAsset cityData;
+    public TextAsset constellationConnectionData;
 
     [SerializeField]
     private float radius = 50;
@@ -32,11 +33,20 @@ public class DataController : MonoBehaviour
         private set { allCities = value; }
     }
 
+    [SerializeField]
+    private List<ConstellationConnection> allConstellationConnections;
+    public List<ConstellationConnection> AllConstellationConnections
+    {
+        get { return allConstellationConnections; }
+        private set { allConstellationConnections = value; }
+    }
+
     public bool showHorizonView = false;
 
     public GameObject starPrefab;
     public GameObject markerPrefab;
     public GameObject allConstellations;
+    public GameObject constellationPrefab;
     private StarComponent[] allStarComponents;
     public GameObject allMarkers;
     public Material markerMaterial;
@@ -56,11 +66,16 @@ public class DataController : MonoBehaviour
     public GameObject cityDropdown;
     public GameObject constellationDropdown;
 
-    private Color unnamedColor = new Color(128f / 255f, 128f / 255f, 128f / 255f);
     private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     private float markerLineWidth = .035f;
+
+    private class ConstellationNamePair
+    {
+        public string shortName;
+        public string fullName;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +84,7 @@ public class DataController : MonoBehaviour
         {
             allConstellations = new GameObject();
             allConstellations.name = "Constellations";
+            allConstellations.AddComponent<ConstellationsController>();
         }
         if (starData != null)
         {
@@ -93,6 +109,11 @@ public class DataController : MonoBehaviour
                 cityDropdown.GetComponent<CityDropdown>().InitCityNames(cities, SelectedCity);
             }
         }
+        if (constellationConnectionData != null)
+        {
+            allConstellationConnections = DataImport.ImportConstellationConnectionData(constellationConnectionData.text);
+            Debug.Log(allConstellationConnections.Count + " connections imported");
+        }
 
         double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
         int starCount = 0;
@@ -101,30 +122,39 @@ public class DataController : MonoBehaviour
             // get magnitudes and normalize between 1 and 5 to scale stars
             var minMag = allStars.Min(s => s.Mag);
             var maxMag = allStars.Max(s => s.Mag);
-            var constellations = new List<string>(allStars.GroupBy(s => s.Constellation).Select(s => s.First().Constellation));  //new Dictionary<string, List<Star>>();
-            Debug.Log(minMag + " " + maxMag + " constellations:" + constellations.Count);
+            var constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
+            var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair{shortName = s.First().Constellation, fullName = s.First().ConstellationFullName}));
+            Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
-            constellations.Sort();
+            constellationFullNames.Sort();
             if (constellationDropdown)
             {
-                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellations, "all");
+                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellationFullNames, "all");
             }
-            foreach (string constellation in constellations)
+            foreach (ConstellationNamePair constellationName in constellationNames)
             {
-                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellation).ToList();
-                GameObject constellationContainer = new GameObject();
-                constellationContainer.name = constellation.Trim() == "" ? "no-const" : constellation;
+                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName.shortName).ToList();
+
+                GameObject constellationContainer = Instantiate(constellationPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                constellationContainer.name = constellationName.shortName.Trim() == "" ? "no-const" : constellationName.shortName;
                 constellationContainer.transform.parent = allConstellations.transform;
+                Constellation constellation = constellationContainer.GetComponent<Constellation>();
+                constellation.constellationNameAbbr = constellationName.shortName;
+                constellation.constellationNameFull = constellationName.fullName;
+                foreach (ConstellationConnection conn in allConstellationConnections)
+                {
+                    if (conn.constellationNameAbbr == constellationName.shortName) constellation.AddConstellationConnection(conn);
+                }
 
                 Color constellationColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-                if (constellation.Trim() == "") constellationColor = unnamedColor;
+                if (constellationName.shortName.Trim() == "") constellationColor = Color.white;
 
                 foreach (Star dataStar in starsInConstellation)
                 {
                     GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
                     newStar.starData = dataStar;
-                    starObject.name = constellation.Trim() == "" ? "no-const" : dataStar.Constellation;
+                    starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
                     {
                         starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);
@@ -145,6 +175,7 @@ public class DataController : MonoBehaviour
                     if (colorByConstellation == true)
                     {
                         Utils.SetObjectColor(starObject, constellationColor);
+                        constellation.highlightColor = constellationColor;
                     }
 
                     allStarComponents[starCount] = newStar;
@@ -158,8 +189,11 @@ public class DataController : MonoBehaviour
                     {
                         showStar(starObject, false);
                     }
+                    constellation.AddStar(starObject);
                 }
+                allConstellations.GetComponent<ConstellationsController>().AddConstellation(constellation);
             }
+            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationsController>().HighlightAllConstellations(true);
         }
 
         if (markerPrefab != null)
@@ -305,25 +339,6 @@ public class DataController : MonoBehaviour
     public void SetSelectedCity(string newCity)
     {
         SelectedCity = newCity;
-    }
-
-    public void ChangeConstellationHighlight(string highlightConstellation)
-    {
-        foreach (GameObject starObject in GameObject.FindGameObjectsWithTag("Star"))
-        {
-            if (starObject.name == highlightConstellation || highlightConstellation == "all")
-            {
-                Color constellationColor = starObject.GetComponent<StarComponent>().constellationColor;
-
-                Utils.SetObjectColor(starObject, constellationColor);
-            }
-            else
-            {
-                Color starColor = starObject.GetComponent<StarComponent>().starColor;
-                Utils.SetObjectColor(starObject, starColor);
-            }
-        }
-        constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
     }
 
     public void SetMagnitudeThreshold(float newVal)
