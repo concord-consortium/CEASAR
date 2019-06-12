@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.UI;
 
 public class MainUIController : MonoBehaviour
 {
     private DataController dataController;
+    private SnapshotsController snapshotsController;
 
     // main control panel where we slot tools
     public GameObject controlPanel;
@@ -23,6 +25,10 @@ public class MainUIController : MonoBehaviour
     private int userMin = 0;
     private int userDay = 1;
     public TextMeshProUGUI currentDateTimeText;
+    public Toggle setTimeToggle;
+    public TMP_InputField yearInput;
+    public Slider daySlider;
+    public Slider timeSlider;
 
     // star selection controls
     public GameObject starInfoPanel;
@@ -31,6 +37,7 @@ public class MainUIController : MonoBehaviour
 
     // city selection controls
     private CityDropdown cityDropdown;
+
 
     // handle sphere interaction
     private GameObject sphere;
@@ -42,15 +49,20 @@ public class MainUIController : MonoBehaviour
     private float autoRotateSpeed = 1f;
     private bool rotating = false;
     private MarkersController markersController;
+    // snapshots
+    private SnapshotDropdown snapshotDropdown;
 
     // Start is called before the first frame update
     void Start()
     {
+
         markersController = FindObjectOfType<MarkersController>();
         dataController = DataController.GetInstance();
         sphere = dataController.gameObject;
+        snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
+        snapshotDropdown = FindObjectOfType<SnapshotDropdown>();
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
         initialPosition = controlPanelRect.anchoredPosition;
         float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
@@ -64,6 +76,13 @@ public class MainUIController : MonoBehaviour
         if (constellationDropdown)
         {
             constellationDropdown.InitConstellationNames(dataController.constellationFullNames, "all");
+        }
+        if (snapshotsController)
+        {
+            foreach (Snapshot snap in snapshotsController.snapshots)
+            {
+                AddSnapshot(snap.dateTime, snap.location);
+            }
         }
     }
 
@@ -275,4 +294,61 @@ public class MainUIController : MonoBehaviour
     {
         dataController.ToggleRunSimulation();
     }
+    public void ChangeCitySelection(string location)
+    {
+        if (cityDropdown)
+        {
+            cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
+        }
+    }
+
+    public void SaveSnapshot()
+    {
+        // get values from datacontroller
+        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime();
+        String location = dataController.SelectedCity;
+        // add a snapshot to the controller
+        snapshotsController.AddSnapshot(snapshotDateTime, location);
+        //update the dropdown
+        List<string> newSnapshots = new List<string>();
+        string snaptext = location + "; " + snapshotDateTime.ToShortDateString() + " " + snapshotDateTime.ToShortTimeString();
+        newSnapshots.Add(snaptext);
+        snapshotDropdown.AddSnapshot(newSnapshots);
+    }
+    public void AddSnapshot(DateTime snapshotDateTime, String location)
+    {
+        //update the dropdown
+        List<string> newSnapshots = new List<string>();
+        string snaptext = location + "; " + snapshotDateTime.ToShortDateString() + " " + snapshotDateTime.ToShortTimeString();
+        newSnapshots.Add(snaptext);
+        snapshotDropdown.AddSnapshot(newSnapshots);
+    }
+
+    public void RestoreSnapshot(int index, string snapshotText)
+    {
+        //call this when we select from dropdown
+        //convert string to datetime?  or use index?
+        // none is 0th index
+        if (index > 0)
+        {
+            DateTime snapshotDateTime = snapshotsController.snapshots[index - 1].dateTime;
+            userYear = snapshotDateTime.Year;
+            userDay = snapshotDateTime.DayOfYear;
+            userHour = snapshotDateTime.Hour;
+            userMin =  snapshotDateTime.Minute;
+            CalculateUserDateTime();
+            String location = snapshotsController.snapshots[index - 1].location;
+            Debug.Log(snapshotDateTime.ToLongDateString());
+            Debug.Log(location);
+            //WTD
+            // send the values to dataController and to other UI pieces
+            // update year, day, hour, location
+            ChangeCitySelection(location);
+            setTimeToggle.isOn = true;
+            yearInput.text = userYear.ToString();
+            daySlider.value = userDay;
+            timeSlider.value = userHour * 60 + userMin;
+        }
+    }
+
 }
