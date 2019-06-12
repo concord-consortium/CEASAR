@@ -6,8 +6,16 @@ using TMPro;
 
 public class MainUIController : MonoBehaviour
 {
+    private DataController dataController;
+
     // main control panel where we slot tools
     public GameObject controlPanel;
+
+    private Vector2 initialPosition;
+    private Vector2 hiddenPosition;
+    private Vector2 targetPosition;
+    private bool movingControlPanel = false;
+    private float speed = 750.0f;
 
     // date and time controls
     private int userYear = 2019;
@@ -19,23 +27,31 @@ public class MainUIController : MonoBehaviour
     // star selection controls
     public GameObject starInfoPanel;
 
-    public DataController dataController;
+    private ConstellationDropdown constellationDropdown;
 
-    private Vector2 initialPosition;
-    private Vector2 hiddenPosition;
-    private Vector2 targetPosition;
-    private bool movingControlPanel = false;
-    private float speed = 750.0f;
-    public GameObject constellationDropdown;
+    // city selection controls
+    private CityDropdown cityDropdown;
 
     // Start is called before the first frame update
     void Start()
     {
+        dataController = FindObjectOfType<DataController>();
+        constellationDropdown = FindObjectOfType<ConstellationDropdown>();
+        cityDropdown = FindObjectOfType<CityDropdown>();
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
         initialPosition = controlPanelRect.anchoredPosition;
         float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
         hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
         targetPosition = initialPosition;
+
+        if (cityDropdown)
+        {
+            cityDropdown.InitCityNames(dataController.cities, dataController.SelectedCity);
+        }
+        if (constellationDropdown)
+        {
+            constellationDropdown.InitConstellationNames(dataController.constellationFullNames, "all");
+        }
     }
 
     // Update is called once per frame

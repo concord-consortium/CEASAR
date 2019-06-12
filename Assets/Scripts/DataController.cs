@@ -2,7 +2,6 @@
 using System.Linq;
 using UnityEngine;
 using System;
-using TMPro;
 
 public class DataController : MonoBehaviour
 {
@@ -12,6 +11,11 @@ public class DataController : MonoBehaviour
 
     [SerializeField]
     private float radius = 50;
+    public float Radius
+    {
+        get { return radius; }
+        private set { radius = value; }
+    }
     [SerializeField]
     private float magnitudeScale = 0.5f;
     [SerializeField]
@@ -44,15 +48,21 @@ public class DataController : MonoBehaviour
     public bool showHorizonView = false;
 
     public GameObject starPrefab;
-    public GameObject markerPrefab;
+
     public GameObject allConstellations;
+    public List<string> constellationFullNames;
     public GameObject constellationPrefab;
     private StarComponent[] allStarComponents;
-    public GameObject allMarkers;
-    public Material markerMaterial;
     public bool colorByConstellation = true;
 
     private DateTime simulationStartTime = DateTime.Now;
+    private double localSiderialStartTime;
+    public double LocalSiderialStartTime
+    {
+        get { return localSiderialStartTime; }
+        private set { localSiderialStartTime = value; }
+    }
+
     private DateTime currentSimulationTime = DateTime.Now;
     public float simulationTimeScale = 10f;
     private bool userSpecifiedDateTime = false;
@@ -60,16 +70,8 @@ public class DataController : MonoBehaviour
     private bool runSimulation = false;
 
     public List<string> cities;
-
     public string SelectedCity;
     public City currentCity;
-    public GameObject cityDropdown;
-    public GameObject constellationDropdown;
-
-    private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
-    private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
-    private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
-    private float markerLineWidth = .035f;
 
     private class ConstellationNamePair
     {
@@ -78,7 +80,7 @@ public class DataController : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (allConstellations == null)
         {
@@ -103,11 +105,6 @@ public class DataController : MonoBehaviour
             }
             currentCity = allCities.Where(c => c.Name == SelectedCity).FirstOrDefault();
             SelectedCity = currentCity.Name;
-
-            if (cityDropdown)
-            {
-                cityDropdown.GetComponent<CityDropdown>().InitCityNames(cities, SelectedCity);
-            }
         }
         if (constellationConnectionData != null)
         {
@@ -115,22 +112,19 @@ public class DataController : MonoBehaviour
             Debug.Log(allConstellationConnections.Count + " connections imported");
         }
 
-        double localSiderialTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
+        localSiderialStartTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
         int starCount = 0;
         if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
             var minMag = allStars.Min(s => s.Mag);
             var maxMag = allStars.Max(s => s.Mag);
-            var constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
+            constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
             var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair{shortName = s.First().Constellation, fullName = s.First().ConstellationFullName}));
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
-            if (constellationDropdown)
-            {
-                constellationDropdown.GetComponent<ConstellationDropdown>().InitConstellationNames(constellationFullNames, "all");
-            }
+
             foreach (ConstellationNamePair constellationName in constellationNames)
             {
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName.shortName).ToList();
@@ -157,7 +151,7 @@ public class DataController : MonoBehaviour
                     starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
                     {
-                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialTime, 0);
+                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
                     }
                     else
                     {
@@ -195,15 +189,6 @@ public class DataController : MonoBehaviour
             }
             if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationsController>().HighlightAllConstellations(true);
         }
-
-        if (markerPrefab != null)
-        {
-            AddMarker("NCP", 0f, 90f, localSiderialTime, colorOrange);
-            AddMarker("SCP", 0f, -90f, localSiderialTime, colorOrange);
-            AddMarker("VE", 0f, 0f, localSiderialTime, colorGreen);
-            AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
-            AddLineMarker("poleLine", colorOrange, GameObject.Find("NCP"), GameObject.Find("SCP"), markerLineWidth);
-        }
     }
 
     void showStar(GameObject starObject, bool show)
@@ -212,68 +197,6 @@ public class DataController : MonoBehaviour
         Collider coll = starObject.GetComponent<Collider>();
         rend.enabled = show;
         coll.enabled = show;
-    }
-
-    void AddMarker(string markerName, float RA, float dec, double lst, Color color)
-    {
-        Marker marker = new Marker(markerName, RA, dec);
-        GameObject markerObject = Instantiate(markerPrefab, this.transform.position, Quaternion.identity);
-        markerObject.transform.parent = allMarkers.transform;
-        MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
-        newMarker.label.text = markerName;
-        newMarker.markerData = marker;
-        markerObject.name = markerName;
-        Utils.SetObjectColor(markerObject, color);
-
-        if (showHorizonView)
-        {
-            markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(radius, lst, 0);
-        }
-        else
-        {
-            markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(radius);
-        }
-    }
-
-    void AddCircumferenceMarker(string markerName, Color color, float lineWidth)
-    {
-        GameObject circumferenceObject = new GameObject();
-        circumferenceObject.name = markerName;
-        circumferenceObject.transform.parent = allMarkers.transform;
-        int segments = 360;
-        LineRenderer lineRendererCircle = circumferenceObject.AddComponent<LineRenderer>();
-        lineRendererCircle.useWorldSpace = false;
-        lineRendererCircle.startWidth = lineWidth;
-        lineRendererCircle.endWidth = lineWidth;
-        lineRendererCircle.positionCount = segments + 1;
-        lineRendererCircle.material = markerMaterial;
-        lineRendererCircle.material.color = color;
-
-        int pointCount = segments + 1; // add extra point to make startpoint and endpoint the same to close the circle
-        Vector3[] points = new Vector3[pointCount];
-
-        for (int i = 0; i < pointCount; i++)
-        {
-            float rad = Mathf.Deg2Rad * (i * 360f / segments);
-            points[i] = new Vector3(Mathf.Sin(rad) * radius, 0, Mathf.Cos(rad) * radius);
-        }
-
-        lineRendererCircle.SetPositions(points);
-    }
-
-    void AddLineMarker(string markerName, Color color, GameObject go1, GameObject go2, float lineWidth)
-    {
-        GameObject lineObject = new GameObject();
-        lineObject.name = markerName;
-        lineObject.transform.parent = allMarkers.transform;
-        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = lineWidth;
-        lineRenderer.endWidth = lineWidth;
-        lineRenderer.useWorldSpace = false;
-        lineRenderer.SetPosition(0, new Vector3(go1.transform.position.x, go1.transform.position.y, go1.transform.position.z));
-        lineRenderer.SetPosition(1, new Vector3(go2.transform.position.x, go2.transform.position.y, go2.transform.position.z));
-        lineRenderer.material = markerMaterial;
-        lineRenderer.material.color = color;
     }
 
     void FixedUpdate()

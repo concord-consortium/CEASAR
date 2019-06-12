@@ -3106,6 +3106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 499112421}
+  - component: {fileID: 499112422}
   m_Layer: 0
   m_Name: Markers
   m_TagString: Untagged
@@ -3127,6 +3128,22 @@ Transform:
   m_Father: {fileID: 361113117}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &499112422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499112420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3b7b8cc56dd4fb478f597d74ee85c21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerPrefab: {fileID: 6573323492524558324, guid: ad05b391ad6bf294ea8e7e587f0713ca,
+    type: 3}
+  markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
+  markerLineWidth: 0.035
 --- !u!1001 &522090885
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4523,8 +4540,6 @@ MonoBehaviour:
   controlPanel: {fileID: 1019273340}
   currentDateTimeText: {fileID: 0}
   starInfoPanel: {fileID: 212893348}
-  dataController: {fileID: 1124937507}
-  constellationDropdown: {fileID: 2053479767}
 --- !u!1 &834455921
 GameObject:
   m_ObjectHideFlags: 0
@@ -6065,19 +6080,14 @@ MonoBehaviour:
   showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
-  markerPrefab: {fileID: 6573323492524558324, guid: ad05b391ad6bf294ea8e7e587f0713ca,
-    type: 3}
   allConstellations: {fileID: 300780002}
+  constellationFullNames: []
   constellationPrefab: {fileID: 309918465546778449, guid: 5f8788d5211448f4e99b39b1c46445b9,
     type: 3}
-  allMarkers: {fileID: 499112420}
-  markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   colorByConstellation: 1
   simulationTimeScale: 10
   cities: []
   SelectedCity: 
-  cityDropdown: {fileID: 0}
-  constellationDropdown: {fileID: 2053479767}
 --- !u!114 &1124937508
 MonoBehaviour:
   m_ObjectHideFlags: 0
