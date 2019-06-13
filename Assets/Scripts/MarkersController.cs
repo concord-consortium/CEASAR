@@ -88,4 +88,9 @@ public class MarkersController : MonoBehaviour
         lineRenderer.material.color = color;
     }
 
+    public void ShowAllMarkers(bool show)
+	{
+        this.gameObject.SetActive(show);
+	}
+
 }
