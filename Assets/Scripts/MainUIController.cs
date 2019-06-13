@@ -46,9 +46,9 @@ public class MainUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sphere = GameObject.Find("CelestialSphere");
         markersController = FindObjectOfType<MarkersController>();
-        dataController = FindObjectOfType<DataController>();
+        dataController = DataController.GetInstance();
+        sphere = dataController.gameObject;
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
