@@ -17,7 +17,7 @@ public class SunPosition : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dataController = FindObjectOfType<DataController>();
+        dataController = DataController.GetInstance();
         currentCity = dataController.currentCity;
         var solarPosition = CalculateSunPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
 
