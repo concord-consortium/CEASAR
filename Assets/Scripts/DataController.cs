@@ -7,7 +7,10 @@ using System;
 public class DataController : MonoBehaviour
 {
     private static DataController dataController;
-
+    public static DataController GetInstance()
+    {
+        return dataController;
+    }
     public TextAsset starData;
     public TextAsset cityData;
     public TextAsset constellationConnectionData;
