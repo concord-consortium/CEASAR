@@ -49,7 +49,7 @@ public class MainUIController : MonoBehaviour
     private bool rotating = false;
     private MarkersController markersController;
     // snapshots
-    private SnapshotDropdown snapshotDropdown;
+    private SnapGrid snapshotGrid;
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +61,7 @@ public class MainUIController : MonoBehaviour
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
-        snapshotDropdown = FindObjectOfType<SnapshotDropdown>();
+        snapshotGrid = FindObjectOfType<SnapGrid>();
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
         initialPosition = controlPanelRect.anchoredPosition;
         float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
@@ -78,9 +78,9 @@ public class MainUIController : MonoBehaviour
         }
         if (snapshotsController)
         {
-            foreach (Snapshot snap in snapshotsController.snapshots)
+            for (int i = 0; i < snapshotsController.snapshots.Count; i++)
             {
-                AddSnapshot(snap.dateTime, snap.location);
+                AddSnapshot(snapshotsController.snapshots[i]);
             }
         }
     }
@@ -309,37 +309,36 @@ public class MainUIController : MonoBehaviour
         // add a snapshot to the controller
         snapshotsController.AddSnapshot(snapshotDateTime, location);
         // add snapshot to dropdown list
-        AddSnapshot (snapshotDateTime, location);
+        AddSnapshot (snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
-    public void AddSnapshot(DateTime snapshotDateTime, String location)
+    public void AddSnapshot(Snapshot snapshot)
     {
-        // user chooses to add a new snapshot, update the dropdown
-        List<string> newSnapshots = new List<string>();
-        string snaptext = location + "; " + snapshotDateTime.ToShortDateString() + " " + snapshotDateTime.ToShortTimeString();
-        newSnapshots.Add(snaptext);
-        snapshotDropdown.UpdateSnapshotList(newSnapshots);
+        // user chooses to add a new snapshot, update the scroll view grid
+        snapshotGrid.AddSnapItem(snapshot);
     }
 
-    public void RestoreSnapshot(int index, string snapshotText)
+    public void RestoreSnapshot(Snapshot snapshot)
     {
+        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
         // user restores snapshot from UI
-        // index == 0 is none
-        if (index > 0)
-        {
-            DateTime snapshotDateTime = snapshotsController.snapshots[index - 1].dateTime;
-            userYear = snapshotDateTime.Year;
-            userDay = snapshotDateTime.DayOfYear;
-            userHour = snapshotDateTime.Hour;
-            userMin =  snapshotDateTime.Minute;
-            CalculateUserDateTime();
-            String location = snapshotsController.snapshots[index - 1].location;
-            ChangeCitySelection(location);
-            setTimeToggle.isOn = true;
-            yearInput.text = userYear.ToString();
-            daySlider.value = userDay;
-            timeSlider.value = userHour * 60 + userMin;
-        }
+        DateTime snapshotDateTime = snapshotsController.snapshots[snapshotIndex].dateTime;
+        userYear = snapshotDateTime.Year;
+        userDay = snapshotDateTime.DayOfYear;
+        userHour = snapshotDateTime.Hour;
+        userMin =  snapshotDateTime.Minute;
+        CalculateUserDateTime();
+        String location = snapshotsController.snapshots[snapshotIndex].location;
+        ChangeCitySelection(location);
+        setTimeToggle.isOn = true;
+        yearInput.text = userYear.ToString();
+        daySlider.value = userDay;
+        timeSlider.value = userHour * 60 + userMin;
+    }
+
+    public void DeleteSnapshot(Snapshot deleteSnap)
+    {
+        snapshotsController.DeleteSnapshot(deleteSnap);
     }
 
 }

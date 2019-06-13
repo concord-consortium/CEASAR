@@ -38,4 +38,32 @@ public class SnapshotsController : MonoBehaviour
     {
         Snapshot snap = snapshots[index];
     }
+
+    public void DeleteSnapshot(Snapshot snapshot)
+    {
+        int snapshotIndex = snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
+        snapshots.RemoveAt(snapshotIndex);
+
+        // delete all from playerprefs
+        bool snapshotFound = false;
+        int count = 0;
+        do
+        {
+            snapshotFound = false;
+            if (PlayerPrefs.HasKey("SnapshotLocation" + count) && PlayerPrefs.HasKey("SnapshotDateTime" + count))
+            {
+                snapshotFound = true;
+                PlayerPrefs.DeleteKey("SnapshotLocation" + count);
+                PlayerPrefs.DeleteKey("SnapshotDateTime" + count);
+            }
+            count++;
+        } while (snapshotFound);
+
+        // add them back in
+        for (int i = 0; i < snapshots.Count; i++)
+        {
+            PlayerPrefs.SetString("SnapshotLocation" + (i).ToString(), snapshots[i].location);
+            PlayerPrefs.SetString("SnapshotDateTime" + (i).ToString(), snapshots[i].dateTime.ToString());
+        }
+    }
 }
