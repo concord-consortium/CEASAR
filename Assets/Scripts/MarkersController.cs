@@ -11,6 +11,7 @@ public class MarkersController : MonoBehaviour
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     public float markerLineWidth = .035f;
+    public bool markersVisible = true;
 
     // Start is called before the first frame update
     void Start()
@@ -90,7 +91,11 @@ public class MarkersController : MonoBehaviour
 
     public void ShowAllMarkers(bool show)
 	{
-        this.gameObject.SetActive(show);
+        markersVisible = show;
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(markersVisible);
+        }
 	}
 
 }
