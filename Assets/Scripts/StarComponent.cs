@@ -12,15 +12,10 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     private Vector3 initialScale;
     private float scaleFactor = 1.5f;
 
-    void Start()
-    {
-        mainUIController = FindObjectOfType<MainUIController>();
-        constellationsController = FindObjectOfType<ConstellationsController>();
-        initialScale = transform.localScale;
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (!mainUIController) mainUIController = FindObjectOfType<MainUIController>();
+        if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
         if (mainUIController && mainUIController.starInfoPanel)
         {
             if (constellationsController) constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
@@ -31,6 +26,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        initialScale = transform.localScale;
         transform.localScale = initialScale * scaleFactor;
     }
 
