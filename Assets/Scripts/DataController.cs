@@ -57,6 +57,7 @@ public class DataController : MonoBehaviour
     public GameObject starPrefab;
 
     public GameObject allConstellations;
+    private ConstellationsController constellationsController;
     public List<string> constellationFullNames;
     public GameObject constellationPrefab;
     private StarComponent[] allStarComponents;
@@ -191,7 +192,6 @@ public class DataController : MonoBehaviour
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
             }
-
         }
     }
 
@@ -203,6 +203,7 @@ public class DataController : MonoBehaviour
             allConstellations.name = "Constellations";
             allConstellations.AddComponent<ConstellationsController>();
         }
+        constellationsController = allConstellations.GetComponent<ConstellationsController>();
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text);
@@ -262,6 +263,7 @@ public class DataController : MonoBehaviour
                 {
                     GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
+                    newStar.Init(constellationsController);
                     newStar.starData = dataStar;
                     starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
@@ -300,9 +302,9 @@ public class DataController : MonoBehaviour
                     }
                     constellation.AddStar(starObject);
                 }
-                allConstellations.GetComponent<ConstellationsController>().AddConstellation(constellation);
+                constellationsController.AddConstellation(constellation);
             }
-            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationsController>().HighlightAllConstellations(true);
+            if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
         }
     }
 
