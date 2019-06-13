@@ -32,9 +32,22 @@ public class MainUIController : MonoBehaviour
     // city selection controls
     private CityDropdown cityDropdown;
 
+    // handle sphere interaction
+    private GameObject sphere;
+    private float moveSpeed = .1f;
+    private float scaleSpeed = 5f;
+    private float maxScale = 100f;
+    private float minScale = .025f;
+    private float rotateSpeed = 10f;
+    private float autoRotateSpeed = 1f;
+    private bool rotating = false;
+    private MarkersController markersController;
+
     // Start is called before the first frame update
     void Start()
     {
+        sphere = GameObject.Find("CelestialSphere");
+        markersController = FindObjectOfType<MarkersController>();
         dataController = FindObjectOfType<DataController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
@@ -74,6 +87,8 @@ public class MainUIController : MonoBehaviour
                 movingControlPanel = false;
             }
         }
+
+        handleAutoRotation();
     }
 
     public void ToggleShowControlPanel()
@@ -135,4 +150,129 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    public void MoveLeft()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.x -= Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void MoveRight()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.x += Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void MoveDown()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.y -= Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void MoveUp()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.y += Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void MoveBack()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.z += Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void MoveForward()
+    {
+        Vector3 pos = sphere.transform.position;
+        pos.z -= Time.deltaTime + moveSpeed;
+        sphere.transform.position = pos;
+    }
+
+    public void DecreaseScale()
+    {
+        if (sphere.transform.localScale.x > minScale)
+        {
+            float scaleIncrement = sphere.transform.localScale.x * .25f * Time.deltaTime;
+            sphere.transform.localScale -= new Vector3(scaleIncrement, scaleIncrement, scaleIncrement);
+        }
+    }
+    public void IncreaseScale()
+    {
+        if (this.transform.localScale.x < maxScale)
+        {
+            float scaleIncrement = sphere.transform.localScale.x * .25f * Time.deltaTime;
+            sphere.transform.localScale += new Vector3(scaleIncrement, scaleIncrement, scaleIncrement);
+        }
+    }
+
+    public void RotateYAxisUp()
+    {
+        sphere.transform.Rotate(Vector3.down, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateYAxisDown()
+    {
+        sphere.transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateXAxisLeft()
+    {
+        sphere.transform.Rotate(Vector3.left, rotateSpeed  * Time.deltaTime);
+    }
+    public void RotateXAxisRight()
+    {
+        sphere.transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateZAxisForward()
+    {
+        sphere.transform.Rotate(Vector3.forward, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateZAxisBack()
+    {
+        sphere.transform.Rotate(Vector3.back, rotateSpeed * Time.deltaTime);
+    }
+
+    public void ToggleMarkerVisibility()
+    {
+        markersController.ShowAllMarkers(!markersController.markersVisible);
+    }
+
+    public void ToggleAutoRotate()
+    {
+        rotating = !rotating;
+    }
+
+    private void handleAutoRotation()
+    {
+        if (rotating)
+        {
+            sphere.transform.Rotate(Vector3.right, autoRotateSpeed * Time.deltaTime);
+            sphere.transform.Rotate(Vector3.back, autoRotateSpeed * Time.deltaTime);
+            sphere.transform.Rotate(Vector3.down, autoRotateSpeed * Time.deltaTime);
+        }
+    }
+
+    public void Reset()
+    {
+        sphere.transform.position = new Vector3(0, 0, 0f);
+        sphere.transform.localScale = new Vector3(1f, 1f, 1f);
+        sphere.transform.rotation = Quaternion.identity;
+    }
+
+    public void SetMagnitudeThreshold(float newVal)
+    {
+        dataController.SetMagnitudeThreshold(newVal);
+    }
+
+    public void ToggleUserTime()
+    {
+        dataController.ToggleUserTime();
+    }
+
+    public void ToggleRunSimulation()
+    {
+        dataController.ToggleRunSimulation();
+    }
 }
