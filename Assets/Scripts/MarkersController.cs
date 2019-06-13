@@ -99,13 +99,13 @@ public class MarkersController : MonoBehaviour
     }
 
     public void ShowAllMarkers(bool show)
-	{
+    {
         markersVisible = show;
         if (markersVisible) CreateMarkers();
         foreach (Transform child in transform)
         {
             child.gameObject.SetActive(markersVisible);
         }
-	}
+    }
 
 }
