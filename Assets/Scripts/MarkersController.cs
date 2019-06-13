@@ -25,6 +25,10 @@ public class MarkersController : MonoBehaviour
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
             AddLineMarker("poleLine", colorOrange, GameObject.Find("NCP"), GameObject.Find("SCP"), markerLineWidth);
         }
+        if (!markersVisible)
+        {
+            ShowAllMarkers(false);
+        }
     }
 
     void AddMarker(string markerName, float RA, float dec, double lst, Color color)
