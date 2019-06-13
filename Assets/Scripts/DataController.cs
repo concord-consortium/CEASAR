@@ -158,9 +158,6 @@ public class DataController : MonoBehaviour
             simulationTimeScale = 10;
             radius = 75;
             magnitudeScale = .3f;
-            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(true);
-            MarkersController markersController = FindObjectOfType<MarkersController>();
-            markersController.ShowAllMarkers(true);
             // use an array for speed of access
             for (int i = 0; i < allStarComponents.Length; i++)
             {
@@ -171,6 +168,9 @@ public class DataController : MonoBehaviour
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
             }
+            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(true);
+            MarkersController markersController = FindObjectOfType<MarkersController>();
+            markersController.ShowAllMarkers(true);
         }
         else
         {
