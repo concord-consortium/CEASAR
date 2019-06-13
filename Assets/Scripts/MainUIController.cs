@@ -38,7 +38,6 @@ public class MainUIController : MonoBehaviour
     // city selection controls
     private CityDropdown cityDropdown;
 
-
     // handle sphere interaction
     private GameObject sphere;
     private float moveSpeed = .1f;
@@ -302,33 +301,30 @@ public class MainUIController : MonoBehaviour
         }
     }
 
-    public void SaveSnapshot()
+    public void NewSnapshot()
     {
         // get values from datacontroller
         DateTime snapshotDateTime = dataController.CurrentSimUniversalTime();
         String location = dataController.SelectedCity;
         // add a snapshot to the controller
         snapshotsController.AddSnapshot(snapshotDateTime, location);
-        //update the dropdown
-        List<string> newSnapshots = new List<string>();
-        string snaptext = location + "; " + snapshotDateTime.ToShortDateString() + " " + snapshotDateTime.ToShortTimeString();
-        newSnapshots.Add(snaptext);
-        snapshotDropdown.AddSnapshot(newSnapshots);
+        // add snapshot to dropdown list
+        AddSnapshot (snapshotDateTime, location);
     }
+
     public void AddSnapshot(DateTime snapshotDateTime, String location)
     {
-        //update the dropdown
+        // user chooses to add a new snapshot, update the dropdown
         List<string> newSnapshots = new List<string>();
         string snaptext = location + "; " + snapshotDateTime.ToShortDateString() + " " + snapshotDateTime.ToShortTimeString();
         newSnapshots.Add(snaptext);
-        snapshotDropdown.AddSnapshot(newSnapshots);
+        snapshotDropdown.UpdateSnapshotList(newSnapshots);
     }
 
     public void RestoreSnapshot(int index, string snapshotText)
     {
-        //call this when we select from dropdown
-        //convert string to datetime?  or use index?
-        // none is 0th index
+        // user restores snapshot from UI
+        // index == 0 is none
         if (index > 0)
         {
             DateTime snapshotDateTime = snapshotsController.snapshots[index - 1].dateTime;
@@ -338,11 +334,6 @@ public class MainUIController : MonoBehaviour
             userMin =  snapshotDateTime.Minute;
             CalculateUserDateTime();
             String location = snapshotsController.snapshots[index - 1].location;
-            Debug.Log(snapshotDateTime.ToLongDateString());
-            Debug.Log(location);
-            //WTD
-            // send the values to dataController and to other UI pieces
-            // update year, day, hour, location
             ChangeCitySelection(location);
             setTimeToggle.isOn = true;
             yearInput.text = userYear.ToString();

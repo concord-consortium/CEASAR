@@ -42,7 +42,6 @@ public class CityDropdown : MonoBehaviour
 
      public void UpdateCitySelection(string location)
     {
-        // Get dropdown reference in case InitConstellationNames is called before Start
         dropdown = GetComponent<TMP_Dropdown>();
         List<TMP_Dropdown.OptionData> dropdownOptions = dropdown.options;
         int dropdownValue = dropdownOptions.FindIndex(el => el.text == location);

@@ -34,13 +34,11 @@ public class SnapshotDropdown : MonoBehaviour
 
     public void InitSnapshots(List<string> snapshots)
     {
-        // Get dropdown reference in case InitSnapshots is called before Start
-        dropdown = GetComponent<TMP_Dropdown>();
-        dropdown.AddOptions(snapshots);
+        UpdateSnapshotList(snapshots);
         dropdown.value = 0;
     }
 
-    public void AddSnapshot(List<string> snapshots)
+    public void UpdateSnapshotList(List<string> snapshots)
     {
         // Get dropdown reference in case InitSnapshots is called before Start
         dropdown = GetComponent<TMP_Dropdown>();
