@@ -249,7 +249,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveForward
         m_Mode: 1
         m_Arguments:
@@ -585,7 +585,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: ToggleMarkerVisibility
         m_Mode: 1
         m_Arguments:
@@ -663,7 +663,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &172376592
 GameObject:
@@ -1004,103 +1004,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 230376626}
   m_CullTransparentMesh: 0
---- !u!1001 &240641114
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_Name
-      value: FPSController
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_UseHeadBob
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_GravityMultiplier
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_ClearFlags
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_BackGroundColor.r
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_BackGroundColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_BackGroundColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: field of view
-      value: 75
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
 --- !u!1 &266091693
 GameObject:
   m_ObjectHideFlags: 0
@@ -2104,7 +2007,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1124937507}
+      - m_Target: {fileID: 799843217}
         m_MethodName: SetMagnitudeThreshold
         m_Mode: 0
         m_Arguments:
@@ -2127,6 +2030,7 @@ GameObject:
   m_Component:
   - component: {fileID: 361113117}
   - component: {fileID: 361113116}
+  - component: {fileID: 361113118}
   m_Layer: 0
   m_Name: CelestialSphere
   m_TagString: Untagged
@@ -2163,6 +2067,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &361113118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361113115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
+  cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
+  constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
+    type: 3}
+  radius: 75
+  magnitudeScale: 0.3
+  magnitudeThreshold: 4.5
+  minMag: 0
+  maxMag: 0
+  showHorizonView: 0
+  starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
+    type: 3}
+  allConstellations: {fileID: 300780002}
+  constellationFullNames: []
+  constellationPrefab: {fileID: 309918465546778449, guid: 5f8788d5211448f4e99b39b1c46445b9,
+    type: 3}
+  colorByConstellation: 1
+  simulationTimeScale: 10
+  cities: []
+  SelectedCity: 
 --- !u!1 &446061078
 GameObject:
   m_ObjectHideFlags: 0
@@ -2695,7 +2631,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveBack
         m_Mode: 1
         m_Arguments:
@@ -3002,7 +2938,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateYAxisDown
         m_Mode: 1
         m_Arguments:
@@ -3144,6 +3080,7 @@ MonoBehaviour:
     type: 3}
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   markerLineWidth: 0.035
+  markersVisible: 1
 --- !u!1001 &522090885
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3194,7 +3131,7 @@ PrefabInstance:
     - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -3934,7 +3871,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: DecreaseScale
         m_Mode: 1
         m_Arguments:
@@ -4320,7 +4257,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateXAxisRight
         m_Mode: 1
         m_Arguments:
@@ -4510,7 +4447,7 @@ RectTransform:
   - {fileID: 1019273341}
   - {fileID: 212893349}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4631,7 +4568,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateXAxisLeft
         m_Mode: 1
         m_Arguments:
@@ -4781,7 +4718,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateZAxisBack
         m_Mode: 1
         m_Arguments:
@@ -5546,7 +5483,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: IncreaseScale
         m_Mode: 1
         m_Arguments:
@@ -5962,7 +5899,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: ToggleAutoRotate
         m_Mode: 1
         m_Arguments:
@@ -6030,7 +5967,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1124937505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6065,7 +6002,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1124937504}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
   m_Name: 
@@ -6077,6 +6014,8 @@ MonoBehaviour:
   radius: 75
   magnitudeScale: 0.3
   magnitudeThreshold: 4.5
+  minMag: 0
+  maxMag: 0
   showHorizonView: 0
   starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
@@ -6156,7 +6095,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveRight
         m_Mode: 1
         m_Arguments:
@@ -9039,7 +8978,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveUp
         m_Mode: 1
         m_Arguments:
@@ -9461,7 +9400,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateZAxisForward
         m_Mode: 1
         m_Arguments:
@@ -9611,7 +9550,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveLeft
         m_Mode: 1
         m_Arguments:
@@ -10399,7 +10338,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: MoveDown
         m_Mode: 1
         m_Arguments:
@@ -11401,7 +11340,7 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: RotateYAxisUp
         m_Mode: 1
         m_Arguments:
@@ -11652,7 +11591,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361113116}
+      - m_Target: {fileID: 799843217}
         m_MethodName: Reset
         m_Mode: 1
         m_Arguments:
