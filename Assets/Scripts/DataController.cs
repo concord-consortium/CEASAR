@@ -6,7 +6,7 @@ using System;
 
 public class DataController : MonoBehaviour
 {
-    public static DataController dataController;
+    private static DataController dataController;
 
     public TextAsset starData;
     public TextAsset cityData;
