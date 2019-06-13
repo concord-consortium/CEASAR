@@ -37,6 +37,65 @@ public static class Utils
     {
         return Quaternion.Euler(rot.x, rot.y, rot.z);
     }
+    // inputs: localSiderialTime is in decimal hours and alpha is right ascension of the object of interest in decimal hours
+    private static float hourAngle(double localSiderialTime, float alpha)
+    {
+        float HA = (float)localSiderialTime - alpha;
+        if (HA < 0)
+        {
+            HA = HA + 24; // if hour angle is negative add 24 hours
+        }
+        return HA; //hour angle in decimal hours
+    }
+    // functions to transform equitorial coordinates(RA, Dec) to Cartesian(x, y, z) for the celestial sphere for plotting in the 3D space.
+    public static Vector3 CalculateEquitorialPosition(float radianRA, float radianDec, float radius)
+    {
+        var xPos = radius * (Mathf.Cos(radianRA) * Mathf.Cos(radianDec));
+        var zPos = radius * (Mathf.Sin(radianRA)) * Mathf.Cos(radianDec);
+        var yPos = radius * (Mathf.Sin(radianDec));
+        return new Vector3(xPos, yPos, zPos);
+    }
+
+    public static Vector3 CalculateHorizonPosition(float RA, float radianDec, float radius, double currentSiderialTime, float observerLatitude)
+    {
+        float Alt = 0;
+        float Azm = 0;
+        // convert all things to Radians for Unity
+        float radianLatitude = Mathf.Deg2Rad * observerLatitude;
+
+        // convert from RA/Dec to Altitude/Azimuth (north = 0)
+        float h = hourAngle(currentSiderialTime, RA);
+        float radianHDegreesPerHour = h * 15 * Mathf.Deg2Rad;
+
+        float sinAltitude = (Mathf.Sin(radianDec) * Mathf.Sin(radianLatitude)) + (Mathf.Cos(radianDec) * Mathf.Cos(radianLatitude) * Mathf.Cos(radianHDegreesPerHour));
+        float altitude = Mathf.Asin(sinAltitude);
+
+        float cosAzimuth = (Mathf.Sin(radianDec) - (Mathf.Sin(radianLatitude) * sinAltitude)) / (Mathf.Cos(radianLatitude) * Mathf.Cos(altitude));
+        float azimuthRaw = Mathf.Acos(cosAzimuth);
+
+        float sinH = Mathf.Sin(radianHDegreesPerHour);
+        if (sinH < 0)
+        {
+            Azm = azimuthRaw;
+        }
+        else
+        {
+            Azm = (Mathf.Deg2Rad * 360) - azimuthRaw;
+        }
+        Alt = altitude; // should now be in radians
+
+        if (float.IsNaN(Alt)) Alt = 0;
+        if (float.IsNaN(Azm)) Azm = 0;
+        var zPos = radius * (Mathf.Cos(Azm)) * (Mathf.Cos(Alt)); // ; RA in hours, so multiply RA by 15 deg / hr
+        var xPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)));
+        var yPos = radius * Mathf.Sin(Alt);
+
+        if (float.IsNaN(xPos))
+        {
+            Debug.Log(Azm + " " + Alt);
+        }
+        return new Vector3(xPos, yPos, zPos);
+    }
 }
 public static class StringExtensions
 {

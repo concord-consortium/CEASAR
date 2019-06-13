@@ -84,6 +84,9 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
 
+    private GameObject fakePole;
+    private List<GameObject> fakeStars;
+
     private class ConstellationNamePair
     {
         public string shortName;
@@ -92,16 +95,16 @@ public class DataController : MonoBehaviour
 
     void Awake()
     {
-         if (dataController == null)
-         {
-             DontDestroyOnLoad (this.gameObject);
-             dataController = this;
-             Init();
-         }
-         else if (dataController != this)
-         {
-             Destroy (gameObject);
-         }
+        if (dataController == null)
+        {
+            DontDestroyOnLoad(this.gameObject);
+            dataController = this;
+            Init();
+        }
+        else if (dataController != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -122,7 +125,7 @@ public class DataController : MonoBehaviour
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
             if (showHorizon)
             {
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
+                // allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
             }
             else
             {
@@ -167,6 +170,7 @@ public class DataController : MonoBehaviour
 
     private void Init()
     {
+        fakeStars = new List<GameObject>();
         if (allConstellations == null)
         {
             allConstellations = new GameObject();
@@ -206,7 +210,7 @@ public class DataController : MonoBehaviour
             minMag = allStars.Min(s => s.Mag);
             maxMag = allStars.Max(s => s.Mag);
             constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
-            var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair{shortName = s.First().Constellation, fullName = s.First().ConstellationFullName}));
+            var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
@@ -236,14 +240,26 @@ public class DataController : MonoBehaviour
                     newStar.Init(constellationsController);
                     newStar.starData = dataStar;
                     starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
-                    if (showHorizonView)
+                    if (showHorizonView && constellationName.shortName.Trim() == "Ori")
                     {
-                        starObject.transform.position = newStar.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
+                        if (dataStar.Mag > magnitudeThreshold)
+                        {
+                            GameObject starObjectTest = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
+                            StarComponent newStarTest = starObjectTest.GetComponent<StarComponent>();
+                            newStarTest.Init(constellationsController);
+                            newStarTest.starData = dataStar;
+                            starObjectTest.name = "TEST";
+                            Utils.SetObjectColor(starObjectTest, Color.magenta);
+
+                            starObjectTest.transform.position = newStar.starData.CalculateHorizonPosition(radius - 2, localSiderialStartTime, 0);
+
+                            fakeStars.Add(starObjectTest);
+                        }
                     }
-                    else
-                    {
-                        starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
-                    }
+                    //else
+                    //{
+                    starObject.transform.position = newStar.starData.CalculateEquitorialPosition(radius);
+                    //}
 
                     // rescale for magnitude
                     var magScaleValue = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
@@ -275,6 +291,14 @@ public class DataController : MonoBehaviour
                 constellationsController.AddConstellation(constellation);
             }
             if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
+        }
+        if (SceneManager.GetActiveScene().name == "Horizon")
+        {
+            fakePole = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            fakePole.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, DateTime.Now.ToSiderealTime(), currentCity.Lat);
+
+            // get the start rotation of the sphere
+            transform.rotation = Quaternion.LookRotation(fakePole.transform.position);
         }
     }
 
@@ -322,13 +346,23 @@ public class DataController : MonoBehaviour
             }
 
             // use an array for speed of access, only update if visible
-            for (int i = 0; i < allStarComponents.Length; i++)
+            //for (int i = 0; i < allStarComponents.Length; i++)
+            //{
+            //    if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
+            //    {
+            //        allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
+            //        allStarComponents[i].transform.LookAt(this.transform);
+            //    }
+            //}
+            if (fakePole)
             {
-                if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
-                {
-                    allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-                    allStarComponents[i].transform.LookAt(this.transform);
-                }
+                fakePole.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, lst, currentCity.Lat);
+                transform.rotation = Quaternion.LookRotation(fakePole.transform.position);
+            }
+            foreach (GameObject fakeStar in fakeStars)
+            {
+                fakeStar.transform.position = fakeStar.GetComponent<StarComponent>().starData.CalculateHorizonPosition(radius - 2, lst, currentCity.Lat);
+                fakeStar.transform.LookAt(this.transform);
             }
 
         }
