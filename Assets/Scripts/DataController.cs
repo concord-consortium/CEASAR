@@ -106,96 +106,59 @@ public class DataController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showObjs, bool consColor)
+    {
+        showHorizonView = showHorizon;
+        simulationTimeScale = ts;
+        radius = rad;
+        magnitudeScale = mag;
+        // use an array for speed of access
+        for (int i = 0; i < allStarComponents.Length; i++)
+        {
+            StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
+            Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
+            if (showHorizon)
+            {
+                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
+            }
+            else
+            {
+                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+            }
+            var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
+            Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
+            allStarComponents[i].gameObject.transform.localScale = magScale;
+            allStarComponents[i].gameObject.transform.LookAt(this.transform);
+        }
+        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
+        MarkersController markersController = FindObjectOfType<MarkersController>();
+        markersController.ShowAllMarkers(showObjs);
+    }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // restore sphere transform
         this.transform.position = new Vector3(0, 0, 0f);
         this.transform.localScale = new Vector3(1f, 1f, 1f);
         this.transform.rotation = Quaternion.identity;
+        // turn off simulation
+        userSpecifiedDateTime = false;
+        runSimulation = false;
         if (scene.name == "Horizon")
         {
-            showHorizonView = true;
-            simulationTimeScale = 1;
-            radius = 100;
-            magnitudeScale = .5f;
-            userSpecifiedDateTime = false;
-            runSimulation = false;
-            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(false);
-            MarkersController markersController = FindObjectOfType<MarkersController>();
-            markersController.ShowAllMarkers(false);
-            // use an array for speed of access
-            for (int i = 0; i < allStarComponents.Length; i++)
-            {
-                StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-                Utils.SetObjectColor(allStarComponents[i].gameObject, starComponent.constellationColor);
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
-				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-                Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-                allStarComponents[i].gameObject.transform.localScale = magScale;
-                allStarComponents[i].gameObject.transform.LookAt(this.transform);
-            }
+            UpdateOnSceneLoad(true, 1, 100, .5f, false, true);
         }
         else if (scene.name == "Planets")
         {
-            showHorizonView = false;
-            simulationTimeScale = 10;
-            radius = 500f;
-            magnitudeScale = 1f;
-            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(false);
-            MarkersController markersController = FindObjectOfType<MarkersController>();
-            markersController.ShowAllMarkers(false);
-            // use an array for speed of access
-            for (int i = 0; i < allStarComponents.Length; i++)
-            {
-                StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-                Utils.SetObjectColor(allStarComponents[i].gameObject, Color.white);
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-                Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-                allStarComponents[i].gameObject.transform.localScale = magScale;
-                allStarComponents[i].gameObject.transform.LookAt(this.transform);
-            }
+            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false);
         }
         else if (scene.name == "Stars")
         {
-            showHorizonView = false;
-            simulationTimeScale = 10;
-            radius = 75;
-            magnitudeScale = .3f;
-            // use an array for speed of access
-            for (int i = 0; i < allStarComponents.Length; i++)
-            {
-                StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-                Utils.SetObjectColor(allStarComponents[i].gameObject, starComponent.constellationColor);
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-                Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-                allStarComponents[i].gameObject.transform.localScale = magScale;
-                allStarComponents[i].gameObject.transform.LookAt(this.transform);
-            }
-            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(true);
-            MarkersController markersController = FindObjectOfType<MarkersController>();
-            markersController.ShowAllMarkers(true);
+            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true);
         }
         else
         {
-            showHorizonView = false;
-            simulationTimeScale = 10;
-            radius = 100;
-            magnitudeScale = .2f;
-            allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(false);
-            MarkersController markersController = FindObjectOfType<MarkersController>();
-            markersController.ShowAllMarkers(false);
-            // use an array for speed of access
-            for (int i = 0; i < allStarComponents.Length; i++)
-            {
-                StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-                Utils.SetObjectColor(allStarComponents[i].gameObject, starComponent.constellationColor);
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-                Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-                allStarComponents[i].gameObject.transform.localScale = magScale;
-                allStarComponents[i].gameObject.transform.LookAt(this.transform);
-            }
+            UpdateOnSceneLoad(false, 10, 100f, .2f, false, true);
         }
     }
 
