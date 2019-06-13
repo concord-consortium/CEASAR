@@ -131,6 +131,7 @@ public class DataController : MonoBehaviour
 				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
+                allStarComponents[i].gameObject.transform.LookAt(this.transform);
             }
         }
         else if (scene.name == "Planets")
@@ -151,6 +152,7 @@ public class DataController : MonoBehaviour
 				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
+                allStarComponents[i].gameObject.transform.LookAt(this.transform);
             }
         }
         else if (scene.name == "Stars")
@@ -168,6 +170,7 @@ public class DataController : MonoBehaviour
 				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
+                allStarComponents[i].gameObject.transform.LookAt(this.transform);
             }
             allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(true);
             MarkersController markersController = FindObjectOfType<MarkersController>();
@@ -191,6 +194,7 @@ public class DataController : MonoBehaviour
 				var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
                 Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
                 allStarComponents[i].gameObject.transform.localScale = magScale;
+                allStarComponents[i].gameObject.transform.LookAt(this.transform);
             }
         }
     }
