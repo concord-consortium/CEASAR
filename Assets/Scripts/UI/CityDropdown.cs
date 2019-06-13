@@ -6,11 +6,12 @@ using TMPro;
 
 public class CityDropdown : MonoBehaviour
 {
-    public GameObject dataController;
+    private DataController dataController;
     TMP_Dropdown dropdown;
 
     void Start()
     {
+        dataController = FindObjectOfType<DataController>();
         dropdown = GetComponent<TMP_Dropdown>();
         // Add listener for when the value of the Dropdown changes
         dropdown.onValueChanged.AddListener(delegate {
@@ -22,7 +23,7 @@ public class CityDropdown : MonoBehaviour
     {
         if (dataController)
         {
-            dataController.GetComponent<DataController>().SetSelectedCity(change.captionText.text);
+            dataController.SetSelectedCity(change.captionText.text);
         }
     }
 

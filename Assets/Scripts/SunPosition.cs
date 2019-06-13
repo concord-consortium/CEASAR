@@ -5,7 +5,7 @@ using UnityEngine;
 public class SunPosition : MonoBehaviour
 {
     public GameObject sun;
-    public DataController dataController;
+    private DataController dataController;
     private City currentCity;
 
     public Material lineMaterial;
@@ -17,7 +17,7 @@ public class SunPosition : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (dataController == null) dataController = FindObjectOfType<DataController>();
+        dataController = FindObjectOfType<DataController>();
         currentCity = dataController.currentCity;
         var solarPosition = CalculateSunPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
 
