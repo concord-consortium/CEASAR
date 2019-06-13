@@ -27,7 +27,7 @@ public class SceneController : MonoBehaviour
     public void LoadPreviousScene ()
     {
         Debug.Log("LoadPreviousScene");
-        if (SceneManager.GetActiveScene().buildIndex <= 0)
+        if (SceneManager.GetActiveScene().buildIndex <= 1)
         {
             SceneManager.LoadScene(SceneManager.sceneCountInBuildSettings - 1);
         }
@@ -42,7 +42,7 @@ public class SceneController : MonoBehaviour
         Debug.Log("LoadNextScene");
         if (SceneManager.GetActiveScene().buildIndex + 1 >= SceneManager.sceneCountInBuildSettings)
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(1);
         }
         else
         {
