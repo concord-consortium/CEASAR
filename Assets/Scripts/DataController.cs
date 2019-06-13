@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System;
 
 public class DataController : MonoBehaviour
 {
+    private static DataController dataController;
+    public static DataController GetInstance()
+    {
+        return dataController;
+    }
     public TextAsset starData;
     public TextAsset cityData;
     public TextAsset constellationConnectionData;
@@ -20,6 +26,10 @@ public class DataController : MonoBehaviour
     private float magnitudeScale = 0.5f;
     [SerializeField]
     private float magnitudeThreshold = 4.5f;
+    [SerializeField]
+    private float minMag;
+    [SerializeField]
+    private float maxMag;
 
     [SerializeField]
     private List<Star> allStars;
@@ -50,6 +60,7 @@ public class DataController : MonoBehaviour
     public GameObject starPrefab;
 
     public GameObject allConstellations;
+    private ConstellationsController constellationsController;
     public List<string> constellationFullNames;
     public GameObject constellationPrefab;
     private StarComponent[] allStarComponents;
@@ -79,8 +90,82 @@ public class DataController : MonoBehaviour
         public string fullName;
     }
 
-    // Start is called before the first frame update
     void Awake()
+    {
+         if (dataController == null)
+         {
+             DontDestroyOnLoad (this.gameObject);
+             dataController = this;
+             Init();
+         }
+         else if (dataController != this)
+         {
+             Destroy (gameObject);
+         }
+    }
+
+    void Start()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showObjs, bool consColor)
+    {
+        showHorizonView = showHorizon;
+        simulationTimeScale = ts;
+        radius = rad;
+        magnitudeScale = mag;
+        // use an array for speed of access
+        for (int i = 0; i < allStarComponents.Length; i++)
+        {
+            StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
+            Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
+            if (showHorizon)
+            {
+                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
+            }
+            else
+            {
+                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+            }
+            var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
+            Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
+            allStarComponents[i].gameObject.transform.localScale = magScale;
+            allStarComponents[i].gameObject.transform.LookAt(this.transform);
+        }
+        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
+        MarkersController markersController = FindObjectOfType<MarkersController>();
+        markersController.ShowAllMarkers(showObjs);
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // restore sphere transform
+        this.transform.position = new Vector3(0, 0, 0f);
+        this.transform.localScale = new Vector3(1f, 1f, 1f);
+        this.transform.rotation = Quaternion.identity;
+        // turn off simulation
+        userSpecifiedDateTime = false;
+        runSimulation = false;
+        if (scene.name == "Horizon")
+        {
+            UpdateOnSceneLoad(true, 1, 100, .5f, false, true);
+        }
+        else if (scene.name == "Planets")
+        {
+            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false);
+        }
+        else if (scene.name == "Stars")
+        {
+            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true);
+        }
+        else
+        {
+            UpdateOnSceneLoad(false, 10, 100f, .2f, false, true);
+        }
+    }
+
+    private void Init()
     {
         if (allConstellations == null)
         {
@@ -88,6 +173,7 @@ public class DataController : MonoBehaviour
             allConstellations.name = "Constellations";
             allConstellations.AddComponent<ConstellationsController>();
         }
+        constellationsController = allConstellations.GetComponent<ConstellationsController>();
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text);
@@ -117,8 +203,8 @@ public class DataController : MonoBehaviour
         if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
-            var minMag = allStars.Min(s => s.Mag);
-            var maxMag = allStars.Max(s => s.Mag);
+            minMag = allStars.Min(s => s.Mag);
+            maxMag = allStars.Max(s => s.Mag);
             constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
             var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair{shortName = s.First().Constellation, fullName = s.First().ConstellationFullName}));
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
@@ -147,6 +233,7 @@ public class DataController : MonoBehaviour
                 {
                     GameObject starObject = Instantiate(starPrefab, this.transform.position, Quaternion.identity);
                     StarComponent newStar = starObject.GetComponent<StarComponent>();
+                    newStar.Init(constellationsController);
                     newStar.starData = dataStar;
                     starObject.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (showHorizonView)
@@ -185,9 +272,9 @@ public class DataController : MonoBehaviour
                     }
                     constellation.AddStar(starObject);
                 }
-                allConstellations.GetComponent<ConstellationsController>().AddConstellation(constellation);
+                constellationsController.AddConstellation(constellation);
             }
-            if (!showHorizonView && colorByConstellation) allConstellations.GetComponent<ConstellationsController>().HighlightAllConstellations(true);
+            if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
         }
     }
 
@@ -290,7 +377,6 @@ public class DataController : MonoBehaviour
     {
         userStartDateTime = newStartDateTime;
     }
-
 
     public void SetSimulationTimeScale(float newVal)
     {

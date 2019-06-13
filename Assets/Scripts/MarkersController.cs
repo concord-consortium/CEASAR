@@ -11,12 +11,19 @@ public class MarkersController : MonoBehaviour
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     public float markerLineWidth = .035f;
+    public bool markersVisible = true;
+    private List<GameObject> markers = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
         dataController = FindObjectOfType<DataController>();
-        if (markerPrefab != null)
+        ShowAllMarkers(markersVisible);
+    }
+
+    void CreateMarkers()
+    {
+        if (markerPrefab != null && markers.Count == 0)
         {
             AddMarker("NCP", 0f, 90f, dataController.LocalSiderialStartTime, colorOrange);
             AddMarker("SCP", 0f, -90f, dataController.LocalSiderialStartTime, colorOrange);
@@ -45,6 +52,7 @@ public class MarkersController : MonoBehaviour
         {
             markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(dataController.Radius);
         }
+        markers.Add(markerObject);
     }
 
     void AddCircumferenceMarker(string markerName, Color color, float lineWidth)
@@ -71,6 +79,7 @@ public class MarkersController : MonoBehaviour
         }
 
         lineRendererCircle.SetPositions(points);
+        markers.Add(circumferenceObject);
     }
 
     void AddLineMarker(string markerName, Color color, GameObject go1, GameObject go2, float lineWidth)
@@ -86,6 +95,17 @@ public class MarkersController : MonoBehaviour
         lineRenderer.SetPosition(1, new Vector3(go2.transform.position.x, go2.transform.position.y, go2.transform.position.z));
         lineRenderer.material = markerMaterial;
         lineRenderer.material.color = color;
+        markers.Add(lineObject);
+    }
+
+    public void ShowAllMarkers(bool show)
+    {
+        markersVisible = show;
+        if (markersVisible) CreateMarkers();
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(markersVisible);
+        }
     }
 
 }

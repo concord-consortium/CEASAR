@@ -6,11 +6,12 @@ using TMPro;
 
 public class SimulationRateDropdown : MonoBehaviour
 {
-    public GameObject dataController;
+    private DataController dataController;
     TMP_Dropdown dropdown;
 
     void Start()
     {
+        dataController = FindObjectOfType<DataController>();
         dropdown = GetComponent<TMP_Dropdown>();
         //Add listener for when the value of the Dropdown changes, to take action
         dropdown.onValueChanged.AddListener(delegate {
@@ -23,7 +24,7 @@ public class SimulationRateDropdown : MonoBehaviour
         if (dataController)
         {
             string newScale = change.captionText.text.Remove(change.captionText.text.Length - 1, 1);
-            dataController.GetComponent<DataController>().SetSimulationTimeScale((float) System.Convert.ToDouble(newScale));
+            dataController.SetSimulationTimeScale((float) System.Convert.ToDouble(newScale));
         }
     }
 

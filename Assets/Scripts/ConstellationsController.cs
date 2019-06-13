@@ -50,11 +50,11 @@ public class ConstellationsController : MonoBehaviour
         }
 	}
 
-    public void ShowAllConstellations()
+    public void ShowAllConstellations(bool show)
 	{
         foreach (Constellation constellation in constellations)
         {
-            constellation.ShowConstellationLines(true);
+            constellation.ShowConstellationLines(show);
         }
 	}
 
