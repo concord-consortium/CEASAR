@@ -11,7 +11,7 @@ public class CityDropdown : MonoBehaviour
 
     void Start()
     {
-        dataController = FindObjectOfType<DataController>();
+        dataController = DataController.GetInstance();
         dropdown = GetComponent<TMP_Dropdown>();
         // Add listener for when the value of the Dropdown changes
         dropdown.onValueChanged.AddListener(delegate {
