@@ -78,9 +78,9 @@ public class MainUIController : MonoBehaviour
         }
         if (snapshotsController)
         {
-            for (int i = 0; i < snapshotsController.snapshots.Count; i++)
+            foreach (Snapshot snapshot in snapshotsController.snapshots)
             {
-                AddSnapshot(snapshotsController.snapshots[i]);
+                AddSnapshotToGrid(snapshot);
             }
         }
     }
@@ -301,18 +301,18 @@ public class MainUIController : MonoBehaviour
         }
     }
 
-    public void NewSnapshot()
+    public void CreateSnapshot()
     {
         // get values from datacontroller
         DateTime snapshotDateTime = dataController.CurrentSimUniversalTime();
         String location = dataController.SelectedCity;
         // add a snapshot to the controller
-        snapshotsController.AddSnapshot(snapshotDateTime, location);
+        snapshotsController.CreateSnapshot(snapshotDateTime, location);
         // add snapshot to dropdown list
-        AddSnapshot (snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+        AddSnapshotToGrid (snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
-    public void AddSnapshot(Snapshot snapshot)
+    public void AddSnapshotToGrid(Snapshot snapshot)
     {
         // user chooses to add a new snapshot, update the scroll view grid
         snapshotGrid.AddSnapItem(snapshot);

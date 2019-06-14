@@ -20,7 +20,8 @@ public class SnapItem : MonoBehaviour
         mainUIController.DeleteSnapshot(snapshot);
         Destroy(gameObject);
     }
-    public void LoadSnapItem()
+
+    public void RestoreSnapItem()
     {
         mainUIController.RestoreSnapshot(snapshot);
     }

@@ -15,6 +15,8 @@ public class SnapshotsController : MonoBehaviour
         do
         {
             snapshotFound = false;
+            // snapshots are stored in playerprefs as paired entries with an index suffix
+            // e.g., "SnapshotLocation0", "SnapshotDateTime0"
             if (PlayerPrefs.HasKey("SnapshotLocation" + count) && PlayerPrefs.HasKey("SnapshotDateTime" + count))
             {
                 snapshotFound = true;
@@ -27,16 +29,11 @@ public class SnapshotsController : MonoBehaviour
         } while (snapshotFound);
     }
 
-    public void AddSnapshot(DateTime dt, String location)
+    public void CreateSnapshot(DateTime dt, String location)
     {
         snapshots.Add(new Snapshot(dt, location));
         PlayerPrefs.SetString("SnapshotLocation" + (snapshots.Count - 1).ToString(), location);
         PlayerPrefs.SetString("SnapshotDateTime" + (snapshots.Count - 1).ToString(), dt.ToString());
-    }
-
-    public void GetSnapshot(int index)
-    {
-        Snapshot snap = snapshots[index];
     }
 
     public void DeleteSnapshot(Snapshot snapshot)
