@@ -123,12 +123,11 @@ public class DataController : MonoBehaviour
         {
             StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
-            //allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+            // TODO: replace with rotating the sphere - currently this exists to reset positions after returning from horizon view
+            allStarComponents[i].SetStarScale(maxMag, mag);
+            allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+            allStarComponents[i].gameObject.transform.LookAt(this.transform);
 
-            //var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-            //Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-            //allStarComponents[i].gameObject.transform.localScale = magScale;
-            //allStarComponents[i].gameObject.transform.LookAt(this.transform);
         }
         allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
         MarkersController markersController = FindObjectOfType<MarkersController>();
@@ -210,11 +209,9 @@ public class DataController : MonoBehaviour
             Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
-            constellationNames.Add(new ConstellationNamePair { shortName = "test", fullName = "test" });
 
             foreach (ConstellationNamePair constellationName in constellationNames)
             {
-                Debug.Log(constellationName.shortName + " " + constellationName.fullName);
 
                 List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName.shortName).ToList();
 

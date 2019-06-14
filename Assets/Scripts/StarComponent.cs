@@ -16,11 +16,16 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         constellationsController = controller;
         starData = star;
         transform.position = star.CalculateEquitorialPosition(radius);
-
-        var magScaleValue = ((star.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
-        Vector3 magScale = transform.localScale * magScaleValue;
-        transform.localScale = magScale;
+        initialScale = transform.localScale;
+        SetStarScale(maxMagnitude, magnitudeScale);
         transform.LookAt(constellationsController.transform);
+    }
+
+    public void SetStarScale(float maxMagnitude, float magnitudeScale)
+    {
+        var magScaleValue = ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        Vector3 magScale = initialScale * magScaleValue;
+        transform.localScale = magScale;
     }
 
     public void OnPointerDown(PointerEventData eventData)
