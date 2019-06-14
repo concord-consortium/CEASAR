@@ -253,6 +253,11 @@ public class DataController : MonoBehaviour
 
                             starObjectTest.transform.position = newStar.starData.CalculateHorizonPosition(radius - 2, localSiderialStartTime, 0);
 
+                            // rescale for magnitude
+                            var magScaleValueTest = ((dataStar.Mag * -1) + maxMag + 1) * magnitudeScale;
+                            Vector3 magScaleTest = starObjectTest.transform.localScale * magScaleValueTest;
+                            starObjectTest.transform.localScale = magScaleTest;
+                            starObjectTest.transform.LookAt(this.transform);
                             fakeStars.Add(starObjectTest);
                         }
                     }
@@ -295,7 +300,7 @@ public class DataController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "Horizon")
         {
             fakePole = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            fakePole.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, DateTime.Now.ToSiderealTime(), currentCity.Lat);
+            fakePole.transform.position = Utils.CalculateHorizonPosition(0, 0, radius, DateTime.Now.ToSiderealTime(), currentCity.Lat);
 
             // get the start rotation of the sphere
             transform.rotation = Quaternion.LookRotation(fakePole.transform.position);
@@ -356,7 +361,7 @@ public class DataController : MonoBehaviour
             //}
             if (fakePole)
             {
-                fakePole.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, lst, currentCity.Lat);
+                fakePole.transform.position = new Vector3(0, radius * Mathf.Cos(Mathf.Deg2Rad * currentCity.Lat), radius * Mathf.Sin(Mathf.Deg2Rad * currentCity.Lat)); // .CalculateHorizonPosition(0, 0, radius, lst, currentCity.Lat);
                 transform.rotation = Quaternion.LookRotation(fakePole.transform.position);
             }
             foreach (GameObject fakeStar in fakeStars)
