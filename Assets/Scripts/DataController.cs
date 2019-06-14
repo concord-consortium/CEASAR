@@ -84,8 +84,8 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
 
-    private GameObject fakePole;
-    private List<GameObject> fakeStars;
+    // For storing a copy of the last known time to limit updates
+    private double lastTime;
 
     private struct ConstellationNamePair
     {
@@ -123,18 +123,12 @@ public class DataController : MonoBehaviour
         {
             StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
-            if (showHorizon)
-            {
-                // allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateHorizonPosition(radius, localSiderialStartTime, 0);
-            }
-            else
-            {
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-            }
-            var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
-            Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
-            allStarComponents[i].gameObject.transform.localScale = magScale;
-            allStarComponents[i].gameObject.transform.LookAt(this.transform);
+            //allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+
+            //var magScaleValue = ((starComponent.starData.Mag * -1) + maxMag + 1) * magnitudeScale;
+            //Vector3 magScale = new Vector3(1f, 1f, 1f) * magScaleValue;
+            //allStarComponents[i].gameObject.transform.localScale = magScale;
+            //allStarComponents[i].gameObject.transform.LookAt(this.transform);
         }
         allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
         MarkersController markersController = FindObjectOfType<MarkersController>();
@@ -170,9 +164,6 @@ public class DataController : MonoBehaviour
 
     private void Init()
     {
-        // TODO: remove
-        fakeStars = new List<GameObject>();
-
         if (allConstellations == null)
         {
             allConstellations = new GameObject();
@@ -251,7 +242,6 @@ public class DataController : MonoBehaviour
                     // Add star data, then position, scale and color
                     newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, radius);
 
-
                     // Eventually store constellation color and observed star color separately
                     newStar.SetStarColor(constellationColor, Color.white);
                     // color by constellation
@@ -280,6 +270,8 @@ public class DataController : MonoBehaviour
 
     void FixedUpdate()
     {
+        bool shouldUpdate = false;
+
         if (SelectedCity != currentCity.Name)
         {
             // verify a valid city was entered
@@ -287,6 +279,7 @@ public class DataController : MonoBehaviour
             if (newCity != null)
             {
                 currentCity = newCity;
+                shouldUpdate = true;
             }
             else
             {
@@ -313,25 +306,22 @@ public class DataController : MonoBehaviour
                 lst = DateTime.Now.ToSiderealTime();
             }
 
-            // use an array for speed of access, only update if visible
-            //for (int i = 0; i < allStarComponents.Length; i++)
-            //{
-            //    if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
-            //    {
-            //        allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-            //        allStarComponents[i].transform.LookAt(this.transform);
-            //    }
-            //}
-            //if (fakePole)
-            //{
-            //    fakePole.transform.position = new Vector3(0, radius * Mathf.Cos(Mathf.Deg2Rad * currentCity.Lat), radius * Mathf.Sin(Mathf.Deg2Rad * currentCity.Lat)); // .CalculateHorizonPosition(0, 0, radius, lst, currentCity.Lat);
-            //    transform.rotation = Quaternion.LookRotation(fakePole.transform.position);
-            //}
-            //foreach (GameObject fakeStar in fakeStars)
-            //{
-            //    fakeStar.transform.position = fakeStar.GetComponent<StarComponent>().starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-            //    fakeStar.transform.LookAt(this.transform);
-            //}
+            // Filter and only update positions if changed time / latitude
+            if (lastTime != lst) shouldUpdate = true;
+
+            if (shouldUpdate)
+            {
+                // use an array for speed of access, only update if visible
+                for (int i = 0; i < allStarComponents.Length; i++)
+                {
+                    if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
+                    {
+                        allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
+                        allStarComponents[i].transform.LookAt(this.transform);
+                    }
+                }
+                lastTime = lst;
+            }
 
         }
     }
