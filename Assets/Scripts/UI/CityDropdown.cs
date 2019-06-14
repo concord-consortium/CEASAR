@@ -39,4 +39,16 @@ public class CityDropdown : MonoBehaviour
         }
         dropdown.value = initialValue;
     }
+
+     public void UpdateCitySelection(string location)
+    {
+        dropdown = GetComponent<TMP_Dropdown>();
+        List<TMP_Dropdown.OptionData> dropdownOptions = dropdown.options;
+        int dropdownValue = dropdownOptions.FindIndex(el => el.text == location);
+        if (dropdownValue < 0)
+        {
+            dropdownValue = 0;
+        }
+        dropdown.value = dropdownValue;
+    }
 }

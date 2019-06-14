@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.UI;
 
 public class MainUIController : MonoBehaviour
 {
     private DataController dataController;
+    private SnapshotsController snapshotsController;
 
     // main control panel where we slot tools
     public GameObject controlPanel;
@@ -23,6 +25,10 @@ public class MainUIController : MonoBehaviour
     private int userMin = 0;
     private int userDay = 1;
     public TextMeshProUGUI currentDateTimeText;
+    public Toggle setTimeToggle;
+    public TMP_InputField yearInput;
+    public Slider daySlider;
+    public Slider timeSlider;
 
     // star selection controls
     public GameObject starInfoPanel;
@@ -42,15 +48,20 @@ public class MainUIController : MonoBehaviour
     private float autoRotateSpeed = 1f;
     private bool rotating = false;
     private MarkersController markersController;
+    // snapshots
+    private SnapGrid snapshotGrid;
 
     // Start is called before the first frame update
     void Start()
     {
+
         markersController = FindObjectOfType<MarkersController>();
         dataController = DataController.GetInstance();
         sphere = dataController.gameObject;
+        snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
+        snapshotGrid = FindObjectOfType<SnapGrid>();
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
         initialPosition = controlPanelRect.anchoredPosition;
         float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
@@ -64,6 +75,13 @@ public class MainUIController : MonoBehaviour
         if (constellationDropdown)
         {
             constellationDropdown.InitConstellationNames(dataController.constellationFullNames, "all");
+        }
+        if (snapshotsController)
+        {
+            foreach (Snapshot snapshot in snapshotsController.snapshots)
+            {
+                AddSnapshotToGrid(snapshot);
+            }
         }
     }
 
@@ -275,4 +293,52 @@ public class MainUIController : MonoBehaviour
     {
         dataController.ToggleRunSimulation();
     }
+    public void ChangeCitySelection(string location)
+    {
+        if (cityDropdown)
+        {
+            cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
+        }
+    }
+
+    public void CreateSnapshot()
+    {
+        // get values from datacontroller
+        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime();
+        String location = dataController.SelectedCity;
+        // add a snapshot to the controller
+        snapshotsController.CreateSnapshot(snapshotDateTime, location);
+        // add snapshot to dropdown list
+        AddSnapshotToGrid (snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+    }
+
+    public void AddSnapshotToGrid(Snapshot snapshot)
+    {
+        // user chooses to add a new snapshot, update the scroll view grid
+        snapshotGrid.AddSnapItem(snapshot);
+    }
+
+    public void RestoreSnapshot(Snapshot snapshot)
+    {
+        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
+        // user restores snapshot from UI
+        DateTime snapshotDateTime = snapshotsController.snapshots[snapshotIndex].dateTime;
+        userYear = snapshotDateTime.Year;
+        userDay = snapshotDateTime.DayOfYear;
+        userHour = snapshotDateTime.Hour;
+        userMin =  snapshotDateTime.Minute;
+        CalculateUserDateTime();
+        String location = snapshotsController.snapshots[snapshotIndex].location;
+        ChangeCitySelection(location);
+        setTimeToggle.isOn = true;
+        yearInput.text = userYear.ToString();
+        daySlider.value = userDay;
+        timeSlider.value = userHour * 60 + userMin;
+    }
+
+    public void DeleteSnapshot(Snapshot deleteSnap)
+    {
+        snapshotsController.DeleteSnapshot(deleteSnap);
+    }
+
 }
