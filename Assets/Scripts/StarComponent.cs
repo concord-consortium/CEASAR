@@ -11,9 +11,16 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     private Vector3 initialScale;
     private float scaleFactor = 1.5f;
 
-    public void Init(ConstellationsController constellationsController)
+    public void Init(ConstellationsController controller, Star star, float maxMagnitude, float magnitudeScale, float radius)
     {
-        constellationsController = constellationsController;
+        constellationsController = controller;
+        starData = star;
+        transform.position = star.CalculateEquitorialPosition(radius);
+
+        var magScaleValue = ((star.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        Vector3 magScale = transform.localScale * magScaleValue;
+        transform.localScale = magScale;
+        transform.LookAt(constellationsController.transform);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -46,5 +53,13 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         // Store constellation color
         this.constellationColor = constellationColor;
 
+    }
+
+    public void ShowStar(bool show)
+    {
+        Renderer rend = GetComponent<Renderer>();
+        Collider coll = GetComponent<Collider>();
+        rend.enabled = show;
+        coll.enabled = show;
     }
 }

@@ -15,9 +15,8 @@ public class Constellation : MonoBehaviour
 
     public Color highlightColor = Color.red;
     public Color neutralColor = Color.white;
-    public Color lineColor = Color.white;
-    public Material lineMaterial;
-    public float lineWidth = .035f;
+
+    public LineRenderer constellationLinePrefab;
 
     public void AddStar(GameObject star)
     {
@@ -55,18 +54,13 @@ public class Constellation : MonoBehaviour
                     int endIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.endStarHipId);
                     if (startIndex >= 0 && endIndex >= 0)
                     {
-                        GameObject connectionLine = new GameObject();
-                        connectionLine.name = "ConnectionLine";
-                        connectionLine.transform.parent = this.transform;
-                        LineRenderer lineRenderer = connectionLine.AddComponent<LineRenderer>();
-                        lineRenderer.startWidth = lineWidth;
-                        lineRenderer.endWidth = lineWidth;
-                        lineRenderer.useWorldSpace = false;
-                        lineRenderer.SetPosition(0, new Vector3(stars[startIndex].transform.position.x, stars[startIndex].transform.position.y, stars[startIndex].transform.position.z));
-                        lineRenderer.SetPosition(1, new Vector3(stars[endIndex].transform.position.x, stars[endIndex].transform.position.y, stars[endIndex].transform.position.z));
-                        lineRenderer.material = lineMaterial;
-                        lineRenderer.material.color = lineColor;
-                        constellationLines.Add(connectionLine);
+                        if (constellationLinePrefab)
+                        {
+                            LineRenderer connectionLine = Instantiate(constellationLinePrefab, this.transform);
+                            connectionLine.SetPosition(0, new Vector3(stars[startIndex].transform.position.x, stars[startIndex].transform.position.y, stars[startIndex].transform.position.z));
+                            connectionLine.SetPosition(1, new Vector3(stars[endIndex].transform.position.x, stars[endIndex].transform.position.y, stars[endIndex].transform.position.z));
+                            constellationLines.Add(connectionLine.gameObject);
+                        }
                     }
                     else
                     {
