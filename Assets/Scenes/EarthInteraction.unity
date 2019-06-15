@@ -853,11 +853,11 @@ MonoBehaviour:
   minMag: 0
   maxMag: 0
   showHorizonView: 0
-  starPrefab: {fileID: 6932068629898470833, guid: 69c731feafd4f40058f07a5156523556,
+  starPrefab: {fileID: 5188296271615159055, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
   allConstellations: {fileID: 595522104}
   constellationFullNames: []
-  constellationPrefab: {fileID: 309918465546778449, guid: 5f8788d5211448f4e99b39b1c46445b9,
+  constellationPrefab: {fileID: 7798315545024252162, guid: 5f8788d5211448f4e99b39b1c46445b9,
     type: 3}
   colorByConstellation: 0
   simulationTimeScale: 10

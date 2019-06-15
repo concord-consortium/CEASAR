@@ -43,8 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e0dd4986bcf6c40ae9e5326ea0d6db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  constellationName: 
+  constellationNameAbbr: 
+  constellationNameFull: 
   highlightColor: {r: 1, g: 0, b: 0, a: 0}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
-  lineColor: {r: 1, g: 1, b: 1, a: 1}
-  lineMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
+  constellationLinePrefab: {fileID: 6712038203607834374, guid: eb2c83d06b4c4463e8b23257795adfb9,
+    type: 3}
