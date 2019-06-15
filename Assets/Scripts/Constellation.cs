@@ -35,7 +35,7 @@ public class Constellation : MonoBehaviour
         }
     }
 
-    public void ShowConstellationLines(bool show)
+    public void ShowConstellationLines(bool show, float width)
     {
         if (constellationLines.Count > 0)
         {
@@ -59,6 +59,8 @@ public class Constellation : MonoBehaviour
                             LineRenderer connectionLine = Instantiate(constellationLinePrefab, this.transform);
                             connectionLine.SetPosition(0, new Vector3(stars[startIndex].transform.position.x, stars[startIndex].transform.position.y, stars[startIndex].transform.position.z));
                             connectionLine.SetPosition(1, new Vector3(stars[endIndex].transform.position.x, stars[endIndex].transform.position.y, stars[endIndex].transform.position.z));
+                            connectionLine.startWidth = width;
+                            connectionLine.endWidth = width;
                             constellationLines.Add(connectionLine.gameObject);
                         }
                     }
