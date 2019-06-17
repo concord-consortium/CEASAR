@@ -271,7 +271,7 @@ public class DataController : MonoBehaviour
             if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
             GetComponentInChildren<MarkersController>().Init();
             // position the North Celestial Pole
-            positionNCP();
+            if (showHorizonView) positionNCP();
         }
     }
 
@@ -300,7 +300,7 @@ public class DataController : MonoBehaviour
             if (newCity != null)
             {
                 currentCity = newCity;
-                positionNCP();
+                if (showHorizonView) positionNCP();
                 shouldUpdate = true;
             }
             else
