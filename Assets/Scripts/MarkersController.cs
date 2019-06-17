@@ -10,37 +10,33 @@ public class MarkersController : MonoBehaviour
     private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
-    public float markerLineWidth = .035f;
+    public float markerLineWidth = .1f;
     public bool markersVisible = true;
+    public bool poleLineVisible = true;
     private List<GameObject> markers = new List<GameObject>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
     public void Init()
     {
         dataController = DataController.GetInstance();
         ShowAllMarkers(markersVisible);
     }
+
     void CreateMarkers()
     {
         if (markerPrefab != null && markers.Count == 0)
         {
-            AddMarker("NCP", 0f, 90f, dataController.LocalSiderialStartTime, colorOrange);
-            AddMarker("SCP", 0f, -90f, dataController.LocalSiderialStartTime, colorOrange);
+            Vector3 NCP = AddMarker("NCP", 0f, 90f, dataController.LocalSiderialStartTime, colorOrange);
+            Vector3 SCP = AddMarker("SCP", 0f, -90f, dataController.LocalSiderialStartTime, colorOrange);
             AddMarker("VE", 0f, 0f, dataController.LocalSiderialStartTime, colorGreen);
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
-            AddLineMarker("poleLine", colorOrange, GameObject.Find("NCP"), GameObject.Find("SCP"), markerLineWidth);
+            if (poleLineVisible) AddLineMarker("poleLine", colorOrange, NCP, SCP);
         }
     }
 
-    void AddMarker(string markerName, float RA, float dec, double lst, Color color)
+    Vector3 AddMarker(string markerName, float RA, float dec, double lst, Color color)
     {
         Marker marker = new Marker(markerName, RA, dec);
-        GameObject markerObject = Instantiate(markerPrefab, this.transform.position, Quaternion.identity);
-        markerObject.transform.parent = this.transform;
+        GameObject markerObject = Instantiate(markerPrefab, this.transform);
         MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
         newMarker.label.text = markerName;
         newMarker.markerData = marker;
@@ -49,17 +45,18 @@ public class MarkersController : MonoBehaviour
 
         if (dataController.UseNCPRotation)
         {
+            float radius = dataController.Radius + 10;
             // Set marker positions in Equitorial position and move with celestial sphere
             switch (markerName)
             {
                 case "NCP":
-                    markerObject.transform.position = dataController.Radius * new Vector3(0, 1, 0);
+                    markerObject.transform.position = radius * new Vector3(0, 1, 0);
                     break;
                 case "SCP":
-                    markerObject.transform.position = dataController.Radius * new Vector3(0, -1, 0);
+                    markerObject.transform.position = radius * new Vector3(0, -1, 0);
                     break;
                 case "VE":
-                    markerObject.transform.position = dataController.Radius * new Vector3(1, 0, 0);
+                    markerObject.transform.position = radius * new Vector3(1, 0, 0);
                     break;
             }
         }
@@ -75,23 +72,26 @@ public class MarkersController : MonoBehaviour
             }
         }
         markers.Add(markerObject);
+        return markerObject.transform.position;
     }
 
     void AddCircumferenceMarker(string markerName, Color color, float lineWidth)
     {
-        GameObject circumferenceObject = new GameObject();
-        circumferenceObject.name = markerName;
-        circumferenceObject.transform.parent = this.transform;
         int segments = 360;
+        int pointCount = segments + 1;
+
+        GameObject circumferenceObject = new GameObject(markerName);
+        circumferenceObject.transform.parent = this.transform;
+
         LineRenderer lineRendererCircle = circumferenceObject.AddComponent<LineRenderer>();
         lineRendererCircle.useWorldSpace = false;
         lineRendererCircle.startWidth = lineWidth;
         lineRendererCircle.endWidth = lineWidth;
-        lineRendererCircle.positionCount = segments + 1;
         lineRendererCircle.material = markerMaterial;
-        lineRendererCircle.material.color = color;
 
-        int pointCount = segments + 1; // add extra point to make startpoint and endpoint the same to close the circle
+        lineRendererCircle.positionCount = pointCount;
+        lineRendererCircle.material.color = color;
+        // add extra point to make startpoint and endpoint the same to close the circle
         Vector3[] points = new Vector3[pointCount];
 
         for (int i = 0; i < pointCount; i++)
@@ -104,19 +104,19 @@ public class MarkersController : MonoBehaviour
         markers.Add(circumferenceObject);
     }
 
-    void AddLineMarker(string markerName, Color color, GameObject go1, GameObject go2, float lineWidth)
+    void AddLineMarker(string markerName, Color color, Vector3 p1, Vector3 p2)
     {
-        GameObject lineObject = new GameObject();
-        lineObject.name = markerName;
+        GameObject lineObject = new GameObject(markerName);
         lineObject.transform.parent = this.transform;
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = lineWidth;
-        lineRenderer.endWidth = lineWidth;
-        lineRenderer.useWorldSpace = false;
-        lineRenderer.SetPosition(0, new Vector3(go1.transform.position.x, go1.transform.position.y, go1.transform.position.z));
-        lineRenderer.SetPosition(1, new Vector3(go2.transform.position.x, go2.transform.position.y, go2.transform.position.z));
+
+        lineRenderer.SetPosition(0, p1);
+        lineRenderer.SetPosition(1, p2);
         lineRenderer.material = markerMaterial;
         lineRenderer.material.color = color;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = markerLineWidth;
+        lineRenderer.useWorldSpace = false;
         markers.Add(lineObject);
     }
 

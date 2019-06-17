@@ -284,8 +284,8 @@ public class DataController : MonoBehaviour
         float radianLat = currentCity.Lat * Mathf.Deg2Rad;
         NCP.transform.position = new Vector3(0, radius * Mathf.Sin(radianLat), radius * Mathf.Cos(radianLat));
 
-        // set initial rotation
-        transform.Rotate(NCP.transform.position, 0f);
+        // set initial rotation - this is our axis for siderial daily rotation.
+        transform.rotation = Quaternion.Euler(currentCity.Lat, 0, 0);
         initialRotation = transform.rotation;
     }
 
@@ -335,21 +335,15 @@ public class DataController : MonoBehaviour
             {
                 if (UseNCPRotation)
                 {
-                    if (!NCP) positionNCP(); // NCP = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (!NCP) positionNCP();
 
-                    // NCP.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, lst, currentCity.Lat);
-                    //float radianLat = currentCity.Lat * Mathf.Deg2Rad;
-                    //NCP.transform.position = new Vector3(0, radius * Mathf.Sin(radianLat), radius * Mathf.Cos(radianLat));
-                    // that's the position at midnight, now get rotation
-
-                    // get the start rotation of the sphere
-                    // transform.rotation = Quaternion.LookRotation(NCP.transform.position, Vector3.left);
-                    float fractionOfDay = ((float)currentSimulationTime.TimeOfDay.TotalSeconds / (24 * 60 * 60)) * 2 * Mathf.PI;
+                    float fractionOfDay = ((float)lst / 24) * 360;
                     transform.rotation = initialRotation;
-                    transform.Rotate(NCP.transform.position, fractionOfDay);
+                    transform.Rotate(0, fractionOfDay, 0, Space.Self);
                 }
                 else
                 {
+                    // Reset rotation - TODO remove when testing NCP rotation is complete
                     this.transform.rotation = Quaternion.identity;
                     // use an array for speed of access, only update if visible
                     for (int i = 0; i < allStarComponents.Length; i++)
