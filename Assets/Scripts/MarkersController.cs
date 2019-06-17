@@ -17,10 +17,13 @@ public class MarkersController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+    }
+    public void Init()
+    {
         dataController = DataController.GetInstance();
         ShowAllMarkers(markersVisible);
     }
-
     void CreateMarkers()
     {
         if (markerPrefab != null && markers.Count == 0)
@@ -44,13 +47,32 @@ public class MarkersController : MonoBehaviour
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        if (dataController.showHorizonView)
+        if (dataController.UseNCPRotation)
         {
-            markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(dataController.Radius, lst, 0);
+            // Set marker positions in Equitorial position and move with celestial sphere
+            switch (markerName)
+            {
+                case "NCP":
+                    markerObject.transform.position = dataController.Radius * new Vector3(0, 1, 0);
+                    break;
+                case "SCP":
+                    markerObject.transform.position = dataController.Radius * new Vector3(0, -1, 0);
+                    break;
+                case "VE":
+                    markerObject.transform.position = dataController.Radius * new Vector3(1, 0, 0);
+                    break;
+            }
         }
         else
         {
-            markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(dataController.Radius);
+            if (dataController.showHorizonView)
+            {
+                markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(dataController.Radius, lst, 0);
+            }
+            else
+            {
+                markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(dataController.Radius);
+            }
         }
         markers.Add(markerObject);
     }

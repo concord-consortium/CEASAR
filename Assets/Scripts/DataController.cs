@@ -84,6 +84,11 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
 
+    [SerializeField]
+    public bool UseNCPRotation;
+    GameObject NCP;
+    private Quaternion initialRotation;
+
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
@@ -125,9 +130,12 @@ public class DataController : MonoBehaviour
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
             // TODO: replace with rotating the sphere - currently this exists to reset positions after returning from horizon view
             allStarComponents[i].SetStarScale(maxMag, mag);
-            allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-            allStarComponents[i].gameObject.transform.LookAt(this.transform);
-
+            this.transform.rotation = Quaternion.identity;
+            if (!UseNCPRotation)
+            {
+                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+                allStarComponents[i].gameObject.transform.LookAt(this.transform);
+            }
         }
         allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
         MarkersController markersController = FindObjectOfType<MarkersController>();
@@ -261,9 +269,25 @@ public class DataController : MonoBehaviour
                 constellationsController.AddConstellation(constellation);
             }
             if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
+            GetComponentInChildren<MarkersController>().Init();
+            // position the North Celestial Pole
+            positionNCP();
         }
     }
 
+    void positionNCP()
+    {
+        // reset current rotation
+        transform.rotation = Quaternion.identity;
+        // calculate NCP for selected latitude
+        if (!NCP) NCP = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        float radianLat = currentCity.Lat * Mathf.Deg2Rad;
+        NCP.transform.position = new Vector3(0, radius * Mathf.Sin(radianLat), radius * Mathf.Cos(radianLat));
+
+        // set initial rotation
+        transform.Rotate(NCP.transform.position, 0f);
+        initialRotation = transform.rotation;
+    }
 
     void FixedUpdate()
     {
@@ -276,6 +300,7 @@ public class DataController : MonoBehaviour
             if (newCity != null)
             {
                 currentCity = newCity;
+                positionNCP();
                 shouldUpdate = true;
             }
             else
@@ -308,13 +333,32 @@ public class DataController : MonoBehaviour
 
             if (shouldUpdate)
             {
-                // use an array for speed of access, only update if visible
-                for (int i = 0; i < allStarComponents.Length; i++)
+                if (UseNCPRotation)
                 {
-                    if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
+                    if (!NCP) positionNCP(); // NCP = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                    // NCP.transform.position = Utils.CalculateHorizonPosition((float)Math.PI / 2, 0, radius, lst, currentCity.Lat);
+                    //float radianLat = currentCity.Lat * Mathf.Deg2Rad;
+                    //NCP.transform.position = new Vector3(0, radius * Mathf.Sin(radianLat), radius * Mathf.Cos(radianLat));
+                    // that's the position at midnight, now get rotation
+
+                    // get the start rotation of the sphere
+                    // transform.rotation = Quaternion.LookRotation(NCP.transform.position, Vector3.left);
+                    float fractionOfDay = ((float)currentSimulationTime.TimeOfDay.TotalSeconds / (24 * 60 * 60)) * 2 * Mathf.PI;
+                    transform.rotation = initialRotation;
+                    transform.Rotate(NCP.transform.position, fractionOfDay);
+                }
+                else
+                {
+                    this.transform.rotation = Quaternion.identity;
+                    // use an array for speed of access, only update if visible
+                    for (int i = 0; i < allStarComponents.Length; i++)
                     {
-                        allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-                        allStarComponents[i].transform.LookAt(this.transform);
+                        if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
+                        {
+                            allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
+                            allStarComponents[i].transform.LookAt(this.transform);
+                        }
                     }
                 }
                 lastTime = lst;
