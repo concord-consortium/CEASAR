@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 7778931955663833681}
   - component: {fileID: 8007568931072091754}
   - component: {fileID: 1925203137039644296}
-  m_Layer: 0
-  m_Name: CubeLine
+  m_Layer: 16
+  m_Name: ConstellationConnection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

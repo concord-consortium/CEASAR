@@ -39,6 +39,7 @@ public class MarkersController : MonoBehaviour
     {
         Marker marker = new Marker(markerName, RA, dec);
         GameObject markerObject = Instantiate(markerPrefab, this.transform);
+        markerObject.layer = LayerMask.NameToLayer("Marker");
         markerObject.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
         newMarker.label.text = markerName;
@@ -72,7 +73,7 @@ public class MarkersController : MonoBehaviour
 
         GameObject circumferenceObject = new GameObject(markerName);
         circumferenceObject.transform.parent = this.transform;
-
+        circumferenceObject.layer = LayerMask.NameToLayer("Marker");
         LineRenderer lineRendererCircle = circumferenceObject.AddComponent<LineRenderer>();
         lineRendererCircle.useWorldSpace = false;
         lineRendererCircle.startWidth = lineWidth;
@@ -98,6 +99,7 @@ public class MarkersController : MonoBehaviour
     {
         GameObject lineObject = new GameObject(markerName);
         lineObject.transform.parent = this.transform;
+        lineObject.layer = LayerMask.NameToLayer("Marker");
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
 
         lineRenderer.SetPosition(0, p1);
