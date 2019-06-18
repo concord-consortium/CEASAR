@@ -16,7 +16,7 @@ public class Constellation : MonoBehaviour
     public Color highlightColor = Color.red;
     public Color neutralColor = Color.white;
 
-    public LineRenderer constellationLinePrefab;
+    public GameObject constellationConnectionPrefab;
 
     public void AddStar(GameObject star)
     {
@@ -54,13 +54,14 @@ public class Constellation : MonoBehaviour
                     int endIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.endStarHipId);
                     if (startIndex >= 0 && endIndex >= 0)
                     {
-                        if (constellationLinePrefab)
+                        if (constellationConnectionPrefab)
                         {
-                            LineRenderer connectionLine = Instantiate(constellationLinePrefab, this.transform);
-                            connectionLine.SetPosition(0, new Vector3(stars[startIndex].transform.position.x, stars[startIndex].transform.position.y, stars[startIndex].transform.position.z));
-                            connectionLine.SetPosition(1, new Vector3(stars[endIndex].transform.position.x, stars[endIndex].transform.position.y, stars[endIndex].transform.position.z));
-                            connectionLine.startWidth = width;
-                            connectionLine.endWidth = width;
+                            Vector3 offset = stars[endIndex].transform.localPosition - stars[startIndex].transform.localPosition;
+                            Vector3 scale = new Vector3(width, offset.magnitude, width);
+                            Vector3 position = stars[startIndex].transform.localPosition + (offset / 2.0f);
+                            GameObject connectionLine = Instantiate(constellationConnectionPrefab, position, Quaternion.identity, this.transform);
+                            connectionLine.transform.up = offset;
+                            connectionLine.transform.localScale = scale;
                             constellationLines.Add(connectionLine.gameObject);
                         }
                     }

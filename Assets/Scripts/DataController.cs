@@ -38,6 +38,7 @@ public class DataController : MonoBehaviour
         get { return allStars; }
         private set { allStars = value; }
     }
+    public int maxStars = 10000;
 
     [SerializeField]
     private List<City> allCities;
@@ -180,7 +181,7 @@ public class DataController : MonoBehaviour
 
         if (starData != null)
         {
-            allStars = DataImport.ImportStarData(starData.text);
+            allStars = DataImport.ImportStarData(starData.text, maxStars);
             Debug.Log(allStars.Count + " stars imported");
             allStarComponents = new StarComponent[allStars.Count];
         }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 342924385934479107}
   - component: {fileID: 7798315545024252162}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Constellation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,5 +47,5 @@ MonoBehaviour:
   constellationNameFull: 
   highlightColor: {r: 1, g: 0, b: 0, a: 0}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
-  constellationLinePrefab: {fileID: 6712038203607834374, guid: eb2c83d06b4c4463e8b23257795adfb9,
+  constellationConnectionPrefab: {fileID: 2034434946690713381, guid: cf383d07432a39847b270b64488a4c82,
     type: 3}

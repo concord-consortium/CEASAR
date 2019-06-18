@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class DataImport
 {
-    public static List<Star> ImportStarData(string sourceData)
+    public static List<Star> ImportStarData(string sourceData, int maxStars)
     {
+        int numStars = 0;
         List<Star> stars = new List<Star>();
         foreach (var line in splitToLines(sourceData))
         {
+            if (numStars == maxStars) break;
             if (!line.StartsWith("Hip"))
             {
                 string[] values = line.Split('\t');
@@ -33,6 +35,7 @@ public static class DataImport
                     Star star = new Star(Hip, ConstellationAbbr, ConstellationFull, ProperName, XBayerFlamsteed, FlamsteedDes, BayerDes, RA, RadianRA, Dec, RadianDec, Dist, Mag, AbsMag, Spectrum, ColorIndex);
 
                     stars.Add(star);
+                    numStars++;
                 }
             }
         }
