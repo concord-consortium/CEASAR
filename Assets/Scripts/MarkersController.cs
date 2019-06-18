@@ -128,6 +128,9 @@ public class MarkersController : MonoBehaviour
                 case "SCP":
                     child.gameObject.SetActive(showMarkers);
                     break;
+                case "VE":
+                    child.gameObject.SetActive(showMarkers);
+                    break;
                 case "equator":
                     child.gameObject.SetActive(showEquator);
                     break;
