@@ -40,14 +40,14 @@ public class MarkersController : MonoBehaviour
         Marker marker = new Marker(markerName, RA, dec);
         GameObject markerObject = Instantiate(markerPrefab, this.transform);
         markerObject.layer = LayerMask.NameToLayer("Marker");
-        markerObject.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
+        markerObject.transform.localScale = markerObject.transform.localScale * markerScale;
         MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
         newMarker.label.text = markerName;
         newMarker.markerData = marker;
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        float radius = dataController.Radius + 10;
+        float radius = dataController.Radius + dataController.Radius * .1f;
         // Set marker positions in Equitorial position and move with celestial sphere
         switch (markerName)
         {
