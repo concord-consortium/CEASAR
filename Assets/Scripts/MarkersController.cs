@@ -113,7 +113,6 @@ public class MarkersController : MonoBehaviour
         markersVisible = showMarkers;
         poleLineVisible = showPole;
         equatorLineVisible = showEquator;
-        Debug.Log(showMarkers + " " + showPole + " " + showEquator);
         if (markers.Count == 0)
         {
             CreateMarkers();
