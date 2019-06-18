@@ -38,7 +38,6 @@ public class DataController : MonoBehaviour
         get { return allStars; }
         private set { allStars = value; }
     }
-    [SerializeField]
     public int maxStars = 10000;
 
     [SerializeField]
