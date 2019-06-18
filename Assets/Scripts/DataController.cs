@@ -282,7 +282,7 @@ public class DataController : MonoBehaviour
         transform.rotation = Quaternion.identity;
         // NCP for selected latitude is due North, elevated at the same angle as latitude
         // this is our axis for siderial daily rotation.
-        transform.rotation = Quaternion.Euler(currentCity.Lat, 0, 0);
+        transform.rotation = Quaternion.Euler(90 - currentCity.Lat, 0, 0);
         initialRotation = transform.rotation;
     }
 
