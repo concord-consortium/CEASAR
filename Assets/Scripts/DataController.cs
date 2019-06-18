@@ -75,6 +75,10 @@ public class DataController : MonoBehaviour
     }
 
     private DateTime currentSimulationTime = DateTime.Now;
+    public DateTime CurrentSimulationTime
+    {
+        get { return currentSimulationTime; }
+    }
     public float simulationTimeScale = 10f;
     private bool userSpecifiedDateTime = false;
     private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -84,6 +88,7 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
 
+    private Quaternion initialRotation;
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
@@ -112,7 +117,7 @@ public class DataController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showObjs, bool consColor)
+    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showMarkers, bool showPoleLine, bool showEquator, bool consColor)
     {
         showHorizonView = showHorizon;
         simulationTimeScale = ts;
@@ -123,15 +128,16 @@ public class DataController : MonoBehaviour
         {
             StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
-            // TODO: replace with rotating the sphere - currently this exists to reset positions after returning from horizon view
             allStarComponents[i].SetStarScale(maxMag, mag);
+            this.transform.rotation = Quaternion.identity;
+
             allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
             allStarComponents[i].gameObject.transform.LookAt(this.transform);
 
         }
-        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
+        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showMarkers);
         MarkersController markersController = FindObjectOfType<MarkersController>();
-        markersController.ShowAllMarkers(showObjs);
+        markersController.ShowMarkers(showMarkers, showPoleLine, showEquator);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -145,19 +151,20 @@ public class DataController : MonoBehaviour
         runSimulation = false;
         if (scene.name == "Horizon")
         {
-            UpdateOnSceneLoad(true, 1, 100, .5f, false, true);
+            UpdateOnSceneLoad(true, 1, 100, .4f, true, false, true, true);
+            positionNCP();
         }
         else if (scene.name == "Planets")
         {
-            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false);
+            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false, false, false);
         }
         else if (scene.name == "Stars")
         {
-            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true);
+            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true, true, true);
         }
         else
         {
-            UpdateOnSceneLoad(false, 10, 100f, .2f, false, true);
+            UpdateOnSceneLoad(false, 10, 100f, .2f, false, false, false, false);
         }
     }
 
@@ -260,10 +267,24 @@ public class DataController : MonoBehaviour
                 }
                 constellationsController.AddConstellation(constellation);
             }
-            if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
+
+            if (colorByConstellation) constellationsController.HighlightAllConstellations(true);
+
+            GetComponentInChildren<MarkersController>().Init();
+            // position the North Celestial Pole
+            if (showHorizonView) positionNCP();
         }
     }
 
+    void positionNCP()
+    {
+        // reset current rotation
+        transform.rotation = Quaternion.identity;
+        // NCP for selected latitude is due North, elevated at the same angle as latitude
+        // this is our axis for siderial daily rotation.
+        transform.rotation = Quaternion.Euler(90 - currentCity.Lat, 0, 0);
+        initialRotation = transform.rotation;
+    }
 
     void FixedUpdate()
     {
@@ -276,6 +297,7 @@ public class DataController : MonoBehaviour
             if (newCity != null)
             {
                 currentCity = newCity;
+                if (showHorizonView) positionNCP();
                 shouldUpdate = true;
             }
             else
@@ -308,15 +330,12 @@ public class DataController : MonoBehaviour
 
             if (shouldUpdate)
             {
-                // use an array for speed of access, only update if visible
-                for (int i = 0; i < allStarComponents.Length; i++)
-                {
-                    if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
-                    {
-                        allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-                        allStarComponents[i].transform.LookAt(this.transform);
-                    }
-                }
+                float fractionOfDay = ((float)lst / 24) * 360;
+                // TODO: switch from reset & recalculate to just setting the angle around the existing axis
+                transform.rotation = initialRotation;
+                // axis is offset by 90 degrees
+                transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
+                // Set last timestamp so we only update when changed
                 lastTime = lst;
             }
 

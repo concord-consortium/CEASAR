@@ -85,7 +85,7 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
-        if (scenesWithAvatars.Contains(scene.name))
+        if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(localPlayer, true);
             foreach (Player p in players.Keys)

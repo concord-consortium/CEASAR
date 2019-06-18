@@ -1618,6 +1618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3f77a9d5e9af94d8df4f675e01ad52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineWidth: 0.035
 --- !u!4 &300780004
 Transform:
   m_ObjectHideFlags: 0
@@ -2085,6 +2086,7 @@ MonoBehaviour:
   simulationTimeScale: 10
   cities: []
   SelectedCity: 
+  UseNCPRotation: 1
 --- !u!1 &446061078
 GameObject:
   m_ObjectHideFlags: 0
@@ -4462,6 +4464,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlPanel: {fileID: 1019273340}
   currentDateTimeText: {fileID: 0}
+  setTimeToggle: {fileID: 0}
+  yearInput: {fileID: 0}
+  daySlider: {fileID: 0}
+  timeSlider: {fileID: 0}
   starInfoPanel: {fileID: 212893348}
 --- !u!1 &834455921
 GameObject:
