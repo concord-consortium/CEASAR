@@ -106,7 +106,7 @@ public class MarkersController : MonoBehaviour
         lineRenderer.SetPosition(1, p2);
         lineRenderer.material = markerMaterial;
         lineRenderer.material.color = color;
-        lineRenderer.startWidth = 0.1f;
+        lineRenderer.startWidth = markerLineWidth;
         lineRenderer.endWidth = markerLineWidth;
         lineRenderer.useWorldSpace = false;
         markers.Add(lineObject);
