@@ -233,6 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3f77a9d5e9af94d8df4f675e01ad52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineWidth: 0.035
 --- !u!4 &595522106
 Transform:
   m_ObjectHideFlags: 0
@@ -716,6 +717,8 @@ MonoBehaviour:
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   markerLineWidth: 0.035
   markersVisible: 0
+  poleLineVisible: 0
+  equatorLineVisible: 0
 --- !u!1 &1753077040
 GameObject:
   m_ObjectHideFlags: 0

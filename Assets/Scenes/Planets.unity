@@ -695,7 +695,6 @@ MonoBehaviour:
   simulationTimeScale: 10
   cities: []
   SelectedCity: 
-  UseNCPRotation: 0
 --- !u!4 &557743841
 Transform:
   m_ObjectHideFlags: 0
@@ -1081,7 +1080,8 @@ MonoBehaviour:
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   markerLineWidth: 0.035
   markersVisible: 0
-  poleLineVisible: 1
+  poleLineVisible: 0
+  equatorLineVisible: 0
 --- !u!4 &1118410150
 Transform:
   m_ObjectHideFlags: 0
