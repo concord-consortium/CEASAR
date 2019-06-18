@@ -128,7 +128,6 @@ public class DataController : MonoBehaviour
         {
             StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
             Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
-            // TODO: replace with rotating the sphere - currently this exists to reset positions after returning from horizon view
             allStarComponents[i].SetStarScale(maxMag, mag);
             this.transform.rotation = Quaternion.identity;
 
