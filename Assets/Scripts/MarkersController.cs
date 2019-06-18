@@ -13,12 +13,13 @@ public class MarkersController : MonoBehaviour
     public float markerLineWidth = .1f;
     public bool markersVisible = true;
     public bool poleLineVisible = true;
+    public bool equatorLineVisible = true;
     private List<GameObject> markers = new List<GameObject>();
 
     public void Init()
     {
         dataController = DataController.GetInstance();
-        ShowAllMarkers(markersVisible);
+        ShowMarkers(markersVisible, poleLineVisible, equatorLineVisible);
     }
 
     void CreateMarkers()
@@ -29,7 +30,7 @@ public class MarkersController : MonoBehaviour
             Vector3 SCP = AddMarker("SCP", 0f, -90f, dataController.CurrentSimulationTime.ToSiderealTime(), colorOrange);
             AddMarker("VE", 0f, 0f, dataController.CurrentSimulationTime.ToSiderealTime(), colorGreen);
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
-            if (poleLineVisible) AddLineMarker("poleLine", colorOrange, NCP, SCP);
+            AddLineMarker("poleLine", colorOrange, NCP, SCP);
         }
     }
 
@@ -107,13 +108,36 @@ public class MarkersController : MonoBehaviour
         markers.Add(lineObject);
     }
 
-    public void ShowAllMarkers(bool show)
+    public void ShowMarkers(bool showMarkers, bool showPole, bool showEquator)
     {
-        markersVisible = show;
-        if (markersVisible) CreateMarkers();
+        markersVisible = showMarkers;
+        poleLineVisible = showPole;
+        equatorLineVisible = showEquator;
+        Debug.Log(showMarkers + " " + showPole + " " + showEquator);
+        if (markers.Count == 0)
+        {
+            CreateMarkers();
+        }
         foreach (Transform child in transform)
         {
-            child.gameObject.SetActive(markersVisible);
+            switch (child.name)
+            {
+                case "NCP":
+                    child.gameObject.SetActive(showMarkers);
+                    break;
+                case "SCP":
+                    child.gameObject.SetActive(showMarkers);
+                    break;
+                case "equator":
+                    child.gameObject.SetActive(showEquator);
+                    break;
+                case "poleLine":
+                    child.gameObject.SetActive(showPole);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 

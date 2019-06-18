@@ -96,7 +96,7 @@ public class MainUIController : MonoBehaviour
         // Move our position a step closer to the target.
         if (movingControlPanel)
         {
-            float step =  speed * Time.deltaTime; // calculate distance to move
+            float step = speed * Time.deltaTime; // calculate distance to move
             Vector2 currentPos = controlPanel.GetComponent<RectTransform>().anchoredPosition;
             Vector2 newPos = Vector3.MoveTowards(currentPos, targetPosition, step);
             controlPanel.GetComponent<RectTransform>().anchoredPosition = newPos;
@@ -130,14 +130,14 @@ public class MainUIController : MonoBehaviour
 
     public void ChangeDay(float newDay)
     {
-        userDay = (int) newDay;
+        userDay = (int)newDay;
         CalculateUserDateTime();
     }
 
     public void ChangeTime(float newTime)
     {
-        userHour = (int) newTime / 60;
-        userMin = (int) (newTime % 60);
+        userHour = (int)newTime / 60;
+        userMin = (int)(newTime % 60);
         CalculateUserDateTime();
     }
 
@@ -237,7 +237,7 @@ public class MainUIController : MonoBehaviour
     }
     public void RotateXAxisLeft()
     {
-        sphere.transform.Rotate(Vector3.left, rotateSpeed  * Time.deltaTime);
+        sphere.transform.Rotate(Vector3.left, rotateSpeed * Time.deltaTime);
     }
     public void RotateXAxisRight()
     {
@@ -254,7 +254,7 @@ public class MainUIController : MonoBehaviour
 
     public void ToggleMarkerVisibility()
     {
-        markersController.ShowAllMarkers(!markersController.markersVisible);
+        markersController.ShowMarkers(!markersController.markersVisible, !markersController.markersVisible, !markersController.markersVisible);
     }
 
     public void ToggleAutoRotate()
@@ -309,7 +309,7 @@ public class MainUIController : MonoBehaviour
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location);
         // add snapshot to dropdown list
-        AddSnapshotToGrid (snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+        AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
     public void AddSnapshotToGrid(Snapshot snapshot)
@@ -326,7 +326,7 @@ public class MainUIController : MonoBehaviour
         userYear = snapshotDateTime.Year;
         userDay = snapshotDateTime.DayOfYear;
         userHour = snapshotDateTime.Hour;
-        userMin =  snapshotDateTime.Minute;
+        userMin = snapshotDateTime.Minute;
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
         ChangeCitySelection(location);

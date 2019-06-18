@@ -117,7 +117,7 @@ public class DataController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showObjs, bool consColor)
+    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showMarkers, bool showPoleLine, bool showEquator, bool consColor)
     {
         showHorizonView = showHorizon;
         simulationTimeScale = ts;
@@ -135,9 +135,9 @@ public class DataController : MonoBehaviour
             allStarComponents[i].gameObject.transform.LookAt(this.transform);
 
         }
-        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
+        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showMarkers);
         MarkersController markersController = FindObjectOfType<MarkersController>();
-        markersController.ShowAllMarkers(showObjs);
+        markersController.ShowMarkers(showMarkers, showPoleLine, showEquator);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -151,19 +151,20 @@ public class DataController : MonoBehaviour
         runSimulation = false;
         if (scene.name == "Horizon")
         {
-            UpdateOnSceneLoad(true, 1, 100, .4f, false, true);
+            UpdateOnSceneLoad(true, 1, 100, .4f, true, false, true, true);
+            positionNCP();
         }
         else if (scene.name == "Planets")
         {
-            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false);
+            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false, false, false);
         }
         else if (scene.name == "Stars")
         {
-            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true);
+            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true, true, true);
         }
         else
         {
-            UpdateOnSceneLoad(false, 10, 100f, .2f, false, true);
+            UpdateOnSceneLoad(false, 10, 100f, .2f, false, false, false, false);
         }
     }
 
