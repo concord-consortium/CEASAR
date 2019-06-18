@@ -75,6 +75,10 @@ public class DataController : MonoBehaviour
     }
 
     private DateTime currentSimulationTime = DateTime.Now;
+    public DateTime CurrentSimulationTime
+    {
+        get { return currentSimulationTime; }
+    }
     public float simulationTimeScale = 10f;
     private bool userSpecifiedDateTime = false;
     private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -131,11 +135,10 @@ public class DataController : MonoBehaviour
             // TODO: replace with rotating the sphere - currently this exists to reset positions after returning from horizon view
             allStarComponents[i].SetStarScale(maxMag, mag);
             this.transform.rotation = Quaternion.identity;
-            if (!UseNCPRotation)
-            {
-                allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-                allStarComponents[i].gameObject.transform.LookAt(this.transform);
-            }
+
+            allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
+            allStarComponents[i].gameObject.transform.LookAt(this.transform);
+
         }
         allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showObjs);
         MarkersController markersController = FindObjectOfType<MarkersController>();
@@ -268,7 +271,8 @@ public class DataController : MonoBehaviour
                 }
                 constellationsController.AddConstellation(constellation);
             }
-            if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
+            //if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
+            constellationsController.HighlightAllConstellations(true);
             GetComponentInChildren<MarkersController>().Init();
             // position the North Celestial Pole
             if (showHorizonView) positionNCP();
@@ -279,12 +283,8 @@ public class DataController : MonoBehaviour
     {
         // reset current rotation
         transform.rotation = Quaternion.identity;
-        // calculate NCP for selected latitude
-        if (!NCP) NCP = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        float radianLat = currentCity.Lat * Mathf.Deg2Rad;
-        NCP.transform.position = new Vector3(0, radius * Mathf.Sin(radianLat), radius * Mathf.Cos(radianLat));
-
-        // set initial rotation - this is our axis for siderial daily rotation.
+        // NCP for selected latitude is due North, elevated at the same angle as latitude
+        // this is our axis for siderial daily rotation.
         transform.rotation = Quaternion.Euler(currentCity.Lat, 0, 0);
         initialRotation = transform.rotation;
     }
@@ -335,11 +335,11 @@ public class DataController : MonoBehaviour
             {
                 if (UseNCPRotation)
                 {
-                    if (!NCP) positionNCP();
-
                     float fractionOfDay = ((float)lst / 24) * 360;
+                    // TODO: switch from reset & recalculate to just setting the angle around the existing axis
                     transform.rotation = initialRotation;
-                    transform.Rotate(0, fractionOfDay, 0, Space.Self);
+                    // axis is offset by 90 degrees
+                    transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
                 }
                 else
                 {

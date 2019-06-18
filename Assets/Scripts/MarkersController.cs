@@ -25,9 +25,9 @@ public class MarkersController : MonoBehaviour
     {
         if (markerPrefab != null && markers.Count == 0)
         {
-            Vector3 NCP = AddMarker("NCP", 0f, 90f, dataController.LocalSiderialStartTime, colorOrange);
-            Vector3 SCP = AddMarker("SCP", 0f, -90f, dataController.LocalSiderialStartTime, colorOrange);
-            AddMarker("VE", 0f, 0f, dataController.LocalSiderialStartTime, colorGreen);
+            Vector3 NCP = AddMarker("NCP", 0f, 90f, dataController.CurrentSimulationTime.ToSiderealTime(), colorOrange);
+            Vector3 SCP = AddMarker("SCP", 0f, -90f, dataController.CurrentSimulationTime.ToSiderealTime(), colorOrange);
+            AddMarker("VE", 0f, 0f, dataController.CurrentSimulationTime.ToSiderealTime(), colorGreen);
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
             if (poleLineVisible) AddLineMarker("poleLine", colorOrange, NCP, SCP);
         }
