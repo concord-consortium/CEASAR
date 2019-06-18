@@ -11,6 +11,7 @@ public class MarkersController : MonoBehaviour
     private Color colorGreen = new Color(76f / 255f, 255f / 255f, 0f / 255f);
     private Color colorBlue = new Color(0f / 255f, 148f / 255f, 255f / 255f);
     public float markerLineWidth = .1f;
+    public float markerScale = 1f;
     public bool markersVisible = true;
     public bool poleLineVisible = true;
     public bool equatorLineVisible = true;
@@ -38,6 +39,7 @@ public class MarkersController : MonoBehaviour
     {
         Marker marker = new Marker(markerName, RA, dec);
         GameObject markerObject = Instantiate(markerPrefab, this.transform);
+        markerObject.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         MarkerComponent newMarker = markerObject.GetComponent<MarkerComponent>();
         newMarker.label.text = markerName;
         newMarker.markerData = marker;
