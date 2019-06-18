@@ -88,11 +88,7 @@ public class DataController : MonoBehaviour
     public string SelectedCity;
     public City currentCity;
 
-    [SerializeField]
-    public bool UseNCPRotation;
-    GameObject NCP;
     private Quaternion initialRotation;
-
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
@@ -156,7 +152,7 @@ public class DataController : MonoBehaviour
         runSimulation = false;
         if (scene.name == "Horizon")
         {
-            UpdateOnSceneLoad(true, 1, 100, .5f, false, true);
+            UpdateOnSceneLoad(true, 1, 100, .4f, false, true);
         }
         else if (scene.name == "Planets")
         {
@@ -271,8 +267,9 @@ public class DataController : MonoBehaviour
                 }
                 constellationsController.AddConstellation(constellation);
             }
-            //if (!showHorizonView && colorByConstellation) constellationsController.HighlightAllConstellations(true);
-            constellationsController.HighlightAllConstellations(true);
+
+            if (colorByConstellation) constellationsController.HighlightAllConstellations(true);
+
             GetComponentInChildren<MarkersController>().Init();
             // position the North Celestial Pole
             if (showHorizonView) positionNCP();
@@ -333,28 +330,12 @@ public class DataController : MonoBehaviour
 
             if (shouldUpdate)
             {
-                if (UseNCPRotation)
-                {
-                    float fractionOfDay = ((float)lst / 24) * 360;
-                    // TODO: switch from reset & recalculate to just setting the angle around the existing axis
-                    transform.rotation = initialRotation;
-                    // axis is offset by 90 degrees
-                    transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
-                }
-                else
-                {
-                    // Reset rotation - TODO remove when testing NCP rotation is complete
-                    this.transform.rotation = Quaternion.identity;
-                    // use an array for speed of access, only update if visible
-                    for (int i = 0; i < allStarComponents.Length; i++)
-                    {
-                        if (allStarComponents[i].gameObject.GetComponent<Renderer>().enabled)
-                        {
-                            allStarComponents[i].gameObject.transform.position = allStarComponents[i].starData.CalculateHorizonPosition(radius, lst, currentCity.Lat);
-                            allStarComponents[i].transform.LookAt(this.transform);
-                        }
-                    }
-                }
+                float fractionOfDay = ((float)lst / 24) * 360;
+                // TODO: switch from reset & recalculate to just setting the angle around the existing axis
+                transform.rotation = initialRotation;
+                // axis is offset by 90 degrees
+                transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
+                // Set last timestamp so we only update when changed
                 lastTime = lst;
             }
 

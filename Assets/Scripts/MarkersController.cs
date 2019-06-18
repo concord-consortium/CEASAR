@@ -43,34 +43,21 @@ public class MarkersController : MonoBehaviour
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        if (dataController.UseNCPRotation)
+        float radius = dataController.Radius + 10;
+        // Set marker positions in Equitorial position and move with celestial sphere
+        switch (markerName)
         {
-            float radius = dataController.Radius + 10;
-            // Set marker positions in Equitorial position and move with celestial sphere
-            switch (markerName)
-            {
-                case "NCP":
-                    markerObject.transform.position = radius * new Vector3(0, 1, 0);
-                    break;
-                case "SCP":
-                    markerObject.transform.position = radius * new Vector3(0, -1, 0);
-                    break;
-                case "VE":
-                    markerObject.transform.position = radius * new Vector3(1, 0, 0);
-                    break;
-            }
+            case "NCP":
+                markerObject.transform.position = radius * new Vector3(0, 1, 0);
+                break;
+            case "SCP":
+                markerObject.transform.position = radius * new Vector3(0, -1, 0);
+                break;
+            case "VE":
+                markerObject.transform.position = radius * new Vector3(1, 0, 0);
+                break;
         }
-        else
-        {
-            if (dataController.showHorizonView)
-            {
-                markerObject.transform.position = newMarker.markerData.CalculateHorizonPosition(dataController.Radius, lst, 0);
-            }
-            else
-            {
-                markerObject.transform.position = newMarker.markerData.CalculateEquitorialPosition(dataController.Radius);
-            }
-        }
+
         markers.Add(markerObject);
         return markerObject.transform.position;
     }

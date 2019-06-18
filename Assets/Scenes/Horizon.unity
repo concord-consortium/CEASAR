@@ -1493,7 +1493,7 @@ MonoBehaviour:
   constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
     type: 3}
   radius: 100
-  magnitudeScale: 0.5
+  magnitudeScale: 0.4
   magnitudeThreshold: 4.5
   minMag: 0
   maxMag: 0
@@ -1508,7 +1508,6 @@ MonoBehaviour:
   simulationTimeScale: 1
   cities: []
   SelectedCity: Boston
-  UseNCPRotation: 1
 --- !u!4 &412565023
 Transform:
   m_ObjectHideFlags: 0
@@ -5030,8 +5029,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1498650488}
   m_HandleRect: {fileID: 1498650487}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
