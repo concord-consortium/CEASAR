@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 342924385934479107}
   - component: {fileID: 7798315545024252162}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Constellation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
