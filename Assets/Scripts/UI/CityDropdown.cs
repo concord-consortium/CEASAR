@@ -11,10 +11,11 @@ public class CityDropdown : MonoBehaviour
 
     void Start()
     {
-        dataController = DataController.GetInstance();
+        dataController = SimulationManager.GetInstance().DataControllerComponent;
         dropdown = GetComponent<TMP_Dropdown>();
         // Add listener for when the value of the Dropdown changes
-        dropdown.onValueChanged.AddListener(delegate {
+        dropdown.onValueChanged.AddListener(delegate
+        {
             DropdownValueChanged(dropdown);
         });
     }
@@ -40,7 +41,7 @@ public class CityDropdown : MonoBehaviour
         dropdown.value = initialValue;
     }
 
-     public void UpdateCitySelection(string location)
+    public void UpdateCitySelection(string location)
     {
         dropdown = GetComponent<TMP_Dropdown>();
         List<TMP_Dropdown.OptionData> dropdownOptions = dropdown.options;

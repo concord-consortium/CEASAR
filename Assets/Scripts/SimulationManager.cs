@@ -15,7 +15,29 @@ public class SimulationManager
         return instance ?? (instance = new SimulationManager());
     }
     public System.Random rng = new System.Random();
+
     public GameObject NetworkControllerObject;
+
+    private GameObject celestialSphereObject;
+
+    public GameObject CelestialSphereObject
+    {
+        get { return celestialSphereObject; }
+        set
+        {
+            celestialSphereObject = value;
+            DataControllerComponent = celestialSphereObject.GetComponent<DataController>();
+            MarkersControllerComponent = celestialSphereObject.GetComponentInChildren<MarkersController>();
+            ConstellationsControllerComponent = celestialSphereObject.GetComponentInChildren<ConstellationsController>();
+        }
+    }
+
+    public DataController DataControllerComponent { get; private set; }
+    public MarkersController MarkersControllerComponent { get; private set; }
+    public ConstellationsController ConstellationsControllerComponent { get; private set; }
+
+    public bool IsReady = false;
+
     public string[] AnimalNames;
     public List<string> ColorNames = new List<string>();
     public List<Color> ColorValues = new List<Color>();

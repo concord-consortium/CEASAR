@@ -55,9 +55,10 @@ public class MainUIController : MonoBehaviour
     void Start()
     {
 
-        markersController = FindObjectOfType<MarkersController>();
-        dataController = DataController.GetInstance();
-        sphere = dataController.gameObject;
+        markersController = SimulationManager.GetInstance().MarkersControllerComponent;
+        dataController = SimulationManager.GetInstance().DataControllerComponent;
+        sphere = SimulationManager.GetInstance().CelestialSphereObject;
+
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();

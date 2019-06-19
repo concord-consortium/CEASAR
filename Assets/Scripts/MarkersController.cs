@@ -19,7 +19,7 @@ public class MarkersController : MonoBehaviour
 
     public void Init()
     {
-        dataController = DataController.GetInstance();
+        dataController = SimulationManager.GetInstance().DataControllerComponent;
         ShowMarkers(markersVisible, poleLineVisible, equatorLineVisible);
     }
 
