@@ -209,8 +209,8 @@ public class DataController : MonoBehaviour
                     if (colorByConstellation == true)
                     {
                         Utils.SetObjectColor(newStar.gameObject, constellationColor);
-                        constellation.highlightColor = constellationColor;
                     }
+                    constellation.highlightColor = constellationColor;
 
                     allStarComponents[starCount] = newStar;
                     starCount++;
