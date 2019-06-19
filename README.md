@@ -7,7 +7,6 @@ Project uses Unity 2019.1.7f1 and is built using the Unity Cloud Build feature.
 This project relies on a central network server on Heroku for multiplayer functionality (currently early in development). The network server software is available [here](https://github.com/concord-consortium/CEASAR-server)
 
 ## Vuforia
----
 Although Vuforia AR support is enabled in the CEASAR project, the required Vuforia assets have not been imported, scenes have not been structured to support Vuforia, and build settings have not been configured to build with Vuforia.
 
 ### Import Assets and Configure Scene
