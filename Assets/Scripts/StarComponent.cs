@@ -41,16 +41,6 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         }
     }
 
-    //public void OnPointerEnter(PointerEventData eventData)
-    //{
-    //    initialScale = transform.localScale;
-    //    transform.localScale = initialScale * scaleFactor;
-    //}
-
-    //public void OnPointerExit(PointerEventData eventData)
-    //{
-    //    transform.localScale = initialScale;
-    //}
     public void OnPointerEnter(PointerEventData eventData)
     {
         currentScale = transform.localScale;
