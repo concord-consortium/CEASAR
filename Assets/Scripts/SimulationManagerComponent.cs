@@ -133,6 +133,8 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
+        MainUIController mainUIController = FindObjectOfType<MainUIController>();
+        mainUIController.Init();
     }
 
 }
