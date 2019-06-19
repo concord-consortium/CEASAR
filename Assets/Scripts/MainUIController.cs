@@ -40,11 +40,11 @@ public class MainUIController : MonoBehaviour
 
     // handle sphere interaction
     private GameObject sphere;
-    private float moveSpeed = .1f;
-    private float scaleSpeed = 5f;
-    private float maxScale = 100f;
-    private float minScale = .025f;
-    private float rotateSpeed = 10f;
+    public float moveSpeed = .1f;
+    public float scaleSpeed = 5f;
+    public float maxScale = 100f;
+    public float minScale = .025f;
+    public float rotateSpeed = 10f;
     private float autoRotateSpeed = 1f;
     private bool rotating = false;
     private MarkersController markersController;
