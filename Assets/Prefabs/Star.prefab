@@ -91,8 +91,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1094d9664cb2749dda30b438c8141a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starColor: {r: 0, g: 0, b: 0, a: 0}
-  constellationColor: {r: 0, g: 0, b: 0, a: 0}
+  starColor: {r: 1, g: 1, b: 1, a: 0}
+  constellationColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!135 &9176006698529054145
 SphereCollider:
   m_ObjectHideFlags: 0

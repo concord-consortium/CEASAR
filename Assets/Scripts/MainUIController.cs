@@ -51,8 +51,7 @@ public class MainUIController : MonoBehaviour
     // snapshots
     private SnapGrid snapshotGrid;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
         markersController = SimulationManager.GetInstance().MarkersControllerComponent;
         dataController = SimulationManager.GetInstance().DataControllerComponent;
