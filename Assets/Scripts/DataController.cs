@@ -68,14 +68,17 @@ public class DataController : MonoBehaviour
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
+    // Calculated from data
+    private float minMag;
+    private float maxMag;
+
     // Scene-specific settings, set via SceneManagerComponent
     private bool colorByConstellation = true;
     private bool showConstellationConnections = true;
     private int maxStars = 10000;
     private float magnitudeScale = 0.5f;
     private float magnitudeThreshold = 4.5f;
-    private float minMag;
-    private float maxMag;
+
     private bool showHorizonView = false;
     private float simulationTimeScale = 10f;
     private float radius = 50;
@@ -108,15 +111,13 @@ public class DataController : MonoBehaviour
     }
 
     // This is where we set the scene parameters
-    public void SetSceneParameters(int maxStars, float magnitudeScale, float magnitudeThreshold, float minMag,
-        float maxMag, bool showHorizonView, float simulationTimeScale, float radius, bool colorByConstellation,
+    public void SetSceneParameters(int maxStars, float magnitudeScale, float magnitudeThreshold,
+        bool showHorizonView, float simulationTimeScale, float radius, bool colorByConstellation,
         bool showConstellationConnections)
     {
         this.maxStars = maxStars;
         this.magnitudeScale = magnitudeScale;
         this.magnitudeThreshold = magnitudeThreshold;
-        this.minMag = minMag;
-        this.maxMag = maxMag;
         this.showHorizonView = showHorizonView;
         this.simulationTimeScale = simulationTimeScale;
         this.radius = radius;

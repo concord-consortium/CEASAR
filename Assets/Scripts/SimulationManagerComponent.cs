@@ -25,10 +25,6 @@ public class SimulationManagerComponent : MonoBehaviour
     [SerializeField]
     private float magnitudeThreshold = 4.5f;
     [SerializeField]
-    private float minMag;
-    [SerializeField]
-    private float maxMag;
-    [SerializeField]
     private bool showHorizonView = false;
     [SerializeField]
     private float simulationTimeScale = 10f;
@@ -102,7 +98,7 @@ public class SimulationManagerComponent : MonoBehaviour
             manager.CelestialSphereObject = Instantiate(celestialSpherePrefab);
 
             // When creating, set parameters before Init
-            manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold, minMag, maxMag,
+            manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
                  showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections);
 
             manager.DataControllerComponent.Init();
@@ -120,7 +116,7 @@ public class SimulationManagerComponent : MonoBehaviour
             // Applying scene-specific settings
             if (manager.DataControllerComponent)
             {
-                manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold, minMag, maxMag,
+                manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
                   showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections);
                 manager.DataControllerComponent.UpdateOnSceneLoad();
             }
