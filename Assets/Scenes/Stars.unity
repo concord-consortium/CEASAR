@@ -4242,8 +4242,8 @@ MonoBehaviour:
   daySlider: {fileID: 0}
   timeSlider: {fileID: 0}
   starInfoPanel: {fileID: 212893348}
-  moveSpeed: 0.1
-  scaleSpeed: 5
+  moveSpeed: 1
+  scaleSpeed: 10
   maxScale: 100
   minScale: 0.025
   rotateSpeed: 10

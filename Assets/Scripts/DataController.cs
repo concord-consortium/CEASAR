@@ -82,6 +82,7 @@ public class DataController : MonoBehaviour
     private bool showHorizonView = false;
     private float simulationTimeScale = 10f;
     private float radius = 50;
+
     public float Radius
     {
         get { return radius; }
@@ -89,7 +90,6 @@ public class DataController : MonoBehaviour
     }
 
     private bool isReady = false;
-
 
     private struct ConstellationNamePair
     {
@@ -201,7 +201,7 @@ public class DataController : MonoBehaviour
                     StarComponent newStar = Instantiate(starPrefab, constellation.transform);
                     newStar.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     // Add star data, then position, scale and color
-                    newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, radius);
+                    newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, SimulationManager.GetInstance().InitialRadius);
 
                     // Eventually store constellation color and observed star color separately
                     newStar.SetStarColor(constellationColor, Color.white);
@@ -231,7 +231,7 @@ public class DataController : MonoBehaviour
         // Reset sphere
         isReady = false;
         this.transform.position = new Vector3(0, 0, 0f);
-        this.transform.localScale = new Vector3(1f, 1f, 1f);
+        this.transform.localScale = new Vector3(1, 1, 1) * SimulationManager.GetInstance().CurrentScaleFactor(radius);
         this.transform.rotation = Quaternion.identity;
         userSpecifiedDateTime = false;
         runSimulation = false;
@@ -242,9 +242,6 @@ public class DataController : MonoBehaviour
             Utils.SetObjectColor(allStarComponents[i].gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
             allStarComponents[i].SetStarScale(maxMag, magnitudeScale);
             this.transform.rotation = Quaternion.identity;
-
-            allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-            allStarComponents[i].gameObject.transform.LookAt(this.transform);
         }
         if (showHorizonView) positionNCP();
         Debug.Log("updated");

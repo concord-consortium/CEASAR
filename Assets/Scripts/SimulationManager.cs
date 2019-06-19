@@ -44,6 +44,13 @@ public class SimulationManager
 
     public Color LocalPlayerColor = Color.white;
 
+    // initial setup scale
+    public readonly float InitialRadius = 100;
+    public float CurrentScaleFactor(float sceneRadius)
+    {
+        return sceneRadius / InitialRadius;
+    }
+
     // Random color (capitalized), random animal (capitalized), random number
     public string GenerateUsername()
     {

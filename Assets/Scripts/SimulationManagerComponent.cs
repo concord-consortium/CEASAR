@@ -79,14 +79,7 @@ public class SimulationManagerComponent : MonoBehaviour
         }
 
     }
-    //void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    //{
-    //    Setup();
-    //}
-    //private void OnApplicationQuit()
-    //{
-    //    SceneManager.sceneLoaded -= OnSceneLoaded;
-    //}
+
     private void Start()
     {
         Debug.Log("Applying scene settings");

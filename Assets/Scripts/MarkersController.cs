@@ -54,7 +54,7 @@ public class MarkersController : MonoBehaviour
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        float radius = dataController.Radius + dataController.Radius * .1f;
+        float radius = SimulationManager.GetInstance().InitialRadius + SimulationManager.GetInstance().InitialRadius * .1f;
         // Set marker positions in Equitorial position and move with celestial sphere
         switch (markerName)
         {
@@ -95,7 +95,10 @@ public class MarkersController : MonoBehaviour
         for (int i = 0; i < pointCount; i++)
         {
             float rad = Mathf.Deg2Rad * (i * 360f / segments);
-            points[i] = new Vector3(Mathf.Sin(rad) * dataController.Radius, 0, Mathf.Cos(rad) * dataController.Radius);
+            points[i] = new Vector3(Mathf.Sin(rad) *
+                SimulationManager.GetInstance().InitialRadius,
+                0,
+                Mathf.Cos(rad) * SimulationManager.GetInstance().InitialRadius);
         }
 
         lineRendererCircle.SetPositions(points);
