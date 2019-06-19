@@ -26,13 +26,15 @@ public class GenerateSkybox : MonoBehaviour
         Cubemap cubemap = new Cubemap(TEXTURE_SIZE, TextureFormat.ARGB32, true);
         cubemap.name = "StarSkyboxCubemap";
         GetComponent<Camera>().RenderToCubemap(cubemap);
-
+#if UNITY_EDITOR
         AssetDatabase.CreateAsset(
           cubemap,
           "Assets/Textures/Skybox/StarSkyboxCubemap.cubemap"
         );
+#endif
     }
 }
+#if UNITY_EDITOR
 public class SaveCubemapToPNG : ScriptableWizard
 {
     #region private members
@@ -103,3 +105,4 @@ public class SaveCubemapToPNG : ScriptableWizard
     }
     #endregion
 }
+#endif

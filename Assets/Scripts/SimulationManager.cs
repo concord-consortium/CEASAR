@@ -15,12 +15,41 @@ public class SimulationManager
         return instance ?? (instance = new SimulationManager());
     }
     public System.Random rng = new System.Random();
+
     public GameObject NetworkControllerObject;
+
+    private GameObject celestialSphereObject;
+
+    public GameObject CelestialSphereObject
+    {
+        get { return celestialSphereObject; }
+        set
+        {
+            celestialSphereObject = value;
+            DataControllerComponent = celestialSphereObject.GetComponent<DataController>();
+            MarkersControllerComponent = celestialSphereObject.GetComponentInChildren<MarkersController>();
+            ConstellationsControllerComponent = celestialSphereObject.GetComponentInChildren<ConstellationsController>();
+        }
+    }
+
+    public DataController DataControllerComponent { get; private set; }
+    public MarkersController MarkersControllerComponent { get; private set; }
+    public ConstellationsController ConstellationsControllerComponent { get; private set; }
+
+    public bool IsReady = false;
+
     public string[] AnimalNames;
     public List<string> ColorNames = new List<string>();
     public List<Color> ColorValues = new List<Color>();
 
     public Color LocalPlayerColor = Color.white;
+
+    // initial setup scale
+    public readonly float InitialRadius = 100;
+    public float CurrentScaleFactor(float sceneRadius)
+    {
+        return sceneRadius / InitialRadius;
+    }
 
     // Random color (capitalized), random animal (capitalized), random number
     public string GenerateUsername()
@@ -61,5 +90,12 @@ public class SimulationManager
             Debug.Log("Color not found for " + colorName.ToLower() + " as part of " + name);
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
         }
+    }
+
+    public float GetRelativeMagnitude(float starMagnitude)
+    {
+        //float min = DataControllerComponent.minMag;
+        float max = DataControllerComponent.maxMag + Mathf.Abs(DataControllerComponent.minMag);
+        return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
 }

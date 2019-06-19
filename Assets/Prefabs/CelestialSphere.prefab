@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8392082369539404023
+--- !u!1 &3593076565269543302
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8392082369539404017}
-  - component: {fileID: 8392082369539404018}
+  - component: {fileID: 3593076565269543296}
+  - component: {fileID: 3593076565269543299}
   m_Layer: 0
   m_Name: CelestialSphere
   m_TagString: Untagged
@@ -17,29 +17,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8392082369539404017
+--- !u!4 &3593076565269543296
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369539404023}
+  m_GameObject: {fileID: 3593076565269543302}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8392082369609031432}
-  - {fileID: 8392082369671008009}
+  - {fileID: 3593076565337986681}
+  - {fileID: 3593076565402060408}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8392082369539404018
+--- !u!114 &3593076565269543299
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369539404023}
+  m_GameObject: {fileID: 3593076565269543302}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2fb169725c3b3b4492cca78b3f47cac, type: 3}
@@ -49,23 +49,15 @@ MonoBehaviour:
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
   constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
     type: 3}
-  radius: 75
-  magnitudeScale: 0.2
-  magnitudeThreshold: 4.5
-  minMag: 0
-  maxMag: 0
-  showHorizonView: 0
   starPrefab: {fileID: 5188296271615159055, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
-  allConstellations: {fileID: 8392082369609031438}
+  allConstellations: {fileID: 3593076565337986687}
   constellationFullNames: []
   constellationPrefab: {fileID: 7798315545024252162, guid: 5f8788d5211448f4e99b39b1c46445b9,
     type: 3}
-  colorByConstellation: 1
-  simulationTimeScale: 10
   cities: []
-  SelectedCity: 
---- !u!1 &8392082369609031438
+  SelectedCity: Boston
+--- !u!1 &3593076565337986687
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,8 +65,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8392082369609031432}
-  - component: {fileID: 8392082369609031439}
+  - component: {fileID: 3593076565337986681}
+  - component: {fileID: 3593076565337986686}
   m_Layer: 0
   m_Name: Constellations
   m_TagString: Untagged
@@ -82,34 +74,34 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8392082369609031432
+--- !u!4 &3593076565337986681
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369609031438}
+  m_GameObject: {fileID: 3593076565337986687}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8392082369539404017}
+  m_Father: {fileID: 3593076565269543296}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8392082369609031439
+--- !u!114 &3593076565337986686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369609031438}
+  m_GameObject: {fileID: 3593076565337986687}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e3f77a9d5e9af94d8df4f675e01ad52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lineWidth: 0.035
---- !u!1 &8392082369671008008
+--- !u!1 &3593076565402060409
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,8 +109,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8392082369671008009}
-  - component: {fileID: 8392082369671008010}
+  - component: {fileID: 3593076565402060408}
+  - component: {fileID: 3593076565402060411}
   m_Layer: 0
   m_Name: Markers
   m_TagString: Untagged
@@ -126,27 +118,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8392082369671008009
+--- !u!4 &3593076565402060408
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369671008008}
+  m_GameObject: {fileID: 3593076565402060409}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8392082369539404017}
+  m_Father: {fileID: 3593076565269543296}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8392082369671008010
+--- !u!114 &3593076565402060411
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8392082369671008008}
+  m_GameObject: {fileID: 3593076565402060409}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3b7b8cc56dd4fb478f597d74ee85c21, type: 3}
@@ -156,4 +148,7 @@ MonoBehaviour:
     type: 3}
   markerMaterial: {fileID: 2100000, guid: 07edf9c2724793f41ac1572e8f445421, type: 2}
   markerLineWidth: 0.035
+  markerScale: 1
   markersVisible: 1
+  poleLineVisible: 1
+  equatorLineVisible: 1

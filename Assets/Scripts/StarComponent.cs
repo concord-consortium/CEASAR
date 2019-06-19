@@ -10,6 +10,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     private ConstellationsController constellationsController;
     private Vector3 initialScale;
     private float scaleFactor = 1.5f;
+    private Vector3 currentScale;
 
     public void Init(ConstellationsController controller, Star star, float maxMagnitude, float magnitudeScale, float radius)
     {
@@ -23,7 +24,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void SetStarScale(float maxMagnitude, float magnitudeScale)
     {
-        var magScaleValue = ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        var magScaleValue = SimulationManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
         Vector3 magScale = initialScale * magScaleValue;
         transform.localScale = magScale;
     }
@@ -42,15 +43,14 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        initialScale = transform.localScale;
-        transform.localScale = initialScale * scaleFactor;
+        currentScale = transform.localScale;
+        transform.localScale = currentScale * scaleFactor;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        transform.localScale = initialScale;
+        transform.localScale = currentScale;
     }
-
     public void SetStarColor(Color constellationColor, Color starColor)
     {
         // Store star color - not yet using real values

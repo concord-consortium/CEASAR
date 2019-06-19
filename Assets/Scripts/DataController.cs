@@ -6,30 +6,9 @@ using System;
 
 public class DataController : MonoBehaviour
 {
-    private static DataController dataController;
-    public static DataController GetInstance()
-    {
-        return dataController;
-    }
     public TextAsset starData;
     public TextAsset cityData;
     public TextAsset constellationConnectionData;
-
-    [SerializeField]
-    private float radius = 50;
-    public float Radius
-    {
-        get { return radius; }
-        private set { radius = value; }
-    }
-    [SerializeField]
-    private float magnitudeScale = 0.5f;
-    [SerializeField]
-    private float magnitudeThreshold = 4.5f;
-    [SerializeField]
-    private float minMag;
-    [SerializeField]
-    private float maxMag;
 
     [SerializeField]
     private List<Star> allStars;
@@ -38,7 +17,6 @@ public class DataController : MonoBehaviour
         get { return allStars; }
         private set { allStars = value; }
     }
-    public int maxStars = 10000;
 
     [SerializeField]
     private List<City> allCities;
@@ -56,8 +34,6 @@ public class DataController : MonoBehaviour
         private set { allConstellationConnections = value; }
     }
 
-    public bool showHorizonView = false;
-
     public StarComponent starPrefab;
 
     public GameObject allConstellations;
@@ -65,7 +41,6 @@ public class DataController : MonoBehaviour
     public List<string> constellationFullNames;
     public Constellation constellationPrefab;
     private StarComponent[] allStarComponents;
-    public bool colorByConstellation = true;
 
     private DateTime simulationStartTime = DateTime.Now;
     private double localSiderialStartTime;
@@ -80,7 +55,7 @@ public class DataController : MonoBehaviour
     {
         get { return currentSimulationTime; }
     }
-    public float simulationTimeScale = 10f;
+
     private bool userSpecifiedDateTime = false;
     private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private bool runSimulation = false;
@@ -93,6 +68,29 @@ public class DataController : MonoBehaviour
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
+    // Calculated from data
+    public float minMag { get; private set; }
+    public float maxMag { get; private set; }
+
+    // Scene-specific settings, set via SceneManagerComponent
+    private bool colorByConstellation = true;
+    private bool showConstellationConnections = true;
+    private int maxStars = 10000;
+    private float magnitudeScale = 0.5f;
+    private float magnitudeThreshold = 4.5f;
+
+    private bool showHorizonView = false;
+    private float simulationTimeScale = 10f;
+    private float radius = 50;
+
+    public float Radius
+    {
+        get { return radius; }
+        private set { radius = value; }
+    }
+
+    private bool isReady = false;
+
     private struct ConstellationNamePair
     {
         public string shortName;
@@ -101,75 +99,33 @@ public class DataController : MonoBehaviour
 
     void Awake()
     {
-        if (dataController == null)
-        {
-            DontDestroyOnLoad(this.gameObject);
-            dataController = this;
-            Init();
-        }
-        else if (dataController != this)
-        {
-            Destroy(gameObject);
-        }
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        // Need this so the network UI persists across scenes
+
+        DontDestroyOnLoad(this.gameObject);
     }
 
-    void Start()
+    void OnSceneUnloaded(Scene scene)
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        this.isReady = false;
     }
 
-    void UpdateOnSceneLoad(bool showHorizon, float ts, float rad, float mag, bool showMarkers, bool showPoleLine, bool showEquator, bool consColor)
+    // This is where we set the scene parameters
+    public void SetSceneParameters(int maxStars, float magnitudeScale, float magnitudeThreshold,
+        bool showHorizonView, float simulationTimeScale, float radius, bool colorByConstellation,
+        bool showConstellationConnections)
     {
-        showHorizonView = showHorizon;
-        simulationTimeScale = ts;
-        radius = rad;
-        magnitudeScale = mag;
-        // use an array for speed of access
-        for (int i = 0; i < allStarComponents.Length; i++)
-        {
-            StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-            Utils.SetObjectColor(allStarComponents[i].gameObject, consColor ? starComponent.constellationColor : Color.white);
-            allStarComponents[i].SetStarScale(maxMag, mag);
-            this.transform.rotation = Quaternion.identity;
-
-            allStarComponents[i].gameObject.transform.position = starComponent.starData.CalculateEquitorialPosition(radius);
-            allStarComponents[i].gameObject.transform.LookAt(this.transform);
-
-        }
-        allConstellations.GetComponent<ConstellationsController>().ShowAllConstellations(showMarkers);
-        MarkersController markersController = FindObjectOfType<MarkersController>();
-        markersController.ShowMarkers(showMarkers, showPoleLine, showEquator);
+        this.maxStars = maxStars;
+        this.magnitudeScale = magnitudeScale;
+        this.magnitudeThreshold = magnitudeThreshold;
+        this.showHorizonView = showHorizonView;
+        this.simulationTimeScale = simulationTimeScale;
+        this.radius = radius;
+        this.colorByConstellation = colorByConstellation;
+        this.showConstellationConnections = showConstellationConnections;
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        // restore sphere transform
-        this.transform.position = new Vector3(0, 0, 0f);
-        this.transform.localScale = new Vector3(1f, 1f, 1f);
-        this.transform.rotation = Quaternion.identity;
-        // turn off simulation
-        userSpecifiedDateTime = false;
-        runSimulation = false;
-        if (scene.name == "Horizon")
-        {
-            UpdateOnSceneLoad(true, 1, 100, .4f, true, false, true, true);
-            positionNCP();
-        }
-        else if (scene.name == "Planets")
-        {
-            UpdateOnSceneLoad(false, 10, 500f, 1f, false, false, false, false);
-        }
-        else if (scene.name == "Stars")
-        {
-            UpdateOnSceneLoad(false, 10, 75f, .3f, true, true, true, true);
-        }
-        else
-        {
-            UpdateOnSceneLoad(false, 10, 100f, .2f, false, false, false, false);
-        }
-    }
-
-    private void Init()
+    public void Init()
     {
         if (allConstellations == null)
         {
@@ -245,7 +201,7 @@ public class DataController : MonoBehaviour
                     StarComponent newStar = Instantiate(starPrefab, constellation.transform);
                     newStar.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     // Add star data, then position, scale and color
-                    newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, radius);
+                    newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, SimulationManager.GetInstance().InitialRadius);
 
                     // Eventually store constellation color and observed star color separately
                     newStar.SetStarColor(constellationColor, Color.white);
@@ -268,13 +224,28 @@ public class DataController : MonoBehaviour
                 }
                 constellationsController.AddConstellation(constellation);
             }
-
-            if (colorByConstellation) constellationsController.HighlightAllConstellations(true);
-
-            GetComponentInChildren<MarkersController>().Init();
-            // position the North Celestial Pole
-            if (showHorizonView) positionNCP();
         }
+    }
+    public void UpdateOnSceneLoad()
+    {
+        // Reset sphere
+        isReady = false;
+        this.transform.position = new Vector3(0, 0, 0f);
+        this.transform.localScale = new Vector3(1, 1, 1) * SimulationManager.GetInstance().CurrentScaleFactor(radius);
+        this.transform.rotation = Quaternion.identity;
+        userSpecifiedDateTime = false;
+        runSimulation = false;
+
+        for (int i = 0; i < allStarComponents.Length; i++)
+        {
+            StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
+            Utils.SetObjectColor(allStarComponents[i].gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
+            allStarComponents[i].SetStarScale(maxMag, magnitudeScale);
+            this.transform.rotation = Quaternion.identity;
+        }
+        if (showHorizonView) positionNCP();
+        Debug.Log("updated");
+        isReady = true;
     }
 
     void positionNCP()
@@ -289,57 +260,60 @@ public class DataController : MonoBehaviour
 
     void FixedUpdate()
     {
-        bool shouldUpdate = false;
+        if (isReady)
+        {
+            bool shouldUpdate = false;
 
-        if (SelectedCity != currentCity.Name)
-        {
-            // verify a valid city was entered
-            var newCity = allCities.Where(c => c.Name == SelectedCity).First();
-            if (newCity != null)
+            if (SelectedCity != currentCity.Name)
             {
-                currentCity = newCity;
-                if (showHorizonView) positionNCP();
-                shouldUpdate = true;
-            }
-            else
-            {
-                SelectedCity = currentCity.Name;
-            }
-        }
-        if (showHorizonView)
-        {
-            double lst;
-            if (userSpecifiedDateTime)
-            {
-                if (simulationTimeScale > 0 && runSimulation)
+                // verify a valid city was entered
+                var newCity = allCities.Where(c => c.Name == SelectedCity).First();
+                if (newCity != null)
                 {
-                    currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
+                    currentCity = newCity;
+                    if (showHorizonView) positionNCP();
+                    shouldUpdate = true;
                 }
                 else
                 {
-                    currentSimulationTime = userStartDateTime;
+                    SelectedCity = currentCity.Name;
                 }
-                lst = currentSimulationTime.ToSiderealTime();
             }
-            else
+            if (showHorizonView)
             {
-                lst = DateTime.Now.ToSiderealTime();
+                double lst;
+                if (userSpecifiedDateTime)
+                {
+                    if (simulationTimeScale > 0 && runSimulation)
+                    {
+                        currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
+                    }
+                    else
+                    {
+                        currentSimulationTime = userStartDateTime;
+                    }
+                    lst = currentSimulationTime.ToSiderealTime();
+                }
+                else
+                {
+                    lst = DateTime.Now.ToSiderealTime();
+                }
+
+                // Filter and only update positions if changed time / latitude
+                if (lastTime != lst) shouldUpdate = true;
+
+                if (shouldUpdate)
+                {
+                    float fractionOfDay = ((float)lst / 24) * 360;
+                    // TODO: switch from reset & recalculate to just setting the angle around the existing axis
+                    transform.rotation = initialRotation;
+                    // axis is offset by 90 degrees
+                    transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
+                    // Set last timestamp so we only update when changed
+                    lastTime = lst;
+                }
+
             }
-
-            // Filter and only update positions if changed time / latitude
-            if (lastTime != lst) shouldUpdate = true;
-
-            if (shouldUpdate)
-            {
-                float fractionOfDay = ((float)lst / 24) * 360;
-                // TODO: switch from reset & recalculate to just setting the angle around the existing axis
-                transform.rotation = initialRotation;
-                // axis is offset by 90 degrees
-                transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
-                // Set last timestamp so we only update when changed
-                lastTime = lst;
-            }
-
         }
     }
 

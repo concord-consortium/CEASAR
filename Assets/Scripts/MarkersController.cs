@@ -19,7 +19,14 @@ public class MarkersController : MonoBehaviour
 
     public void Init()
     {
-        dataController = DataController.GetInstance();
+        dataController = SimulationManager.GetInstance().DataControllerComponent;
+    }
+
+    public void SetSceneParameters(float markerLineWidth, float markerScale, bool markersVisible, bool poleLineVisible, bool equatorLineVisible)
+    {
+        this.markerLineWidth = markerLineWidth;
+        this.markerScale = markerScale;
+        this.markersVisible = markersVisible;
         ShowMarkers(markersVisible, poleLineVisible, equatorLineVisible);
     }
 
@@ -47,7 +54,7 @@ public class MarkersController : MonoBehaviour
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        float radius = dataController.Radius + dataController.Radius * .1f;
+        float radius = SimulationManager.GetInstance().InitialRadius + SimulationManager.GetInstance().InitialRadius * .1f;
         // Set marker positions in Equitorial position and move with celestial sphere
         switch (markerName)
         {
@@ -88,7 +95,10 @@ public class MarkersController : MonoBehaviour
         for (int i = 0; i < pointCount; i++)
         {
             float rad = Mathf.Deg2Rad * (i * 360f / segments);
-            points[i] = new Vector3(Mathf.Sin(rad) * dataController.Radius, 0, Mathf.Cos(rad) * dataController.Radius);
+            points[i] = new Vector3(Mathf.Sin(rad) *
+                SimulationManager.GetInstance().InitialRadius,
+                0,
+                Mathf.Cos(rad) * SimulationManager.GetInstance().InitialRadius);
         }
 
         lineRendererCircle.SetPositions(points);
@@ -111,7 +121,7 @@ public class MarkersController : MonoBehaviour
         lineRenderer.useWorldSpace = false;
         markers.Add(lineObject);
     }
-
+    // Can be toggled from the UI as well as called on scene change
     public void ShowMarkers(bool showMarkers, bool showPole, bool showEquator)
     {
         markersVisible = showMarkers;
@@ -123,6 +133,7 @@ public class MarkersController : MonoBehaviour
         }
         foreach (Transform child in transform)
         {
+            LineRenderer lineRenderer = child.GetComponent<LineRenderer>();
             switch (child.name)
             {
                 case "NCP":
@@ -136,9 +147,19 @@ public class MarkersController : MonoBehaviour
                     break;
                 case "equator":
                     child.gameObject.SetActive(showEquator);
+                    if (lineRenderer != null)
+                    {
+                        lineRenderer.startWidth = markerLineWidth;
+                        lineRenderer.endWidth = markerLineWidth;
+                    }
                     break;
                 case "poleLine":
                     child.gameObject.SetActive(showPole);
+                    if (lineRenderer != null)
+                    {
+                        lineRenderer.startWidth = markerLineWidth;
+                        lineRenderer.endWidth = markerLineWidth;
+                    }
                     break;
                 default:
                     break;

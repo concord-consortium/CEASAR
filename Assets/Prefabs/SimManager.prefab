@@ -45,3 +45,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkControllerPrefab: {fileID: 2549443975885674653, guid: ab1c2ff2ac7bb4d0dabd42423d922349,
     type: 3}
+  celestialSpherePrefab: {fileID: 3593076565269543302, guid: 37233d25d9339419abd3bbacedde00bc,
+    type: 3}
+  maxStars: 10000
+  radius: 50
+  magnitudeScale: 0.5
+  magnitudeThreshold: 4.5
+  minMag: 0
+  maxMag: 0
+  showHorizonView: 0
+  simulationTimeScale: 10
+  colorByConstellation: 0
+  showConstellationConnections: 0
+  showMarkers: 0
+  showPoleLine: 0
+  showEquator: 0

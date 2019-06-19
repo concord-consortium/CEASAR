@@ -46,30 +46,29 @@ public class Constellation : MonoBehaviour
         }
         else
         {
-            if (show)
+            // Ensure all lines are created at start, then hidden until needed
+            foreach (ConstellationConnection conn in constellationConnections)
             {
-                foreach (ConstellationConnection conn in constellationConnections)
+                int startIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.startStarHipId);
+                int endIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.endStarHipId);
+                if (startIndex >= 0 && endIndex >= 0)
                 {
-                    int startIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.startStarHipId);
-                    int endIndex = stars.FindIndex(star => star.GetComponent<StarComponent>().starData.Hipparcos == conn.endStarHipId);
-                    if (startIndex >= 0 && endIndex >= 0)
+                    if (constellationConnectionPrefab)
                     {
-                        if (constellationConnectionPrefab)
-                        {
-                            Vector3 offset = stars[endIndex].transform.localPosition - stars[startIndex].transform.localPosition;
-                            Vector3 scale = new Vector3(width, offset.magnitude, width);
-                            Vector3 position = stars[startIndex].transform.localPosition + (offset / 2.0f);
-                            GameObject connectionLine = Instantiate(constellationConnectionPrefab, position, Quaternion.identity, this.transform);
-                            connectionLine.transform.up = offset;
-                            connectionLine.transform.localScale = scale;
-                            constellationLines.Add(connectionLine.gameObject);
-                        }
+                        Vector3 offset = stars[endIndex].transform.position - stars[startIndex].transform.position;
+                        Vector3 scale = new Vector3(width, offset.magnitude, width);
+                        Vector3 position = stars[startIndex].transform.position + (offset / 2.0f);
+                        GameObject connectionLine = Instantiate(constellationConnectionPrefab, position, Quaternion.identity, this.transform);
+                        connectionLine.transform.up = offset;
+                        connectionLine.transform.localScale = scale;
+                        constellationLines.Add(connectionLine.gameObject);
+                        connectionLine.SetActive(show);
                     }
-                    else
-                    {
-                        // if (startIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.startStarHipId);
-                        // if (endIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.endStarHipId);
-                    }
+                }
+                else
+                {
+                    // if (startIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.startStarHipId);
+                    // if (endIndex < 0) Debug.Log("Missing Star in Constellation Connection: " + conn.endStarHipId);
                 }
             }
         }
