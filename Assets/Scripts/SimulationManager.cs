@@ -84,4 +84,11 @@ public class SimulationManager
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
         }
     }
+
+    public float GetRelativeMagnitude(float starMagnitude)
+    {
+        //float min = DataControllerComponent.minMag;
+        float max = DataControllerComponent.maxMag + Mathf.Abs(DataControllerComponent.minMag);
+        return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
+    }
 }

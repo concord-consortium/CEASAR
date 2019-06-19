@@ -54,7 +54,6 @@ public class MainUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         markersController = SimulationManager.GetInstance().MarkersControllerComponent;
         dataController = SimulationManager.GetInstance().DataControllerComponent;
         sphere = SimulationManager.GetInstance().CelestialSphereObject;

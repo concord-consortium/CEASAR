@@ -5,7 +5,13 @@ using UnityEngine;
 public class ConstellationsController : MonoBehaviour
 {
     List<Constellation> constellations = new List<Constellation>();
-    public float lineWidth = .035f;
+    float lineWidth = .035f;
+
+    public void SetSceneParameters(float lineWidth, bool show)
+    {
+        this.lineWidth = lineWidth;
+        ShowAllConstellations(show);
+    }
 
     public void AddConstellation(Constellation constellation)
     {

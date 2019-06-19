@@ -23,7 +23,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void SetStarScale(float maxMagnitude, float magnitudeScale)
     {
-        var magScaleValue = ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        var magScaleValue = SimulationManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
         Vector3 magScale = initialScale * magScaleValue;
         transform.localScale = magScale;
     }

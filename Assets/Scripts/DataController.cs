@@ -69,8 +69,8 @@ public class DataController : MonoBehaviour
     private double lastTime;
 
     // Calculated from data
-    private float minMag;
-    private float maxMag;
+    public float minMag { get; private set; }
+    public float maxMag { get; private set; }
 
     // Scene-specific settings, set via SceneManagerComponent
     private bool colorByConstellation = true;
@@ -226,7 +226,6 @@ public class DataController : MonoBehaviour
             }
         }
     }
-
     public void UpdateOnSceneLoad()
     {
         // Reset sphere

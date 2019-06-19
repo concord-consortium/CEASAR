@@ -40,6 +40,14 @@ public class SimulationManagerComponent : MonoBehaviour
     private bool showPoleLine;
     [SerializeField]
     private bool showEquator;
+    [SerializeField]
+    float markerLineWidth = .1f;
+    [SerializeField]
+    float markerScale = 1f;
+
+    // Settings for constellations
+    [SerializeField]
+    private float lineWidth = .035f;
 
     private void Awake()
     {
@@ -101,12 +109,15 @@ public class SimulationManagerComponent : MonoBehaviour
             manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
                  showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections);
 
+            // Create all the stars
             manager.DataControllerComponent.Init();
 
+            // Set up the markers with a reference to the dataController for parameters like current radius
             manager.MarkersControllerComponent.Init();
+            manager.MarkersControllerComponent.SetSceneParameters(markerLineWidth, markerScale, showMarkers, showPoleLine, showEquator);
+
             // Show/hide Marker items toggles visibility of existing objects
-            manager.MarkersControllerComponent.ShowMarkers(showMarkers, showPoleLine, showEquator);
-            manager.ConstellationsControllerComponent.ShowAllConstellations(showConstellationConnections);
+            manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
 
 
             manager.DataControllerComponent.UpdateOnSceneLoad();
@@ -122,11 +133,11 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             if (manager.MarkersControllerComponent)
             {
-                manager.MarkersControllerComponent.ShowMarkers(showMarkers, showPoleLine, showEquator);
+                manager.MarkersControllerComponent.SetSceneParameters(markerLineWidth, markerScale, showMarkers, showPoleLine, showEquator);
             }
             if (manager.ConstellationsControllerComponent)
             {
-                manager.ConstellationsControllerComponent.ShowAllConstellations(showConstellationConnections);
+                manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
     }

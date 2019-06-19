@@ -20,6 +20,13 @@ public class MarkersController : MonoBehaviour
     public void Init()
     {
         dataController = SimulationManager.GetInstance().DataControllerComponent;
+    }
+
+    public void SetSceneParameters(float markerLineWidth, float markerScale, bool markersVisible, bool poleLineVisible, bool equatorLineVisible)
+    {
+        this.markerLineWidth = markerLineWidth;
+        this.markerScale = markerScale;
+        this.markersVisible = markersVisible;
         ShowMarkers(markersVisible, poleLineVisible, equatorLineVisible);
     }
 
@@ -111,7 +118,7 @@ public class MarkersController : MonoBehaviour
         lineRenderer.useWorldSpace = false;
         markers.Add(lineObject);
     }
-
+    // Can be toggled from the UI as well as called on scene change
     public void ShowMarkers(bool showMarkers, bool showPole, bool showEquator)
     {
         markersVisible = showMarkers;
@@ -123,6 +130,7 @@ public class MarkersController : MonoBehaviour
         }
         foreach (Transform child in transform)
         {
+            LineRenderer lineRenderer = child.GetComponent<LineRenderer>();
             switch (child.name)
             {
                 case "NCP":
@@ -136,9 +144,19 @@ public class MarkersController : MonoBehaviour
                     break;
                 case "equator":
                     child.gameObject.SetActive(showEquator);
+                    if (lineRenderer != null)
+                    {
+                        lineRenderer.startWidth = markerLineWidth;
+                        lineRenderer.endWidth = markerLineWidth;
+                    }
                     break;
                 case "poleLine":
                     child.gameObject.SetActive(showPole);
+                    if (lineRenderer != null)
+                    {
+                        lineRenderer.startWidth = markerLineWidth;
+                        lineRenderer.endWidth = markerLineWidth;
+                    }
                     break;
                 default:
                     break;
