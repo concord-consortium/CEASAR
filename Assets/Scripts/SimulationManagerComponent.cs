@@ -134,7 +134,7 @@ public class SimulationManagerComponent : MonoBehaviour
             }
         }
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
-        mainUIController.Init();
+        if (mainUIController) mainUIController.Init();
     }
 
 }
