@@ -77,11 +77,6 @@ public class SimulationManagerComponent : MonoBehaviour
         {
             Debug.Log("Manager configuration already set");
         }
-
-    }
-
-    private void Start()
-    {
         Debug.Log("Applying scene settings");
         Setup();
     }
