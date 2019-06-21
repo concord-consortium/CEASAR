@@ -7,7 +7,7 @@ public class SnapshotsController : MonoBehaviour
 {
     public List<Snapshot> snapshots = new List<Snapshot>();
 
-    void Awake()
+    public void Init()
     {
         // load snapshots from playerprefs
         bool snapshotFound = false;

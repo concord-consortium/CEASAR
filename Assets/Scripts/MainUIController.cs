@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MainUIController : MonoBehaviour
 {
+    public List<GameObject> enabledPanels = new List<GameObject>();
+
     private DataController dataController;
     private SnapshotsController snapshotsController;
 
@@ -57,13 +59,29 @@ public class MainUIController : MonoBehaviour
         dataController = SimulationManager.GetInstance().DataControllerComponent;
         sphere = SimulationManager.GetInstance().CelestialSphereObject;
 
+        // UI sub-panels are added to the enabledPanels list and then ordered and positioned
+        // vertically starting at the bottom of the Main UI panel (add or remove from list to
+        // enable or disable)
+        float panelPosition = 0f;
+        float totalPanelHeight = 0f;
+        foreach (GameObject go in enabledPanels)
+        {
+            go.SetActive(true);
+            RectTransform goRect = go.GetComponent<RectTransform>();
+            panelPosition += goRect.rect.height * .5f;
+            goRect.anchoredPosition = new Vector2(0, panelPosition);
+            panelPosition += goRect.rect.height * .5f;
+            totalPanelHeight = totalPanelHeight + goRect.rect.height;
+        }
+
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
+
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
         initialPosition = controlPanelRect.anchoredPosition;
-        float hiddenY = controlPanelRect.rect.height * -0.5f + 50f;
+        float hiddenY = controlPanelRect.rect.height * .5f - totalPanelHeight + 50f;
         hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
         targetPosition = initialPosition;
 
@@ -77,6 +95,7 @@ public class MainUIController : MonoBehaviour
         }
         if (snapshotsController)
         {
+            snapshotsController.Init();
             foreach (Snapshot snapshot in snapshotsController.snapshots)
             {
                 AddSnapshotToGrid(snapshot);
