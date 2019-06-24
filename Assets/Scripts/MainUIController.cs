@@ -106,7 +106,7 @@ public class MainUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentDateTimeText)
+        if (currentDateTimeText && dataController)
         {
             currentDateTimeText.text = dataController.CurrentSimUniversalTime().ToString() + " (UTC)";
         }
