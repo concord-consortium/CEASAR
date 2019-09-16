@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 using System.Collections;
 using System.Collections.Generic;
+
+using System.Threading;
+using System.Threading.Tasks;
 using System;
 using System.Text;
 using Colyseus;
@@ -42,7 +45,7 @@ public class ColyseusClient : MonoBehaviour
 
     private void Update()
     {
-        if (client != null && localPlayer != null && client.Id != null)
+        if (client != null && localPlayer != null)
         {
             lastUpdate += Time.deltaTime;
             if (lastUpdate > heartbeatInterval)
@@ -59,33 +62,33 @@ public class ColyseusClient : MonoBehaviour
             }
         }
     }
-    IEnumerator ListenToServer()
-    {
-        while (true)
-        {
-            if (client != null)
-            {
-                /* Always call Recv if Colyseus connection is open */
-                client.Recv();
-            }
-            yield return 0;
-        }
-    }
+//    IEnumerator ListenToServer()
+//    {
+//        while (true)
+//        {
+//            if (client != null)
+//            {
+//                /* Always call Recv if Colyseus connection is open */
+//                client.Recv();
+//            }
+//            yield return 0;
+//        }
+//    }
 
-    public void ConnectToServer(string serverEndpoint, string username)
+    public async void ConnectToServer(string serverEndpoint, string username)
     {
         networkController = GetComponent<NetworkController>();
         if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
-            if (clientConnectionCoroutine == null) clientConnectionCoroutine = ListenToServer();
-            try
-            {
-                StopCoroutine(clientConnectionCoroutine);
-            }
-            finally
-            {
-                StartCoroutine(clientConnectionCoroutine);
-            }
+//            if (clientConnectionCoroutine == null) clientConnectionCoroutine = ListenToServer();
+//            try
+//            {
+//                StopCoroutine(clientConnectionCoroutine);
+//            }
+//            finally
+//            {
+//                StartCoroutine(clientConnectionCoroutine);
+//            }
 
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
@@ -94,7 +97,7 @@ public class ColyseusClient : MonoBehaviour
 
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
-            client = new Client(serverEndpoint);
+            client = ColyseusManager.Instance.CreateClient(endpoint);
 
             //await client.Auth.Login();
             //var friends = await client.Auth.GetFriends();
@@ -103,12 +106,14 @@ public class ColyseusClient : MonoBehaviour
             //client.Auth.Username = "MyUsername";
             //await client.Auth.Save();
 
-            client.OnOpen += (object sender, EventArgs e) =>
-            {
+            //client.OnOpen += (object sender, EventArgs e) =>
+            //{
                 Debug.Log("joining room");
                 networkController.ServerStatusMessage = "Joining Room...";
                 JoinRoom();
-            };
+            //};
+            /*
+             * TODO: reinstate error handling on connections
 
             client.OnError += (sender, e) =>
             {
@@ -120,19 +125,20 @@ public class ColyseusClient : MonoBehaviour
             };
             client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
             StartCoroutine(client.Connect());
+            */
         }
 
     }
-    IEnumerator ConnectRetry(string endpoint, string name)
-    {
-        yield return new WaitForSeconds(retryInterval);
-        if (retries < maxRetries)
-        {
-            // try to reconnect
-            ConnectToServer(endpoint, name);
-            retries++;
-        }
-    }
+//    IEnumerator ConnectRetry(string endpoint, string name)
+//    {
+//        yield return new WaitForSeconds(retryInterval);
+//        if (retries < maxRetries)
+//        {
+//            // try to reconnect
+//            ConnectToServer(endpoint, name);
+//            retries++;
+//        }
+//    }
     public void Disconnect()
     {
         if (IsConnected)
@@ -147,7 +153,7 @@ public class ColyseusClient : MonoBehaviour
         if (client != null)
         {
             // closing client connection
-            client.Close();
+            //client.Close();
             connecting = false;
             client = null;
         }
@@ -163,12 +169,13 @@ public class ColyseusClient : MonoBehaviour
         networkController.ServerStatusMessage = "Disconnected.";
     }
 
-    void JoinRoom()
+    async void JoinRoom()
     {
         bool canJoinExisting = false;
         string availableRoomID = "";
-        client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
-        {
+        var roomsAvailable = await client.GetAvailableRooms(roomName);
+        //client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
+        //{
             Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
             canJoinExisting = roomsAvailable.Length > 0;
             for (var i = 0; i < roomsAvailable.Length; i++)
@@ -185,29 +192,29 @@ public class ColyseusClient : MonoBehaviour
             }
 
 
-        });
+        //});
         string roomToJoin = canJoinExisting ? availableRoomID : roomName;
-        room = client.Join<State>(roomToJoin, new Dictionary<string, object>()
+        room = await client.Join<State>(roomToJoin, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
 
-        room.OnReadyToConnect += (sender, e) =>
-        {
-            Debug.Log("Ready to connect to room!");
-            StartCoroutine(room.Connect());
-        };
-        room.OnError += (sender, e) =>
-        {
-            Debug.LogError(e.Message);
-            networkController = GetComponent<NetworkController>();
-            networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
-            string oldName = localPlayerName;
-            Disconnect();
-            StartCoroutine(ConnectRetry(endpoint, oldName));
-        };
-        room.OnJoin += (sender, e) =>
-        {
+//        room.OnReadyToConnect += (sender, e) =>
+//        {
+//            Debug.Log("Ready to connect to room!");
+//            StartCoroutine(room.Connect());
+//        };
+//        room.OnError += (sender, e) =>
+//        {
+//            Debug.LogError(e.Message);
+//            networkController = GetComponent<NetworkController>();
+//            networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
+//            string oldName = localPlayerName;
+//            Disconnect();
+//            StartCoroutine(ConnectRetry(endpoint, oldName));
+//        };
+        //room.OnJoin += (sender, e) =>
+        //{
             Debug.Log("Joined room successfully.");
 
             room.State.players.OnAdd += OnPlayerAdd;
@@ -216,13 +223,13 @@ public class ColyseusClient : MonoBehaviour
 
             PlayerPrefs.SetString("sessionId", room.SessionId);
             PlayerPrefs.Save();
-        };
+        //};
 
         room.OnStateChange += OnStateChangeHandler;
         room.OnMessage += OnMessage;
     }
 
-    void ReJoinRoom()
+    async void ReJoinRoom()
     {
         string sessionId = PlayerPrefs.GetString("sessionId");
         if (string.IsNullOrEmpty(sessionId))
@@ -231,13 +238,14 @@ public class ColyseusClient : MonoBehaviour
             return;
         }
 
-        room = client.ReJoin<State>(roomName, sessionId);
+        room = await client.Reconnect<State>(roomName, sessionId);
 
-        room.OnReadyToConnect += (sender, e) =>
-        {
-            Debug.Log("Ready to connect to room!");
-            StartCoroutine(room.Connect());
-        };
+        //room.OnReadyToConnect += (sender, e) =>
+        //{
+            //Debug.Log("Ready to connect to room!");
+            //StartCoroutine(room.Connect());
+        //};
+        /*
         room.OnError += (sender, e) => Debug.LogError(e.Message);
         room.OnJoin += (sender, e) =>
         {
@@ -246,34 +254,34 @@ public class ColyseusClient : MonoBehaviour
             room.State.players.OnRemove += OnPlayerRemove;
             room.State.players.OnChange += OnPlayerChange;
         };
+        */
 
         room.OnStateChange += OnStateChangeHandler;
         room.OnMessage += OnMessage;
     }
 
-    void LeaveRoom()
+    async void LeaveRoom()
     {
         Debug.Log("closing connection");
         if (room != null)
         {
-            room.Leave(false);
+            await room.Leave(false);
         }
 
     }
 
-    void GetAvailableRooms()
+    async void GetAvailableRooms()
     {
-        client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
+        var roomsAvailable = await client.GetAvailableRooms(roomName);
+
+        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
+        for (var i = 0; i < roomsAvailable.Length; i++)
         {
-            Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-            for (var i = 0; i < roomsAvailable.Length; i++)
-            {
-                Debug.Log("roomId: " + roomsAvailable[i].roomId);
-                Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-                Debug.Log("clients: " + roomsAvailable[i].clients);
-                Debug.Log("metadata: " + roomsAvailable[i].metadata);
-            }
-        });
+            Debug.Log("roomId: " + roomsAvailable[i].roomId);
+            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
+            Debug.Log("clients: " + roomsAvailable[i].clients);
+            Debug.Log("metadata: " + roomsAvailable[i].metadata);
+        }
     }
     public string GetClientList()
     {
@@ -304,38 +312,39 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    void OnMessage(object sender, MessageEventArgs e)
+    void OnMessage(object msg)
     {
-        Debug.Log(e.Message);
+        var message = (IndexedDictionary<string, object>)msg;
+        Debug.Log(message);
     }
 
-    void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
+    void OnStateChangeHandler (State state, bool isFirstState)
     {
         // Setup room first state
         // This is where we might capture current state and save/load
     }
 
-    void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerAdd(Player player, string key)
     {
-        if (!players.Contains(item.Value)) players.Add(item.Value);
-        if (item.Key == room.SessionId)
+        if (!players.Contains(player)) players.Add(player);
+        if (key == room.SessionId)
         {
-            localPlayer = item.Value;
-            networkController.ServerStatusMessage = "Connected as " + item.Value.username;
+            localPlayer = player;
+            networkController.ServerStatusMessage = "Connected as " + player.username;
         }
-        networkController.OnPlayerAdd(item.Value, item.Key == room.SessionId);
+        networkController.OnPlayerAdd(player, key == room.SessionId);
     }
 
-    void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerRemove(Player player, string key)
     {
-        if (players.Contains(item.Value)) players.Remove(item.Value);
-        networkController.OnPlayerRemove(item.Value);
+        if (players.Contains(player)) players.Remove(player);
+        networkController.OnPlayerRemove(player);
     }
 
-    void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
     {
-        Debug.Log(sender + " " + item.Key);
-        networkController.OnPlayerChange(item.Key, item.Value);
+        Debug.Log(player + " " + key);
+        networkController.OnPlayerChange(key, player);
     }
 
     public void SendMovement(NetworkTransform t)

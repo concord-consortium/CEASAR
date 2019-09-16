@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2318e097-b69b-4c45-9dd7-596571d8d71e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Auth.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Auth.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Auth.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Auth.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Client.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Client.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Client.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Client.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Connection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Connection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Connection.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Connection.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Events.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Events.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties/AssemblyInfo.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Properties/AssemblyInfo.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Protocol.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Protocol.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Protocol.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Protocol.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Room.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Room.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Room.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Room.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/BigEndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/BigEndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/DoubleConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/DoubleConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/EndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/EndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/Endianness.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/Endianness.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/LittleEndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Conversion/LittleEndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/FossilDeltaSerializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/FossilDeltaSerializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/FossilDeltaSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/FossilDeltaSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Decoder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Decoder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Decoder.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Decoder.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Schema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Schema.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Schema.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Schema/Schema.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/SchemaSerializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/SchemaSerializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/SchemaSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/SchemaSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Serializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Serializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Serializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Serializer/Serializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/Compare.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/Compare.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/Compare.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/Compare.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/StateContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/StateContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/StateContainer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/StateListener/StateContainer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ExtensionMethods.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ExtensionMethods.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ExtensionMethods.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ExtensionMethods.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ObjectExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ObjectExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ObjectExtensions.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Colyseus/Utils/ObjectExtensions.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Delta.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Delta.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/LICENSE.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/LICENSE.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/README.md.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/README.md.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Reader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Reader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/RollingHash.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/RollingHash.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Writer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/FossilDelta/Writer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/GenerateTypeSerializerAttribute.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/GenerateTypeSerializerAttribute.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IJsonReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IJsonReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IJsonWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IJsonWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IValueInfo.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IValueInfo.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IndexedDictionary.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/IndexedDictionary.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Json.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Json.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonMember.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonMember.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonReaderExtentions.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonReaderExtentions.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonSerializationException.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonSerializationException.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStreamReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStreamReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStreamWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStreamWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringBuilderReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringBuilderReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringBuilderWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringBuilderWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonStringReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonTextReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonTextReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonTextWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonTextWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonToken.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonToken.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonUtils.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonUtils.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonWriterExtentions.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/JsonWriterExtentions.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/BigEndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/BigEndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/DefaultMsgPackExtensionTypeHandler.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/DefaultMsgPackExtensionTypeHandler.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/EndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/EndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/Endianness.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/Endianness.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/LittleEndianBitConverter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/LittleEndianBitConverter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackExtensionType.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackExtensionType.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackExtensionTypeHandler.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackExtensionTypeHandler.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackReader.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackReader.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackTimestamp.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackTimestamp.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackType.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackType.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackWriter.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/MsgPackWriter.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/UnknownMsgPackExtentionTypeException.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/UnknownMsgPackExtentionTypeException.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/UnknownMsgPackFormatException.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MessagePack/UnknownMsgPackFormatException.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/DataMemberDescription.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/DataMemberDescription.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/FieldDescription.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/FieldDescription.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/MemberDescription.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/MemberDescription.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/PropertyDescription.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/PropertyDescription.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/ReflectionUtils.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/ReflectionUtils.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/TypeDescription.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Metadata/TypeDescription.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MsgPack.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/MsgPack.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/ReflectionExtentions.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/ReflectionExtentions.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/SerializationContext.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/SerializationContext.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/SerializationOptions.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/SerializationOptions.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/ArraySerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/ArraySerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/BinarySerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/BinarySerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/BoundsSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/BoundsSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DateTimeOffsetSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DateTimeOffsetSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DateTimeSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DateTimeSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DictionaryEntrySerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DictionaryEntrySerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DictionarySerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/DictionarySerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/EnumNumberSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/EnumNumberSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/EnumSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/EnumSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/GuidSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/GuidSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Matrix4x4Serializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Matrix4x4Serializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/MsgPackExtensionTypeSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/MsgPackExtensionTypeSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/MsgPackTimestampSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/MsgPackTimestampSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/ObjectSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/ObjectSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/PrimitiveTypeSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/PrimitiveTypeSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/QuaternionSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/QuaternionSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/RectSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/RectSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/StreamSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/StreamSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/TimeSpanSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/TimeSpanSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/UriSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/UriSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector2Serializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector2Serializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector3Serializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector3Serializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector4Serializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/Vector4Serializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/VersionSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/Serializers/VersionSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/TypeSerializer.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/TypeSerializer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/TypeSerializerAttribute.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/GameDevWare.Serialization/TypeSerializerAttribute.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.jslib" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.jslib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.jslib.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/WebSocket/WebSocket.jslib.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/websocket-sharp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebSocket/websocket-sharp.dll.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logs/Packages-Update.log" beforeDir="false" afterPath="$PROJECT_DIR$/Logs/Packages-Update.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="814">
+              <caret line="175" column="21" selection-start-line="175" selection-start-column="21" selection-end-line="175" selection-end-column="21" />
+              <folding>
+                <marker date="1568658264131" expanded="true" signature="6:262" ph="..." />
+                <marker date="1568658264131" expanded="true" signature="307:11528" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="790:857" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="1109:1644" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="1166:1638" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="1266:1628" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="1391:1563" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="1645:1943" ph="/* IEnumerator ListenToServer() ... */" />
+                <marker date="1568658264131" expanded="true" signature="2015:3939" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="2168:3932" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="2291:2377" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="2397:2484" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="2891:3184" ph="/* await client.Auth.Login(); ... */" />
+                <marker date="1568658264131" expanded="true" signature="3360:3922" ph="/* TODO: reinstate error handling on connections ... */" />
+                <marker date="1568658264131" expanded="true" signature="3940:4240" ph="/* IEnumerator ConnectRetry(string endpoint, string name) ... */" />
+                <marker date="1568658264131" expanded="true" signature="4269:5029" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="4300:4473" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="4402:4463" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="4501:4651" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="4524:4582" ph="/* closing client connection ... */" />
+                <marker date="1568658264131" expanded="true" signature="4663:4737" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="4765:4895" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="5056:7173" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="5225:5883" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="5417:5871" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="5757:5857" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="6053:6108" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="6112:6697" ph="/* room.OnReadyToConnect += (sender, e) =&gt; ... */" />
+                <marker date="1568658264131" expanded="true" signature="6744:7076" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="7202:8101" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="7316:7423" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="7549:7656" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="7770:8004" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8129:8266" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8202:8259" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8302:8794" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8506:8788" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8828:9193" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="8863:9131" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9016:9087" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9144:9187" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9244:9416" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9276:9328" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9341:9410" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9448:9550" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9614:9730" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9629:9724" ph="/* Setup room first state ... */" />
+                <marker date="1568658264131" expanded="true" signature="9779:10097" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="9880:10021" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10149:10273" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10382:10488" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10538:10808" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10569:10802" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10655:10769" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10882:11462" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="10913:11456" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="11253:11423" ph="{...}" />
+                <marker date="1568658264131" expanded="true" signature="11492:11526" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/.idea.CEASAR/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/.idea.CEASAR/.idea/indexLayout.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-34" />
+    <option name="y" value="156" />
+    <option name="width" value="1542" />
+    <option name="height" value="1486" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Scripts" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Scripts" type="1045f7f1:UnityExplorerNode" />
+              <item name="Network" type="1045f7f1:UnityExplorerNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+        <option name="show-project-names" value="true" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Discover.Launch.Via.Unity" value="true" />
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2318e097-b69b-4c45-9dd7-596571d8d71e" name="Default Changelist" comment="" />
+      <created>1568655557847</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568655557847</updated>
+      <workItem from="1568655560347" duration="1840000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="1840000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-34" y="156" width="1542" height="1486" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.37466666" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="NuGet" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Unit Tests" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Performance Profiler" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Errors In Solution" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Unit Tests Coverage" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Network/ColyseusClient.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="814">
+          <caret line="175" column="21" selection-start-line="175" selection-start-column="21" selection-end-line="175" selection-end-column="21" />
+          <folding>
+            <marker date="1568658264131" expanded="true" signature="6:262" ph="..." />
+            <marker date="1568658264131" expanded="true" signature="307:11528" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="790:857" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="1109:1644" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="1166:1638" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="1266:1628" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="1391:1563" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="1645:1943" ph="/* IEnumerator ListenToServer() ... */" />
+            <marker date="1568658264131" expanded="true" signature="2015:3939" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="2168:3932" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="2291:2377" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="2397:2484" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="2891:3184" ph="/* await client.Auth.Login(); ... */" />
+            <marker date="1568658264131" expanded="true" signature="3360:3922" ph="/* TODO: reinstate error handling on connections ... */" />
+            <marker date="1568658264131" expanded="true" signature="3940:4240" ph="/* IEnumerator ConnectRetry(string endpoint, string name) ... */" />
+            <marker date="1568658264131" expanded="true" signature="4269:5029" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="4300:4473" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="4402:4463" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="4501:4651" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="4524:4582" ph="/* closing client connection ... */" />
+            <marker date="1568658264131" expanded="true" signature="4663:4737" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="4765:4895" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="5056:7173" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="5225:5883" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="5417:5871" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="5757:5857" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="6053:6108" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="6112:6697" ph="/* room.OnReadyToConnect += (sender, e) =&gt; ... */" />
+            <marker date="1568658264131" expanded="true" signature="6744:7076" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="7202:8101" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="7316:7423" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="7549:7656" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="7770:8004" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8129:8266" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8202:8259" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8302:8794" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8506:8788" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8828:9193" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="8863:9131" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9016:9087" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9144:9187" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9244:9416" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9276:9328" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9341:9410" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9448:9550" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9614:9730" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9629:9724" ph="/* Setup room first state ... */" />
+            <marker date="1568658264131" expanded="true" signature="9779:10097" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="9880:10021" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10149:10273" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10382:10488" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10538:10808" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10569:10802" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10655:10769" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10882:11462" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="10913:11456" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="11253:11423" ph="{...}" />
+            <marker date="1568658264131" expanded="true" signature="11492:11526" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
