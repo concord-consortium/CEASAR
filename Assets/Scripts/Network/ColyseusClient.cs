@@ -80,16 +80,6 @@ public class ColyseusClient : MonoBehaviour
         networkController = GetComponent<NetworkController>();
         if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
-//            if (clientConnectionCoroutine == null) clientConnectionCoroutine = ListenToServer();
-//            try
-//            {
-//                StopCoroutine(clientConnectionCoroutine);
-//            }
-//            finally
-//            {
-//                StartCoroutine(clientConnectionCoroutine);
-//            }
-
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
             Debug.Log("Connecting to " + serverEndpoint);
@@ -98,20 +88,16 @@ public class ColyseusClient : MonoBehaviour
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
             client = ColyseusManager.Instance.CreateClient(endpoint);
-
-            //await client.Auth.Login();
-            //var friends = await client.Auth.GetFriends();
-
-            //// Update username
-            //client.Auth.Username = "MyUsername";
-            //await client.Auth.Save();
-
-            //client.OnOpen += (object sender, EventArgs e) =>
-            //{
-                Debug.Log("joining room");
-                networkController.ServerStatusMessage = "Joining Room...";
-                JoinRoom();
-            //};
+            await client.Auth.Login();
+            
+            // Update username
+            client.Auth.Username = username;
+            await client.Auth.Save();
+            
+            Debug.Log("joining room");
+            networkController.ServerStatusMessage = "Joining Room...";
+            JoinRoom();
+            
             /*
              * TODO: reinstate error handling on connections
 
@@ -174,27 +160,24 @@ public class ColyseusClient : MonoBehaviour
         bool canJoinExisting = false;
         string availableRoomID = "";
         var roomsAvailable = await client.GetAvailableRooms(roomName);
-        //client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
-        //{
-            Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-            canJoinExisting = roomsAvailable.Length > 0;
-            for (var i = 0; i < roomsAvailable.Length; i++)
+
+        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
+        canJoinExisting = roomsAvailable.Length > 0;
+        for (var i = 0; i < roomsAvailable.Length; i++)
+        {
+            Debug.Log("roomId: " + roomsAvailable[i].roomId);
+            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
+            Debug.Log("clients: " + roomsAvailable[i].clients);
+            Debug.Log("metadata: " + roomsAvailable[i].metadata);
+
+            if (canJoinExisting && i == 0)
             {
-                Debug.Log("roomId: " + roomsAvailable[i].roomId);
-                Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-                Debug.Log("clients: " + roomsAvailable[i].clients);
-                Debug.Log("metadata: " + roomsAvailable[i].metadata);
-
-                if (canJoinExisting && i == 0)
-                {
-                    availableRoomID = roomsAvailable[i].roomId;
-                }
+                availableRoomID = roomsAvailable[i].roomId;
             }
-
-
-        //});
+        }
+        
         string roomToJoin = canJoinExisting ? availableRoomID : roomName;
-        room = await client.Join<State>(roomToJoin, new Dictionary<string, object>()
+        room = await client.JoinOrCreate<State>(roomToJoin, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
@@ -213,48 +196,16 @@ public class ColyseusClient : MonoBehaviour
 //            Disconnect();
 //            StartCoroutine(ConnectRetry(endpoint, oldName));
 //        };
-        //room.OnJoin += (sender, e) =>
-        //{
-            Debug.Log("Joined room successfully.");
 
-            room.State.players.OnAdd += OnPlayerAdd;
-            room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerChange;
+        Debug.Log("Joined room successfully.");
 
-            PlayerPrefs.SetString("sessionId", room.SessionId);
-            PlayerPrefs.Save();
-        //};
+        room.State.players.OnAdd += OnPlayerAdd;
+        room.State.players.OnRemove += OnPlayerRemove;
+        room.State.players.OnChange += OnPlayerChange;
 
-        room.OnStateChange += OnStateChangeHandler;
-        room.OnMessage += OnMessage;
-    }
-
-    async void ReJoinRoom()
-    {
-        string sessionId = PlayerPrefs.GetString("sessionId");
-        if (string.IsNullOrEmpty(sessionId))
-        {
-            Debug.Log("Cannot ReJoin without having a sessionId");
-            return;
-        }
-
-        room = await client.Reconnect<State>(roomName, sessionId);
-
-        //room.OnReadyToConnect += (sender, e) =>
-        //{
-            //Debug.Log("Ready to connect to room!");
-            //StartCoroutine(room.Connect());
-        //};
-        /*
-        room.OnError += (sender, e) => Debug.LogError(e.Message);
-        room.OnJoin += (sender, e) =>
-        {
-            Debug.Log("Joined room successfully.");
-            room.State.players.OnAdd += OnPlayerAdd;
-            room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerChange;
-        };
-        */
+        PlayerPrefs.SetString("roomId", room.Id);
+        PlayerPrefs.SetString("sessionId", room.SessionId);
+        PlayerPrefs.Save();
 
         room.OnStateChange += OnStateChangeHandler;
         room.OnMessage += OnMessage;
@@ -359,7 +310,7 @@ public class ColyseusClient : MonoBehaviour
                     );
         }
     }
-    public void SendInteraction(Vector3 pos, Quaternion rot, Color color)
+    public async void SendInteraction(Vector3 pos, Quaternion rot, Color color)
     {
         if (IsConnected)
         {
@@ -367,13 +318,20 @@ public class ColyseusClient : MonoBehaviour
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
-            room.Send(new Dictionary<string, object>()
-                    {
-                        {"transform", t },
-                        {"color", color.ToString()},
-                        {"message", "interaction"}
-                    }
-                    );
+            await room.Send(new
+            {
+                transform = t,
+                color = color.ToString(),
+                message = "interaction"
+            });
+            
+//            room.Send(new Dictionary<string, object>()
+//                    {
+//                        {"transform", t },
+//                        {"color", color.ToString()},
+//                        {"message", "interaction"}
+//                    }
+//                    );
         }
     }
 
