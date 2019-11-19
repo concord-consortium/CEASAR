@@ -40,3 +40,7 @@ sysinfo.txt
 *.unitypackage
 ceasar-colyseus/data
 ceasar-colyseus/node_modules
+.idea
+.idea/.idea.CEASAR
+.idea/.idea.CEASAR/.idea
+.idea/.idea.CEASAR/.idea/workspace.xml
