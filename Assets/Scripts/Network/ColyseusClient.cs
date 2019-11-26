@@ -157,27 +157,30 @@ public class ColyseusClient : MonoBehaviour
 
     async void JoinRoom()
     {
-        bool canJoinExisting = false;
-        string availableRoomID = "";
-        var roomsAvailable = await client.GetAvailableRooms(roomName);
+//        bool canJoinExisting = false;
+//        string availableRoomID = "";
+//        var roomsAvailable = await client.GetAvailableRooms(roomName);
+//
+//        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
+//        canJoinExisting = roomsAvailable.Length > 0;
+//        for (var i = 0; i < roomsAvailable.Length; i++)
+//        {
+//            Debug.Log("roomId: " + roomsAvailable[i].roomId);
+//            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
+//            Debug.Log("clients: " + roomsAvailable[i].clients);
+//            Debug.Log("metadata: " + roomsAvailable[i].metadata);
+//
+//            if (canJoinExisting && i == 0)
+//            {
+//                availableRoomID = roomsAvailable[i].roomId;
+//            }
+//        }
+//        
+//        string roomToJoin = canJoinExisting ? availableRoomID : roomName;
 
-        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-        canJoinExisting = roomsAvailable.Length > 0;
-        for (var i = 0; i < roomsAvailable.Length; i++)
-        {
-            Debug.Log("roomId: " + roomsAvailable[i].roomId);
-            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-            Debug.Log("clients: " + roomsAvailable[i].clients);
-            Debug.Log("metadata: " + roomsAvailable[i].metadata);
-
-            if (canJoinExisting && i == 0)
-            {
-                availableRoomID = roomsAvailable[i].roomId;
-            }
-        }
-        
-        string roomToJoin = canJoinExisting ? availableRoomID : roomName;
-        room = await client.JoinOrCreate<State>(roomToJoin, new Dictionary<string, object>()
+        // For now, join / create the same room by name - if this is an existing room then both players will be in the
+        // same room. This will likely need more work later.
+        room = await client.JoinOrCreate<State>(roomName, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
@@ -265,18 +268,19 @@ public class ColyseusClient : MonoBehaviour
 
     void OnMessage(object msg)
     {
-        var message = (IndexedDictionary<string, object>)msg;
-        Debug.Log(message);
+        Debug.Log(msg);
     }
 
     void OnStateChangeHandler (State state, bool isFirstState)
     {
         // Setup room first state
         // This is where we might capture current state and save/load
+        Debug.Log(state);
     }
 
     void OnPlayerAdd(Player player, string key)
     {
+        Debug.Log("Player Add: " + player.username + " " + player.id + " key: " + key);
         if (!players.Contains(player)) players.Add(player);
         if (key == room.SessionId)
         {
@@ -315,6 +319,7 @@ public class ColyseusClient : MonoBehaviour
         if (IsConnected)
         {
             NetworkTransform t = new NetworkTransform();
+            Debug.Log(pos + " " + rot);
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
