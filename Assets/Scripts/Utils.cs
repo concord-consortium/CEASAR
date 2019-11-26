@@ -31,7 +31,7 @@ public static class Utils
     }
     public static Vector3 NetworkPosToPosition(NetworkVector3 pos)
     {
-        return new Vector3(pos.x, pos.y, pos.x);
+        return new Vector3(pos.x, pos.y, pos.z);
     }
     public static Quaternion NetworkRotToRotation(NetworkVector3 rot)
     {

@@ -62,18 +62,6 @@ public class ColyseusClient : MonoBehaviour
             }
         }
     }
-//    IEnumerator ListenToServer()
-//    {
-//        while (true)
-//        {
-//            if (client != null)
-//            {
-//                /* Always call Recv if Colyseus connection is open */
-//                client.Recv();
-//            }
-//            yield return 0;
-//        }
-//    }
 
     public async void ConnectToServer(string serverEndpoint, string username)
     {
@@ -97,34 +85,9 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
             JoinRoom();
-            
-            /*
-             * TODO: reinstate error handling on connections
-
-            client.OnError += (sender, e) =>
-            {
-                Debug.LogError(e.Message);
-                networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
-                string oldName = localPlayerName;
-                Disconnect();
-                StartCoroutine(ConnectRetry(endpoint, oldName));
-            };
-            client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
-            StartCoroutine(client.Connect());
-            */
         }
-
     }
-//    IEnumerator ConnectRetry(string endpoint, string name)
-//    {
-//        yield return new WaitForSeconds(retryInterval);
-//        if (retries < maxRetries)
-//        {
-//            // try to reconnect
-//            ConnectToServer(endpoint, name);
-//            retries++;
-//        }
-//    }
+    
     public void Disconnect()
     {
         if (IsConnected)
@@ -157,48 +120,12 @@ public class ColyseusClient : MonoBehaviour
 
     async void JoinRoom()
     {
-//        bool canJoinExisting = false;
-//        string availableRoomID = "";
-//        var roomsAvailable = await client.GetAvailableRooms(roomName);
-//
-//        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-//        canJoinExisting = roomsAvailable.Length > 0;
-//        for (var i = 0; i < roomsAvailable.Length; i++)
-//        {
-//            Debug.Log("roomId: " + roomsAvailable[i].roomId);
-//            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-//            Debug.Log("clients: " + roomsAvailable[i].clients);
-//            Debug.Log("metadata: " + roomsAvailable[i].metadata);
-//
-//            if (canJoinExisting && i == 0)
-//            {
-//                availableRoomID = roomsAvailable[i].roomId;
-//            }
-//        }
-//        
-//        string roomToJoin = canJoinExisting ? availableRoomID : roomName;
-
         // For now, join / create the same room by name - if this is an existing room then both players will be in the
         // same room. This will likely need more work later.
         room = await client.JoinOrCreate<State>(roomName, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
-
-//        room.OnReadyToConnect += (sender, e) =>
-//        {
-//            Debug.Log("Ready to connect to room!");
-//            StartCoroutine(room.Connect());
-//        };
-//        room.OnError += (sender, e) =>
-//        {
-//            Debug.LogError(e.Message);
-//            networkController = GetComponent<NetworkController>();
-//            networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
-//            string oldName = localPlayerName;
-//            Disconnect();
-//            StartCoroutine(ConnectRetry(endpoint, oldName));
-//        };
 
         Debug.Log("Joined room successfully.");
 
@@ -329,14 +256,6 @@ public class ColyseusClient : MonoBehaviour
                 color = color.ToString(),
                 message = "interaction"
             });
-            
-//            room.Send(new Dictionary<string, object>()
-//                    {
-//                        {"transform", t },
-//                        {"color", color.ToString()},
-//                        {"message", "interaction"}
-//                    }
-//                    );
         }
     }
 
