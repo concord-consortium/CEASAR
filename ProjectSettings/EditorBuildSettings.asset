@@ -20,4 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EarthInteraction.unity
     guid: ebf8a616e171f4a028bc6ffcf10efaa6
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 1019c8589c43e441b8998b7b637a2044,
+      type: 2}
+    com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: b5c33470341ec4007a69c95148400d6a,
+      type: 2}
