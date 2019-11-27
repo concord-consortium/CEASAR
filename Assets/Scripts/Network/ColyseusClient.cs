@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 using System.Collections;
 using System.Collections.Generic;
+
+using System.Threading;
+using System.Threading.Tasks;
 using System;
 using System.Text;
 using Colyseus;
@@ -42,7 +45,7 @@ public class ColyseusClient : MonoBehaviour
 
     private void Update()
     {
-        if (client != null && localPlayer != null && client.Id != null)
+        if (client != null && localPlayer != null)
         {
             lastUpdate += Time.deltaTime;
             if (lastUpdate > heartbeatInterval)
@@ -59,34 +62,12 @@ public class ColyseusClient : MonoBehaviour
             }
         }
     }
-    IEnumerator ListenToServer()
-    {
-        while (true)
-        {
-            if (client != null)
-            {
-                /* Always call Recv if Colyseus connection is open */
-                client.Recv();
-            }
-            yield return 0;
-        }
-    }
 
-    public void ConnectToServer(string serverEndpoint, string username)
+    public async void ConnectToServer(string serverEndpoint, string username)
     {
         networkController = GetComponent<NetworkController>();
         if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
         {
-            if (clientConnectionCoroutine == null) clientConnectionCoroutine = ListenToServer();
-            try
-            {
-                StopCoroutine(clientConnectionCoroutine);
-            }
-            finally
-            {
-                StartCoroutine(clientConnectionCoroutine);
-            }
-
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
             Debug.Log("Connecting to " + serverEndpoint);
@@ -94,45 +75,19 @@ public class ColyseusClient : MonoBehaviour
 
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
-            client = new Client(serverEndpoint);
-
-            //await client.Auth.Login();
-            //var friends = await client.Auth.GetFriends();
-
-            //// Update username
-            //client.Auth.Username = "MyUsername";
-            //await client.Auth.Save();
-
-            client.OnOpen += (object sender, EventArgs e) =>
-            {
-                Debug.Log("joining room");
-                networkController.ServerStatusMessage = "Joining Room...";
-                JoinRoom();
-            };
-
-            client.OnError += (sender, e) =>
-            {
-                Debug.LogError(e.Message);
-                networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
-                string oldName = localPlayerName;
-                Disconnect();
-                StartCoroutine(ConnectRetry(endpoint, oldName));
-            };
-            client.OnClose += (sender, e) => Debug.Log("CONNECTION CLOSED");
-            StartCoroutine(client.Connect());
-        }
-
-    }
-    IEnumerator ConnectRetry(string endpoint, string name)
-    {
-        yield return new WaitForSeconds(retryInterval);
-        if (retries < maxRetries)
-        {
-            // try to reconnect
-            ConnectToServer(endpoint, name);
-            retries++;
+            client = ColyseusManager.Instance.CreateClient(endpoint);
+            await client.Auth.Login();
+            
+            // Update username
+            client.Auth.Username = username;
+            await client.Auth.Save();
+            
+            Debug.Log("joining room");
+            networkController.ServerStatusMessage = "Joining Room...";
+            JoinRoom();
         }
     }
+    
     public void Disconnect()
     {
         if (IsConnected)
@@ -147,7 +102,7 @@ public class ColyseusClient : MonoBehaviour
         if (client != null)
         {
             // closing client connection
-            client.Close();
+            //client.Close();
             connecting = false;
             client = null;
         }
@@ -163,117 +118,51 @@ public class ColyseusClient : MonoBehaviour
         networkController.ServerStatusMessage = "Disconnected.";
     }
 
-    void JoinRoom()
+    async void JoinRoom()
     {
-        bool canJoinExisting = false;
-        string availableRoomID = "";
-        client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
-        {
-            Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-            canJoinExisting = roomsAvailable.Length > 0;
-            for (var i = 0; i < roomsAvailable.Length; i++)
-            {
-                Debug.Log("roomId: " + roomsAvailable[i].roomId);
-                Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-                Debug.Log("clients: " + roomsAvailable[i].clients);
-                Debug.Log("metadata: " + roomsAvailable[i].metadata);
-
-                if (canJoinExisting && i == 0)
-                {
-                    availableRoomID = roomsAvailable[i].roomId;
-                }
-            }
-
-
-        });
-        string roomToJoin = canJoinExisting ? availableRoomID : roomName;
-        room = client.Join<State>(roomToJoin, new Dictionary<string, object>()
+        // For now, join / create the same room by name - if this is an existing room then both players will be in the
+        // same room. This will likely need more work later.
+        room = await client.JoinOrCreate<State>(roomName, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
 
-        room.OnReadyToConnect += (sender, e) =>
-        {
-            Debug.Log("Ready to connect to room!");
-            StartCoroutine(room.Connect());
-        };
-        room.OnError += (sender, e) =>
-        {
-            Debug.LogError(e.Message);
-            networkController = GetComponent<NetworkController>();
-            networkController.ServerStatusMessage = "Connection error! Attempting to fix...";
-            string oldName = localPlayerName;
-            Disconnect();
-            StartCoroutine(ConnectRetry(endpoint, oldName));
-        };
-        room.OnJoin += (sender, e) =>
-        {
-            Debug.Log("Joined room successfully.");
+        Debug.Log("Joined room successfully.");
 
-            room.State.players.OnAdd += OnPlayerAdd;
-            room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerChange;
+        room.State.players.OnAdd += OnPlayerAdd;
+        room.State.players.OnRemove += OnPlayerRemove;
+        room.State.players.OnChange += OnPlayerChange;
 
-            PlayerPrefs.SetString("sessionId", room.SessionId);
-            PlayerPrefs.Save();
-        };
+        PlayerPrefs.SetString("roomId", room.Id);
+        PlayerPrefs.SetString("sessionId", room.SessionId);
+        PlayerPrefs.Save();
 
         room.OnStateChange += OnStateChangeHandler;
         room.OnMessage += OnMessage;
     }
 
-    void ReJoinRoom()
-    {
-        string sessionId = PlayerPrefs.GetString("sessionId");
-        if (string.IsNullOrEmpty(sessionId))
-        {
-            Debug.Log("Cannot ReJoin without having a sessionId");
-            return;
-        }
-
-        room = client.ReJoin<State>(roomName, sessionId);
-
-        room.OnReadyToConnect += (sender, e) =>
-        {
-            Debug.Log("Ready to connect to room!");
-            StartCoroutine(room.Connect());
-        };
-        room.OnError += (sender, e) => Debug.LogError(e.Message);
-        room.OnJoin += (sender, e) =>
-        {
-            Debug.Log("Joined room successfully.");
-            room.State.players.OnAdd += OnPlayerAdd;
-            room.State.players.OnRemove += OnPlayerRemove;
-            room.State.players.OnChange += OnPlayerChange;
-        };
-
-        room.OnStateChange += OnStateChangeHandler;
-        room.OnMessage += OnMessage;
-    }
-
-    void LeaveRoom()
+    async void LeaveRoom()
     {
         Debug.Log("closing connection");
         if (room != null)
         {
-            room.Leave(false);
+            await room.Leave(false);
         }
 
     }
 
-    void GetAvailableRooms()
+    async void GetAvailableRooms()
     {
-        client.GetAvailableRooms(roomName, (RoomAvailable[] roomsAvailable) =>
+        var roomsAvailable = await client.GetAvailableRooms(roomName);
+
+        Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
+        for (var i = 0; i < roomsAvailable.Length; i++)
         {
-            Debug.Log("Available rooms (" + roomsAvailable.Length + ")");
-            for (var i = 0; i < roomsAvailable.Length; i++)
-            {
-                Debug.Log("roomId: " + roomsAvailable[i].roomId);
-                Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
-                Debug.Log("clients: " + roomsAvailable[i].clients);
-                Debug.Log("metadata: " + roomsAvailable[i].metadata);
-            }
-        });
+            Debug.Log("roomId: " + roomsAvailable[i].roomId);
+            Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
+            Debug.Log("clients: " + roomsAvailable[i].clients);
+            Debug.Log("metadata: " + roomsAvailable[i].metadata);
+        }
     }
     public string GetClientList()
     {
@@ -304,38 +193,40 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    void OnMessage(object sender, MessageEventArgs e)
+    void OnMessage(object msg)
     {
-        Debug.Log(e.Message);
+        Debug.Log(msg);
     }
 
-    void OnStateChangeHandler(object sender, StateChangeEventArgs<State> e)
+    void OnStateChangeHandler (State state, bool isFirstState)
     {
         // Setup room first state
         // This is where we might capture current state and save/load
+        Debug.Log(state);
     }
 
-    void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerAdd(Player player, string key)
     {
-        if (!players.Contains(item.Value)) players.Add(item.Value);
-        if (item.Key == room.SessionId)
+        Debug.Log("Player Add: " + player.username + " " + player.id + " key: " + key);
+        if (!players.Contains(player)) players.Add(player);
+        if (key == room.SessionId)
         {
-            localPlayer = item.Value;
-            networkController.ServerStatusMessage = "Connected as " + item.Value.username;
+            localPlayer = player;
+            networkController.ServerStatusMessage = "Connected as " + player.username;
         }
-        networkController.OnPlayerAdd(item.Value, item.Key == room.SessionId);
+        networkController.OnPlayerAdd(player, key == room.SessionId);
     }
 
-    void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerRemove(Player player, string key)
     {
-        if (players.Contains(item.Value)) players.Remove(item.Value);
-        networkController.OnPlayerRemove(item.Value);
+        if (players.Contains(player)) players.Remove(player);
+        networkController.OnPlayerRemove(player);
     }
 
-    void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
     {
-        Debug.Log(sender + " " + item.Key);
-        networkController.OnPlayerChange(item.Key, item.Value);
+        Debug.Log(player + " " + key);
+        networkController.OnPlayerChange(key, player);
     }
 
     public void SendMovement(NetworkTransform t)
@@ -350,21 +241,21 @@ public class ColyseusClient : MonoBehaviour
                     );
         }
     }
-    public void SendInteraction(Vector3 pos, Quaternion rot, Color color)
+    public async void SendInteraction(Vector3 pos, Quaternion rot, Color color)
     {
         if (IsConnected)
         {
             NetworkTransform t = new NetworkTransform();
+            Debug.Log(pos + " " + rot);
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
-            room.Send(new Dictionary<string, object>()
-                    {
-                        {"transform", t },
-                        {"color", color.ToString()},
-                        {"message", "interaction"}
-                    }
-                    );
+            await room.Send(new
+            {
+                transform = t,
+                color = color.ToString(),
+                message = "interaction"
+            });
         }
     }
 

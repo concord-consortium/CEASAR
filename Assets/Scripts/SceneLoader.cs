@@ -9,7 +9,7 @@ public class SceneLoader : MonoBehaviour
     public GameObject LoadingPanel;
     public GameObject ButtonPanel;
     public Slider slider;
-
+    
     public void LoadScene (int sceneIndex)
     {
         StartCoroutine(LoadAsynchronously(sceneIndex));

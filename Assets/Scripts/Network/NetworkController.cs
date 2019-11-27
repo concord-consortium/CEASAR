@@ -247,7 +247,9 @@ public class NetworkController : MonoBehaviour
     {
         if (interactionIndicator)
         {
-            GameObject indicatorObj = Instantiate(interactionIndicator, pos, rot);
+            GameObject indicatorObj = Instantiate(interactionIndicator);
+            indicatorObj.transform.localRotation = rot;
+            indicatorObj.transform.position = pos;
             Utils.SetObjectColor(indicatorObj, playerColor);
             StartCoroutine(selfDestruct(indicatorObj));
         }

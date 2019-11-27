@@ -2,7 +2,7 @@
 // THIS FILE HAS BEEN GENERATED AUTOMATICALLY
 // DO NOT CHANGE IT MANUALLY UNLESS YOU KNOW WHAT YOU'RE DOING
 // 
-// GENERATED USING @colyseus/schema 0.4.34
+// GENERATED USING @colyseus/schema 0.4.61
 // 
 
 using Colyseus.Schema;
@@ -28,5 +28,8 @@ public class Player : Schema {
 
 	[Type(6, "ref", typeof(NetworkTransform))]
 	public NetworkTransform interactionTarget = new NetworkTransform();
+
+	[Type(7, "boolean")]
+	public bool connected = false;
 }
 
