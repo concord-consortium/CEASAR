@@ -163,7 +163,9 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="AR" t="Include">
+            <e p="PlaceOnImageTarget.cs" t="Include" />
             <e p="PlaceOnPlane.cs" t="Include" />
+            <e p="TrackedImageInfoManager.cs" t="Include" />
           </e>
           <e p="CleanStars.cs" t="Include" />
           <e p="Constellation.cs" t="Include" />
