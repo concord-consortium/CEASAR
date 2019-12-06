@@ -46,9 +46,20 @@ public class PlaceOnImageTarget : MonoBehaviour
     {
         foreach (var trackedImage in eventArgs.added)
         {
-            // Give the initial image a reasonable default scale
-            trackedImage.transform.localScale = new Vector3(0.01f, 1f, 0.01f);
-
+            trackedImage.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            
+            foreach (Transform t in trackedImage.transform)
+            {
+                Debug.Log(t.name + " " + trackedImage.referenceImage.name);
+                if (trackedImage.referenceImage.name.StartsWith(t.name))
+                {
+                    t.gameObject.SetActive(true);
+                }
+                else
+                {
+                    t.gameObject.SetActive(false);
+                }
+            }
             UpdateInfo(trackedImage);
         }
 

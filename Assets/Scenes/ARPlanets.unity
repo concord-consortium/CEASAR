@@ -254,7 +254,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Debug Text Here
+  m_Text: .
 --- !u!222 &424433647
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -592,7 +592,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &1575319312
 RectTransform:
@@ -896,7 +896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ReferenceLibrary: {fileID: 11400000, guid: bfcf08a0747a44b5abcdeb84f6170e9d, type: 2}
   m_MaxNumberOfMovingImages: 3
-  m_TrackedImagePrefab: {fileID: 5188471676443059837, guid: 8b1d477f1efd14140a540c575ead54f9,
+  m_TrackedImagePrefab: {fileID: 7307483986999136961, guid: 49e0be8315f9e4d5082bbe94796f5930,
     type: 3}
 --- !u!114 &1792228230
 MonoBehaviour:

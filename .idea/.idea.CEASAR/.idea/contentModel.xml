@@ -466,6 +466,11 @@
             </e>
           </e>
         </e>
+        <e p="StreamingAssets" t="Include">
+          <e p="HiddenARCore" t="Include">
+            <e p="b7474e28-d4e3-4a9e-9563-0a8c31d422ee.imgdb-imglist.txt" t="Include" />
+          </e>
+        </e>
         <e p="TextMesh Pro" t="Include">
           <e p="Fonts" t="Include">
             <e p="LiberationSans - OFL.txt" t="Include" />
@@ -508,7 +513,7 @@
       <e p="Packages" t="ExcludeRecursive" />
       <e p="Temp/bin" t="ExcludeRecursive" />
     </e>
-    <e p="$USER_HOME$/Library/Caches/Rider2019.1/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.1/resharper-host/local/Transient/ReSharperHost/v191/SolutionCaches/_CEASAR.-1216980001.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2019.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2019.2/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_CEASAR.-1216980001.00" t="ExcludeRecursive" />
   </component>
 </project>
