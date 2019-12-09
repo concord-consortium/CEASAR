@@ -229,16 +229,20 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerChange(key, player);
     }
 
-    public void SendMovement(NetworkTransform t)
+    public async void SendMovement(Vector3 pos, Quaternion rot )
     {
         if (IsConnected)
         {
-            room.Send(new Dictionary<string, object>()
-                    {
-                        {"transform", t },
-                        {"message", "movement"}
-                    }
-                    );
+            NetworkTransform t = new NetworkTransform();
+            Debug.Log(pos + " " + rot);
+            t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
+            Vector3 r = rot.eulerAngles;
+            t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
+            await room.Send(new
+            {
+                transform = t,
+                message = "movement"
+            });
         }
     }
     public async void SendInteraction(Vector3 pos, Quaternion rot, Color color)

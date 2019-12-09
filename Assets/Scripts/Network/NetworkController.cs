@@ -157,18 +157,20 @@ public class NetworkController : MonoBehaviour
     {
         Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username + " playerId: " + player.id);
 
-        Vector3 pos = new Vector3(player.x, player.y, 0);
+        Vector3 pos = Utils.NetworkPosToPosition(player.playerPosition.position);
+        Quaternion rot = Utils.NetworkRotToRotation(player.playerPosition.rotation);
         if (isLocal)
         {
             localPlayer = player;
-            localPlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            Transform avatarCamera = GameObject.FindWithTag("Player").transform;
+            localPlayerAvatar = avatarCamera.Find("Avatar").gameObject;
             Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = "localPlayer_" + player.username;
         }
         else
         {
-            GameObject remotePlayerAvatar = Instantiate(avatar, pos, Quaternion.identity);
+            GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
             Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
@@ -206,10 +208,10 @@ public class NetworkController : MonoBehaviour
 
         Player knownPlayer = players.Keys.ToList().Find(p => p.id == playerId);
 
-        //bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
-        //bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
+        bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
+        bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
 
-        //Debug.Log(interactionUpdate + " " + movementUpdate);
+        Debug.Log(interactionUpdate + " " + movementUpdate);
 
         GameObject remotePlayerAvatar;
         players.TryGetValue(updatedPlayer, out remotePlayerAvatar);
@@ -219,26 +221,26 @@ public class NetworkController : MonoBehaviour
         }
         else if (knownPlayer != null)
         {
-            //if (interactionUpdate)
-            //{
-            Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," + updatedPlayer.interactionTarget.position.y + "," + updatedPlayer.interactionTarget.position.z);
-            Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
-            Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
-            ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
-            //}
-            //else if (movementUpdate)
-            //{
-            Debug.Log("Movement update: " + updatedPlayer.playerPosition);
-            if (remotePlayerAvatar)
+            if (interactionUpdate)
             {
+                Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," + updatedPlayer.interactionTarget.position.y + "," + updatedPlayer.interactionTarget.position.z);
+                Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
+                Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
+                ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
+            }
+            else if (movementUpdate)
+            {
+                Debug.Log("Movement update: " + updatedPlayer.playerPosition);
+                if (remotePlayerAvatar)
+                {
 
-                remotePlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
+                    remotePlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
+                }
+                else
+                {
+                    localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
+                }
             }
-            else
-            {
-                localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
-            }
-            //}
         }
 
     }
@@ -260,6 +262,19 @@ public class NetworkController : MonoBehaviour
 
         }
 
+    }
+
+    public void HandleMovementUpdate(Vector3 pos, Quaternion rot, bool isLocal)
+    {
+        if (isLocal)
+        {
+            // broadcast!
+            colyseusClient.SendMovement(pos, rot);
+        }
+        else
+        {
+            // move remote player
+        }
     }
 
     IEnumerator selfDestruct(GameObject indicatorObj)
