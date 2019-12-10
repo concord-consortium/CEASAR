@@ -208,10 +208,11 @@ public class NetworkController : MonoBehaviour
 
         Player knownPlayer = players.Keys.ToList().Find(p => p.id == playerId);
 
-        bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
-        bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
+        //bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
+        //bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
 
-        Debug.Log(interactionUpdate + " " + movementUpdate);
+        // Debug.Log(Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget) +
+        //          " " + Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition));
 
         GameObject remotePlayerAvatar;
         players.TryGetValue(updatedPlayer, out remotePlayerAvatar);
@@ -221,26 +222,29 @@ public class NetworkController : MonoBehaviour
         }
         else if (knownPlayer != null)
         {
-            if (interactionUpdate)
+            if (updatedPlayer.interactionTarget != null)
             {
                 Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," + updatedPlayer.interactionTarget.position.y + "," + updatedPlayer.interactionTarget.position.z);
                 Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
                 Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
                 ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
             }
-            else if (movementUpdate)
-            {
+//            else if (movementUpdate)
+//            {
                 Debug.Log("Movement update: " + updatedPlayer.playerPosition);
-                if (remotePlayerAvatar)
+                if (remotePlayerAvatar != null)
                 {
-
-                    remotePlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
+                    remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
                 }
-                else
-                {
-                    localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
-                }
-            }
+//                else
+//                {
+//                    localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
+//                }
+//            }
+        }
+        else
+        {
+            Debug.Log("Ghost player!");
         }
 
     }
