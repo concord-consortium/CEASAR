@@ -7,7 +7,6 @@ public class PlayerMovement : MonoBehaviour
 {
     private Vector3 lastPos;
     private Quaternion lastRot;
-    private int sendInterval = 1;
     private float lastSend = 0;
     NetworkController network;
     private void Awake()
@@ -21,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
         if (lastPos != transform.position || lastRot != transform.rotation)
         {
             // send update - no more frequently than once per second
-            if (Time.time - sendInterval > lastSend)
+            if (Time.time - SimulationManager.GetInstance().MovementSendInterval > lastSend)
             {
                 // send movement!
                 // Debug.Log("I'm sending!! " + transform.position);

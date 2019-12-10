@@ -63,6 +63,26 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    public void SetNetworkAddress(string destination)
+    {
+        SimulationManager manager = SimulationManager.GetInstance();
+        switch (destination)
+        {
+            case "local":
+                m_EndpointField.text = manager.LocalNetworkServer;
+                break;
+            case "dev":
+                m_EndpointField.text = manager.DevNetworkServer;
+                break;
+            case "web":
+                m_EndpointField.text = manager.ProductionNetworkServer;
+                break;
+            default:
+                m_EndpointField.text = manager.ProductionNetworkServer;
+                break;
+        }
+    }
+
     // Need this so the network UI persists across scenes
     private void Awake()
     {
@@ -104,15 +124,15 @@ public class NetworkController : MonoBehaviour
          */
         if (!IsConnected)
         {
+            SimulationManager manager = SimulationManager.GetInstance();
             if (string.IsNullOrEmpty(localPlayerName))
             {
-                SimulationManager manager = SimulationManager.GetInstance();
                 localPlayerName = manager.GenerateUsername();
                 manager.LocalPlayerColor = manager.GetColorForUsername(localPlayerName);
                 Debug.Log(localPlayerName);
             }
-            string _localEndpoint = "ws://localhost:2567/";
-            string _remoteEndpoint = "wss://calm-meadow-14344.herokuapp.com";
+            string _localEndpoint = manager.LocalNetworkServer;
+            string _remoteEndpoint = manager.ProductionNetworkServer;
 #if UNITY_EDITOR
             string endpoint = _localEndpoint;
 #else

@@ -5,7 +5,6 @@ using UnityEngine;
 // This class is the manager Singleton, and contains specific references to application-level objects
 public class SimulationManager
 {
-
     // can't use constructor, guaranteed singleton
     protected SimulationManager() { }
     private static SimulationManager instance;
@@ -50,6 +49,13 @@ public class SimulationManager
     {
         return sceneRadius / InitialRadius;
     }
+    // Movement synchronization throttled for Heroku/Mongo
+    public float MovementSendInterval = 1.0f;
+    
+    // Server Address!
+    public string LocalNetworkServer = "ws://localhost:2567";
+    public string DevNetworkServer = "ws://ceasar-serve-movement-u-1jajht.herokuapp.com";
+    public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     // Random color (capitalized), random animal (capitalized), random number
     public string GenerateUsername()
