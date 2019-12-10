@@ -195,6 +195,7 @@ public class NetworkController : MonoBehaviour
             Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
+            remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
             // add "player" to map of players
             if (!remotePlayers.ContainsKey(player.id))
             {
@@ -233,12 +234,6 @@ public class NetworkController : MonoBehaviour
 
         Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
 
-        //bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
-        //bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
-
-        // Debug.Log(Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget) +
-        //          " " + Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition));
-
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(updatedPlayer.id, out remotePlayerAvatar);
         if (isLocal)
@@ -257,7 +252,8 @@ public class NetworkController : MonoBehaviour
             Debug.Log("Movement update: " + updatedPlayer.playerPosition);
             if (remotePlayerAvatar != null)
             {
-                remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
+                remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
+                // remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
             }
             else
             {
