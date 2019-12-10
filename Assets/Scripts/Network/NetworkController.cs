@@ -27,7 +27,7 @@ public class NetworkController : MonoBehaviour
 
     protected ColyseusClient colyseusClient;
 
-    protected IndexedDictionary<Player, GameObject> players = new IndexedDictionary<Player, GameObject>();
+    protected IndexedDictionary<string, GameObject> remotePlayers = new IndexedDictionary<string, GameObject>();
 
     public TMPro.TMP_Text debugMessages;
 
@@ -88,9 +88,10 @@ public class NetworkController : MonoBehaviour
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(localPlayer, true);
-            foreach (Player p in players.Keys)
+            foreach (string p in remotePlayers.Keys)
             {
-                OnPlayerAdd(p, false);
+                Player remotePlayer = colyseusClient.GetPlayerById(p);
+                OnPlayerAdd(remotePlayer, false);
             }
         }
     }
@@ -132,7 +133,7 @@ public class NetworkController : MonoBehaviour
         colyseusClient.Disconnect();
 
         // Destroy player game objects
-        foreach (KeyValuePair<Player, GameObject> entry in players)
+        foreach (KeyValuePair<string, GameObject> entry in remotePlayers)
         {
             Destroy(entry.Value);
         }
@@ -175,38 +176,42 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             // add "player" to map of players
-            if (!players.ContainsKey(player))
+            if (!remotePlayers.ContainsKey(player.id))
             {
-                players.Add(player, remotePlayerAvatar);
+                remotePlayers.Add(player.id, remotePlayerAvatar);
             }
             else
             {
-                players[player] = remotePlayerAvatar;
+                remotePlayers[player.id] = remotePlayerAvatar;
             }
         }
         debugMessages.text = colyseusClient.GetClientList();
+        string listOfPlayersForDebug = "";
+        foreach (var p in remotePlayers.Keys)
+        {
+            listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
+        }
+        Debug.Log(listOfPlayersForDebug);
     }
 
     public void OnPlayerRemove(Player player)
     {
         GameObject remotePlayerAvatar;
-        players.TryGetValue(player, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(player.id, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
 
-        players.Remove(player);
+        remotePlayers.Remove(player.id);
         debugMessages.text = colyseusClient.GetClientList();
     }
 
 
-    public void OnPlayerChange(string playerId, Player updatedPlayer)
+    public void OnPlayerChange(Player updatedPlayer)
     {
-        bool isLocal = playerId == localPlayer.id;
-        bool isKnownPlayer = players.Keys.Contains(updatedPlayer);   // ToList().First(p => p.id == playerId);
-        string knownPlayerName = isKnownPlayer ? updatedPlayer.username : "unknown";
+        bool isLocal = updatedPlayer.id == localPlayer.id;
+        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.id);   // ToList().First(p => p.id == playerId);
+        string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
 
-        Debug.Log("player id " + playerId + " is local: " + isLocal + " isKnown: " + knownPlayerName);
-
-        Player knownPlayer = players.Keys.ToList().Find(p => p.id == playerId);
+        Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
 
         //bool interactionUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.interactionTarget, knownPlayer.interactionTarget);
         //bool movementUpdate = isKnownPlayer && Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition);
@@ -215,12 +220,12 @@ public class NetworkController : MonoBehaviour
         //          " " + Utils.CompareNetworkTransform(updatedPlayer.playerPosition, knownPlayer.playerPosition));
 
         GameObject remotePlayerAvatar;
-        players.TryGetValue(updatedPlayer, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(updatedPlayer.id, out remotePlayerAvatar);
         if (isLocal)
         {
             Debug.Log("self update");
         }
-        else if (knownPlayer != null)
+        else
         {
             if (updatedPlayer.interactionTarget != null)
             {
@@ -229,22 +234,15 @@ public class NetworkController : MonoBehaviour
                 Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
                 ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
             }
-//            else if (movementUpdate)
-//            {
-                Debug.Log("Movement update: " + updatedPlayer.playerPosition);
-                if (remotePlayerAvatar != null)
-                {
-                    remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
-                }
-//                else
-//                {
-//                    localPlayerAvatar.transform.Translate(new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, 0));
-//                }
-//            }
-        }
-        else
-        {
-            Debug.Log("Ghost player!");
+            Debug.Log("Movement update: " + updatedPlayer.playerPosition);
+            if (remotePlayerAvatar != null)
+            {
+                remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
+            }
+            else
+            {
+                Debug.Log("Ghost player with no avatar!");
+            }
         }
 
     }

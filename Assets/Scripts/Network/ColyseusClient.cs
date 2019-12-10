@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 using System.Text;
 using Colyseus;
 using Colyseus.Schema;
@@ -181,6 +182,11 @@ public class ColyseusClient : MonoBehaviour
             return "";
         }
     }
+
+    public Player GetPlayerById(string playerId)
+    {
+        return players?.First(p => p.id == playerId);
+    }
     public void SendNetworkMessage(string message)
     {
         if (room != null)
@@ -226,7 +232,7 @@ public class ColyseusClient : MonoBehaviour
     void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
     {
         Debug.Log(player + " " + key);
-        networkController.OnPlayerChange(key, player);
+        networkController.OnPlayerChange(player);
     }
 
     public async void SendMovement(Vector3 pos, Quaternion rot )
