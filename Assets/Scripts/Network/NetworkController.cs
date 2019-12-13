@@ -34,7 +34,7 @@ public class NetworkController : MonoBehaviour
 
     public TMPro.TMP_Text debugMessages;
 
-    private string localPlayerName = "";
+    private string localUsername = "";
 
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
@@ -88,21 +88,26 @@ public class NetworkController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        InsureUsername();
+        EnsureUsername();
     }
 
-    void InsureUsername()
+    void EnsureUsername()
     {
-        string foundName = PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
-        if (foundName != null && foundName.Length > 0)
+        if(!string.IsNullOrEmpty(localUsername))
         {
-            SetUsername(foundName);
+            return;
         }
-        else
+        string foundName = PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
+        if (string.IsNullOrEmpty(foundName))
         {
             RandomizeUsername();
         }
+        else
+        {
+            SetUsername(foundName);
+        }
     }
+
     void Start()
     {
         colyseusClient = GetComponent<ColyseusClient>();
@@ -119,14 +124,14 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
-        InsureUsername();
+        EnsureUsername();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(localPlayer, true);
             foreach (string p in remotePlayers.Keys)
             {
-                Player remotePlayer = colyseusClient.GetPlayerByUsername(p);
-                OnPlayerAdd(remotePlayer, localPlayer.username != p);
+                Player remotePlayer = colyseusClient.GetPlayerById(p);
+                OnPlayerAdd(remotePlayer, localPlayer.id != p);
             }
         }
     }
@@ -134,13 +139,13 @@ public class NetworkController : MonoBehaviour
     void SetUsername(string uName)
     {
         SimulationManager manager = SimulationManager.GetInstance();
-        localPlayerName = uName;
-        manager.LocalPlayerColor = manager.GetColorForUsername(localPlayerName);
-        Debug.Log(localPlayerName);
-        PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, localPlayerName);
+        localUsername = uName;
+        manager.LocalPlayerColor = manager.GetColorForUsername(localUsername);
+        Debug.Log(localUsername);
+        PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, localUsername);
         if (usernameText)
         {
-            usernameText.text = localPlayerName;
+            usernameText.text = localUsername;
             usernameText.color = manager.LocalPlayerColor;
         }
     }
@@ -160,10 +165,7 @@ public class NetworkController : MonoBehaviour
         if (!IsConnected)
         {
             SimulationManager manager = SimulationManager.GetInstance();
-            if (string.IsNullOrEmpty(localPlayerName))
-            {
-                RandomizeUsername();
-            }
+            EnsureUsername();
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
 #if UNITY_EDITOR
@@ -173,7 +175,7 @@ public class NetworkController : MonoBehaviour
 #endif
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
-            colyseusClient.ConnectToServer(endpoint, localPlayerName);
+            colyseusClient.ConnectToServer(endpoint, localUsername);
         }
         else if (IsConnected) Disconnect();
         else
@@ -200,7 +202,7 @@ public class NetworkController : MonoBehaviour
     public void OnPlayerAdd(Player player, bool isLocal)
     {
         Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username + " playerId: " + player.id);
-
+        Debug.Log("is local: " + isLocal);      
         Vector3 pos = Utils.NetworkPosToPosition(player.playerPosition.position);
         Quaternion rot = Utils.NetworkRotToRotation(player.playerPosition.rotation);
         if (isLocal)
@@ -221,13 +223,13 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
 
             // add "player" to map of players
-            if (!remotePlayers.ContainsKey(player.username))
+            if (!remotePlayers.ContainsKey(player.id))
             {
-                remotePlayers.Add(player.username, remotePlayerAvatar);
+                remotePlayers.Add(player.id, remotePlayerAvatar);
             }
             else
             {
-                remotePlayers[player.username] = remotePlayerAvatar;
+                remotePlayers[player.id] = remotePlayerAvatar;
             }
         }
         debugMessages.text = colyseusClient.GetClientList();
@@ -242,18 +244,19 @@ public class NetworkController : MonoBehaviour
     public void OnPlayerRemove(Player player)
     {
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(player.id, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
 
-        remotePlayers.Remove(player.username);
+        remotePlayers.Remove(player.id);
         debugMessages.text = colyseusClient.GetClientList();
     }
 
 
     public void OnPlayerChange(Player updatedPlayer)
     {
-        bool isLocal = updatedPlayer.username == localPlayer.username;
-        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.username);  
+
+        bool isLocal = updatedPlayer.id == localPlayer.id;
+        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.id);  
         string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
 
         Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
