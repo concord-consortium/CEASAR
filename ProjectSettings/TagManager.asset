@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Star
   - Debug
+  - LocalPlayerAvatar
   layers:
   - Default
   - TransparentFX

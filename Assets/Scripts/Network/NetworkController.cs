@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
-using System.Text;
+
+
+
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
 {
+    public const string PLAYER_PREFS_NAME_KEY = "CAESAR_USERNAME";
     // UI Buttons are attached through Unity Inspector
     public Button connectButton;
     public TMPro.TMP_Text connectButtonText;
     public InputField m_EndpointField;
     public Text connectionStatusText;
+    public Text usernameText;
     private string _connectionStatusMessage;
 
     public GameObject avatar;
@@ -32,8 +35,6 @@ public class NetworkController : MonoBehaviour
     public TMPro.TMP_Text debugMessages;
 
     private string localPlayerName = "";
-
-    private float lastUpdate;
 
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
@@ -87,8 +88,21 @@ public class NetworkController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
+        InsureUsername();
     }
 
+    void InsureUsername()
+    {
+        string foundName = PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
+        if (foundName != null && foundName.Length > 0)
+        {
+            SetUsername(foundName);
+        }
+        else
+        {
+            RandomizeUsername();
+        }
+    }
     void Start()
     {
         colyseusClient = GetComponent<ColyseusClient>();
@@ -105,15 +119,36 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
+        InsureUsername();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(localPlayer, true);
             foreach (string p in remotePlayers.Keys)
             {
-                Player remotePlayer = colyseusClient.GetPlayerById(p);
-                OnPlayerAdd(remotePlayer, false);
+                Player remotePlayer = colyseusClient.GetPlayerByUsername(p);
+                OnPlayerAdd(remotePlayer, localPlayer.username != p);
             }
         }
+    }
+
+    void SetUsername(string uName)
+    {
+        SimulationManager manager = SimulationManager.GetInstance();
+        localPlayerName = uName;
+        manager.LocalPlayerColor = manager.GetColorForUsername(localPlayerName);
+        Debug.Log(localPlayerName);
+        PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, localPlayerName);
+        if (usernameText)
+        {
+            usernameText.text = localPlayerName;
+            usernameText.color = manager.LocalPlayerColor;
+        }
+    }
+
+    public void RandomizeUsername()
+    {
+        SimulationManager manager = SimulationManager.GetInstance();
+        SetUsername(manager.GenerateUsername());
     }
 
     void ConnectToServer()
@@ -127,9 +162,7 @@ public class NetworkController : MonoBehaviour
             SimulationManager manager = SimulationManager.GetInstance();
             if (string.IsNullOrEmpty(localPlayerName))
             {
-                localPlayerName = manager.GenerateUsername();
-                manager.LocalPlayerColor = manager.GetColorForUsername(localPlayerName);
-                Debug.Log(localPlayerName);
+                RandomizeUsername();
             }
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
@@ -157,21 +190,11 @@ public class NetworkController : MonoBehaviour
         {
             Destroy(entry.Value);
         }
+        remotePlayers.Clear();
 
         // closing client connection
-
-        if (localPlayerAvatar) Destroy(localPlayerAvatar);
         debugMessages.text = "";
-    }
-
-    void SendNetworkMessage()
-    {
-        colyseusClient.SendNetworkMessage("message");
-    }
-
-    void OnMessage(string message)
-    {
-        Debug.Log(message);
+        ServerStatusMessage = "Disconected";
     }
 
     public void OnPlayerAdd(Player player, bool isLocal)
@@ -184,7 +207,7 @@ public class NetworkController : MonoBehaviour
         {
             localPlayer = player;
             Transform avatarCamera = GameObject.FindWithTag("Player").transform;
-            localPlayerAvatar = avatarCamera.Find("Avatar").gameObject;
+            localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
             Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = "localPlayer_" + player.username;
@@ -196,14 +219,15 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
+
             // add "player" to map of players
-            if (!remotePlayers.ContainsKey(player.id))
+            if (!remotePlayers.ContainsKey(player.username))
             {
-                remotePlayers.Add(player.id, remotePlayerAvatar);
+                remotePlayers.Add(player.username, remotePlayerAvatar);
             }
             else
             {
-                remotePlayers[player.id] = remotePlayerAvatar;
+                remotePlayers[player.username] = remotePlayerAvatar;
             }
         }
         debugMessages.text = colyseusClient.GetClientList();
@@ -218,24 +242,24 @@ public class NetworkController : MonoBehaviour
     public void OnPlayerRemove(Player player)
     {
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(player.id, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
 
-        remotePlayers.Remove(player.id);
+        remotePlayers.Remove(player.username);
         debugMessages.text = colyseusClient.GetClientList();
     }
 
 
     public void OnPlayerChange(Player updatedPlayer)
     {
-        bool isLocal = updatedPlayer.id == localPlayer.id;
-        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.id);   // ToList().First(p => p.id == playerId);
+        bool isLocal = updatedPlayer.username == localPlayer.username;
+        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.username);  
         string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
 
         Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
 
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(updatedPlayer.id, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(updatedPlayer.username, out remotePlayerAvatar);
         if (isLocal)
         {
             Debug.Log("self update");
