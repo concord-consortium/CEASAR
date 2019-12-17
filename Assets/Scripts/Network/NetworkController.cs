@@ -14,6 +14,7 @@ public class NetworkController : MonoBehaviour
     public const string PLAYER_PREFS_NAME_KEY = "CAESAR_USERNAME";
     // UI Buttons are attached through Unity Inspector
     public Button connectButton;
+    public Button randomizeUsernameButton;
     public TMPro.TMP_Text connectButtonText;
     public InputField m_EndpointField;
     public Text connectionStatusText;
@@ -141,6 +142,8 @@ public class NetworkController : MonoBehaviour
         SimulationManager manager = SimulationManager.GetInstance();
         localUsername = uName;
         manager.LocalPlayerColor = manager.GetColorForUsername(localUsername);
+        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
+        UpdateLocalPlayerAvatar(uName);
         Debug.Log(localUsername);
         PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, localUsername);
         if (usernameText)
@@ -176,17 +179,22 @@ public class NetworkController : MonoBehaviour
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localUsername);
+            randomizeUsernameButton.enabled = false;
         }
-        else if (IsConnected) Disconnect();
+        else if (IsConnected)
+        {
+            Disconnect();
+        }
         else
         {
             Debug.Log("Already disconnected");
         }
     }
+
     void Disconnect()
     {
         colyseusClient.Disconnect();
-
+        randomizeUsernameButton.enabled = true;
         // Destroy player game objects
         foreach (KeyValuePair<string, GameObject> entry in remotePlayers)
         {
@@ -199,6 +207,14 @@ public class NetworkController : MonoBehaviour
         ServerStatusMessage = "Disconected";
     }
 
+    private void UpdateLocalPlayerAvatar(string username)
+    {
+        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
+        Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
+        localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+        localPlayerAvatar.name = "localPlayer_" + username;
+    }
+
     public void OnPlayerAdd(Player player, bool isLocal)
     {
         Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username + " playerId: " + player.id);
@@ -208,11 +224,7 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             localPlayer = player;
-            Transform avatarCamera = GameObject.FindWithTag("Player").transform;
-            localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
-            Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
-            localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            localPlayerAvatar.name = "localPlayer_" + player.username;
+            UpdateLocalPlayerAvatar(player.username);
         }
         else
         {
