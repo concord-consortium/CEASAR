@@ -72,17 +72,15 @@ public class ColyseusClient : MonoBehaviour
 
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
-            if (client == null)
-            {
-                Debug.Log("log in client");
-                client = ColyseusManager.Instance.CreateClient(endpoint);
-                await client.Auth.Login();
-                // Update username
-                client.Auth.Username = username;
-                Debug.Log("joining room");
-            }
+            Debug.Log("log in client");
+            client = ColyseusManager.Instance.CreateClient(endpoint);
+            await client.Auth.Login();
+
+            // Update username
+            client.Auth.Username = username;
+            Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            JoinRoom();
+            await JoinRoom();
             connecting = false;
         }
     }   
@@ -104,7 +102,7 @@ public class ColyseusClient : MonoBehaviour
         client = null;
     }
 
-    async void JoinRoom()
+    async Task<Colyseus.Room<State>> JoinRoom()
     {
         // For now, join / create the same room by name - if this is an existing room then both players will be in the
         // same room. This will likely need more work later.
@@ -125,6 +123,7 @@ public class ColyseusClient : MonoBehaviour
 
         room.OnStateChange += OnStateChangeHandler;
         room.OnMessage += OnMessage;
+        return room;
     }
 
     async void LeaveRoom()
