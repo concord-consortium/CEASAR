@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 3894378643
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: eff1cb89b93c194a45fb024e4877b158
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: f19fbf085e00d23fbc8d6cf7b345590b
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/PlanetaryBodies/Earth/2k_earth_normal_map.tif
+Dependencies: []

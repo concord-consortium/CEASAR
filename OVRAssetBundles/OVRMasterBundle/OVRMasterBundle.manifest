@@ -1,0 +1,53 @@
+ManifestFileVersion: 0
+CRC: 3696411065
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: asset_resources
+      Dependencies:
+        Dependency_0: asset_ttf0
+    Info_1:
+      Name: scene_vrearthinteraction
+      Dependencies:
+        Dependency_0: asset_prefab0
+        Dependency_1: asset_fbx0
+        Dependency_2: asset_mat0
+    Info_2:
+      Name: asset_png0
+      Dependencies: {}
+    Info_3:
+      Name: asset_prefab0
+      Dependencies:
+        Dependency_0: asset_resources
+        Dependency_1: asset_png0
+        Dependency_2: asset_mat0
+        Dependency_3: asset_txt0
+        Dependency_4: asset_obj0
+    Info_4:
+      Name: asset_fbx0
+      Dependencies:
+        Dependency_0: asset_mat0
+    Info_5:
+      Name: asset_mat0
+      Dependencies:
+        Dependency_0: asset_png0
+        Dependency_1: asset_tif0
+        Dependency_2: asset_tga0
+    Info_6:
+      Name: asset_ttf0
+      Dependencies: {}
+    Info_7:
+      Name: asset_txt0
+      Dependencies: {}
+    Info_8:
+      Name: asset_tif0
+      Dependencies: {}
+    Info_9:
+      Name: asset_psd0
+      Dependencies: {}
+    Info_10:
+      Name: asset_obj0
+      Dependencies: {}
+    Info_11:
+      Name: asset_tga0
+      Dependencies: {}

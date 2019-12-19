@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 2309014550
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 3b80ec5a20b0fde48891494851cc5ec2
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: cb3f6df5cbc4a2990c44c2787bc9553a
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/Star10Point_morepointy.png
+- Assets/Textures/arrow up.png
+- Assets/Textures/arrow down.png
+- Assets/Textures/PlanetaryBodies/Earth/world.topo.bathy.200405.3x5400x2700.png
+Dependencies: []

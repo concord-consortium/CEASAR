@@ -1,0 +1,29 @@
+ManifestFileVersion: 0
+CRC: 4093249237
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: daf37df5526f5cef55e9995823dfa314
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2164263bd948184a9373784f776f453a
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+Assets:
+- Assets/Materials/Marker_Mat.mat
+- Assets/Materials/VRPointer.mat
+- Assets/Materials/Avatar.mat
+- Assets/Materials/Earth.mat
+- Assets/Standard Assets/2D/Materials/SpriteLit.mat
+- Assets/Materials/Star.mat
+- Assets/Oculus/VR/Meshes/OculusTouchForQuestAndRiftS/Materials/OculusTouchForQuestAndRiftS_Material.mat
+Dependencies:
+- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_png0
+- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tif0
+- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tga0
