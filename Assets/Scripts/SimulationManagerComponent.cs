@@ -87,8 +87,15 @@ public class SimulationManagerComponent : MonoBehaviour
     {
         if (manager.NetworkControllerObject == null)
         {
-            Debug.Log("Creating new network object");
-            manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+            if (FindObjectOfType<NetworkController>() != null)
+            {
+                manager.NetworkControllerObject = FindObjectOfType<NetworkController>().gameObject;
+            }
+            else
+            {
+                Debug.Log("Creating new network object");
+                manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+            }
         }
         if (manager.CelestialSphereObject == null)
         {

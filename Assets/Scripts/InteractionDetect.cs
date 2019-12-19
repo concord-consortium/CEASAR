@@ -27,16 +27,19 @@ public class InteractionDetect : MonoBehaviour
     }
     void FixedUpdate()
     {
-        ray = camera.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit, 100, layerMask))
+        if (camera)
         {
-            // Do something with the object that was hit by the raycast.
-            if (Input.GetMouseButtonDown(0))
+            ray = camera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit, 100, layerMask))
             {
-                manager = SimulationManager.GetInstance();
-                network = FindObjectOfType<NetworkController>();
-                network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                // Do something with the object that was hit by the raycast.
+                if (Input.GetMouseButtonDown(0))
+                {
+                    manager = SimulationManager.GetInstance();
+                    network = FindObjectOfType<NetworkController>();
+                    network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                }
             }
         }
     }

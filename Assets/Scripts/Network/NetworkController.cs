@@ -172,7 +172,7 @@ public class NetworkController : MonoBehaviour
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
 #if UNITY_EDITOR
-            string endpoint = _localEndpoint;
+            string endpoint = _remoteEndpoint;
 #else
             string endpoint = _remoteEndpoint; 
 #endif
@@ -238,7 +238,15 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             localPlayer = player;
-            UpdateLocalPlayerAvatar(player.username);
+
+            // UpdateLocalPlayerAvatar(player.username);
+            Transform avatarCamera = GameObject.FindWithTag("Player").transform;
+            var avatar = avatarCamera.Find("Avatar");
+            // need a null check here - the hierarchy is different in VR mode
+            localPlayerAvatar = avatar != null ? avatar.gameObject : avatarCamera.gameObject;
+            Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
+            localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+            localPlayerAvatar.name = "localPlayer_" + player.username;
         }
         else
         {
