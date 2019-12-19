@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 
 
+public enum NetworkConnection { Local, Dev, Remote }
+
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
 {
@@ -40,6 +42,8 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
+    public NetworkConnection networkConnection = NetworkConnection.Remote;
+
     public bool IsConnected
     {
         get { return colyseusClient != null && colyseusClient.IsConnected; }
@@ -67,16 +71,31 @@ public class NetworkController : MonoBehaviour
 
     public void SetNetworkAddress(string destination)
     {
-        SimulationManager manager = SimulationManager.GetInstance();
         switch (destination)
         {
             case "local":
-                m_EndpointField.text = manager.LocalNetworkServer;
+                setNetworkAddress(NetworkConnection.Local);
                 break;
             case "dev":
+                setNetworkAddress(NetworkConnection.Dev);
+                break;
+            default:
+                setNetworkAddress(NetworkConnection.Remote);
+                break;
+        }
+    }
+    private void setNetworkAddress(NetworkConnection destination)
+    {
+        SimulationManager manager = SimulationManager.GetInstance();
+        switch (destination)
+        {
+            case NetworkConnection.Local:
+                m_EndpointField.text = manager.LocalNetworkServer;
+                break;
+            case NetworkConnection.Dev:
                 m_EndpointField.text = manager.DevNetworkServer;
                 break;
-            case "web":
+            case NetworkConnection.Remote:
                 m_EndpointField.text = manager.ProductionNetworkServer;
                 break;
             default:
