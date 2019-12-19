@@ -69,6 +69,7 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    // Called via event handlers set up in the scene in the NetworkController prefab
     public void SetNetworkAddress(string destination)
     {
         switch (destination)
@@ -323,7 +324,7 @@ public class NetworkController : MonoBehaviour
                 Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
                 ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
             }
-            Debug.Log("Movement update: " + updatedPlayer.playerPosition);
+            // Debug.Log("Movement update: " + updatedPlayer.playerPosition);
             if (remotePlayerAvatar != null)
             {
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
@@ -345,6 +346,13 @@ public class NetworkController : MonoBehaviour
             indicatorObj.transform.localRotation = rot;
             indicatorObj.transform.position = pos;
             Utils.SetObjectColor(indicatorObj, playerColor);
+            // Experimental code for Lat/Lng
+            float radius = 5;
+            if (GameObject.Find("Earth"))
+            {
+                radius = GameObject.Find("Earth").transform.localScale.x / 2;
+            }
+            Debug.Log("lat lng " + Utils.LatLngFromPosition(pos, radius));
             StartCoroutine(selfDestruct(indicatorObj));
         }
         if (isLocal)

@@ -96,7 +96,15 @@ public static class Utils
         }
         return new Vector3(xPos, yPos, zPos);
     }
+    public static Vector2 LatLngFromPosition(Vector3 position, float sphereRadius)
+    {
+        float lat = 90 - ((float)Math.Acos(position.y / sphereRadius) * 180 / Mathf.PI); //90 - theta
+        float lon = (float)Math.Atan(position.x / position.z) * 180 / Mathf.PI; //phi
+        return new Vector2(lat, lon);
+    }
 }
+
+
 public static class StringExtensions
 {
     public static string FirstCharToUpper(this string input)
