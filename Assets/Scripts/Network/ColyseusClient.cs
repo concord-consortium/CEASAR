@@ -142,7 +142,6 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("roomId: " + roomsAvailable[i].roomId);
             Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
             Debug.Log("clients: " + roomsAvailable[i].clients);
-            Debug.Log("metadata: " + roomsAvailable[i].metadata);
         }
     }
     public string GetClientList()

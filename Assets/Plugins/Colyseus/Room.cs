@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using GameDevWare.Serialization;
@@ -8,14 +8,6 @@ namespace Colyseus
 	public delegate void ColyseusOpenEventHandler();
 	public delegate void ColyseusCloseEventHandler(NativeWebSocket.WebSocketCloseCode code);
 	public delegate void ColyseusErrorEventHandler(string message);
-
-	public class RoomAvailable
-	{
-		public string roomId { get; set; }
-		public uint clients { get; set; }
-		public uint maxClients { get; set; }
-		public object metadata { get; set; }
-	}
 
 	public interface IRoom
 	{
@@ -112,7 +104,7 @@ namespace Colyseus
 			if (Id != null) {
 				if (consented)
 				{
-					await Connection.Send(new object[] { Protocol.LEAVE_ROOM }); 
+					await Connection.Send(new object[] { Protocol.LEAVE_ROOM });
 				}
 				else
 				{
@@ -173,9 +165,6 @@ namespace Colyseus
 						serializer = (ISerializer<T>) new FossilDeltaSerializer();
 					}
 
-					// TODO: use serializer defined by the back-end.
-					// serializer = (Colyseus.Serializer) new FossilDeltaSerializer();
-
 					if (bytes.Length > offset)
 					{
 						serializer.Handshake(bytes, offset);
@@ -189,12 +178,21 @@ namespace Colyseus
 					OnError?.Invoke(message);
 
 				}
+				else if (code == Protocol.ROOM_DATA_SCHEMA)
+				{
+					Type messageType = Schema.Context.GetInstance().Get(bytes[1]);
+
+					var message = (Schema.Schema) Activator.CreateInstance(messageType);
+					message.Decode(bytes, new Schema.Iterator { Offset = 2 });
+
+					OnMessage?.Invoke(message);
+				}
 				else if (code == Protocol.LEAVE_ROOM)
 				{
 					await Leave();
 
 				}
-				else 
+				else
 				{
 					previousCode = code;
 
@@ -213,7 +211,6 @@ namespace Colyseus
 				{
 					var message = MsgPack.Deserialize<object>(new MemoryStream(bytes));
 					OnMessage?.Invoke(message);
-
 				}
 				previousCode = 0;
 			}
