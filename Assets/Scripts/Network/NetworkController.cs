@@ -128,11 +128,11 @@ public class NetworkController : MonoBehaviour
         EnsureUsername();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
-            OnPlayerAdd(localPlayer, true);
+            OnPlayerAdd(localPlayer);
             foreach (string p in remotePlayers.Keys)
             {
                 Player remotePlayer = colyseusClient.GetPlayerById(p);
-                OnPlayerAdd(remotePlayer, localPlayer.id != p);
+                OnPlayerAdd(remotePlayer);
             }
         }
     }
@@ -204,10 +204,9 @@ public class NetworkController : MonoBehaviour
 
         // closing client connection
         debugMessages.text = "";
-        ServerStatusMessage = "Disconected";
     }
 
-    private void UpdateLocalPlayerAvatar(string username)
+    void UpdateLocalPlayerAvatar(string username)
     {
         localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
         Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
@@ -215,10 +214,25 @@ public class NetworkController : MonoBehaviour
         localPlayerAvatar.name = "localPlayer_" + username;
     }
 
-    public void OnPlayerAdd(Player player, bool isLocal)
+    void updatePlayerList()
     {
-        Debug.Log("Player add! x => " + player.x + ", y => " + player.y + " playerName:" + player.username + " playerId: " + player.id);
-        Debug.Log("is local: " + isLocal);      
+        debugMessages.text = colyseusClient.GetClientList();
+        debugMessages.enabled = true;
+        string listOfPlayersForDebug = "";
+        foreach (var p in remotePlayers.Keys)
+        {
+            listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
+        }
+        Debug.Log(listOfPlayersForDebug);
+        debugMessages.text = listOfPlayersForDebug;
+    }
+
+    public void OnPlayerAdd(Player player)
+    {
+        bool isLocal = localUsername == player.username;
+        Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id);
+        Debug.Log("is local: " + isLocal);
+        Debug.Log("localPlayer: " + localPlayer?.username);
         Vector3 pos = Utils.NetworkPosToPosition(player.playerPosition.position);
         Quaternion rot = Utils.NetworkRotToRotation(player.playerPosition.rotation);
         if (isLocal)
@@ -235,40 +249,34 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
 
             // add "player" to map of players
-            if (!remotePlayers.ContainsKey(player.id))
+            if (!remotePlayers.ContainsKey(player.username))
             {
-                remotePlayers.Add(player.id, remotePlayerAvatar);
+                remotePlayers.Add(player.username, remotePlayerAvatar);
             }
             else
             {
-                remotePlayers[player.id] = remotePlayerAvatar;
+                remotePlayers[player.username] = remotePlayerAvatar;
             }
         }
-        debugMessages.text = colyseusClient.GetClientList();
-        string listOfPlayersForDebug = "";
-        foreach (var p in remotePlayers.Keys)
-        {
-            listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
-        }
-        Debug.Log(listOfPlayersForDebug);
+        updatePlayerList();
     }
 
     public void OnPlayerRemove(Player player)
     {
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(player.id, out remotePlayerAvatar);
+        remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
-
-        remotePlayers.Remove(player.id);
+        remotePlayers.Remove(player.username);
         debugMessages.text = colyseusClient.GetClientList();
+        updatePlayerList();
     }
 
-
+                    
     public void OnPlayerChange(Player updatedPlayer)
     {
 
-        bool isLocal = updatedPlayer.id == localPlayer.id;
-        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.id);  
+        bool isLocal = updatedPlayer.username == localPlayer.username;
+        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.username);  
         string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
 
         Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
@@ -316,7 +324,6 @@ public class NetworkController : MonoBehaviour
         {
             // now need to broadcast to remotes
             colyseusClient.SendInteraction(pos, rot, playerColor);
-
         }
 
     }

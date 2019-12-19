@@ -264,7 +264,7 @@ public class DataController : MonoBehaviour
         {
             bool shouldUpdate = false;
 
-            if (SelectedCity != currentCity.Name)
+            if (SelectedCity != currentCity?.Name)
             {
                 // verify a valid city was entered
                 var newCity = allCities.Where(c => c.Name == SelectedCity).First();
