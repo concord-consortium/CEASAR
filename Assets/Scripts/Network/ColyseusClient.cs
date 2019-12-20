@@ -25,7 +25,8 @@ public class ColyseusClient : MonoBehaviour
     protected Room<State> room;
     private NetworkController networkController;
 
-    protected List<Player> players = new List<Player>();
+    //protected List<Player> players = new List<Player>();
+    protected IndexedDictionary<string, Player> players = new IndexedDictionary<string, Player>();
     private Player localPlayer;
     private string localPlayerName = "";
 
@@ -37,10 +38,6 @@ public class ColyseusClient : MonoBehaviour
     }
     private string endpoint;
     private float heartbeatInterval = 10;
-
-    private int retries = 0;
-    private int maxRetries = 3;
-    private float retryInterval = 1.0f;
 
     private IEnumerator clientConnectionCoroutine;
 
@@ -64,10 +61,10 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async void ConnectToServer(string serverEndpoint, string username)
+    public async Task ConnectToServer(string serverEndpoint, string username)
     {
         networkController = GetComponent<NetworkController>();
-        if (!connecting && (!IsConnected || string.IsNullOrEmpty(localPlayerName)))
+        if (!connecting && !IsConnected)
         {
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
@@ -76,50 +73,36 @@ public class ColyseusClient : MonoBehaviour
 
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
+            Debug.Log("log in client");
             client = ColyseusManager.Instance.CreateClient(endpoint);
             await client.Auth.Login();
-            
+
             // Update username
             client.Auth.Username = username;
-            await client.Auth.Save();
-            
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            JoinRoom();
+            await JoinRoom();
+            connecting = false;
         }
-    }
+    }   
     
-    public void Disconnect()
+    public async Task Disconnect()
     {
         if (IsConnected)
         {
-            LeaveRoom();
-            localPlayerName = "";
-            if (players != null)
+            await LeaveRoom();
+            if (players != null)    
             {
                 players.Clear();
             }
+            client.Auth.Logout();
+            localPlayerName = "";
         }
-        if (client != null)
-        {
-            // closing client connection
-            //client.Close();
-            connecting = false;
-            client = null;
-        }
-        try
-        {
-            StopCoroutine(clientConnectionCoroutine);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("Attempted to close Network connection but encountered an issue: " + e.Message);
-        }
-        networkController = GetComponent<NetworkController>();
-        networkController.ServerStatusMessage = "Disconnected.";
+        client = null;
+        networkController.ServerStatusMessage = "Disconnected";
     }
 
-    async void JoinRoom()
+    async Task JoinRoom()
     {
         // For now, join / create the same room by name - if this is an existing room then both players will be in the
         // same room. This will likely need more work later.
@@ -142,17 +125,14 @@ public class ColyseusClient : MonoBehaviour
         room.OnMessage += OnMessage;
     }
 
-    async void LeaveRoom()
+    async Task LeaveRoom()
     {
         Debug.Log("closing connection");
-        if (room != null)
-        {
-            await room.Leave(false);
-        }
-
+        await room.Leave(true);
+        room = null;
     }
 
-    async void GetAvailableRooms()
+    async Task GetAvailableRooms()
     {
         var roomsAvailable = await client.GetAvailableRooms(roomName);
 
@@ -162,7 +142,6 @@ public class ColyseusClient : MonoBehaviour
             Debug.Log("roomId: " + roomsAvailable[i].roomId);
             Debug.Log("maxClients: " + roomsAvailable[i].maxClients);
             Debug.Log("clients: " + roomsAvailable[i].clients);
-            Debug.Log("metadata: " + roomsAvailable[i].metadata);
         }
     }
     public string GetClientList()
@@ -171,9 +150,9 @@ public class ColyseusClient : MonoBehaviour
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Connected clients:");
-            foreach (Player p in players)
+            foreach (string p in players.Keys)
             {
-                sb.AppendLine(p.username);
+                sb.AppendLine(p);
             }
             return sb.ToString();
         }
@@ -183,9 +162,9 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public Player GetPlayerById(string playerId)
+    public Player GetPlayerById(string username)
     {
-        return players?.First(p => p.id == playerId);
+        return players[username];
     }
     public void SendNetworkMessage(string message)
     {
@@ -213,26 +192,27 @@ public class ColyseusClient : MonoBehaviour
 
     void OnPlayerAdd(Player player, string key)
     {
-        Debug.Log("Player Add: " + player.username + " " + player.id + " key: " + key);
-        if (!players.Contains(player)) players.Add(player);
-        if (key == room.SessionId)
+        Debug.Log("ColyseusClient - Player Add: " + player.username + " " + player.id + " key: " + key);
+        bool isLocal = key == room.SessionId;
+        players[player.username] = player;
+        if (isLocal)
         {
             localPlayer = player;
             networkController.ServerStatusMessage = "Connected as " + player.username;
         }
-        networkController.OnPlayerAdd(player, key == room.SessionId);
+        networkController.OnPlayerAdd(player);
     }
 
     void OnPlayerRemove(Player player, string key)
     {
-        if (players.Contains(player)) players.Remove(player);
+        if (players[player.username] != null ) players.Remove(player.username);
         networkController.OnPlayerRemove(player);
     }
 
     void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
     {
         Debug.Log(player + " " + key);
-        networkController.OnPlayerChange(player);
+            networkController.OnPlayerChange(player);
     }
 
     public async void SendMovement(Vector3 pos, Quaternion rot )

@@ -49,7 +49,7 @@ public class RemotePlayerMovement : MonoBehaviour
         while(elapsedTime < lerpInterval)
         {
             elapsedTime += Time.deltaTime;
-            float delta = elapsedTime / lerpInterval;
+            float delta = Mathf.Clamp(elapsedTime / lerpInterval, 0f, 0.9999f);
             transform.position = Vector3.Lerp(startPosition, nextPosition, delta);
             if (startRotation != nextRotation)
             {
