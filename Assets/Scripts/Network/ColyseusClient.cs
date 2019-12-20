@@ -212,7 +212,7 @@ public class ColyseusClient : MonoBehaviour
     void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
     {
         Debug.Log(player + " " + key);
-            networkController.OnPlayerChange(player);
+        networkController.OnPlayerChange(player);
     }
 
     public async void SendMovement(Vector3 pos, Quaternion rot )
