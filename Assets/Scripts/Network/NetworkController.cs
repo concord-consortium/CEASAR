@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,6 +155,7 @@ public class NetworkController : MonoBehaviour
                 OnPlayerAdd(remotePlayer);
             }
         }
+        CCLogger.logSceneLoaded(scene.name);
     }
 
     void SetUsername(string uName)
@@ -171,6 +172,7 @@ public class NetworkController : MonoBehaviour
             usernameText.text = localUsername;
             usernameText.color = manager.LocalPlayerColor;
         }
+        CCLogger.logSetUsername();
     }
 
     public void RandomizeUsername()
@@ -199,6 +201,7 @@ public class NetworkController : MonoBehaviour
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localUsername);
+            CCLogger.logConnect();
             if (randomizeUsernameButton != null)  randomizeUsernameButton.enabled = false;
         }
         else if (IsConnected)
@@ -221,7 +224,7 @@ public class NetworkController : MonoBehaviour
             Destroy(entry.Value);
         }
         remotePlayers.Clear();
-
+        CCLogger.logDisconnect();
         // closing client connection
         debugMessages.text = "";
     }
