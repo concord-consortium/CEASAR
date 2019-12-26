@@ -199,7 +199,7 @@ public class NetworkController : MonoBehaviour
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localUsername);
-            randomizeUsernameButton.enabled = false;
+            if (randomizeUsernameButton != null)  randomizeUsernameButton.enabled = false;
         }
         else if (IsConnected)
         {
@@ -228,7 +228,7 @@ public class NetworkController : MonoBehaviour
 
     void UpdateLocalPlayerAvatar(string username)
     {
-        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
+        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
         Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
         localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
         localPlayerAvatar.name = "localPlayer_" + username;
@@ -259,14 +259,14 @@ public class NetworkController : MonoBehaviour
         {
             localPlayer = player;
 
-            // UpdateLocalPlayerAvatar(player.username);
-            Transform avatarCamera = GameObject.FindWithTag("Player").transform;
+            UpdateLocalPlayerAvatar(player.username);
+            /*Transform avatarCamera = GameObject.FindWithTag("Player").transform;
             var avatar = avatarCamera.Find("Avatar");
             // need a null check here - the hierarchy is different in VR mode
             localPlayerAvatar = avatar != null ? avatar.gameObject : avatarCamera.gameObject;
             Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            localPlayerAvatar.name = "localPlayer_" + player.username;
+            localPlayerAvatar.name = "localPlayer_" + player.username;*/
         }
         else
         {
