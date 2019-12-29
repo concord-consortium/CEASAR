@@ -6,12 +6,13 @@ Shader "Custom/EarthDayNight" {
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         // _Glossiness ("Smoothness", Range(0,1)) = 0.5
         // _Metallic ("Metallic", Range(0,1)) = 0.0
-        _Normals("_Normals", 2D) = "black" {}
-        _Lights("_Lights", 2D) = "black" {}
-        _LightScale("_LightScale", Float) = 1
-        _AtmosNear("_AtmosNear", Color) = (0.1686275,0.7372549,1,1)
-        _AtmosFar("_AtmosFar", Color) = (0.4557808,0.5187039,0.9850746,1)
-        _AtmosFalloff("_AtmosFalloff", Float) = 3
+        _Normals("Normal Map", 2D) = "black" {}
+        _Lights("Lights", 2D) = "black" {}
+        _LightScale("Light Scale", Float) = 1
+        _AtmosNear("Atmos Near", Color) = (0.1686275,0.7372549,1,1)
+        _AtmosFar("Atmos Far", Color) = (0.4557808,0.5187039,0.9850746,1)
+        _AtmosFalloff("Atmos Falloff", Float) = 3
+        _LightsEmission ("Lights Emission", Float) = 0
 
     }
     SubShader {
@@ -40,6 +41,7 @@ Shader "Custom/EarthDayNight" {
         float4 _AtmosNear;
         float4 _AtmosFar;
         float _AtmosFalloff;
+        float _LightsEmission;
         
         struct EditorSurfaceOutput
         {
@@ -52,7 +54,6 @@ Shader "Custom/EarthDayNight" {
             half4 Custom;
         };
         
-        // NOT SURE ON THIS
         inline half4 LightingBlinnPhongEditor_PrePass (EditorSurfaceOutput s, half4 light)
         {
             half3 spec = light.a * s.Gloss;
@@ -109,22 +110,35 @@ Shader "Custom/EarthDayNight" {
             o.Specular = 0.0;
             o.Custom = 0.0;
             o.Alpha = 1.0;
+            
+            float4 BasicOutline = float4(0,0,1,1);
+            
+            // invert effect to be stronger at the edges
+            float4 FresnelSimple = (1.0 - dot( 
+                normalize( float4( IN.viewDir.x, IN.viewDir.y,IN.viewDir.z, 1.50).xyz), 
+                normalize( BasicOutline.xyz ) )).xxxx;
+            
+            // Apply atmospheric falloff color
+            float4 Pow0 = pow( FresnelSimple, _AtmosFalloff.xxxx);
+            float4 Saturate0 = saturate(Pow0);
+            // Make gradient between near and far atmospheric falloff
+            float4 Lerp0 = lerp(_AtmosNear, _AtmosFar, Saturate0);
+            
+            float4 FresnelEffect = Lerp0 * Saturate0;
+            float4 MainTex2D = tex2D(_MainTex, IN.uv_MainTex.xy);
+            float4 FinalMainTex = FresnelEffect + MainTex2D;
+            
+            float4 Normals2D = tex2D(_Normals,IN.uv_Normals.xy);
+            float4 UnpackNormal0 = float4(UnpackNormal(Normals2D).xyz, 1.0);
+            
+            float4 Lights2D = tex2D(_Lights,IN.uv_Lights.xy);
+            float4 LightsTex = Lights2D * _LightScale.xxxx;
 
-            float4 Fresnel0_1_NoInput = float4(0,0,1,1);
-            float4 Fresnel0=(1.0 - dot( normalize( float4( IN.viewDir.x, IN.viewDir.y,IN.viewDir.z,1.50 ).xyz), normalize( Fresnel0_1_NoInput.xyz ) )).xxxx;
-            float4 Pow0=pow(Fresnel0,_AtmosFalloff.xxxx);
-            float4 Saturate0=saturate(Pow0);
-            float4 Lerp0=lerp(_AtmosNear,_AtmosFar,Saturate0);
-            float4 Multiply1=Lerp0 * Saturate0;
-            float4 Sampled2D2=tex2D(_MainTex,IN.uv_MainTex.xy);
-            float4 Add0=Multiply1 + Sampled2D2;
-            float4 Sampled2D0=tex2D(_Normals,IN.uv_Normals.xy);
-            float4 UnpackNormal0=float4(UnpackNormal(Sampled2D0).xyz, 1.0);
-
-            o.Albedo = Add0;
+            o.Albedo = FinalMainTex;
             o.Normal = UnpackNormal0;
-            o.Emission = 0.0; // tex2D(_Lights,IN.uv_Lights.xy).r * _LightScale;
-            o.Custom = tex2D(_Lights,IN.uv_Lights.xy).r * _LightScale;
+            //o.Emission = 0.0;
+            o.Emission = LightsTex * _LightsEmission;
+            o.Custom = tex2D(_Lights, IN.uv_Lights.xy).r * _LightScale;
             o.Normal = normalize(o.Normal);
             
         }
