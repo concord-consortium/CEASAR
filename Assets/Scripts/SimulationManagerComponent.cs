@@ -49,6 +49,8 @@ public class SimulationManagerComponent : MonoBehaviour
     [SerializeField]
     private float lineWidth = .035f;
 
+    [SerializeField] private StarComponent starPrefab;
+
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
@@ -92,6 +94,10 @@ public class SimulationManagerComponent : MonoBehaviour
         {
             Debug.Log("Creating new Celestial Sphere");
             manager.CelestialSphereObject = Instantiate(celestialSpherePrefab);
+            if (this.starPrefab != null)
+            {
+                manager.DataControllerComponent.starPrefab = this.starPrefab;
+            }
 
             // When creating, set parameters before Init
             manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
