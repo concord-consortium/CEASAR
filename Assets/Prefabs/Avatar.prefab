@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5068828250317386008}
   - component: {fileID: 1541516519151373793}
   m_Layer: 0
-  m_Name: avatar
-  m_TagString: Untagged
+  m_Name: Avatar
+  m_TagString: LocalPlayerAvatar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,7 +57,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6908143846576553799, guid: 7aa8fc9979a50493b85030c89e915e6c, type: 3}
+  - {fileID: 2100000, guid: e7113546eaba6470284b647f779c7a8b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
