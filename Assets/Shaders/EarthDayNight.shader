@@ -15,6 +15,7 @@ Shader "Custom/EarthDayNight" {
         _AtmosFalloff("Atmos Falloff", Float) = 3
         _LightsEmission ("Lights Emission", Float) = 0
         _Shininess("Shininess", Float) = 10
+        _SpecularIntensity("Specular Intensity", Color) = (0.5,0.5,0.5,1)
         _CloudSpeed("Clouds Speed", Float) = -0.02
 
     }
@@ -49,6 +50,7 @@ Shader "Custom/EarthDayNight" {
         float _LightsEmission;
         float _Shininess;
         float _CloudSpeed;
+        float4 _SpecularIntensity;
         
         struct CustomSurfaceOutput
         {
@@ -63,7 +65,7 @@ Shader "Custom/EarthDayNight" {
         
         inline half4 LightingBlinnPhongCustom_PrePass (CustomSurfaceOutput s, half4 light)
         {
-            half3 spec = light.a * s.Gloss;
+            half3 spec = s.Gloss;
             half4 c;
             c.rgb = (s.Albedo * light.rgb + light.rgb * spec.rgb);
             c.g -= .01 * s.Alpha;
@@ -94,13 +96,15 @@ Shader "Custom/EarthDayNight" {
             float3 lightReflectDirection = reflect(-lightDir, s.Normal);
             float3 lightSeeDirection = max(0.0,dot(lightReflectDirection, viewDir));
             float3 shininessPower = pow(lightSeeDirection, _Shininess);
+            // float3 shininessPower = smoothstep(0, 1, lightSeeDirection);
             float3 specularReflection = atten * s.Specular.rgb * shininessPower;      
+            // pass specular highlights as Gloss
+            s.Gloss = specularReflection;
                  
             //s.Alpha is set to 1 where the earth is dark.  The value of night lights has been saved to Custom
             half invdiff = 1 - saturate(16 * diff);
             s.Alpha = invdiff;
-            // pass specular highlights as Gloss
-            s.Gloss = specularReflection;
+            
             
             return LightingBlinnPhongCustom_PrePass( s, res );
         }
@@ -155,7 +159,7 @@ Shader "Custom/EarthDayNight" {
             float4 Lights2D = tex2D(_Lights,IN.uv_Lights.xy);
             float4 LightsTex = Lights2D * _LightScale.xxxx;
             
-            float4 SpecularTex = tex2D(_Specular, IN.uv_Specular.xy);
+            float4 SpecularTex = tex2D(_Specular, IN.uv_Specular.xy) * _SpecularIntensity;
 
             o.Albedo = FinalMainTex;
             o.Normal = UnpackNormal0;
