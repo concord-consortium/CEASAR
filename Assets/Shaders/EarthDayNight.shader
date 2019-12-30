@@ -1,18 +1,21 @@
-// Upgrade NOTE: upgraded instancing buffer 'Props' to new syntax.
+// Adapted from https://wiki.unity3d.com/index.php/Earth/Planet
+// -- Earth Shader created by Julien Lynge @ Fragile Earth Studios
+// -- Upgrade of a shader originally put together in Strumpy Shader Editor by Clamps
 
 Shader "Custom/EarthDayNight" {
     Properties {
-        // _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
-        // _Glossiness ("Smoothness", Range(0,1)) = 0.5
-        // _Metallic ("Metallic", Range(0,1)) = 0.0
         _Normals("Normal Map", 2D) = "black" {}
         _Lights("Lights", 2D) = "black" {}
+        _Specular("Specular", 2D) = "black" {}
+        _Clouds("Clouds", 2D) = "black" {}
         _LightScale("Light Scale", Float) = 1
         _AtmosNear("Atmos Near", Color) = (0.1686275,0.7372549,1,1)
         _AtmosFar("Atmos Far", Color) = (0.4557808,0.5187039,0.9850746,1)
         _AtmosFalloff("Atmos Falloff", Float) = 3
         _LightsEmission ("Lights Emission", Float) = 0
+        _Shininess("Shininess", Float) = 10
+        _CloudSpeed("Clouds Speed", Float) = -0.02
 
     }
     SubShader {
@@ -29,7 +32,7 @@ Shader "Custom/EarthDayNight" {
         LOD 200
         
         CGPROGRAM
-        #pragma surface surf BlinnPhongEditor
+        #pragma surface surf BlinnPhongCustom
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -37,28 +40,32 @@ Shader "Custom/EarthDayNight" {
         sampler2D _MainTex;
         sampler2D _Normals;
         sampler2D _Lights;
+        sampler2D _Specular;
+        sampler2D _Clouds;
         float _LightScale;
         float4 _AtmosNear;
         float4 _AtmosFar;
         float _AtmosFalloff;
         float _LightsEmission;
+        float _Shininess;
+        float _CloudSpeed;
         
-        struct EditorSurfaceOutput
+        struct CustomSurfaceOutput
         {
             half3 Albedo;
             half3 Normal;
             half3 Emission;
             half3 Gloss;
-            half Specular;
+            half3 Specular;
             half Alpha;
             half4 Custom;
         };
         
-        inline half4 LightingBlinnPhongEditor_PrePass (EditorSurfaceOutput s, half4 light)
+        inline half4 LightingBlinnPhongCustom_PrePass (CustomSurfaceOutput s, half4 light)
         {
             half3 spec = light.a * s.Gloss;
             half4 c;
-            c.rgb = (s.Albedo * light.rgb + light.rgb * spec);
+            c.rgb = (s.Albedo * light.rgb + light.rgb * spec.rgb);
             c.g -= .01 * s.Alpha;
             c.r -= .03 * s.Alpha;
             c.rg += min(s.Custom, s.Alpha);
@@ -69,7 +76,7 @@ Shader "Custom/EarthDayNight" {
 
         }
 
-        inline half4 LightingBlinnPhongEditor (EditorSurfaceOutput s, half3 lightDir, half3 viewDir, half atten)
+        inline half4 LightingBlinnPhongCustom (CustomSurfaceOutput s, half3 lightDir, half3 viewDir, half atten)
         {
             half3 h = normalize (lightDir + viewDir);
     
@@ -83,11 +90,19 @@ Shader "Custom/EarthDayNight" {
             res.w = spec * Luminance (_LightColor0.rgb);
             res *= atten * 2.0;
     
+            // specular highlights
+            float3 lightReflectDirection = reflect(-lightDir, s.Normal);
+            float3 lightSeeDirection = max(0.0,dot(lightReflectDirection, viewDir));
+            float3 shininessPower = pow(lightSeeDirection, _Shininess);
+            float3 specularReflection = atten * s.Specular.rgb * shininessPower;      
+                 
             //s.Alpha is set to 1 where the earth is dark.  The value of night lights has been saved to Custom
             half invdiff = 1 - saturate(16 * diff);
             s.Alpha = invdiff;
-    
-            return LightingBlinnPhongEditor_PrePass( s, res );
+            // pass specular highlights as Gloss
+            s.Gloss = specularReflection;
+            
+            return LightingBlinnPhongCustom_PrePass( s, res );
         }
 
         struct Input {
@@ -95,6 +110,8 @@ Shader "Custom/EarthDayNight" {
             float2 uv_MainTex;
             float2 uv_Normals;
             float2 uv_Lights;
+            float2 uv_Specular;
+            float2 uv_Clouds;
         };
         
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -104,16 +121,15 @@ Shader "Custom/EarthDayNight" {
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
-        void surf (Input IN, inout EditorSurfaceOutput o)
+        void surf (Input IN, inout CustomSurfaceOutput o)
         {
             o.Gloss = 0.0;
-            o.Specular = 0.0;
             o.Custom = 0.0;
             o.Alpha = 1.0;
             
             float4 BasicOutline = float4(0,0,1,1);
             
-            // invert effect to be stronger at the edges
+            // invese effect - needs to be stronger at the edges
             float4 FresnelSimple = (1.0 - dot( 
                 normalize( float4( IN.viewDir.x, IN.viewDir.y,IN.viewDir.z, 1.50).xyz), 
                 normalize( BasicOutline.xyz ) )).xxxx;
@@ -126,16 +142,25 @@ Shader "Custom/EarthDayNight" {
             
             float4 FresnelEffect = Lerp0 * Saturate0;
             float4 MainTex2D = tex2D(_MainTex, IN.uv_MainTex.xy);
-            float4 FinalMainTex = FresnelEffect + MainTex2D;
+            
+            // animate moving clouds
+            float2 animatedCloudUV = IN.uv_Clouds.xy;
+             animatedCloudUV.x += _CloudSpeed * _Time.x;
+            float4 CloudsTex2D = tex2D(_Clouds, animatedCloudUV); // IN.uv_Clouds.xy);
+            float4 FinalMainTex = FresnelEffect + MainTex2D + CloudsTex2D;
             
             float4 Normals2D = tex2D(_Normals,IN.uv_Normals.xy);
             float4 UnpackNormal0 = float4(UnpackNormal(Normals2D).xyz, 1.0);
             
             float4 Lights2D = tex2D(_Lights,IN.uv_Lights.xy);
             float4 LightsTex = Lights2D * _LightScale.xxxx;
+            
+            float4 SpecularTex = tex2D(_Specular, IN.uv_Specular.xy);
 
             o.Albedo = FinalMainTex;
             o.Normal = UnpackNormal0;
+            // o.Specular = 0.0;
+            o.Specular = SpecularTex;
             //o.Emission = 0.0;
             o.Emission = LightsTex * _LightsEmission;
             o.Custom = tex2D(_Lights, IN.uv_Lights.xy).r * _LightScale;
