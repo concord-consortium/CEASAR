@@ -10,8 +10,8 @@ Shader "Custom/EarthDayNight" {
         _Specular("Specular", 2D) = "black" {}
         _Clouds("Clouds", 2D) = "black" {}
         _LightScale("Light Scale", Float) = 1
-        _AtmosNear("Atmos Near", Color) = (0.1686275,0.7372549,1,1)
-        _AtmosFar("Atmos Far", Color) = (0.4557808,0.5187039,0.9850746,1)
+        _AtmosNear("Atmos Near", Color) = (0.169,0.737,1,1)
+        _AtmosFar("Atmos Far", Color) = (0.45,0.519,0.985,1)
         _AtmosFalloff("Atmos Falloff", Float) = 3
         _LightsEmission ("Lights Emission", Float) = 0
         _Shininess("Shininess", Float) = 10
@@ -72,10 +72,8 @@ Shader "Custom/EarthDayNight" {
             c.r -= .03 * s.Alpha;
             c.rg += min(s.Custom, s.Alpha);
             c.b += 0.75 * min(s.Custom, s.Alpha);
-            // c.b = saturate(c.b + s.Alpha * .02);
             c.a = 1.0;
             return c;
-
         }
 
         inline half4 LightingBlinnPhongCustom (CustomSurfaceOutput s, half3 lightDir, half3 viewDir, half atten)
@@ -105,7 +103,6 @@ Shader "Custom/EarthDayNight" {
             half invdiff = 1 - saturate(16 * diff);
             s.Alpha = invdiff;
             
-            
             return LightingBlinnPhongCustom_PrePass( s, res );
         }
 
@@ -133,7 +130,7 @@ Shader "Custom/EarthDayNight" {
             
             float4 BasicOutline = float4(0,0,1,1);
             
-            // invese effect - needs to be stronger at the edges
+            // inverse effect - needs to be stronger at the edges
             float4 FresnelSimple = (1.0 - dot( 
                 normalize( float4( IN.viewDir.x, IN.viewDir.y,IN.viewDir.z, 1.50).xyz), 
                 normalize( BasicOutline.xyz ) )).xxxx;
@@ -149,8 +146,10 @@ Shader "Custom/EarthDayNight" {
             
             // animate moving clouds
             float2 animatedCloudUV = IN.uv_Clouds.xy;
-             animatedCloudUV.x += _CloudSpeed * _Time.x;
-            float4 CloudsTex2D = tex2D(_Clouds, animatedCloudUV); // IN.uv_Clouds.xy);
+            animatedCloudUV.x += _CloudSpeed * _Time.x;
+            float4 CloudsTex2D = tex2D(_Clouds, animatedCloudUV);
+            
+            // combine main texture, fresnel, and clouds
             float4 FinalMainTex = FresnelEffect + MainTex2D + CloudsTex2D;
             
             float4 Normals2D = tex2D(_Normals,IN.uv_Normals.xy);
@@ -163,9 +162,7 @@ Shader "Custom/EarthDayNight" {
 
             o.Albedo = FinalMainTex;
             o.Normal = UnpackNormal0;
-            // o.Specular = 0.0;
             o.Specular = SpecularTex;
-            //o.Emission = 0.0;
             o.Emission = LightsTex * _LightsEmission;
             o.Custom = tex2D(_Lights, IN.uv_Lights.xy).r * _LightScale;
             o.Normal = normalize(o.Normal);
