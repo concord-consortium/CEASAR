@@ -5,24 +5,27 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/LoadSim.unity
     guid: ea8bcf295027215428aedd9b48bbd92b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Stars.unity
     guid: faff0818eabc04885abbe66a8ff2406b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Horizon.unity
     guid: 6ec7fba65a6414c468715111e0beb325
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/EarthInteraction.unity
     guid: ebf8a616e171f4a028bc6ffcf10efaa6
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ARPlanets.unity
     guid: a2b0d60b5ca16465b93124b84f9b10ce
   - enabled: 0
     path: Assets/Scenes/Planets.unity
     guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
+  - enabled: 1
+    path: Assets/Scenes/VREarthInteraction.unity
+    guid: fd8d5d9ab3c38da4487081d60ee41d53
   m_configObjects:
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 1019c8589c43e441b8998b7b637a2044,
       type: 2}
