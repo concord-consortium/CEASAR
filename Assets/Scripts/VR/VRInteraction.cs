@@ -24,7 +24,7 @@ public class VRInteraction : MonoBehaviour
         laserLineRenderer.SetPositions(initLaserPositions);
         laserLineRenderer.startWidth = laserWidth;
         laserLineRenderer.endWidth = laserWidth;
-        layerMask = LayerMask.GetMask("Earth");
+        layerMask = LayerMask.GetMask("Earth", "Stars", "UI");
         manager = SimulationManager.GetInstance();
         network = FindObjectOfType<NetworkController>();
     }
@@ -42,10 +42,7 @@ public class VRInteraction : MonoBehaviour
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
         MeshRenderer renderer = controllerObject.GetComponentInChildren<MeshRenderer>();
-        //if (renderer)
-        //{
-        //    renderer.enabled = showIndicator;
-        //}
+
         if (showIndicator)
         {
             Vector3 pos = transform.position;
@@ -67,10 +64,17 @@ public class VRInteraction : MonoBehaviour
                 {
                     if (canInteract)
                     {
-                        manager = SimulationManager.GetInstance();
-                        network = FindObjectOfType<NetworkController>();
-                        network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                        canInteract = false;
+                        // filter by what we hit
+                        if (hit.transform.name == "Earth")
+                        {
+                            manager = SimulationManager.GetInstance();
+                            network = FindObjectOfType<NetworkController>();
+                            network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            canInteract = false;
+                        } else
+                        {
+                            // handle star interaction, etc
+                        }
                     }
                 }
                 else
