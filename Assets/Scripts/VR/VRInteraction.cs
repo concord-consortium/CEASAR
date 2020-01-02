@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ControllerHand {  Left, Right };
+public enum ControllerHand { Left, Right };
 [RequireComponent(typeof(LineRenderer))]
 public class VRInteraction : MonoBehaviour
 {
@@ -31,20 +31,21 @@ public class VRInteraction : MonoBehaviour
     void Update()
     {
         OVRInput.Update();
-        if (hand == ControllerHand.Left) {
-            showIndicator(gameObject, OVRInput.Get(OVRInput.Button.Three));
-        } else { 
-            showIndicator(gameObject, OVRInput.Get(OVRInput.Button.One));
-        }
+        showIndicator(gameObject, true);
+        //if (hand == ControllerHand.Left) {
+        //    showIndicator(gameObject, OVRInput.Get(OVRInput.Button.Three));
+        //} else { 
+        //    showIndicator(gameObject, OVRInput.Get(OVRInput.Button.One));
+        //}
     }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
         MeshRenderer renderer = controllerObject.GetComponentInChildren<MeshRenderer>();
-        if (renderer)
-        {
-            renderer.enabled = showIndicator;
-        }
+        //if (renderer)
+        //{
+        //    renderer.enabled = showIndicator;
+        //}
         if (showIndicator)
         {
             Vector3 pos = transform.position;
@@ -56,13 +57,15 @@ public class VRInteraction : MonoBehaviour
 
             // now detect if the user is holding down the Interact button also
             // bool canInteract = Time.time - lastInteract > interactionInterval;
-            if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+
+            // raycast, then if we hit the Earth we can show the interaction
+            ray = new Ray(pos, forwardDirection);
+            if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
             {
-                if (canInteract)
+                laserLineRenderer.SetPosition(1, hit.point);
+                if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
                 {
-                    // raycast, then if we hit the Earth we can show the interaction
-                    ray = new Ray(pos, forwardDirection);
-                    if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
+                    if (canInteract)
                     {
                         manager = SimulationManager.GetInstance();
                         network = FindObjectOfType<NetworkController>();
@@ -70,12 +73,13 @@ public class VRInteraction : MonoBehaviour
                         canInteract = false;
                     }
                 }
-            } else
-            {
-                canInteract = true;
+                else
+                {
+                    canInteract = true;
+                }
             }
-            
-        } else
+        }
+        else
         {
             laserLineRenderer.SetPositions(initLaserPositions);
         }
