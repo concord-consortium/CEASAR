@@ -51,8 +51,6 @@ MonoBehaviour:
   radius: 50
   magnitudeScale: 0.5
   magnitudeThreshold: 4.5
-  minMag: 0
-  maxMag: 0
   showHorizonView: 0
   simulationTimeScale: 10
   colorByConstellation: 0
@@ -60,3 +58,9 @@ MonoBehaviour:
   showMarkers: 0
   showPoleLine: 0
   showEquator: 0
+  markerLineWidth: 0.1
+  markerScale: 1
+  lineWidth: 0.035
+  starPrefab: {fileID: 0}
+  sceneLoaderPrefab: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
+    type: 3}

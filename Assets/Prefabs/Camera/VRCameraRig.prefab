@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 4680472575861007959}
   - component: {fileID: 4680472575861007965}
   - component: {fileID: 4711558878506397977}
+  - component: {fileID: 6903329138514398943}
   m_Layer: 0
   m_Name: VRCameraRig
   m_TagString: Untagged
@@ -217,7 +218,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4680472575867573177}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2.5}
+  m_LocalPosition: {x: 0, y: 2, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4680472575867737819}
@@ -314,6 +315,19 @@ MonoBehaviour:
   resetHmdPoseByMiddleMouseButton: 1
   activateKeys: 3201000031010000
   pitchKeys: 3401000033010000
+--- !u!114 &6903329138514398943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4680472575867573177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9f7e2e0dd244b4aa70c0128d856d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserMaxLength: 15
 --- !u!1 &4680472575867573179
 GameObject:
   m_ObjectHideFlags: 0

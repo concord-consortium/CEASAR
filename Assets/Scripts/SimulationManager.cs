@@ -20,7 +20,7 @@ public class SimulationManager
     // List of scenes in project for current build target
     private readonly string[] _desktopScenes = new string[4] { "LoadSim", "Stars", "Horizon", "EarthInteraction" };
     private readonly string[] _ARScenes = new string[4] { "LoadSim", "Stars", "Horizon", "AREarthInteraction" };
-    private readonly string[] _VRScenes = new string[4] { "LoadSim", "Stars", "Horizon", "VREarthInteraction" };
+    private readonly string[] _VRScenes = new string[4] { "LoadSim", "Stars", "Horizon", "EarthInteraction" };
 
     public string[] Scenes {
         get {
