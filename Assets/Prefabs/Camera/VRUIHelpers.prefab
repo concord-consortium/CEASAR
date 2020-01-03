@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursorVisual: {fileID: 2250500970667101413}
-  maxLength: 10
+  maxLength: 100
 --- !u!120 &2203474501307457491
 LineRenderer:
   m_ObjectHideFlags: 0

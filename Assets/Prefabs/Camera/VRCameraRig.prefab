@@ -327,6 +327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9f7e2e0dd244b4aa70c0128d856d19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vrPointerPrefab: {fileID: 8142256564677687833, guid: bae269b11de12a84b854567b8aa3b208,
+    type: 3}
   laserMaxLength: 15
 --- !u!1 &4680472575867573179
 GameObject:

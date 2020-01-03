@@ -39,7 +39,7 @@ public class SceneLoader : MonoBehaviour
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
         LaserPointer lp = FindObjectOfType<LaserPointer>();
-        lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.On;
+        lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
 
         // some scene-specific pieces to remove
         GameObject horizonCamControls = GameObject.Find("HorizonCameraControls");

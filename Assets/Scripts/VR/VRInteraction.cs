@@ -11,21 +11,24 @@ public class VRInteraction : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     int layerMask;
-    //public LineRenderer laserLineRenderer;
+    public GameObject vrPointerPrefab;
+    LineRenderer laserLineRenderer;
     //public float laserWidth = 0.1f;
     public float laserMaxLength = 15f;
     SimulationManager manager;
     NetworkController network;
     //public ControllerHand hand = ControllerHand.Left;
-    //Vector3[] initLaserPositions;
+    Vector3[] initLaserPositions;
     bool canInteract = true;
     OVRInputModule m_InputModule;
+    bool shouldShowIndicator;
 
     private void Start()
     {
-        //initLaserPositions = new Vector3[2] { Vector3.zero, Vector3.zero };
-        //laserLineRenderer = this.GetComponent<LineRenderer>();
-        //laserLineRenderer.SetPositions(initLaserPositions);
+        shouldShowIndicator = GameObject.Find("Earth") != null;
+        laserLineRenderer = Instantiate(vrPointerPrefab).GetComponent<LineRenderer>();
+        initLaserPositions = new Vector3[2] { Vector3.zero, Vector3.zero };
+        laserLineRenderer.SetPositions(initLaserPositions);
         //laserLineRenderer.startWidth = laserWidth;
         //laserLineRenderer.endWidth = laserWidth;
         m_InputModule = FindObjectOfType<OVRInputModule>();
@@ -38,7 +41,7 @@ public class VRInteraction : MonoBehaviour
     {
         // OVRInput.Update();
 
-        showIndicator(gameObject, true);
+        showIndicator(gameObject, shouldShowIndicator);
         //if (hand == ControllerHand.Left) {
         //    showIndicator(gameObject, OVRInput.Get(OVRInput.Button.Three));
         //} else { 
@@ -57,10 +60,10 @@ public class VRInteraction : MonoBehaviour
             if (m_InputModule != null && m_InputModule.rayTransform != null) rayOrigin = m_InputModule.rayTransform;
             Vector3 pos = rayOrigin.position;
             Vector3 forwardDirection = rayOrigin.forward;
-            //Vector3 endPosition = pos + (laserMaxLength * forwardDirection);
+            Vector3 endPosition = pos + (laserMaxLength * forwardDirection);
 
-            //laserLineRenderer.SetPosition(0, pos);
-            //laserLineRenderer.SetPosition(1, endPosition);
+            laserLineRenderer.SetPosition(0, pos);
+            laserLineRenderer.SetPosition(1, endPosition);
 
             // now detect if the user is holding down the Interact button also
             // bool canInteract = Time.time - lastInteract > interactionInterval;
@@ -69,7 +72,7 @@ public class VRInteraction : MonoBehaviour
             ray = new Ray(pos, forwardDirection);
             if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
             {
-                // laserLineRenderer.SetPosition(1, hit.point);
+                laserLineRenderer.SetPosition(1, hit.point);
                 if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
                 {
                     if (canInteract)
@@ -95,7 +98,7 @@ public class VRInteraction : MonoBehaviour
         }
         else
         {
-            // laserLineRenderer.SetPositions(initLaserPositions);
+            laserLineRenderer.SetPositions(initLaserPositions);
         }
     }
     private void FixedUpdate()

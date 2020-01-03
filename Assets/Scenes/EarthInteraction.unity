@@ -700,7 +700,7 @@ PrefabInstance:
     - target: {fileID: 3076132387530007204, guid: dab45e85c8683430fbb06a5522886e8f,
         type: 3}
       propertyPath: m_Name
-      value: Earth_DayNight
+      value: Earth
       objectReference: {fileID: 0}
     - target: {fileID: 2083978893715968183, guid: dab45e85c8683430fbb06a5522886e8f,
         type: 3}
