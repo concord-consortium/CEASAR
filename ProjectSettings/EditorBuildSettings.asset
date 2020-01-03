@@ -23,9 +23,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Planets.unity
     guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
-  - enabled: 0
-    path: Assets/Scenes/VREarthInteraction.unity
-    guid: fd8d5d9ab3c38da4487081d60ee41d53
   m_configObjects:
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 1019c8589c43e441b8998b7b637a2044,
       type: 2}
