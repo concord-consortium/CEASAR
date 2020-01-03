@@ -1,92 +1,98 @@
 ﻿using System;
 using UnityEngine.Networking;
 using UnityEngine;
+using System.Threading.Tasks;
 
 [Serializable]
-
-public class LogItem
+public class LogContext
 {
-    public string application = "CEASAR";
+    public const string APP_NAME = "CEASAR";
+    public string application = APP_NAME;
     public string activity = "activity";
     public string scene = "scene";
     public double time = 0; // epoc millies
-    // TODO: event_name should just be 'event' which is a reserved word …
-    // CC Log Manager wants a JSON field "event"....
-    public string event_name = "test event";
     public string event_value = "test value";
     public string platformName = "unknown";
-    public string userName = "unknown";
+    public string username = "unknown";
     public string message = "";
+    // event is a reserved word, but we need to send it as JSON.
+    // see: https://stackoverflow.com/questions/2787716/use-the-long-reserved-word-as-a-variable-name-in-c-sharp
+    public string @event = "nothing";
+    public LogContext()
+    {
+        time = getTimeMillies();
+        application = APP_NAME;
+        scene = getSceneName();
+        platformName = Application.platform.ToString();
+        username = PlayerPrefs.GetString(NetworkController.PLAYER_PREFS_NAME_KEY);
+    }
+    private static double getTimeMillies()
+    {
+        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+        return t.TotalMilliseconds;
+    }
+
+    private static string getSceneName()
+    {
+        UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        return scene.name;
+    }
 }
 
 public class CCLogger
 {
-
+    public const string LOGINGURL = "http://cc-log-manager.herokuapp.com/api/logs";
+    public const string EVENT_DISCONNECT = "Disconnect";
+    public const string EVENT_CONNECT = "Connect";
+    public const string EVENT_USERNAME = "Set username";
+    public const string EVENT_SCENE = "Scene loaded";
+    public const string EVENT_PLAYER_MOVE = "Player Move";
+    public const string EVENT_ADD_MARKER = "Marker Added";
     private static CCLogger instance;
-    LogItem item;
-    protected CCLogger() {
-        item = new LogItem();
-    }
 
     public static CCLogger GetInstance()
     {
         return instance ?? (instance = new CCLogger());
     }
 
-    public async System.Threading.Tasks.Task logAsync()
-    {
-        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-        double millies = t.TotalMilliseconds;
-        item.time = millies;
-        item.application = "CEASAR";
-        item.platformName = Application.platform.ToString();
-        item.userName = PlayerPrefs.GetString("username");
 
-        string json = JsonUtility.ToJson(item);
-        string url = "http://cc-log-manager.herokuapp.com/api/logs";
-        var request = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        await request.SendWebRequest();
-        Debug.Log("Status Code: " + request.responseCode);
+    private async Task postLog(string jsonLogMessage)
+    {
+        try
+        {
+            var request = new UnityWebRequest(LOGINGURL, "POST");
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonLogMessage);
+            request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            await request.SendWebRequest();
+            Debug.Log("Logger returned http status code: " + request.responseCode);
+        } catch (Exception e)
+        {
+            Debug.LogError("Failed to send log to log server.");
+            Debug.LogError(jsonLogMessage);
+            Debug.LogError(e);
+        }
+        
     }
 
-    public static void logDisconnect(string msg="")
+    private async Task _logAsync(string eventType, string msg)
     {
-        CCLogger logger = GetInstance();
-        logger.item.event_name = "Disconnect";
-        logger.item.event_value = "Disconnect";
-        logger.item.message = msg;
-        logger.logAsync();
+        LogContext context = new LogContext();
+        context.@event = eventType;
+        context.event_value = eventType;
+        context.message = msg;
+        string json = JsonUtility.ToJson(context);
+        await postLog(json);
     }
 
-    public static void logConnect(string msg = "")
+    public static void Log(string eventType, string msg)
     {
-        CCLogger logger = GetInstance();
-        logger.item.event_name = "Connect";
-        logger.item.event_value = "Connect";
-        logger.item.message = msg;
-        logger.logAsync();
+        Debug.Log("Logging: " + eventType + "-- " + msg);
+#pragma warning disable CS4014
+        // This call is not awaited, execution continues before the call is completed.
+        // So as to not stall or interupt play while transmitting log messages.
+        GetInstance()._logAsync(eventType, msg);
+#pragma warning restore CS4014
     }
-
-    public static void logSetUsername(string msg = "")
-    {
-        CCLogger logger = GetInstance();
-        logger.item.event_name = "setUserName";
-        logger.item.event_value = "setUserName";
-        logger.item.message = msg;
-        logger.logAsync();
-    }
-
-    public static void logSceneLoaded(string msg="")
-    {
-        CCLogger logger = GetInstance();
-        logger.item.event_name = "setUserName";
-        logger.item.event_value = "setUserName";
-        logger.item.message = msg;
-        logger.logAsync();
-    }
-
 }

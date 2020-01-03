@@ -155,7 +155,7 @@ public class NetworkController : MonoBehaviour
                 OnPlayerAdd(remotePlayer);
             }
         }
-        CCLogger.logSceneLoaded(scene.name);
+        CCLogger.Log(CCLogger.EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
     void SetUsername(string uName)
@@ -172,7 +172,7 @@ public class NetworkController : MonoBehaviour
             usernameText.text = localUsername;
             usernameText.color = manager.LocalPlayerColor;
         }
-        CCLogger.logSetUsername();
+        CCLogger.Log(CCLogger.EVENT_USERNAME, "Username set " + localUsername);
     }
 
     public void RandomizeUsername()
@@ -201,7 +201,7 @@ public class NetworkController : MonoBehaviour
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localUsername);
-            CCLogger.logConnect();
+            CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
             if (randomizeUsernameButton != null)  randomizeUsernameButton.enabled = false;
         }
         else if (IsConnected)
@@ -224,8 +224,7 @@ public class NetworkController : MonoBehaviour
             Destroy(entry.Value);
         }
         remotePlayers.Clear();
-        CCLogger.logDisconnect();
-        // closing client connection
+        CCLogger.Log(CCLogger.EVENT_DISCONNECT, "disconnected");
         debugMessages.text = "";
     }
 
@@ -300,7 +299,6 @@ public class NetworkController : MonoBehaviour
         debugMessages.text = colyseusClient.GetClientList();
         updatePlayerList();
     }
-
                     
     public void OnPlayerChange(Player updatedPlayer)
     {
@@ -315,7 +313,7 @@ public class NetworkController : MonoBehaviour
         remotePlayers.TryGetValue(updatedPlayer.username, out remotePlayerAvatar);
         if (isLocal)
         {
-            Debug.Log("self update");
+            Debug.Log("local player moved");
         }
         else
         {
@@ -371,6 +369,11 @@ public class NetworkController : MonoBehaviour
         {
             // broadcast!
             colyseusClient.SendMovement(pos, rot);
+
+            // log!
+            string movementInfo = "local player moved to P:" +
+                pos.ToString() + " R:" + rot.ToString();
+            CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
         }
         else
         {
