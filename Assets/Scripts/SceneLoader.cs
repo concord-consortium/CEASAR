@@ -47,14 +47,17 @@ public class SceneLoader : MonoBehaviour
         {
             horizonCamControls.SetActive(false);
         }
-        
+
 #else
         if (regularCameraRig == null)
         {
-            GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
-            mainCam.tag = "MainCamera";
-            mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-            mainCam.GetComponent<Camera>().backgroundColor = Color.black;
+            GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            if (existingCamera == null){
+                GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
+                mainCam.tag = "MainCamera";
+                mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+                mainCam.GetComponent<Camera>().backgroundColor = Color.black;
+            }
         }
         else
         {
@@ -63,5 +66,5 @@ public class SceneLoader : MonoBehaviour
 #endif
 
     }
-    
+
 }
