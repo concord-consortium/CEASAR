@@ -49,20 +49,15 @@ public class SceneLoader : MonoBehaviour
         }
 
 #else
-        if (regularCameraRig == null)
-        {
-            GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            if (existingCamera == null){
-                GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
-                mainCam.tag = "MainCamera";
-                mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-                mainCam.GetComponent<Camera>().backgroundColor = Color.black;
-            }
+       
+        GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        if (existingCamera == null && regularCameraRig != null){
+            GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
+            mainCam.tag = "MainCamera";
+            mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            mainCam.GetComponent<Camera>().backgroundColor = Color.black;
         }
-        else
-        {
-            Instantiate(regularCameraRig);
-        }
+
 #endif
 
     }
