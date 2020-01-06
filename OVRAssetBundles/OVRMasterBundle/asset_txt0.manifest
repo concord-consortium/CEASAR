@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 2523352965
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 159ed24b23bb01cacda59fa42aac001c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Data/HYG-for-import-9k.txt
+- Assets/Data/constellation-connections-western-rey.txt
+- Assets/Data/worldcities-lat-log-zones.txt
+Dependencies: []

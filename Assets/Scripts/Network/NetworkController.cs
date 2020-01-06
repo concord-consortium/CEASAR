@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 
 
+public enum NetworkConnection { Local, Dev, Remote }
+
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
 {
@@ -40,6 +42,8 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
+    public NetworkConnection networkConnection = NetworkConnection.Remote;
+
     public bool IsConnected
     {
         get { return colyseusClient != null && colyseusClient.IsConnected; }
@@ -65,18 +69,34 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    // Called via event handlers set up in the scene in the NetworkController prefab
     public void SetNetworkAddress(string destination)
+    {
+        switch (destination)
+        {
+            case "local":
+                setNetworkAddress(NetworkConnection.Local);
+                break;
+            case "dev":
+                setNetworkAddress(NetworkConnection.Dev);
+                break;
+            default:
+                setNetworkAddress(NetworkConnection.Remote);
+                break;
+        }
+    }
+    private void setNetworkAddress(NetworkConnection destination)
     {
         SimulationManager manager = SimulationManager.GetInstance();
         switch (destination)
         {
-            case "local":
+            case NetworkConnection.Local:
                 m_EndpointField.text = manager.LocalNetworkServer;
                 break;
-            case "dev":
+            case NetworkConnection.Dev:
                 m_EndpointField.text = manager.DevNetworkServer;
                 break;
-            case "web":
+            case NetworkConnection.Remote:
                 m_EndpointField.text = manager.ProductionNetworkServer;
                 break;
             default:
@@ -142,7 +162,7 @@ public class NetworkController : MonoBehaviour
         SimulationManager manager = SimulationManager.GetInstance();
         localUsername = uName;
         manager.LocalPlayerColor = manager.GetColorForUsername(localUsername);
-        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
+        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
         UpdateLocalPlayerAvatar(uName);
         Debug.Log(localUsername);
         PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, localUsername);
@@ -172,14 +192,14 @@ public class NetworkController : MonoBehaviour
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
 #if UNITY_EDITOR
-            string endpoint = _localEndpoint;
+            string endpoint = _remoteEndpoint;
 #else
             string endpoint = _remoteEndpoint; 
 #endif
             // allow user to specify an endpoint
             endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
             colyseusClient.ConnectToServer(endpoint, localUsername);
-            randomizeUsernameButton.enabled = false;
+            if (randomizeUsernameButton != null)  randomizeUsernameButton.enabled = false;
         }
         else if (IsConnected)
         {
@@ -208,10 +228,16 @@ public class NetworkController : MonoBehaviour
 
     void UpdateLocalPlayerAvatar(string username)
     {
-        localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar").gameObject;
+        if (localPlayerAvatar == null)
+        {
+            localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
+        }
         Color playerColor = SimulationManager.GetInstance().LocalPlayerColor;
-        localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-        localPlayerAvatar.name = "localPlayer_" + username;
+        if (localPlayerAvatar)
+        {
+            localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
+            localPlayerAvatar.name = "localPlayer_" + username;
+        }
     }
 
     void updatePlayerList()
@@ -238,6 +264,7 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             localPlayer = player;
+
             UpdateLocalPlayerAvatar(player.username);
         }
         else
@@ -296,7 +323,7 @@ public class NetworkController : MonoBehaviour
                 Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
                 ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
             }
-            Debug.Log("Movement update: " + updatedPlayer.playerPosition);
+            // Debug.Log("Movement update: " + updatedPlayer.playerPosition);
             if (remotePlayerAvatar != null)
             {
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
@@ -318,6 +345,13 @@ public class NetworkController : MonoBehaviour
             indicatorObj.transform.localRotation = rot;
             indicatorObj.transform.position = pos;
             Utils.SetObjectColor(indicatorObj, playerColor);
+            // Experimental code for Lat/Lng
+            float radius = 5;
+            if (GameObject.Find("Earth"))
+            {
+                radius = GameObject.Find("Earth").transform.localScale.x / 2;
+            }
+            Debug.Log("lat lng " + Utils.LatLngFromPosition(pos, radius));
             StartCoroutine(selfDestruct(indicatorObj));
         }
         if (isLocal)

@@ -13,7 +13,30 @@ public class SimulationManager
     {
         return instance ?? (instance = new SimulationManager());
     }
+
+    // A decent random generator
     public System.Random rng = new System.Random();
+
+    // List of scenes in project for current build target
+    private readonly string[] _desktopScenes = new string[4] { "LoadSim", "Stars", "Horizon", "EarthInteraction" };
+    private readonly string[] _ARScenes = new string[4] { "LoadSim", "Stars", "Horizon", "EarthInteraction" };
+    private readonly string[] _VRScenes = new string[4] { "LoadSim", "Stars", "Horizon", "EarthInteraction" };
+
+    public string[] Scenes {
+        get {
+#if UNITY_STANDALONE
+            return this._desktopScenes;
+#elif UNITY_IOS
+            return this._ARScenes;
+#elif UNITY_ANDROID
+            return this._VRScenes;
+#else
+            // Catch-all default
+            return this._desktopScenes;
+#endif
+        }
+    }
+
 
     public GameObject NetworkControllerObject;
 

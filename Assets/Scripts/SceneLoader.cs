@@ -6,25 +6,60 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    public GameObject LoadingPanel;
-    public GameObject ButtonPanel;
-    public Slider slider;
-    
-    public void LoadScene (int sceneIndex)
+    [SerializeField]
+    private GameObject regularCameraRig;
+    [SerializeField]
+    private GameObject vrCameraRig;
+    [SerializeField]
+    private GameObject vrEventSystem;
+    [SerializeField]
+    private GameObject defaultEventSystem;
+    public void Start()
     {
-        StartCoroutine(LoadAsynchronously(sceneIndex));
+#if UNITY_ANDROID
+        GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        if (existingCamera != null)
+        {
+            existingCamera.SetActive(false);
+        }
+        Instantiate(vrCameraRig);
+        Canvas[] mainUI = FindObjectsOfType<Canvas>();
+        foreach (Canvas c in mainUI)
+        {
+            c.renderMode = RenderMode.WorldSpace;
+            c.transform.position = new Vector3(0, 2, 5);
+            c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
+            c.planeDistance = 10;
+            c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+            c.GetComponent<GraphicRaycaster>().enabled = false;
+            if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
+            c.GetComponent<OVRRaycaster>().enabled = true;
+        }
+        if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
+        if (defaultEventSystem) defaultEventSystem.SetActive(false);
+        Instantiate(vrEventSystem);
+        LaserPointer lp = FindObjectOfType<LaserPointer>();
+        lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
+
+        // some scene-specific pieces to remove
+        GameObject horizonCamControls = GameObject.Find("HorizonCameraControls");
+        if (horizonCamControls != null)
+        {
+            horizonCamControls.SetActive(false);
+        }
+
+#else
+       
+        GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        if (existingCamera == null && regularCameraRig != null){
+            GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
+            mainCam.tag = "MainCamera";
+            mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            mainCam.GetComponent<Camera>().backgroundColor = Color.black;
+        }
+
+#endif
+
     }
 
-    IEnumerator LoadAsynchronously (int sceneIndex)
-    {
-        ButtonPanel.SetActive(false);
-        LoadingPanel.SetActive(true);
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        while (!operation.isDone)
-        {
-            float progress = Mathf.Clamp01(operation.progress / .9f);
-            slider.value = progress;
-            yield return null;
-        }
-    }
 }

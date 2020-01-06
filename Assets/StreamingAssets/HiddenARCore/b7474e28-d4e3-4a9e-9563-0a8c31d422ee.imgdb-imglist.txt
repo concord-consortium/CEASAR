@@ -1,3 +1,0 @@
-333ce19eef724af7aa2ced81270b4069|Assets/Textures/ImageTargets/Earth.jpg|0.05
-4f6dd2bf5dc44842b7ed2852109222e9|Assets/Textures/ImageTargets/Sun.jpg|0.05
-d11c79b9093843388634372b4745991b|Assets/Textures/ImageTargets/Moon.jpg|0.05

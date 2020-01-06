@@ -51,6 +51,10 @@ public class SimulationManagerComponent : MonoBehaviour
 
     [SerializeField] private StarComponent starPrefab;
 
+    [SerializeField]
+    private SceneLoader sceneLoaderPrefab;
+    private SceneLoader sceneLoader;
+
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
@@ -85,10 +89,25 @@ public class SimulationManagerComponent : MonoBehaviour
 
     void Setup()
     {
+        SceneLoader existingLoader = FindObjectOfType<SceneLoader>();
+        if (existingLoader != null)
+        {
+            sceneLoader = existingLoader;
+        } else
+        {
+            sceneLoader = Instantiate(sceneLoaderPrefab);
+        }
         if (manager.NetworkControllerObject == null)
         {
-            Debug.Log("Creating new network object");
-            manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+            if (FindObjectOfType<NetworkController>() != null)
+            {
+                manager.NetworkControllerObject = FindObjectOfType<NetworkController>().gameObject;
+            }
+            else
+            {
+                Debug.Log("Creating new network object");
+                manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+            }
         }
         if (manager.CelestialSphereObject == null)
         {
