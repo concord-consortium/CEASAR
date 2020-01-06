@@ -359,6 +359,9 @@ public class NetworkController : MonoBehaviour
         {
             // now need to broadcast to remotes
             colyseusClient.SendInteraction(pos, rot, playerColor);
+            string interactionInfo = "local interaction P:" +
+    pos.ToString() + " R:" + rot.ToString();
+            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
 
     }

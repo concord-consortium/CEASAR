@@ -47,7 +47,7 @@ public class CCLogger
     public const string EVENT_USERNAME = "Set username";
     public const string EVENT_SCENE = "Scene loaded";
     public const string EVENT_PLAYER_MOVE = "Player Move";
-    public const string EVENT_ADD_MARKER = "Marker Added";
+    public const string EVENT_ADD_INTERACTION = "Interaction marker Added";
     private static CCLogger instance;
 
     public static CCLogger GetInstance()
