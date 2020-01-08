@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 //public enum ControllerHand { Left, Right };
 //[RequireComponent(typeof(LineRenderer))]
@@ -13,40 +14,37 @@ public class VRInteraction : MonoBehaviour
     int layerMask;
     public GameObject vrPointerPrefab;
     LineRenderer laserLineRenderer;
-    //public float laserWidth = 0.1f;
-    public float laserMaxLength = 15f;
+    float laserMaxLength = 1500f;
     SimulationManager manager;
     NetworkController network;
-    //public ControllerHand hand = ControllerHand.Left;
-    Vector3[] initLaserPositions;
     bool canInteract = true;
     OVRInputModule m_InputModule;
     bool shouldShowIndicator;
+    Vector3 laserStartPos = Vector3.zero;
+    Vector3 forwardDirection = Vector3.forward;
+    Vector3 laserEndPos = Vector3.zero;
+    float activeLaserWidth = 0.04f;
+    float inactiveLaserWidth = 0.02f;
+
+    private StarComponent currentStar;
 
     private void Start()
     {
-        shouldShowIndicator = GameObject.Find("Earth") != null;
+
+        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim"; // GameObject.Find("Earth") != null;
         laserLineRenderer = Instantiate(vrPointerPrefab).GetComponent<LineRenderer>();
-        initLaserPositions = new Vector3[2] { Vector3.zero, Vector3.zero };
-        laserLineRenderer.SetPositions(initLaserPositions);
-        //laserLineRenderer.startWidth = laserWidth;
-        //laserLineRenderer.endWidth = laserWidth;
+
+        updateLaser(false);
+
         m_InputModule = FindObjectOfType<OVRInputModule>();
 
-        layerMask = LayerMask.GetMask("Earth");
+        layerMask = LayerMask.GetMask("Earth", "Stars");
         manager = SimulationManager.GetInstance();
         network = FindObjectOfType<NetworkController>();
     }
     void Update()
     {
-        // OVRInput.Update();
-
         showIndicator(gameObject, shouldShowIndicator);
-        //if (hand == ControllerHand.Left) {
-        //    showIndicator(gameObject, OVRInput.Get(OVRInput.Button.Three));
-        //} else { 
-        //    showIndicator(gameObject, OVRInput.Get(OVRInput.Button.One));
-        //}
     }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
@@ -54,55 +52,98 @@ public class VRInteraction : MonoBehaviour
         // MeshRenderer renderer = controllerObject.GetComponentInChildren<MeshRenderer>();
 
         if (showIndicator)
-        {   
-            if(!m_InputModule) m_InputModule = FindObjectOfType<OVRInputModule>();
+        {
+            if (!m_InputModule) m_InputModule = FindObjectOfType<OVRInputModule>();
             Transform rayOrigin = this.transform;
             if (m_InputModule != null && m_InputModule.rayTransform != null) rayOrigin = m_InputModule.rayTransform;
-            Vector3 pos = rayOrigin.position;
-            Vector3 forwardDirection = rayOrigin.forward;
-            Vector3 endPosition = pos + (laserMaxLength * forwardDirection);
-
-            laserLineRenderer.SetPosition(0, pos);
-            laserLineRenderer.SetPosition(1, endPosition);
-
+            laserStartPos = rayOrigin.position;
+            forwardDirection = rayOrigin.forward;
+            laserEndPos = laserStartPos + (laserMaxLength * forwardDirection);
+            updateLaser(false);
             // now detect if the user is holding down the Interact button also
             // bool canInteract = Time.time - lastInteract > interactionInterval;
 
             // raycast, then if we hit the Earth we can show the interaction
-            ray = new Ray(pos, forwardDirection);
+            ray = new Ray(laserStartPos, forwardDirection);
             if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
             {
-                laserLineRenderer.SetPosition(1, hit.point);
-                if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+                laserEndPos = hit.point;
+                updateLaser(true);
+
+                if (hit.transform.name == "Earth")
                 {
-                    if (canInteract)
+                    if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
                     {
-                        // filter by what we hit
-                        if (hit.transform.name == "Earth")
+                        if (canInteract)
                         {
+                            // filter by what we hit
+
                             manager = SimulationManager.GetInstance();
                             network = FindObjectOfType<NetworkController>();
                             network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
                             canInteract = false;
-                        } else
-                        {
-                            // handle star interaction, etc
                         }
                     }
+                    else
+                    {
+                        canInteract = true;
+                    }
                 }
-                else
+                else if (hit.transform.tag == "Star")
                 {
-                    canInteract = true;
+                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                    if (nextStar != null && nextStar != currentStar)
+                    {
+                        Debug.Log("Star! " + nextStar.starData.ProperName);
+                        // remove highlighting from previous star
+                        if (currentStar != null) currentStar.CursorHighlightStar(false);
+
+                    }
+                    currentStar = nextStar;
+                    currentStar.CursorHighlightStar(true);
+
+                    if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+                    {
+                        if (canInteract)
+                        {
+                            currentStar.HandleSelectStar();
+                            manager = SimulationManager.GetInstance();
+                            network = FindObjectOfType<NetworkController>();
+                            network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            canInteract = false;
+                        }
+                    }
+                    else
+                    {
+                        canInteract = true;
+                    }
                 }
             }
+            else
+            {
+                if (currentStar != null)
+                {
+                    currentStar.CursorHighlightStar(false);
+                }
+                updateLaser(false);
+            }
+        }
+    }
+
+    void updateLaser(bool activeTarget)
+    {
+        laserLineRenderer.SetPosition(0, laserStartPos);
+        laserLineRenderer.SetPosition(1, laserEndPos);
+        if (activeTarget)
+        {
+            laserLineRenderer.startWidth = activeLaserWidth;
+            laserLineRenderer.endWidth = activeLaserWidth;
         }
         else
         {
-            laserLineRenderer.SetPositions(initLaserPositions);
+            laserLineRenderer.startWidth = inactiveLaserWidth;
+            laserLineRenderer.endWidth = inactiveLaserWidth;
         }
-    }
-    private void FixedUpdate()
-    {
-        // OVRInput.FixedUpdate();
+        
     }
 }
