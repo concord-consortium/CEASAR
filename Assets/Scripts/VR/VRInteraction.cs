@@ -92,30 +92,33 @@ public class VRInteraction : MonoBehaviour
                 else if (hit.transform.tag == "Star")
                 {
                     StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                    if (nextStar != null && nextStar != currentStar)
+                    if (nextStar != null)
                     {
-                        Debug.Log("Star! " + nextStar.starData.ProperName);
-                        // remove highlighting from previous star
-                        if (currentStar != null) currentStar.CursorHighlightStar(false);
-
-                    }
-                    currentStar = nextStar;
-                    currentStar.CursorHighlightStar(true);
-
-                    if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
-                    {
-                        if (canInteract)
+                        if (nextStar != currentStar)
                         {
-                            currentStar.HandleSelectStar();
-                            manager = SimulationManager.GetInstance();
-                            network = FindObjectOfType<NetworkController>();
-                            network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                            canInteract = false;
+                            Debug.Log("New star! " + nextStar.starData.ProperName);
+                            // remove highlighting from previous star
+                            if (currentStar != null) currentStar.CursorHighlightStar(false);
                         }
-                    }
-                    else
-                    {
-                        canInteract = true;
+                    
+                        currentStar = nextStar;
+                        currentStar.CursorHighlightStar(true);
+
+                        if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+                        {
+                            if (canInteract)
+                            {
+                                currentStar.HandleSelectStar();
+                                manager = SimulationManager.GetInstance();
+                                network = FindObjectOfType<NetworkController>();
+                                network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                                canInteract = false;
+                            }
+                        }
+                        else
+                        {
+                            canInteract = true;
+                        }
                     }
                 }
             }
