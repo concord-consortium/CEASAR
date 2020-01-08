@@ -9,8 +9,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     private ConstellationsController constellationsController;
     private Vector3 initialScale;
-    private float scaleFactor = 1.5f;
-    private Vector3 currentScale;
+    private float scaleFactor = 2f;
 
     public void Init(ConstellationsController controller, Star star, float maxMagnitude, float magnitudeScale, float radius)
     {
@@ -29,7 +28,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         transform.localScale = magScale;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void HandleSelectStar()
     {
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
         if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
@@ -40,17 +39,18 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
         }
     }
-
-    public void OnPointerEnter(PointerEventData eventData)
+    public void CursorHighlightStar(bool highlight)
     {
-        currentScale = transform.localScale;
-        transform.localScale = currentScale * scaleFactor;
+        if (highlight)
+        {
+            // currentScale = transform.localScale;
+            transform.localScale = initialScale * scaleFactor;
+        } else
+        {
+            transform.localScale = initialScale;
+        }
     }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        transform.localScale = currentScale;
-    }
+   
     public void SetStarColor(Color constellationColor, Color starColor)
     {
         // Store star color - not yet using real values
@@ -67,4 +67,20 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         rend.enabled = show;
         coll.enabled = show;
     }
+
+    #region MouseEvent Handling
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        HandleSelectStar();
+    }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        CursorHighlightStar(true);
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        CursorHighlightStar(false);
+    }
+    #endregion
+
 }
