@@ -13,6 +13,7 @@ using Colyseus;
 using Colyseus.Schema;
 
 using GameDevWare.Serialization;
+using JetBrains.Annotations;
 
 public class ColyseusClient : MonoBehaviour
 {
@@ -212,8 +213,8 @@ public class ColyseusClient : MonoBehaviour
         Debug.Log(player + " " + key);
         networkController.OnPlayerChange(player);
     }
-
-    public async void SendMovement(Vector3 pos, Quaternion rot )
+    
+    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, string messageType)
     {
         if (IsConnected)
         {
@@ -222,31 +223,27 @@ public class ColyseusClient : MonoBehaviour
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
+            
             await room.Send(new
             {
                 transform = t,
-                message = "movement"
+                message = messageType
             });
         }
     }
-    public async void SendInteraction(Vector3 pos, Quaternion rot, Color color)
+    public async void SendCelestialInteraction(NetworkCelestialObject celestialObj)
     {
         if (IsConnected)
         {
-            NetworkTransform t = new NetworkTransform();
-            Debug.Log(pos + " " + rot);
-            t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
-            Vector3 r = rot.eulerAngles;
-            t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
-            await room.Send(new
+            NetworkCelestialObject c = celestialObj;
+            Debug.Log("celestial object" +  c);
+           await room.Send(new
             {
-                transform = t,
-                color = color.ToString(),
-                message = "interaction"
+                celestialObject = c,
+                message = "celestialinteraction"
             });
         }
     }
-
     void OnApplicationQuit()
     {
         Disconnect();

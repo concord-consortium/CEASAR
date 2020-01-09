@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -358,7 +358,7 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             // now need to broadcast to remotes
-            colyseusClient.SendInteraction(pos, rot, playerColor);
+            colyseusClient.SendNetworkTransformUpdate(pos, rot, "interaction");
             string interactionInfo = "local interaction P:" +
     pos.ToString() + " R:" + rot.ToString();
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
@@ -371,7 +371,7 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             // broadcast!
-            colyseusClient.SendMovement(pos, rot);
+            colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
 
             // log!
             string movementInfo = "local player moved to P:" +
