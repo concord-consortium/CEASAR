@@ -51,8 +51,6 @@ public class ColyseusClient : MonoBehaviour
                 // send update
                 room.Send(new Dictionary<string, object>()
                     {
-                        {"posX", localPlayer.x },
-                        {"posY", localPlayer.y },
                         {"message", "heartbeat"}
                     }
                 );

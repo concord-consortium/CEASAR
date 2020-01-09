@@ -17,19 +17,13 @@ public class Player : Schema {
 	[Type(2, "string")]
 	public string currentScene = "";
 
-	[Type(3, "number")]
-	public float x = 0;
-
-	[Type(4, "number")]
-	public float y = 0;
-
-	[Type(5, "ref", typeof(NetworkTransform))]
+	[Type(3, "ref", typeof(NetworkTransform))]
 	public NetworkTransform playerPosition = new NetworkTransform();
 
-	[Type(6, "ref", typeof(NetworkTransform))]
+	[Type(4, "ref", typeof(NetworkTransform))]
 	public NetworkTransform interactionTarget = new NetworkTransform();
 
-	[Type(7, "boolean")]
+	[Type(5, "boolean")]
 	public bool connected = false;
 }
 
