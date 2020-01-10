@@ -74,13 +74,29 @@ public class ColyseusClient : MonoBehaviour
             endpoint = serverEndpoint;
             Debug.Log("log in client");
             client = ColyseusManager.Instance.CreateClient(endpoint);
-            await client.Auth.Login();
+            try
+            {
+                await client.Auth.Login();
+            }
+            catch (Exception e)
+            {
+                networkController.ServerStatusMessage = "Exception creating client! " + e.Message;
+            }
+            
 
             // Update username
             client.Auth.Username = username;
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            await JoinRoom();
+            try
+            {
+                await JoinRoom();
+            }
+            catch (Exception e)
+            {
+                networkController.ServerStatusMessage = "Exception joining room! " + e.Message;
+            }
+            
             connecting = false;
         }
     }   
@@ -179,7 +195,19 @@ public class ColyseusClient : MonoBehaviour
 
     void OnMessage(object msg)
     {
-        Debug.Log(msg);
+        if (msg is UpdateMessage)
+        {
+            // update messages have a message type and player Id we can use to update from remote interactions
+            var m = (UpdateMessage) msg;
+            Debug.Log(m.updateType + " " + m.playerId);
+            Player player = players.Values.First(p => p.id == m.playerId);
+            networkController.HandlePlayerInteraction(player, m.updateType);
+        }
+        else
+        {
+            // unknown message type
+            Debug.Log(msg);
+        }
     }
 
     void OnStateChangeHandler (State state, bool isFirstState)
@@ -208,7 +236,7 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerRemove(player);
     }
 
-    void OnPlayerChange(Player player, string key)//(object sender, KeyValueEventArgs<Player, string> item)
+    void OnPlayerChange(Player player, string key)
     {
         Debug.Log(player + " " + key);
         networkController.OnPlayerChange(player);
@@ -237,7 +265,7 @@ public class ColyseusClient : MonoBehaviour
         {
             NetworkCelestialObject c = celestialObj;
             Debug.Log("celestial object" +  c);
-           await room.Send(new
+            await room.Send(new
             {
                 celestialObject = c,
                 message = "celestialinteraction"

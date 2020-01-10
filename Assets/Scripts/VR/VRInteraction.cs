@@ -108,10 +108,7 @@ public class VRInteraction : MonoBehaviour
                         {
                             if (canInteract)
                             {
-                                currentStar.HandleSelectStar();
-                                manager = SimulationManager.GetInstance();
-                                network = FindObjectOfType<NetworkController>();
-                                network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                                currentStar.HandleSelectStar(true);
                                 canInteract = false;
                             }
                         }

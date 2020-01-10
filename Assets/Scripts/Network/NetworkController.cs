@@ -302,7 +302,8 @@ public class NetworkController : MonoBehaviour
                     
     public void OnPlayerChange(Player updatedPlayer)
     {
-
+        // All player updates pass through here, including movement and interactions
+        // though we need to handle those interactions differently. Keep this purely for movement!
         bool isLocal = updatedPlayer.username == localPlayer.username;
         bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.username);  
         string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
@@ -317,18 +318,9 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
-            if (updatedPlayer.interactionTarget != null)
-            {
-                Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," + updatedPlayer.interactionTarget.position.y + "," + updatedPlayer.interactionTarget.position.z);
-                Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
-                Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
-                ShowInteraction(pos, rot, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
-            }
-            // Debug.Log("Movement update: " + updatedPlayer.playerPosition);
             if (remotePlayerAvatar != null)
             {
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
-                // remotePlayerAvatar.transform.position = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
             }
             else
             {
@@ -336,6 +328,41 @@ public class NetworkController : MonoBehaviour
             }
         }
 
+    }
+
+    public void HandlePlayerInteraction(Player updatedPlayer, string interactionType)
+    {
+        // For all non-movement updates
+        bool isLocal = updatedPlayer.username == localPlayer.username;
+        if (!isLocal)
+        {
+            switch (interactionType)
+            {
+                case "interaction":
+                    // show indicator
+                    Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," +
+                              updatedPlayer.interactionTarget.position.y + "," +
+                              updatedPlayer.interactionTarget.position.z);
+                    Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
+                    Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
+                    ShowInteraction(pos, rot,
+                        SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
+                    break;
+                case "celestialinteraction":
+                    Debug.Log("remote player selected star");
+                    // highlight star/ constellation
+                    // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
+                    // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
+                    // maintain a dict of stars by ID for easier lookups. 
+                    break;
+                case "locationpin":
+                    // add / move player pin
+                    Debug.Log("remote player pinned a location");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public void ShowInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
@@ -363,9 +390,27 @@ public class NetworkController : MonoBehaviour
     pos.ToString() + " R:" + rot.ToString();
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
-
     }
-
+    public void ShowCelestialObjectInteraction(string coName, string coGroup, string uniqueId, bool isLocal)
+    {
+        if (isLocal)
+        {
+            // now need to broadcast to remotes
+            NetworkCelestialObject co = new NetworkCelestialObject
+            {
+                name = coName, group = coGroup, uniqueId = uniqueId
+            };
+            colyseusClient.SendCelestialInteraction(co);
+            string interactionInfo = "local celestial interaction CO:" +
+                                     coName + ", " + coGroup + ", " + uniqueId;
+            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+        }
+        else
+        {
+            string interactionInfo = "remote celestial interaction CO:" +
+                                     coName + ", " + coGroup + ", " + uniqueId;
+        }
+    }
     public void HandleMovementUpdate(Vector3 pos, Quaternion rot, bool isLocal)
     {
         if (isLocal)
@@ -398,4 +443,5 @@ public class NetworkController : MonoBehaviour
         Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+    
 }

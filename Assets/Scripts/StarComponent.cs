@@ -28,7 +28,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         transform.localScale = magScale;
     }
 
-    public void HandleSelectStar()
+    public void HandleSelectStar(bool broadcastToNetwork = false)
     {
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
         if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
@@ -37,6 +37,13 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             if (constellationsController) constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
             mainUIController.ChangeStarSelection(this.gameObject);
             mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
+        }
+
+        if (broadcastToNetwork)
+        {
+            NetworkController network = FindObjectOfType<NetworkController>();
+            network.ShowCelestialObjectInteraction(starData.ProperName,
+                starData.Constellation, starData.XBayerFlamsteed, true);
         }
     }
     public void CursorHighlightStar(bool highlight)
@@ -71,7 +78,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     #region MouseEvent Handling
     public void OnPointerDown(PointerEventData eventData)
     {
-        HandleSelectStar();
+        HandleSelectStar(true);
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
