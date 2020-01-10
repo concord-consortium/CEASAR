@@ -214,7 +214,7 @@ public class ColyseusClient : MonoBehaviour
     {
         // Setup room first state
         // This is where we might capture current state and save/load
-        Debug.Log(state);
+        // Debug.Log(state);
     }
 
     void OnPlayerAdd(Player player, string key)

@@ -305,29 +305,22 @@ public class NetworkController : MonoBehaviour
         // All player updates pass through here, including movement and interactions
         // though we need to handle those interactions differently. Keep this purely for movement!
         bool isLocal = updatedPlayer.username == localPlayer.username;
-        bool isKnownRemotePlayer = remotePlayers.Keys.Contains(updatedPlayer.username);  
-        string knownPlayerName = isKnownRemotePlayer ? updatedPlayer.username : "unknown";
-
-        Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal + " isKnown: " + knownPlayerName);
+        
+        Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal);
 
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(updatedPlayer.username, out remotePlayerAvatar);
-        if (isLocal)
-        {
-            Debug.Log("local player moved");
-        }
-        else
+        
+        if (!isLocal)
         {
             if (remotePlayerAvatar != null)
             {
-                remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y, updatedPlayer.playerPosition.position.z);
-            }
-            else
-            {
-                Debug.Log("Ghost player with no avatar!");
+                // only move players with an avatar
+                remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(
+                    updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y,
+                    updatedPlayer.playerPosition.position.z);
             }
         }
-
     }
 
     public void HandlePlayerInteraction(Player updatedPlayer, string interactionType)
@@ -354,6 +347,7 @@ public class NetworkController : MonoBehaviour
                     // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                     // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
                     // maintain a dict of stars by ID for easier lookups. 
+                    SimulationManager.GetInstance().DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar();
                     break;
                 case "locationpin":
                     // add / move player pin

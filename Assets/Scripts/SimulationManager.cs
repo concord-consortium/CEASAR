@@ -77,7 +77,7 @@ public class SimulationManager
     
     // Server Address!
     public string LocalNetworkServer = "ws://localhost:2567";
-    public string DevNetworkServer = "ws://ceasar-serve-movement-u-1jajht.herokuapp.com";
+    public string DevNetworkServer = "ws://192.168.1.223:2567";
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     // Random color (capitalized), random animal (capitalized), random number
