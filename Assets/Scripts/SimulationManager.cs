@@ -39,7 +39,7 @@ public class SimulationManager
 
 
     public GameObject NetworkControllerObject;
-
+    public NetworkConnection NetworkStatus = NetworkConnection.None; 
     private GameObject celestialSphereObject;
 
     public GameObject CelestialSphereObject
@@ -77,7 +77,7 @@ public class SimulationManager
     
     // Server Address!
     public string LocalNetworkServer = "ws://localhost:2567";
-    public string DevNetworkServer = "ws://192.168.1.223:2567";
+    public string DevNetworkServer = "ws://ceasar-serve-166903181-luo6i9u.herokuapp.com/";
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     // Random color (capitalized), random animal (capitalized), random number

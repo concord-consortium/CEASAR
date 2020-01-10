@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 
 
-public enum NetworkConnection { Local, Dev, Remote }
+public enum NetworkConnection { Local, Dev, Remote, None }
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
@@ -22,6 +22,7 @@ public class NetworkController : MonoBehaviour
     public Text connectionStatusText;
     public Text usernameText;
     private string _connectionStatusMessage;
+    private NetworkConnection _selectedNetwork = NetworkConnection.None;
 
     public GameObject avatar;
     private Player localPlayer;
@@ -103,6 +104,8 @@ public class NetworkController : MonoBehaviour
                 m_EndpointField.text = manager.ProductionNetworkServer;
                 break;
         }
+
+        _selectedNetwork = destination;
     }
 
     // Need this so the network UI persists across scenes
@@ -193,14 +196,25 @@ public class NetworkController : MonoBehaviour
             EnsureUsername();
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
+            string endpoint = string.Empty;
+
+            if (string.IsNullOrEmpty(m_EndpointField.text))
+            {
+                // no user interaction with the network address, work on some defaults
 #if UNITY_EDITOR
-            string endpoint = _remoteEndpoint;
+                endpoint = _localEndpoint;
+                if (_selectedNetwork == NetworkConnection.None) _selectedNetwork = NetworkConnection.Local;
 #else
-            string endpoint = _remoteEndpoint; 
+                endpoint = _remoteEndpoint;
+                if (_selectedNetwork == NetworkConnection.None) _selectedNetwork = NetworkConnection.Remote;
 #endif
-            // allow user to specify an endpoint
-            endpoint = string.IsNullOrEmpty(m_EndpointField.text) ? endpoint : m_EndpointField.text;
+            }
+            else
+            {
+                endpoint = m_EndpointField.text;
+            }
             colyseusClient.ConnectToServer(endpoint, localUsername);
+            manager.NetworkStatus = _selectedNetwork;
             CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
             if (randomizeUsernameButton != null)  randomizeUsernameButton.enabled = false;
         }

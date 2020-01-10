@@ -41,9 +41,9 @@ public class DataController : MonoBehaviour
     public List<string> constellationFullNames;
     public Constellation constellationPrefab;
     private Dictionary<string, StarComponent> allStarComponents;
-    public StarComponent GetStarById(string xBayerFlamsteed)
+    public StarComponent GetStarById(string uniqueId)
     {
-        return allStarComponents[xBayerFlamsteed];
+        return allStarComponents[uniqueId];
     }
 
     private DateTime simulationStartTime = DateTime.Now;
@@ -143,7 +143,7 @@ public class DataController : MonoBehaviour
         {
             allStars = DataImport.ImportStarData(starData.text, maxStars);
             Debug.Log(allStars.Count + " stars imported");
-            allStarComponents = new Dictionary<string, StarComponent>(); // new StarComponent[allStars.Count];
+            allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
         {
@@ -216,7 +216,7 @@ public class DataController : MonoBehaviour
                     }
                     constellation.highlightColor = constellationColor;
 
-                    allStarComponents[dataStar.XBayerFlamsteed] = newStar;
+                    allStarComponents[dataStar.uniqueId] = newStar;
                     starCount++;
 
                     // show or hide based on magnitude threshold

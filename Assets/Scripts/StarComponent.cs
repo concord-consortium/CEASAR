@@ -30,6 +30,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
     {
+        Debug.Log("Selected star: " + starData.uniqueId);
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
         if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
         if (mainUIController && mainUIController.starInfoPanel)
@@ -43,7 +44,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         {
             NetworkController network = FindObjectOfType<NetworkController>();
             network.ShowCelestialObjectInteraction(starData.ProperName,
-                starData.Constellation, starData.XBayerFlamsteed, true);
+                starData.Constellation, starData.uniqueId, true);
         }
     }
     public void CursorHighlightStar(bool highlight)

@@ -74,29 +74,13 @@ public class ColyseusClient : MonoBehaviour
             endpoint = serverEndpoint;
             Debug.Log("log in client");
             client = ColyseusManager.Instance.CreateClient(endpoint);
-            try
-            {
-                await client.Auth.Login();
-            }
-            catch (Exception e)
-            {
-                networkController.ServerStatusMessage = "Exception creating client! " + e.Message;
-            }
-            
+            await client.Auth.Login();
 
             // Update username
             client.Auth.Username = username;
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            try
-            {
-                await JoinRoom();
-            }
-            catch (Exception e)
-            {
-                networkController.ServerStatusMessage = "Exception joining room! " + e.Message;
-            }
-            
+            await JoinRoom();
             connecting = false;
         }
     }   
