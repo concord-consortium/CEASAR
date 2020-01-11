@@ -72,7 +72,12 @@ public class SunPositionController : MonoBehaviour
     {
         renderSunArc();
 
-        if (sun != null) sun.transform.position = getSolarPosition(dataController.CurrentSimUniversalTime(), dataController.currentCity.Lat, dataController.currentCity.Lng);
+        if (sun != null)
+        {
+            sun.transform.position = getSolarPosition(dataController.CurrentSimUniversalTime(), dataController.currentCity.Lat, dataController.currentCity.Lng);
+            sun.transform.LookAt(new Vector3(0,0,0));
+        }
+        
     }
 
     Vector3 getSolarPosition(DateTime t, double lat, double lng)
