@@ -22,16 +22,17 @@ public class MainUIController : MonoBehaviour
     private float speed = 750.0f;
 
     // date and time controls
-    private int userYear = 2019;
-    private int userHour = 0;
-    private int userMin = 0;
-    private int userDay = 1;
+    private int userYear = DateTime.UtcNow.Year;
+    private int userHour = DateTime.UtcNow.Hour;
+    private int userMin = DateTime.UtcNow.Minute;
+    private int userDay = DateTime.UtcNow.DayOfYear;
     public TextMeshProUGUI currentDateTimeText;
     public Toggle setTimeToggle;
-    public TMP_InputField yearInput;
     public Slider daySlider;
     public Slider timeSlider;
 
+    public Slider yearSlider;
+    
     // star selection controls
     public GameObject starInfoPanel;
 
@@ -101,6 +102,13 @@ public class MainUIController : MonoBehaviour
                 AddSnapshotToGrid(snapshot);
             }
         }
+
+        if (yearSlider && daySlider && timeSlider)
+        {
+            yearSlider.value = dataController.CurrentSimUniversalTime.Year;
+            daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
+            timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
+        }
     }
 
     // Update is called once per frame
@@ -108,7 +116,7 @@ public class MainUIController : MonoBehaviour
     {
         if (currentDateTimeText && dataController)
         {
-            currentDateTimeText.text = dataController.CurrentSimUniversalTime().ToString() + " (UTC)";
+            currentDateTimeText.text = dataController.CurrentSimUniversalTime.ToString() + " (UTC)";
         }
 
         // Move our position a step closer to the target.
@@ -140,9 +148,9 @@ public class MainUIController : MonoBehaviour
         movingControlPanel = true;
     }
 
-    public void ChangeYear(string newYear)
+    public void ChangeYear(float newYear)
     {
-        userYear = int.Parse(newYear);
+        userYear = (int)newYear;
         CalculateUserDateTime();
     }
 
@@ -322,7 +330,7 @@ public class MainUIController : MonoBehaviour
     public void CreateSnapshot()
     {
         // get values from datacontroller
-        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime();
+        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime;
         String location = dataController.SelectedCity;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location);
@@ -349,7 +357,7 @@ public class MainUIController : MonoBehaviour
         String location = snapshotsController.snapshots[snapshotIndex].location;
         ChangeCitySelection(location);
         setTimeToggle.isOn = true;
-        yearInput.text = userYear.ToString();
+        yearSlider.value = userYear;
         daySlider.value = userDay;
         timeSlider.value = userHour * 60 + userMin;
     }

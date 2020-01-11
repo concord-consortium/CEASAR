@@ -58,7 +58,7 @@ public class SunPositionController : MonoBehaviour
     List<Vector3> getArcPoints()
     {
         List<Vector3> points = new List<Vector3>();
-        DateTime d = dataController.CurrentSimUniversalTime();
+        DateTime d = dataController.CurrentSimUniversalTime;
         DateTime midnight = new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
@@ -74,7 +74,7 @@ public class SunPositionController : MonoBehaviour
 
         if (sun != null)
         {
-            sun.transform.position = getSolarPosition(dataController.CurrentSimUniversalTime(), dataController.currentCity.Lat, dataController.currentCity.Lng);
+            sun.transform.position = getSolarPosition(dataController.CurrentSimUniversalTime, dataController.currentCity.Lat, dataController.currentCity.Lng);
             sun.transform.LookAt(new Vector3(0,0,0));
         }
         

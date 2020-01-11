@@ -60,7 +60,7 @@ public class MoonPositionController : MonoBehaviour
     List<Vector3> getArcPoints()
     {
         List<Vector3> points = new List<Vector3>();
-        DateTime d = dataController.CurrentSimUniversalTime();
+        DateTime d = dataController.CurrentSimUniversalTime;
         DateTime midnight = new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
@@ -74,7 +74,7 @@ public class MoonPositionController : MonoBehaviour
     {
         renderMoonArc();
 
-        if (moon != null) moon.transform.position = getLunarPosition(dataController.CurrentSimUniversalTime(), dataController.currentCity.Lat, dataController.currentCity.Lng);
+        if (moon != null) moon.transform.position = getLunarPosition(dataController.CurrentSimUniversalTime, dataController.currentCity.Lat, dataController.currentCity.Lng);
     }
 
     Vector3 getLunarPosition(DateTime t, double lat, double lng)
