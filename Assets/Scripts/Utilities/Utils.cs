@@ -86,16 +86,26 @@ public static class Utils
 
         if (float.IsNaN(Alt)) Alt = 0;
         if (float.IsNaN(Azm)) Azm = 0;
-        var zPos = radius * (Mathf.Cos(Azm)) * (Mathf.Cos(Alt)); // ; RA in hours, so multiply RA by 15 deg / hr
-        var xPos = radius * (Mathf.Cos(Alt) * (Mathf.Sin(Azm)));
-        var yPos = radius * Mathf.Sin(Alt);
+        return CalculatePositionByAzAlt(Azm, Alt, radius);
+    }
+
+    public static Vector3 CalculatePositionByAzAlt(float azimuth, float altitude, float radius)
+    {
+        var zPos = radius * (Mathf.Cos(azimuth)) * (Mathf.Cos(altitude)); // ; RA in hours, so multiply RA by 15 deg / hr
+        var xPos = radius * (Mathf.Cos(altitude) * (Mathf.Sin(azimuth)));
+        var yPos = radius * Mathf.Sin(altitude);
 
         if (float.IsNaN(xPos))
         {
-            Debug.Log(Azm + " " + Alt);
+            Debug.Log(azimuth + " " + altitude);
         }
         return new Vector3(xPos, yPos, zPos);
     }
+    public static Vector3 CalculatePositionByAzAlt(double azimuth, double altitude, float radius)
+    {
+        return CalculatePositionByAzAlt((float)azimuth, (float)altitude, radius);
+    }
+    
     public static Vector2 LatLngFromPosition(Vector3 position, float sphereRadius)
     {
         float lat = 90 - ((float)Math.Acos(position.y / sphereRadius) * 180 / Mathf.PI); //90 - theta

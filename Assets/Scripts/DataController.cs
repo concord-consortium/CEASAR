@@ -61,7 +61,7 @@ public class DataController : MonoBehaviour
     }
 
     private bool userSpecifiedDateTime = false;
-    private DateTime userStartDateTime = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    private DateTime userStartDateTime = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private bool runSimulation = false;
 
     public List<string> cities;
@@ -319,15 +319,15 @@ public class DataController : MonoBehaviour
         }
     }
 
-    public DateTime CurrentSimUniversalTime()
+    public DateTime CurrentSimUniversalTime
     {
-        if (userSpecifiedDateTime)
+        get
         {
-            return currentSimulationTime;
-        }
-        else
-        {
-            return DateTime.UtcNow;
+            if (userSpecifiedDateTime) return currentSimulationTime;
+            else
+            {
+                return DateTime.UtcNow;
+            }
         }
     }
 

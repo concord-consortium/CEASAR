@@ -60,7 +60,7 @@ MonoBehaviour:
   showEquator: 0
   markerLineWidth: 0.1
   markerScale: 1
-  lineWidth: 0.035
+  lineWidth: 0.1
   starPrefab: {fileID: 0}
   sceneLoaderPrefab: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
     type: 3}
