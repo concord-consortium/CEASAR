@@ -40,7 +40,11 @@ public class DataController : MonoBehaviour
     private ConstellationsController constellationsController;
     public List<string> constellationFullNames;
     public Constellation constellationPrefab;
-    private StarComponent[] allStarComponents;
+    private Dictionary<string, StarComponent> allStarComponents;
+    public StarComponent GetStarById(string uniqueId)
+    {
+        return allStarComponents[uniqueId];
+    }
 
     private DateTime simulationStartTime = DateTime.Now;
     private double localSiderialStartTime;
@@ -139,7 +143,7 @@ public class DataController : MonoBehaviour
         {
             allStars = DataImport.ImportStarData(starData.text, maxStars);
             Debug.Log(allStars.Count + " stars imported");
-            allStarComponents = new StarComponent[allStars.Count];
+            allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
         {
@@ -212,7 +216,7 @@ public class DataController : MonoBehaviour
                     }
                     constellation.highlightColor = constellationColor;
 
-                    allStarComponents[starCount] = newStar;
+                    allStarComponents[dataStar.uniqueId] = newStar;
                     starCount++;
 
                     // show or hide based on magnitude threshold
@@ -236,12 +240,10 @@ public class DataController : MonoBehaviour
         userSpecifiedDateTime = false;
         runSimulation = false;
 
-        for (int i = 0; i < allStarComponents.Length; i++)
+        foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            StarComponent starComponent = allStarComponents[i].gameObject.GetComponent<StarComponent>();
-            Utils.SetObjectColor(allStarComponents[i].gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
-            allStarComponents[i].SetStarScale(maxMag, magnitudeScale);
-            this.transform.rotation = Quaternion.identity;
+            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
+            starComponent.SetStarScale(maxMag, magnitudeScale);
         }
         if (showHorizonView) positionNCP();
         Debug.Log("updated");
@@ -337,10 +339,9 @@ public class DataController : MonoBehaviour
     public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
-        for (int i = 0; i < allStarComponents.Length; i++)
+        foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            StarComponent star = allStarComponents[i];
-            star.ShowStar(star.starData.Mag < magnitudeThreshold);
+            starComponent.ShowStar(starComponent.starData.Mag < magnitudeThreshold);
         }
     }
 

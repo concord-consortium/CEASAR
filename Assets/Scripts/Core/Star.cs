@@ -39,5 +39,6 @@ public class Star : CelestialSphereItem
         this.AbsMag = AbsMag;
         this.Spectrum = Spectrum;
         this.ColorIndex = ColorIndex;
+        this.uniqueId = "star_" + RA.ToString() + "_" + Dec.ToString();
     }
 }

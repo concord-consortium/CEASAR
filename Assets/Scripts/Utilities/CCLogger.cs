@@ -88,11 +88,15 @@ public class CCLogger
 
     public static void Log(string eventType, string msg)
     {
-        Debug.Log("Logging: " + eventType + "-- " + msg);
+        // only log if we're on the network to reduce clutter
+        if (SimulationManager.GetInstance().NetworkStatus == NetworkConnection.Remote)
+        {
+            Debug.Log("Logging: " + eventType + "-- " + msg);
 #pragma warning disable CS4014
-        // This call is not awaited, execution continues before the call is completed.
-        // So as to not stall or interupt play while transmitting log messages.
-        GetInstance()._logAsync(eventType, msg);
+            // This call is not awaited, execution continues before the call is completed.
+            // So as to not stall or interupt play while transmitting log messages.
+            GetInstance()._logAsync(eventType, msg);
 #pragma warning restore CS4014
+        }
     }
 }

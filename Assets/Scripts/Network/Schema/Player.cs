@@ -17,17 +17,17 @@ public class Player : Schema {
 	[Type(2, "string")]
 	public string currentScene = "";
 
-	[Type(3, "number")]
-	public float x = 0;
-
-	[Type(4, "number")]
-	public float y = 0;
-
-	[Type(5, "ref", typeof(NetworkTransform))]
+	[Type(3, "ref", typeof(NetworkTransform))]
 	public NetworkTransform playerPosition = new NetworkTransform();
 
-	[Type(6, "ref", typeof(NetworkTransform))]
+	[Type(4, "ref", typeof(NetworkTransform))]
 	public NetworkTransform interactionTarget = new NetworkTransform();
+
+	[Type(5, "ref", typeof(NetworkTransform))]
+	public NetworkTransform locationPin = new NetworkTransform();
+
+	[Type(6, "ref", typeof(NetworkCelestialObject))]
+	public NetworkCelestialObject celestialObjectTarget = new NetworkCelestialObject();
 
 	[Type(7, "boolean")]
 	public bool connected = false;

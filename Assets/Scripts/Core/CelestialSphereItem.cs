@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 
 public abstract class CelestialSphereItem
@@ -12,9 +13,10 @@ public abstract class CelestialSphereItem
     protected float radianDec;
     public bool hidden;
 
+    public string uniqueId;
+    
     public CelestialSphereItem()
     {
-
     }
 
     public CelestialSphereItem(float RA, float Dec)
