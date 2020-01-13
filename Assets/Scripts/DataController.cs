@@ -298,7 +298,7 @@ public class DataController : MonoBehaviour
                 }
                 else
                 {
-                    lst = DateTime.Now.ToSiderealTime();
+                    lst = DateTime.UtcNow.ToSiderealTime();
                 }
 
                 // Filter and only update positions if changed time / latitude
@@ -306,11 +306,15 @@ public class DataController : MonoBehaviour
 
                 if (shouldUpdate)
                 {
-                    float fractionOfDay = ((float)lst / 24) * 360;
+                    float celestialSphereOffsetR = -45f; 
+                    float siderealHoursPerDay = 23.9344696f;
+                    float fractionOfDay = (float)lst / siderealHoursPerDay;
+                    float planetRotation = fractionOfDay * 360;
+                    
                     // TODO: switch from reset & recalculate to just setting the angle around the existing axis
                     transform.rotation = initialRotation;
-                    // axis is offset by 90 degrees
-                    transform.Rotate(0, fractionOfDay + 90, 0, Space.Self);
+                    transform.Rotate(0, celestialSphereOffsetR, 0, Space.Self);
+                    transform.Rotate(0, planetRotation, 0, Space.Self);
                     // Set last timestamp so we only update when changed
                     lastTime = lst;
                 }
