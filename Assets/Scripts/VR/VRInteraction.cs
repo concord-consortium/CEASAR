@@ -25,6 +25,8 @@ public class VRInteraction : MonoBehaviour
     Vector3 laserEndPos = Vector3.zero;
     float activeLaserWidth = 0.04f;
     float inactiveLaserWidth = 0.02f;
+    GameObject mainUI;
+    GameObject networkUI;
 
     private StarComponent currentStar;
 
@@ -45,12 +47,11 @@ public class VRInteraction : MonoBehaviour
     void Update()
     {
         showIndicator(gameObject, shouldShowIndicator);
+        toggleMenu();
     }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
-        // MeshRenderer renderer = controllerObject.GetComponentInChildren<MeshRenderer>();
-
         if (showIndicator)
         {
             if (!m_InputModule) m_InputModule = FindObjectOfType<OVRInputModule>();
@@ -61,7 +62,6 @@ public class VRInteraction : MonoBehaviour
             laserEndPos = laserStartPos + (laserMaxLength * forwardDirection);
             updateLaser(false);
             // now detect if the user is holding down the Interact button also
-            // bool canInteract = Time.time - lastInteract > interactionInterval;
 
             // raycast, then if we hit the Earth we can show the interaction
             ray = new Ray(laserStartPos, forwardDirection);
@@ -72,7 +72,7 @@ public class VRInteraction : MonoBehaviour
 
                 if (hit.transform.name == "Earth")
                 {
-                    if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+                    if (interactionTrigger())
                     {
                         if (canInteract)
                         {
@@ -104,10 +104,17 @@ public class VRInteraction : MonoBehaviour
                         currentStar = nextStar;
                         currentStar.CursorHighlightStar(true);
 
-                        if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+                        if (interactionTrigger())
                         {
                             if (canInteract)
                             {
+                                // move the star info panel
+                                StarInfoPanel starUI = FindObjectOfType<StarInfoPanel>();
+                                if (starUI)
+                                {
+                                    positionCanvasTransformRelativeToOrigin(starUI.transform.parent.gameObject, 6f);
+                                }
+                                // now select the star
                                 currentStar.HandleSelectStar(true);
                                 canInteract = false;
                             }
@@ -128,6 +135,70 @@ public class VRInteraction : MonoBehaviour
                 updateLaser(false);
             }
         }
+    }
+    void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float distance)
+    {
+        Transform origin = this.transform;
+        if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
+        canvasObject.transform.position = origin.position + (origin.forward * 6);
+        Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
+        newRotation.x = 0;
+        newRotation.z = 0;
+        canvasObject.transform.rotation = Quaternion.Euler(newRotation);
+    }
+    void toggleMenu()
+    {
+        if (leftMenuTrigger())
+        {
+            if (mainUI == null) mainUI = GameObject.Find("MainUI");
+            if (mainUI)
+            {
+                positionCanvasTransformRelativeToOrigin(mainUI, 6f);
+                /*Transform origin = this.transform;
+                if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
+                mainUI.transform.position = origin.position + (origin.forward * 6);
+                Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
+                newRotation.x = 0;
+                newRotation.z = 0;
+                mainUI.transform.rotation = Quaternion.Euler(newRotation);*/
+            }
+        }
+        if (rightMenuTrigger())
+        {
+            if (networkUI == null) networkUI = GameObject.Find("NetworkUI");
+            if (networkUI)
+            {
+                positionCanvasTransformRelativeToOrigin(networkUI, 6f);
+               /* Transform origin = this.transform;
+                if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
+                networkUI.transform.position = origin.position + (origin.forward * 6);
+                Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
+                newRotation.x = 0;
+                newRotation.z = 0;
+                networkUI.transform.rotation = Quaternion.Euler(newRotation);*/
+            }
+        }
+    }
+
+    bool interactionTrigger()
+    {
+        return (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.One) ||
+                        OVRInput.Get(OVRInput.Button.Three));
+    }
+    bool grabTrigger()
+    {
+        return (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) ||
+                        OVRInput.Get(OVRInput.Button.SecondaryHandTrigger));
+    }
+    bool leftMenuTrigger()
+    {
+        return (OVRInput.Get(OVRInput.Button.Two));
+    }
+    bool rightMenuTrigger()
+    {
+        return (OVRInput.Get(OVRInput.Button.Four));
     }
 
     void updateLaser(bool activeTarget)

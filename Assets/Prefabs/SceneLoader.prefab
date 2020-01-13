@@ -50,3 +50,5 @@ MonoBehaviour:
   vrEventSystem: {fileID: 2249599586391153847, guid: 0c9ab61d8cd85cb499c6724491c0de5b,
     type: 3}
   defaultEventSystem: {fileID: 0}
+  vrStarInfoCanvas: {fileID: 5785092752585064236, guid: 64a0c50e706f624418826f5e2fed6d77,
+    type: 3}
