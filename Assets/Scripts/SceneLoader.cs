@@ -99,6 +99,13 @@ public class SceneLoader : MonoBehaviour
         {
             horizonCamControls.SetActive(false);
         }
+
+        if (SceneManager.GetActiveScene().name == "EarthInteraction")
+        {
+            Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+            vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            vrCam.GetComponent<Camera>().backgroundColor = Color.black;
+        }
     }
 
 
