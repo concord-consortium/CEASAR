@@ -60,31 +60,13 @@ public class MainUIController : MonoBehaviour
         dataController = SimulationManager.GetInstance().DataControllerComponent;
         sphere = SimulationManager.GetInstance().CelestialSphereObject;
 
-        // UI sub-panels are added to the enabledPanels list and then ordered and positioned
-        // vertically starting at the bottom of the Main UI panel (add or remove from list to
-        // enable or disable)
-        float panelPosition = 0f;
-        float totalPanelHeight = 0f;
-        foreach (GameObject go in enabledPanels)
-        {
-            go.SetActive(true);
-            RectTransform goRect = go.GetComponent<RectTransform>();
-            panelPosition += goRect.rect.height * .5f;
-            goRect.anchoredPosition = new Vector2(0, panelPosition);
-            panelPosition += goRect.rect.height * .5f;
-            totalPanelHeight = totalPanelHeight + goRect.rect.height;
-        }
+        positionActivePanels();
 
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
 
-        RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
-        initialPosition = controlPanelRect.anchoredPosition;
-        float hiddenY = controlPanelRect.rect.height * .5f - totalPanelHeight + 50f;
-        hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
-        targetPosition = initialPosition;
 
         if (cityDropdown)
         {
@@ -109,6 +91,30 @@ public class MainUIController : MonoBehaviour
             daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
             timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
         }
+    }
+
+    void positionActivePanels()
+    {
+        // UI sub-panels are added to the enabledPanels list and then ordered and positioned
+        // vertically starting at the bottom of the Main UI panel (add or remove from list to
+        // enable or disable)
+        float panelPosition = 0f;
+        float totalPanelHeight = 0f;
+        foreach (GameObject go in enabledPanels)
+        {
+            go.SetActive(true);
+            RectTransform goRect = go.GetComponent<RectTransform>();
+            panelPosition += goRect.rect.height * .5f;
+            goRect.anchoredPosition = new Vector2(0, panelPosition);
+            panelPosition += goRect.rect.height * .5f;
+            totalPanelHeight = totalPanelHeight + goRect.rect.height;
+        }
+
+        RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
+        initialPosition = controlPanelRect.anchoredPosition;
+        float hiddenY = controlPanelRect.rect.height * .5f - totalPanelHeight + 50f;
+        hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
+        targetPosition = initialPosition;
     }
 
     // Update is called once per frame
@@ -181,8 +187,9 @@ public class MainUIController : MonoBehaviour
         if (starInfoPanel)
         {
             StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel(starComponent.starData);
-            starInfoPanel.GetComponent<WorldToScreenPos>().UpdatePosition(selectedStar);
+            SimulationManager.GetInstance().CurrentlySelectedStar = starComponent;
+            starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
+            
         }
     }
 

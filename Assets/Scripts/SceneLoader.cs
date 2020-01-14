@@ -14,8 +14,10 @@ public class SceneLoader : MonoBehaviour
     private GameObject vrEventSystem;
     [SerializeField]
     private GameObject defaultEventSystem;
-    [SerializeField]
-    private GameObject vrStarInfoCanvas;
+    //[SerializeField]
+    //private GameObject vrUI;
+    // [SerializeField]
+    // private GameObject vrStarInfoCanvas;
 
     public void Start()
     {
@@ -47,15 +49,19 @@ public class SceneLoader : MonoBehaviour
             existingCamera.SetActive(false);
         }
         Instantiate(vrCameraRig);
-        
-        MainUIController mainUI = FindObjectOfType<MainUIController>();
+
+        //MainUIController mainUI = FindObjectOfType<MainUIController>();
+        //Destroy(mainUI.gameObject);
+
+        //Instantiate(vrUI);
+        /*MainUIController mainUI = FindObjectOfType<MainUIController>();
         if (mainUI != null)
         {
             GameObject vrStarInfoPanel = Instantiate(vrStarInfoCanvas);
             StarInfoPanel sip = vrStarInfoPanel.GetComponentInChildren<StarInfoPanel>();
             mainUI.starInfoPanel = sip.gameObject;
             sip.setEnabled(false);
-        }
+        }*/
 
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
@@ -69,10 +75,10 @@ public class SceneLoader : MonoBehaviour
             if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
             c.GetComponent<OVRRaycaster>().enabled = true;
             
-
+            
             if (c.gameObject.name == "MainUI")
             {
-                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
                 c.transform.position = new Vector3(3, 3, 5);
 
             }
@@ -85,6 +91,7 @@ public class SceneLoader : MonoBehaviour
             {
                 c.transform.position = new Vector3(0, 3, 5);
             }
+            
         }
         
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
@@ -100,7 +107,7 @@ public class SceneLoader : MonoBehaviour
             horizonCamControls.SetActive(false);
         }
 
-        if (SceneManager.GetActiveScene().name == "EarthInteraction")
+        if (SceneManager.GetActiveScene().name == "EarthInteraction" || SceneManager.GetActiveScene().name == "Stars")
         {
             Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;

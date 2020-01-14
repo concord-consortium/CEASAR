@@ -108,13 +108,6 @@ public class VRInteraction : MonoBehaviour
                         {
                             if (canInteract)
                             {
-                                // move the star info panel
-                                StarInfoPanel starUI = FindObjectOfType<StarInfoPanel>();
-                                if (starUI)
-                                {
-                                    positionCanvasTransformRelativeToOrigin(starUI.transform.parent.gameObject, 6f);
-                                }
-                                // now select the star
                                 currentStar.HandleSelectStar(true);
                                 canInteract = false;
                             }

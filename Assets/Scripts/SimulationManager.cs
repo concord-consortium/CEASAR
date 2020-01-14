@@ -80,6 +80,8 @@ public class SimulationManager
     public string DevNetworkServer = "ws://ceasar-serve-166903181-luo6i9u.herokuapp.com/";
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
+    public StarComponent CurrentlySelectedStar;
+
     // Random color (capitalized), random animal (capitalized), random number
     public string GenerateUsername()
     {
