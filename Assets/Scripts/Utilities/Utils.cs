@@ -56,6 +56,7 @@ public static class Utils
         return new Vector3(xPos, yPos, zPos);
     }
 
+    [Obsolete]
     public static Vector3 CalculateHorizonPosition(float RA, float radianDec, float radius, double currentSiderialTime, float observerLatitude)
     {
         float Alt = 0;
@@ -91,8 +92,9 @@ public static class Utils
 
     public static Vector3 CalculatePositionByAzAlt(float azimuth, float altitude, float radius)
     {
-        var zPos = radius * (Mathf.Cos(azimuth)) * (Mathf.Cos(altitude)); // ; RA in hours, so multiply RA by 15 deg / hr
-        var xPos = radius * (Mathf.Cos(altitude) * (Mathf.Sin(azimuth)));
+        // our ground uses Z for North, so we need to flip this around a little
+        var zPos = radius * (Mathf.Cos(azimuth)) * (Mathf.Cos(altitude)) * -1; 
+        var xPos = radius * (Mathf.Cos(altitude) * (Mathf.Sin(azimuth))) * -1;
         var yPos = radius * Mathf.Sin(altitude);
 
         if (float.IsNaN(xPos))

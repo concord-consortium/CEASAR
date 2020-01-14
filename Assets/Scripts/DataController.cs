@@ -311,10 +311,9 @@ public class DataController : MonoBehaviour
                     float fractionOfDay = (float)lst / siderealHoursPerDay;
                     float planetRotation = fractionOfDay * 360;
                     
-                    // TODO: switch from reset & recalculate to just setting the angle around the existing axis
+                    // Start from initial rotation then rotate around for the current time and offset
                     transform.rotation = initialRotation;
-                    transform.Rotate(0, celestialSphereOffsetR, 0, Space.Self);
-                    transform.Rotate(0, planetRotation, 0, Space.Self);
+                    transform.Rotate(0, (celestialSphereOffsetR + planetRotation), 0, Space.Self);
                     // Set last timestamp so we only update when changed
                     lastTime = lst;
                 }

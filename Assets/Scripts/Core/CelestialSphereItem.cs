@@ -33,10 +33,4 @@ public abstract class CelestialSphereItem
     {
         return Utils.CalculateEquitorialPosition(radianRA, radianDec, radius);
     }
-
-    // calculate the position of stars at a point on Earth
-    public Vector3 CalculateHorizonPosition(float radius, double currentSiderialTime, float observerLatitude)
-    {
-        return Utils.CalculateHorizonPosition(RA, radianDec, radius, currentSiderialTime, observerLatitude);
-    }
 }
