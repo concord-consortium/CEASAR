@@ -418,7 +418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2549443974540763584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1055,7 +1055,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2549443975333580285
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1565,21 +1565,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d032d210d0b4434a307561cc2ac400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connectButton: {fileID: 2549443976156324535}
-  randomizeUsernameButton: {fileID: 812656907745087619}
-  connectButtonText: {fileID: 2549443974769864288}
-  m_EndpointField: {fileID: 2549443974321892131}
-  connectionStatusText: {fileID: 2549443975923022077}
-  usernameText: {fileID: 3882684661845234279}
   avatar: {fileID: 961596688562665789, guid: f2ed9c5a162c9413a80a675d8d657522, type: 3}
   interactionIndicator: {fileID: 3837293221611235267, guid: bea5abd67e7974abb8b55180a88d1311,
     type: 3}
   roomName: ceasar
-  debugMessages: {fileID: 2549443974602230068}
   autoConnect: 0
   scenesWithAvatars:
   - EarthInteraction
   networkConnection: 2
+  networkUI: {fileID: 0}
 --- !u!114 &2549443975885674654
 MonoBehaviour:
   m_ObjectHideFlags: 0

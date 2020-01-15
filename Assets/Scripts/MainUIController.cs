@@ -4,10 +4,14 @@ using UnityEngine;
 using System;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainUIController : MonoBehaviour
 {
+    private SimulationManager manager;
+
     public List<GameObject> enabledPanels = new List<GameObject>();
+    private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
 
     private DataController dataController;
     private SnapshotsController snapshotsController;
@@ -20,6 +24,7 @@ public class MainUIController : MonoBehaviour
     private Vector2 targetPosition;
     private bool movingControlPanel = false;
     private float speed = 750.0f;
+    private bool isHidden = false;
 
     // date and time controls
     private int userYear = DateTime.UtcNow.Year;
@@ -54,12 +59,20 @@ public class MainUIController : MonoBehaviour
     // snapshots
     private SnapGrid snapshotGrid;
 
+    private void Awake()
+    {
+        manager = SimulationManager.GetInstance();
+    }
     public void Init()
     {
-        markersController = SimulationManager.GetInstance().MarkersControllerComponent;
-        dataController = SimulationManager.GetInstance().DataControllerComponent;
-        sphere = SimulationManager.GetInstance().CelestialSphereObject;
-
+        manager = SimulationManager.GetInstance();
+        markersController = manager.MarkersControllerComponent;
+        dataController = manager.DataControllerComponent;
+        sphere = manager.CelestialSphereObject;
+        allPanels = new Dictionary<string, GameObject>();
+        foreach (Transform t in controlPanel.transform) {
+            allPanels.Add(t.name, t.gameObject);
+        }
         positionActivePanels();
 
         snapshotsController = FindObjectOfType<SnapshotsController>();
@@ -92,22 +105,46 @@ public class MainUIController : MonoBehaviour
             timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
         }
     }
+    public void AddPanel(GameObject panel)
+    {
+        if (!enabledPanels.Contains(panel)) enabledPanels.Add(panel);
+        positionActivePanels();
+    }
+    public void RemovePanel(GameObject panel)
+    {
+        if (enabledPanels.Contains(panel)) enabledPanels.Remove(panel);
+        positionActivePanels();
+    }
 
     void positionActivePanels()
     {
+        // reset menu hide/show
+        if (isHidden) controlPanel.GetComponent<RectTransform>().anchoredPosition = initialPosition;
+
+        foreach (Transform t in controlPanel.transform)
+        {
+            t.gameObject.SetActive(false);
+        }
         // UI sub-panels are added to the enabledPanels list and then ordered and positioned
         // vertically starting at the bottom of the Main UI panel (add or remove from list to
         // enable or disable)
         float panelPosition = 0f;
         float totalPanelHeight = 0f;
-        foreach (GameObject go in enabledPanels)
+
+        // Add the panels in reverse order, so the title is always on top
+        // and the child panels are in a consistent order
+        for (int i = allPanels.Count - 1; i >= 0; i--)
         {
-            go.SetActive(true);
-            RectTransform goRect = go.GetComponent<RectTransform>();
-            panelPosition += goRect.rect.height * .5f;
-            goRect.anchoredPosition = new Vector2(0, panelPosition);
-            panelPosition += goRect.rect.height * .5f;
-            totalPanelHeight = totalPanelHeight + goRect.rect.height;
+            GameObject go = allPanels.Values.ToArray()[i];
+            if (enabledPanels.Contains(go))
+            {
+                go.SetActive(true);
+                RectTransform goRect = go.GetComponent<RectTransform>();
+                panelPosition += goRect.rect.height * .5f;
+                goRect.anchoredPosition = new Vector2(0, panelPosition);
+                panelPosition += goRect.rect.height * .5f;
+                totalPanelHeight = totalPanelHeight + goRect.rect.height;
+            }
         }
 
         RectTransform controlPanelRect = controlPanel.GetComponent<RectTransform>();
@@ -141,15 +178,46 @@ public class MainUIController : MonoBehaviour
         handleAutoRotation();
     }
 
+    public void TogglePanel(string panelName)
+    {
+        GameObject togglePanelObject = allPanels[panelName];
+        if (togglePanelObject != null)
+        {
+            if (enabledPanels.Contains(togglePanelObject))
+                RemovePanel(togglePanelObject);
+            else
+                AddPanel(togglePanelObject);
+        }
+    }
+    public void ShowPanel(string panelName)
+    {
+        GameObject togglePanelObject = allPanels[panelName];
+        if (togglePanelObject != null)
+        {
+            if (!enabledPanels.Contains(togglePanelObject))
+                AddPanel(togglePanelObject);
+        }
+    }
+    public void HidePanel(string panelName)
+    {
+        GameObject togglePanelObject = allPanels[panelName];
+        if (togglePanelObject != null)
+        {
+            if (enabledPanels.Contains(togglePanelObject))
+                RemovePanel(togglePanelObject);
+        }
+    }
     public void ToggleShowControlPanel()
     {
         if (targetPosition == initialPosition)
         {
             targetPosition = hiddenPosition;
+            isHidden = true;
         }
         else
         {
             targetPosition = initialPosition;
+            isHidden = false;
         }
         movingControlPanel = true;
     }
@@ -184,13 +252,21 @@ public class MainUIController : MonoBehaviour
 
     public void ChangeStarSelection(GameObject selectedStar)
     {
-        if (starInfoPanel)
+        // make sure it's visible
+        ShowPanel("StarInfoPanel");
+
+        if (starInfoPanel && selectedStar)
         {
             StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
-            SimulationManager.GetInstance().CurrentlySelectedStar = starComponent;
+            manager.CurrentlySelectedStar = starComponent;
             starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
-            
         }
+    }
+    public void ClearStarSelection()
+    {
+        manager.CurrentlySelectedStar = null;
+        manager.ConstellationsControllerComponent.HighlightAllConstellations(true);
+        HidePanel("StarInfoPanel");
     }
 
     public void ChangeConstellationHighlight(string highlightConstellation)
@@ -373,5 +449,4 @@ public class MainUIController : MonoBehaviour
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
-
 }

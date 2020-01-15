@@ -6,11 +6,29 @@ using System.Text;
 
 public class StarInfoPanel : MonoBehaviour
 {
+    private SimulationManager manager;
     public TextMeshProUGUI starInfoText;
+
+    private void Start()
+    {
+        manager = SimulationManager.GetInstance();
+        if (manager.CurrentlySelectedStar == null)
+        {
+            starInfoText.text = "";
+            MainUIController mainUIController = FindObjectOfType<MainUIController>();
+            mainUIController.HidePanel("StarInfoPanel");
+        }
+        else if (string.IsNullOrEmpty(starInfoText.text))
+        {
+            UpdateStarInfoPanel();
+            Debug.Log("Highlighting constellation " + manager.CurrentlySelectedStar.starData.ConstellationFullName);
+            FindObjectOfType<ConstellationsController>().HighlightSingleConstellation(manager.CurrentlySelectedStar.starData.ConstellationFullName);
+        }
+    }
 
     public void UpdateStarInfoPanel()
     {
-        Star starData = SimulationManager.GetInstance().CurrentlySelectedStar.starData;
+        Star starData = manager.CurrentlySelectedStar.starData;
         StringBuilder description = new StringBuilder();
         description.Append("Name: ").Append(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
         description.Append("   Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
@@ -22,7 +40,7 @@ public class StarInfoPanel : MonoBehaviour
     }
     public void ClearStarSelection()
     {
-        SimulationManager.GetInstance().CurrentlySelectedStar = null;
+        manager.CurrentlySelectedStar = null;
         starInfoText.text = "";
         ConstellationsController constellationsController = FindObjectOfType<ConstellationsController>();
         if (constellationsController)

@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class ConstellationsController : MonoBehaviour
 {
+
+    private SimulationManager manager;
     List<Constellation> constellations = new List<Constellation>();
     float lineWidth = .035f;
+    bool sceneShouldShowConstellations = false;
 
     public void SetSceneParameters(float lineWidth, bool show)
     {
         this.lineWidth = lineWidth;
+        this.sceneShouldShowConstellations = show;
         ShowAllConstellations(show);
     }
 

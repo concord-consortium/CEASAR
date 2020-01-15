@@ -64,7 +64,10 @@ public class SimulationManager
     public List<string> ColorNames = new List<string>();
     public List<Color> ColorValues = new List<Color>();
 
-    public Color LocalPlayerColor = Color.white;
+    private Color localPlayerColor = Color.white;
+    public Color LocalPlayerColor {
+        get { return localPlayerColor; }
+    }
 
     // initial setup scale
     public readonly float InitialRadius = 100;
@@ -82,13 +85,15 @@ public class SimulationManager
 
     public StarComponent CurrentlySelectedStar;
 
+    private string localUsername = "";
     // Random color (capitalized), random animal (capitalized), random number
-    public string GenerateUsername()
+    public void GenerateUsername()
     {
         int colorIndex = rng.Next(ColorNames.Count - 1);
         int animalIndex = rng.Next(AnimalNames.Length - 1);
         string randomNumber = rng.Next(999).ToString();
-        return ColorNames[colorIndex].FirstCharToUpper() + AnimalNames[animalIndex].FirstCharToUpper() + randomNumber;
+        localUsername = ColorNames[colorIndex].FirstCharToUpper() + AnimalNames[animalIndex].FirstCharToUpper() + randomNumber;
+        localPlayerColor = ColorValues[colorIndex];
     }
 
     // We can find out the color value from the username
@@ -112,14 +117,23 @@ public class SimulationManager
 
         string colorName = sb.ToString();
         // Don't forget to lowercase the name!
-        if (ColorNames.Contains(colorName.ToLower()))
+        string color = colorName.ToLower();
+        if (ColorNames.Contains(color))
         {
-            return ColorValues[ColorNames.IndexOf(colorName.ToLower())];
+            return ColorValues[ColorNames.IndexOf(color)];
         }
         else
         {
-            Debug.Log("Color not found for " + colorName.ToLower() + " as part of " + name);
+            Debug.Log("Color not found for " + color + " as part of " + name);
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
+        }
+    }
+
+    public string LocalUsername {
+        get { return localUsername; }
+        set { 
+            localUsername = value;
+            localPlayerColor = GetColorForUsername(localUsername);
         }
     }
 
