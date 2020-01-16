@@ -45,18 +45,38 @@ public class SceneLoader : MonoBehaviour
             existingCamera.SetActive(false);
         }
         Instantiate(vrCameraRig);
-        Canvas[] mainUI = FindObjectsOfType<Canvas>();
-        foreach (Canvas c in mainUI)
+
+        Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
+        foreach (Canvas c in allUICanvases)
         {
             c.renderMode = RenderMode.WorldSpace;
-            c.transform.position = new Vector3(0, 3, 5);
+
             c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
             c.planeDistance = 10;
             c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             c.GetComponent<GraphicRaycaster>().enabled = false;
             if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
             c.GetComponent<OVRRaycaster>().enabled = true;
+            
+            
+            if (c.gameObject.name == "MainUI")
+            {
+                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
+                c.transform.position = new Vector3(3, 3, 5);
+
+            }
+            else if (c.gameObject.name == "NetworkUI")
+            {
+                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+                c.transform.position = new Vector3(-3, 3, 5);
+            }
+            else
+            {
+                c.transform.position = new Vector3(0, 3, 5);
+            }
+            
         }
+        
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
@@ -69,7 +89,16 @@ public class SceneLoader : MonoBehaviour
         {
             horizonCamControls.SetActive(false);
         }
+
+        if (SceneManager.GetActiveScene().name == "EarthInteraction" || SceneManager.GetActiveScene().name == "Stars")
+        {
+            Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+            vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            vrCam.GetComponent<Camera>().backgroundColor = Color.black;
+        }
     }
+
+
     private void setupStandardCameras()
     {
         GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
