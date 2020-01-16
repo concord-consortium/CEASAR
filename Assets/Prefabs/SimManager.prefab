@@ -45,6 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkControllerPrefab: {fileID: 2549443975885674653, guid: ab1c2ff2ac7bb4d0dabd42423d922349,
     type: 3}
+  interactionControllerPrefab: {fileID: 1113959076393538667, guid: a50af537ddde54b77b38046cc7102d8f,
+    type: 3}
   celestialSpherePrefab: {fileID: 3593076565269543302, guid: 37233d25d9339419abd3bbacedde00bc,
     type: 3}
   maxStars: 10000
