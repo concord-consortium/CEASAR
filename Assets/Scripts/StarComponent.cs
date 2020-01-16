@@ -48,8 +48,8 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
         if (broadcastToNetwork)
         {
-            NetworkController network = FindObjectOfType<NetworkController>();
-            network.ShowCelestialObjectInteraction(starData.ProperName,
+            InteractionController interactionController = FindObjectOfType<InteractionController>();
+            interactionController.ShowCelestialObjectInteraction(starData.ProperName,
                 starData.Constellation, starData.uniqueId, true);
         }
     }

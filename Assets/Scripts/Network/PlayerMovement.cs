@@ -22,10 +22,15 @@ public class PlayerMovement : MonoBehaviour
             // send update - no more frequently than once per second
             if (Time.time - SimulationManager.GetInstance().MovementSendInterval > lastSend)
             {
-                // send movement!
-                // Debug.Log("I'm sending!! " + transform.position);
+                // Broadcast movement to network:
                 if (!network) network = FindObjectOfType<NetworkController>();
-                network.HandleMovementUpdate(transform.position, transform.rotation, true);
+                network.BroadcastPlayerMovement(transform.position, transform.rotation);
+
+                // Log movement:
+                string movementInfo = "local player moved to P:" +
+                    transform.position.ToString() + " R:" + transform.rotation.ToString();
+                CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
+
                 // update local comparators
                 lastPos = transform.position;
                 lastRot = transform.rotation;

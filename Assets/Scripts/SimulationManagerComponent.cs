@@ -120,7 +120,7 @@ public class SimulationManagerComponent : MonoBehaviour
             else
             {
                 Debug.Log("Creating new Interaction controller object");
-                manager.InteractionControllerObject = Instantiate(InteractionControllerPrefab);
+                manager.InteractionControllerObject = Instantiate(interactionControllerPrefab);
             }
         }
         if (manager.CelestialSphereObject == null)

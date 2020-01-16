@@ -185,7 +185,7 @@ public class ColyseusClient : MonoBehaviour
             var m = (UpdateMessage) msg;
             Debug.Log(m.updateType + " " + m.playerId);
             Player player = players.Values.First(p => p.id == m.playerId);
-            networkController.HandlePlayerInteraction(player, m.updateType);
+            networkController.HandleNetworkInteraction(player, m.updateType);
         }
         else
         {
