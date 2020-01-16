@@ -31,14 +31,19 @@ public class VRInteraction : MonoBehaviour
     float activeLaserWidth = 0.04f;
     float inactiveLaserWidth = 0.02f;
     GameObject mainUI;
+    MainUIController mainUIController;
     GameObject networkUI;
 
     private StarComponent currentStar;
 
+    private Vector3 startPointForDrawing = Vector3.zero;
+    private Vector3 endPointForDrawing = Vector3.zero;
+    public Material lineDrawingMaterial;
+
+    LineRenderer drawingLine;
     private void Start()
     {
-
-        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim"; // GameObject.Find("Earth") != null;
+        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim"; 
         _vrPointer = Instantiate(vrPointerPrefab);
         laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
 
@@ -67,54 +72,69 @@ public class VRInteraction : MonoBehaviour
             forwardDirection = rayOrigin.forward;
             laserEndPos = laserStartPos + (laserMaxLength * forwardDirection);
             updateLaser(false);
-            // now detect if the user is holding down the Interact button also
+            // Next, detect if the user is holding down the Interact button also
 
-            // raycast, then if we hit the Earth we can show the interaction
-            ray = new Ray(laserStartPos, forwardDirection);
-            if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
+            if (mainUIController == null) mainUIController = FindObjectOfType<MainUIController>();
+            // if we're drawing, no need to raycast
+            if (mainUIController.IsDrawing)
             {
-                laserEndPos = hit.point;
-                updateLaser(true);
-
-                if (hit.transform.name == "Earth")
+                if (startPointForDrawing == Vector3.zero)
                 {
+                    // first interaction sets start
                     if (interactionTrigger())
                     {
-                        if (canInteract)
+                        startPointForDrawing = laserEndPos;
+                        Debug.Log("Start point set: " + startPointForDrawing.ToString());
+                        if (drawingLine == null)
                         {
-                            // filter by what we hit
-
-                            manager = SimulationManager.GetInstance();
-                            interactionController = FindObjectOfType<InteractionController>();
-                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                            canInteract = false;
+                            drawingLine = this.gameObject.AddComponent<LineRenderer>();
+                            drawingLine.material = lineDrawingMaterial;
+                            drawingLine.startWidth = 20;
+                            drawingLine.endWidth = 20;
                         }
+                        drawingLine.positionCount = 2;
+                        drawingLine.SetPosition(0, startPointForDrawing);
+                        drawingLine.SetPosition(1, startPointForDrawing);
                     }
-                    else
+                } else if (endPointForDrawing == Vector3.zero)
+                {
+                    drawingLine.SetPosition(1, laserEndPos);
+                    if (interactionTrigger())
                     {
-                        canInteract = true;
+                        endPointForDrawing = laserEndPos;
+                        Debug.Log("End point set: " + endPointForDrawing.ToString() + " magnitude: " + Vector3.Magnitude(endPointForDrawing - startPointForDrawing));
+                    }
+                } else
+                {
+                    if (interactionTrigger()){
+                        // clear start/end
+                        startPointForDrawing = Vector3.zero;
+                        endPointForDrawing = Vector3.zero;
+                        drawingLine.SetPosition(0, Vector3.zero);
+                        drawingLine.SetPosition(1, Vector3.zero);
                     }
                 }
-                else if (hit.transform.tag == "Star")
+            }
+            else
+            {
+                // Raycast, then if we hit the Earth or a star we can show the interaction
+                ray = new Ray(laserStartPos, forwardDirection);
+                if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
                 {
-                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                    if (nextStar != null)
-                    {
-                        if (nextStar != currentStar)
-                        {
-                            Debug.Log("New star! " + nextStar.starData.ProperName);
-                            // remove highlighting from previous star
-                            if (currentStar != null) currentStar.CursorHighlightStar(false);
-                        }
-                    
-                        currentStar = nextStar;
-                        currentStar.CursorHighlightStar(true);
+                    laserEndPos = hit.point;
+                    updateLaser(true);
 
+                    if (hit.transform.name == "Earth")
+                    {
                         if (interactionTrigger())
                         {
                             if (canInteract)
                             {
-                                currentStar.HandleSelectStar(true);
+                                // filter by what we hit
+
+                                manager = SimulationManager.GetInstance();
+                                interactionController = FindObjectOfType<InteractionController>();
+                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true); 
                                 canInteract = false;
                             }
                         }
@@ -123,15 +143,44 @@ public class VRInteraction : MonoBehaviour
                             canInteract = true;
                         }
                     }
+                    else if (hit.transform.tag == "Star")
+                    {
+                        StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                        if (nextStar != null)
+                        {
+                            if (nextStar != currentStar)
+                            {
+                                Debug.Log("New star! " + nextStar.starData.ProperName);
+                                // remove highlighting from previous star
+                                if (currentStar != null) currentStar.CursorHighlightStar(false);
+                            }
+
+                            currentStar = nextStar;
+                            currentStar.CursorHighlightStar(true);
+
+                            if (interactionTrigger())
+                            {
+                                if (canInteract)
+                                {
+                                    currentStar.HandleSelectStar(true);
+                                    canInteract = false;
+                                }
+                            }
+                            else
+                            {
+                                canInteract = true;
+                            }
+                        }
+                    }
                 }
-            }
-            else
-            {
-                if (currentStar != null)
+                else
                 {
-                    currentStar.CursorHighlightStar(false);
+                    if (currentStar != null)
+                    {
+                        currentStar.CursorHighlightStar(false);
+                    }
+                    updateLaser(false);
                 }
-                updateLaser(false);
             }
         }
     }
@@ -153,38 +202,16 @@ public class VRInteraction : MonoBehaviour
             if (mainUI)
             {
                 positionCanvasTransformRelativeToOrigin(mainUI, 6f);
-                /*Transform origin = this.transform;
-                if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
-                mainUI.transform.position = origin.position + (origin.forward * 6);
-                Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
-                newRotation.x = 0;
-                newRotation.z = 0;
-                mainUI.transform.rotation = Quaternion.Euler(newRotation);*/
-            }
-        }
-        if (rightMenuTrigger())
-        {
-            if (networkUI == null) networkUI = GameObject.Find("NetworkUI");
-            if (networkUI)
-            {
-                positionCanvasTransformRelativeToOrigin(networkUI, 6f);
-               /* Transform origin = this.transform;
-                if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
-                networkUI.transform.position = origin.position + (origin.forward * 6);
-                Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
-                newRotation.x = 0;
-                newRotation.z = 0;
-                networkUI.transform.rotation = Quaternion.Euler(newRotation);*/
             }
         }
     }
 
     bool interactionTrigger()
     {
-        return (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) ||
-                        OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) ||
-                        OVRInput.Get(OVRInput.Button.One) ||
-                        OVRInput.Get(OVRInput.Button.Three));
+        return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger) ||
+                        OVRInput.GetDown(OVRInput.Button.One) ||
+                        OVRInput.GetDown(OVRInput.Button.Three));
     }
     bool grabTrigger()
     {
@@ -198,6 +225,11 @@ public class VRInteraction : MonoBehaviour
     bool rightMenuTrigger()
     {
         return (OVRInput.Get(OVRInput.Button.Four));
+    }
+
+    void setDrawStartPoint()
+    {
+
     }
 
     void updateLaser(bool activeTarget)

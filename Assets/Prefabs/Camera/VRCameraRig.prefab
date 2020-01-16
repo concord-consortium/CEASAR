@@ -235,6 +235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vrPointerPrefab: {fileID: 8142256564677687833, guid: bae269b11de12a84b854567b8aa3b208,
     type: 3}
+  lineDrawingMaterial: {fileID: 2100000, guid: 82f338a4b2b287f4fa01c37dff6a96b7, type: 2}
 --- !u!1 &4680472575867573179
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,10 +567,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4682494241804767069}
     m_Modifications:
-    - target: {fileID: 100000, guid: 37ba10a26a648144fa2390c8adfb2c8a, type: 3}
-      propertyPath: m_Name
-      value: OculusTouchForQuestAndRiftS_Right
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 37ba10a26a648144fa2390c8adfb2c8a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -613,6 +610,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 37ba10a26a648144fa2390c8adfb2c8a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 37ba10a26a648144fa2390c8adfb2c8a, type: 3}
+      propertyPath: m_Name
+      value: OculusTouchForQuestAndRiftS_Right
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37ba10a26a648144fa2390c8adfb2c8a, type: 3}
@@ -629,10 +630,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4675916119715375333}
     m_Modifications:
-    - target: {fileID: 100000, guid: 32fbc8bcebb64584da5868aeeb086cda, type: 3}
-      propertyPath: m_Name
-      value: OculusTouchForQuestAndRiftS_Left
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 32fbc8bcebb64584da5868aeeb086cda, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -676,6 +673,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 32fbc8bcebb64584da5868aeeb086cda, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 32fbc8bcebb64584da5868aeeb086cda, type: 3}
+      propertyPath: m_Name
+      value: OculusTouchForQuestAndRiftS_Left
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32fbc8bcebb64584da5868aeeb086cda, type: 3}

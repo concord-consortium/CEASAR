@@ -68,6 +68,15 @@ public class MainUIController : MonoBehaviour
     // snapshots
     private SnapGrid snapshotGrid;
 
+    public GameObject drawModeIndicator;
+    private bool isDrawing = false;
+    public bool IsDrawing {
+        get { return isDrawing; }
+        set { 
+            isDrawing = value;
+            if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+        }
+    }
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
@@ -231,6 +240,10 @@ public class MainUIController : MonoBehaviour
         movingControlPanel = true;
     }
 
+    public void ToggleDrawMode()
+    {
+        IsDrawing = !IsDrawing;
+    }
     public void ChangeYear(float newYear)
     {
         userYear = (int)newYear;
