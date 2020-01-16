@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg class="MuiSvgIcon-root jss1823" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation" xmlns="http://www.w3.org/2000/svg">
+  <path transform="scale(1.33, 1.33)" fill="none" d="M0 0h18v18H0z"/>
+  <path d="M 5.241 7.296 L 8.107 9.421 L 7.009 5.992 L 9.874 3.917 L 6.361 3.917 L 5.241 0.377 L 4.123 3.917 L 0.611 3.917 L 3.474 5.992 L 2.379 9.421 Z" style="fill: none;"/>
+  <polyline style="fill: none; stroke: rgb(96, 96, 96);" points="5.901 6.275 8.939 18.917 18.5 11.997"/>
+  <polyline style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" points="7.821 5.331"/>
+  <path d="M 8.942 20.994 L 11.785 23.007 L 10.698 19.759 L 13.541 17.793 L 10.054 17.793 L 8.942 14.44 L 7.831 17.793 L 4.344 17.793 L 7.187 19.759 L 6.099 23.007 Z" style=""/>
+  <path d="M 18.371 14.251 L 21.42 16.462 L 20.253 12.894 L 23.298 10.733 L 19.562 10.733 L 18.371 7.05 L 17.179 10.733 L 13.443 10.733 L 16.49 12.894 L 15.324 16.462 Z" style=""/>
+  <path d="M 6.288 8.944 L 10.128 11.647 L 8.658 7.285 L 12.494 4.643 L 7.788 4.643 L 6.288 0.142 L 4.787 4.643 L 0.081 4.643 L 3.918 7.285 L 2.45 11.647 Z" style=""/>
+</svg>
