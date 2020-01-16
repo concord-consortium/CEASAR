@@ -37,9 +37,18 @@ public class MainUIController : MonoBehaviour
     public Slider timeSlider;
 
     public Slider yearSlider;
-    
+
     // star selection controls
-    public GameObject starInfoPanel;
+    private GameObject _starInfoPanel;
+    public GameObject starInfoPanel {
+        get { 
+            if (_starInfoPanel == null)
+            {
+                _starInfoPanel = allPanels["StarInfoPanel"];
+            }
+            return _starInfoPanel; 
+        }
+    }
 
     private ConstellationDropdown constellationDropdown;
 

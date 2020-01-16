@@ -37,10 +37,10 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         {
             if (constellationsController) constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
             // make sure it's visible
+            SimulationManager.GetInstance().CurrentlySelectedStar = this;
             mainUIController.ShowPanel("StarInfoPanel");
 
-            SimulationManager.GetInstance().CurrentlySelectedStar = this;
-            FindObjectOfType<StarInfoPanel>().UpdateStarInfoPanel();
+            mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
             
             // update dropdown, if visible
             mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
