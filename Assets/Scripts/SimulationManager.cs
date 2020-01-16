@@ -36,9 +36,8 @@ public class SimulationManager
 #endif
         }
     }
-
-
     public GameObject NetworkControllerObject;
+    public GameObject InteractionControllerObject;
     public NetworkConnection NetworkStatus = NetworkConnection.None; 
     private GameObject celestialSphereObject;
 

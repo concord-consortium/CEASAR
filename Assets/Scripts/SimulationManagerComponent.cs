@@ -13,6 +13,8 @@ public class SimulationManagerComponent : MonoBehaviour
     [SerializeField]
     private GameObject networkControllerPrefab;
     [SerializeField]
+    private GameObject interactionControllerPrefab;
+    [SerializeField]
     private GameObject celestialSpherePrefab;
 
     // Celestial Sphere scene-specific settings
@@ -107,6 +109,18 @@ public class SimulationManagerComponent : MonoBehaviour
             {
                 Debug.Log("Creating new network object");
                 manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+            }
+        }
+        if (manager.InteractionControllerObject == null)
+        {
+            if (FindObjectOfType<InteractionController>() != null)
+            {
+                manager.InteractionControllerObject = FindObjectOfType<InteractionController>().gameObject;
+            }
+            else
+            {
+                Debug.Log("Creating new Interaction controller object");
+                manager.InteractionControllerObject = Instantiate(InteractionControllerPrefab);
             }
         }
         if (manager.CelestialSphereObject == null)

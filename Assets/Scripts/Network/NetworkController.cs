@@ -353,16 +353,32 @@ public class NetworkController : MonoBehaviour
         if (interactionIndicator)
         {
             GameObject indicatorObj = Instantiate(interactionIndicator);
+            GameObject earth = GameObject.Find("Earth");
             indicatorObj.transform.localRotation = rot;
             indicatorObj.transform.position = pos;
             Utils.SetObjectColor(indicatorObj, playerColor);
             // Experimental code for Lat/Lng
             float radius = 5;
-            if (GameObject.Find("Earth"))
+            if (earth)
             {
-                radius = GameObject.Find("Earth").transform.localScale.x / 2;
+
+                Vector3 earthPos = pos - earth.transform.position;
+                Vector3 size = earth.GetComponent<Renderer>().bounds.size;
+                radius = size.x / 2;
+                Debug.Log("size" + size);
+                Debug.Log("pos.x: " + pos.x);
+                Debug.Log("pos.y: " + pos.y);
+                Debug.Log("pos.z: " + pos.z);
+                Debug.Log("==========================");
+                Debug.Log("earth.x: " + earthPos.x);
+                Debug.Log("earth.y: " + earthPos.y);
+                Debug.Log("earth.z: " + earthPos.z);
+                Debug.Log("r: " + radius);
+                Debug.Log("lat lng " + Utils.LatLngFromPosition(earthPos, radius));
             }
-            Debug.Log("lat lng " + Utils.LatLngFromPosition(pos, radius));
+            else {
+                Debug.Log("NO EARTH");
+            }
             StartCoroutine(selfDestruct(indicatorObj));
         }
         if (isLocal)
