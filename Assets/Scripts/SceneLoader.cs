@@ -14,10 +14,6 @@ public class SceneLoader : MonoBehaviour
     private GameObject vrEventSystem;
     [SerializeField]
     private GameObject defaultEventSystem;
-    //[SerializeField]
-    //private GameObject vrUI;
-    // [SerializeField]
-    // private GameObject vrStarInfoCanvas;
 
     public void Start()
     {
@@ -49,19 +45,6 @@ public class SceneLoader : MonoBehaviour
             existingCamera.SetActive(false);
         }
         Instantiate(vrCameraRig);
-
-        //MainUIController mainUI = FindObjectOfType<MainUIController>();
-        //Destroy(mainUI.gameObject);
-
-        //Instantiate(vrUI);
-        /*MainUIController mainUI = FindObjectOfType<MainUIController>();
-        if (mainUI != null)
-        {
-            GameObject vrStarInfoPanel = Instantiate(vrStarInfoCanvas);
-            StarInfoPanel sip = vrStarInfoPanel.GetComponentInChildren<StarInfoPanel>();
-            mainUI.starInfoPanel = sip.gameObject;
-            sip.setEnabled(false);
-        }*/
 
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)

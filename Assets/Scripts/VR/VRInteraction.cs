@@ -13,6 +13,11 @@ public class VRInteraction : MonoBehaviour
     Ray ray;
     int layerMask;
     public GameObject vrPointerPrefab;
+
+    private GameObject _vrPointer;
+    public GameObject vrPointerInstance {
+        get { return _vrPointer; }
+    }
     LineRenderer laserLineRenderer;
     float laserMaxLength = 1500f;
     SimulationManager manager;
@@ -34,7 +39,8 @@ public class VRInteraction : MonoBehaviour
     {
 
         shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim"; // GameObject.Find("Earth") != null;
-        laserLineRenderer = Instantiate(vrPointerPrefab).GetComponent<LineRenderer>();
+        _vrPointer = Instantiate(vrPointerPrefab);
+        laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
 
         updateLaser(false);
 
