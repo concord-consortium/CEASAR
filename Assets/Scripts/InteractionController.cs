@@ -1,27 +1,53 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 
 public class InteractionController : MonoBehaviour
 {
     public GameObject interactionIndicator;
-    public NetworkController _networkController;
-    public NetworkController networkController
+
+    // Cached reference to earth object for lat/lng
+    private GameObject _earth;
+    private GameObject earth
+    {
+        get
+        {
+            if(_earth == null)
+            {
+                // Look up and cache the local earth object
+                _earth = GameObject.FindGameObjectWithTag("Earth");
+            }
+            return _earth;
+        }
+    }
+
+    // Cached reference to Network controller for broadcasting events
+    private NetworkController _networkController;
+    private NetworkController networkController
     {
         get {
-            if (_networkController)
+            if (_networkController == null)
             {
-                return _networkController;
+                // Look up and cache our network controller
+                _networkController = FindObjectOfType<NetworkController>();
             }
-            _networkController = FindObjectOfType<NetworkController>();
             return _networkController;
         }
     }
 
+    
     private void Awake()
     {
+        SceneManager.sceneUnloaded += OnSceneUnload;
         DontDestroyOnLoad(this.gameObject);
+    }
 
+    private void OnSceneUnload(Scene scene)
+    {
+        // Forget about our cached earth object.
+        _earth = null;
+        // Don't need to forget about our network controller -- never disposed.
+        // _networkController = null;
     }
 
     public void HandleRemoteInteraction(Player updatedPlayer, string interactionType)
@@ -80,8 +106,6 @@ public class InteractionController : MonoBehaviour
     public void ShowEarthMarkerInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
         Vector2 latLng = Vector2.zero; // unset value
-        GameObject earth = GameObject.Find("Earth");
-
         if (earth)
         {
             Vector3 earthPos = pos - earth.transform.position;
@@ -109,6 +133,7 @@ public class InteractionController : MonoBehaviour
                 networkController.BroadcastEarthInteraction(pos, rot);
             }
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
+            Debug.Log(interactionInfo);
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
