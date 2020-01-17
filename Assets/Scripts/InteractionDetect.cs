@@ -10,14 +10,14 @@ public class InteractionDetect : MonoBehaviour
     Ray ray;
     int layerMask;
     SimulationManager manager;
-    NetworkController network;
+    InteractionController interactionController;
     // Start is called before the first frame update
     void Start()
     {
         camera = GetComponent<Camera>();
         layerMask = LayerMask.GetMask("Earth");
         manager = SimulationManager.GetInstance();
-        network = FindObjectOfType<NetworkController>();
+        interactionController = FindObjectOfType<InteractionController>();
     }
 
     // Update is called once per frame
@@ -37,8 +37,16 @@ public class InteractionDetect : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     manager = SimulationManager.GetInstance();
-                    network = FindObjectOfType<NetworkController>();
-                    network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                    interactionController = FindObjectOfType<InteractionController>();
+                    if(interactionController)
+                    {
+                        interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                    }
+                    else
+                    {
+                        Debug.Log("💀 cant find interaction manager");
+                    }
+                    
                 }
             }
         }

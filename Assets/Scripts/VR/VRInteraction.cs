@@ -21,7 +21,7 @@ public class VRInteraction : MonoBehaviour
     LineRenderer laserLineRenderer;
     float laserMaxLength = 1500f;
     SimulationManager manager;
-    NetworkController network;
+    InteractionController interactionController;
     bool canInteract = true;
     OVRInputModule m_InputModule;
     bool shouldShowIndicator;
@@ -48,7 +48,7 @@ public class VRInteraction : MonoBehaviour
 
         layerMask = LayerMask.GetMask("Earth", "Stars");
         manager = SimulationManager.GetInstance();
-        network = FindObjectOfType<NetworkController>();
+        interactionController = FindObjectOfType<InteractionController>();
     }
     void Update()
     {
@@ -85,8 +85,8 @@ public class VRInteraction : MonoBehaviour
                             // filter by what we hit
 
                             manager = SimulationManager.GetInstance();
-                            network = FindObjectOfType<NetworkController>();
-                            network.ShowInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            interactionController = FindObjectOfType<InteractionController>();
+                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
                             canInteract = false;
                         }
                     }

@@ -108,10 +108,11 @@ public static class Utils
         return CalculatePositionByAzAlt((float)azimuth, (float)altitude, radius);
     }
     
-    public static Vector2 LatLngFromPosition(Vector3 position, float sphereRadius)
+    public static Vector2 LatLngFromPosition(Vector3 pos, float rad)
     {
-        float lat = 90 - ((float)Math.Acos(position.y / sphereRadius) * 180 / Mathf.PI); //90 - theta
-        float lon = (float)Math.Atan(position.x / position.z) * 180 / Mathf.PI; //phi
+        
+        float lat = 90 - (float) Math.Acos(pos.y / rad) * 180 / Mathf.PI;
+        float lon = (float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI;
         return new Vector2(lat, lon);
     }
 }

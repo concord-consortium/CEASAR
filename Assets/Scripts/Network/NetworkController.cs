@@ -311,105 +311,42 @@ public class NetworkController : MonoBehaviour
             }
         }
     }
-
-    public void HandlePlayerInteraction(Player updatedPlayer, string interactionType)
+    private bool isLocalPlayer(Player player)
     {
-        // For all non-movement updates
-        bool isLocal = updatedPlayer.username == localPlayer.username;
-        if (!isLocal)
-        {
-            switch (interactionType)
-            {
-                case "interaction":
-                    // show indicator
-                    Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," +
-                              updatedPlayer.interactionTarget.position.y + "," +
-                              updatedPlayer.interactionTarget.position.z);
-                    Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
-                    Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
-                    ShowInteraction(pos, rot,
-                        SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
-                    break;
-                case "celestialinteraction":
-                    Debug.Log("remote player selected star");
-                    // highlight star/ constellation
-                    // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
-                    // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
-                    // maintain a dict of stars by ID for easier lookups. 
-                    SimulationManager.GetInstance().DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar();
-                    break;
-                case "locationpin":
-                    // add / move player pin
-                    Debug.Log("remote player pinned a location");
-                    break;
-                default:
-                    break;
-            }
-        }
+        return player.username == localPlayer.username; 
     }
 
-    public void ShowInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
+    private bool isRemotePlayer(Player player)
     {
-        if (interactionIndicator)
-        {
-            GameObject indicatorObj = Instantiate(interactionIndicator);
-            indicatorObj.transform.localRotation = rot;
-            indicatorObj.transform.position = pos;
-            Utils.SetObjectColor(indicatorObj, playerColor);
-            // Experimental code for Lat/Lng
-            float radius = 5;
-            if (GameObject.Find("Earth"))
-            {
-                radius = GameObject.Find("Earth").transform.localScale.x / 2;
-            }
-            Debug.Log("lat lng " + Utils.LatLngFromPosition(pos, radius));
-            StartCoroutine(selfDestruct(indicatorObj));
-        }
-        if (isLocal)
-        {
-            // now need to broadcast to remotes
-            colyseusClient.SendNetworkTransformUpdate(pos, rot, "interaction");
-            string interactionInfo = "local interaction P:" +
-    pos.ToString() + " R:" + rot.ToString();
-            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
-        }
+        return !isLocalPlayer(player);
     }
-    public void ShowCelestialObjectInteraction(string coName, string coGroup, string uniqueId, bool isLocal)
-    {
-        if (isLocal)
+
+    public void HandleNetworkInteraction(Player player, string interactionType)
+    { 
+        if (isRemotePlayer(player))
         {
-            // now need to broadcast to remotes
-            NetworkCelestialObject co = new NetworkCelestialObject
-            {
-                name = coName, group = coGroup, uniqueId = uniqueId
-            };
-            colyseusClient.SendCelestialInteraction(co);
-            string interactionInfo = "local celestial interaction CO:" +
-                                     coName + ", " + coGroup + ", " + uniqueId;
-            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+            InteractionController interactionController = FindObjectOfType<InteractionController>();
+            interactionController.HandleRemoteInteraction(player, interactionType);
         }
         else
         {
-            string interactionInfo = "remote celestial interaction CO:" +
-                                     coName + ", " + coGroup + ", " + uniqueId;
+            Debug.Log("Ignoring local interaction from network ... ");
         }
     }
-    public void HandleMovementUpdate(Vector3 pos, Quaternion rot, bool isLocal)
-    {
-        if (isLocal)
-        {
-            // broadcast!
-            colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
 
-            // log!
-            string movementInfo = "local player moved to P:" +
-                pos.ToString() + " R:" + rot.ToString();
-            CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
-        }
-        else
-        {
-            // move remote player
-        }
+    public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
+    {
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, "interaction");
+    }
+
+    public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
+    {
+        colyseusClient.SendCelestialInteraction(celestialObj);
+    }
+
+    public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
+    {
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
     }
 
     IEnumerator selfDestruct(GameObject indicatorObj)
