@@ -38,9 +38,19 @@ public class InteractionController : MonoBehaviour
     
     private void Awake()
     {
-        SceneManager.sceneUnloaded += OnSceneUnload;
         DontDestroyOnLoad(this.gameObject);
     }
+
+    void OnDisable()
+    {
+        SceneManager.sceneUnloaded -= OnSceneUnload;
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneUnloaded += OnSceneUnload;
+    }
+
 
     private void OnSceneUnload(Scene scene)
     {
