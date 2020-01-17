@@ -8,6 +8,7 @@ TagManager:
   - Debug
   - LocalPlayerAvatar
   - VRPointer
+  - Earth
   layers:
   - Default
   - TransparentFX
