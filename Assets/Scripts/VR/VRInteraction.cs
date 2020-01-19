@@ -36,6 +36,8 @@ public class VRInteraction : MonoBehaviour
 
     private StarComponent currentStar;
 
+    public AnnotationTool annotationTool;
+
     private Vector3 startPointForDrawing = Vector3.zero;
     private Vector3 endPointForDrawing = Vector3.zero;
     public Material lineDrawingMaterial;
@@ -43,7 +45,8 @@ public class VRInteraction : MonoBehaviour
     LineRenderer drawingLine;
     private void Start()
     {
-        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim"; 
+        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim";
+        if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
         _vrPointer = Instantiate(vrPointerPrefab);
         laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
 
@@ -76,9 +79,13 @@ public class VRInteraction : MonoBehaviour
 
             if (mainUIController == null) mainUIController = FindObjectOfType<MainUIController>();
             // if we're drawing, no need to raycast
-            if (mainUIController.IsDrawing)
+            if (mainUIController.IsDrawing && annotationTool != null)
             {
-                if (startPointForDrawing == Vector3.zero)
+                if (interactionTrigger())
+                {
+                    annotationTool.Annotate(laserEndPos);
+                }
+                /*if (startPointForDrawing == Vector3.zero)
                 {
                     // first interaction sets start
                     if (interactionTrigger())
@@ -113,7 +120,7 @@ public class VRInteraction : MonoBehaviour
                         drawingLine.SetPosition(0, Vector3.zero);
                         drawingLine.SetPosition(1, Vector3.zero);
                     }
-                }
+                }*/
             }
             else
             {

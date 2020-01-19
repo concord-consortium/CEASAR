@@ -70,8 +70,11 @@ public class SimulationManager
 
     // initial setup scale
     public readonly float InitialRadius = 100;
+    // Scene Radius will be set in DataController, but we can keep a reference here for lookups elsewhere
+    public float SceneRadius = 100;
     public float CurrentScaleFactor(float sceneRadius)
     {
+        SceneRadius = sceneRadius;
         return sceneRadius / InitialRadius;
     }
     // Movement synchronization throttled for Heroku/Mongo
