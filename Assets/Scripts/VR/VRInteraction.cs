@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-//public enum ControllerHand { Left, Right };
-//[RequireComponent(typeof(LineRenderer))]
 public class VRInteraction : MonoBehaviour
 {
+    RaycastHit[] hits = new RaycastHit[2];
     RaycastHit hit;
     Ray ray;
-    int layerMask;
+    int layerMaskEarth;
+    int layerMaskStars;
     public GameObject vrPointerPrefab;
 
     private GameObject _vrPointer;
@@ -19,17 +19,19 @@ public class VRInteraction : MonoBehaviour
         get { return _vrPointer; }
     }
     LineRenderer laserLineRenderer;
-    float laserMaxLength = 1500f;
+    float laserShortDistance = 40f;
+    float laserLongDistance = 1500f;
     SimulationManager manager;
     InteractionController interactionController;
     bool canInteract = true;
     OVRInputModule m_InputModule;
     bool shouldShowIndicator;
+    bool allowStarInteractions;
     Vector3 laserStartPos = Vector3.zero;
     Vector3 forwardDirection = Vector3.forward;
     Vector3 laserEndPos = Vector3.zero;
-    float activeLaserWidth = 0.04f;
-    float inactiveLaserWidth = 0.02f;
+    float activeLaserWidth = 0.02f;
+    float inactiveLaserWidth = 0.01f;
     GameObject mainUI;
     MainUIController mainUIController;
     GameObject networkUI;
@@ -38,14 +40,13 @@ public class VRInteraction : MonoBehaviour
 
     public AnnotationTool annotationTool;
 
-    private Vector3 startPointForDrawing = Vector3.zero;
-    private Vector3 endPointForDrawing = Vector3.zero;
-    public Material lineDrawingMaterial;
 
     LineRenderer drawingLine;
     private void Start()
     {
-        shouldShowIndicator = SceneManager.GetActiveScene().name != "LoadSim";
+        string sceneName = SceneManager.GetActiveScene().name;
+        shouldShowIndicator = sceneName != "LoadSim";
+        allowStarInteractions = sceneName == "Horizon" || sceneName == "Stars";
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
         _vrPointer = Instantiate(vrPointerPrefab);
         laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
@@ -54,12 +55,18 @@ public class VRInteraction : MonoBehaviour
 
         m_InputModule = FindObjectOfType<OVRInputModule>();
 
-        layerMask = LayerMask.GetMask("Earth", "Stars");
+        layerMaskEarth = LayerMask.GetMask("Earth");
+        layerMaskStars = LayerMask.GetMask("Stars");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
+
+        laserLongDistance = (manager.SceneRadius + 2);
     }
     void Update()
     {
+        if (manager == null) manager = SimulationManager.GetInstance();
+        if (interactionController == null) interactionController = FindObjectOfType<InteractionController>();
+
         showIndicator(gameObject, shouldShowIndicator);
         toggleMenu();
     }
@@ -73,7 +80,7 @@ public class VRInteraction : MonoBehaviour
             if (m_InputModule != null && m_InputModule.rayTransform != null) rayOrigin = m_InputModule.rayTransform;
             laserStartPos = rayOrigin.position;
             forwardDirection = rayOrigin.forward;
-            laserEndPos = laserStartPos + (laserMaxLength * forwardDirection);
+            laserEndPos = laserStartPos + (laserLongDistance * forwardDirection);
             updateLaser(false);
             // Next, detect if the user is holding down the Interact button also
 
@@ -85,98 +92,56 @@ public class VRInteraction : MonoBehaviour
                 {
                     annotationTool.Annotate(laserEndPos);
                 }
-                /*if (startPointForDrawing == Vector3.zero)
-                {
-                    // first interaction sets start
-                    if (interactionTrigger())
-                    {
-                        startPointForDrawing = laserEndPos;
-                        Debug.Log("Start point set: " + startPointForDrawing.ToString());
-                        if (drawingLine == null)
-                        {
-                            drawingLine = this.gameObject.AddComponent<LineRenderer>();
-                            drawingLine.material = lineDrawingMaterial;
-                            drawingLine.startWidth = 20;
-                            drawingLine.endWidth = 20;
-                        }
-                        drawingLine.positionCount = 2;
-                        drawingLine.SetPosition(0, startPointForDrawing);
-                        drawingLine.SetPosition(1, startPointForDrawing);
-                    }
-                } else if (endPointForDrawing == Vector3.zero)
-                {
-                    drawingLine.SetPosition(1, laserEndPos);
-                    if (interactionTrigger())
-                    {
-                        endPointForDrawing = laserEndPos;
-                        Debug.Log("End point set: " + endPointForDrawing.ToString() + " magnitude: " + Vector3.Magnitude(endPointForDrawing - startPointForDrawing));
-                    }
-                } else
-                {
-                    if (interactionTrigger()){
-                        // clear start/end
-                        startPointForDrawing = Vector3.zero;
-                        endPointForDrawing = Vector3.zero;
-                        drawingLine.SetPosition(0, Vector3.zero);
-                        drawingLine.SetPosition(1, Vector3.zero);
-                    }
-                }*/
+
             }
             else
             {
                 // Raycast, then if we hit the Earth or a star we can show the interaction
                 ray = new Ray(laserStartPos, forwardDirection);
-                if (Physics.Raycast(ray, out hit, laserMaxLength, layerMask))
-                {
-                    laserEndPos = hit.point;
-                    updateLaser(true);
 
-                    if (hit.transform.name == "Earth")
+                if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+                {
+                    for (int i = 0; i < hits.Length; i++)
                     {
+                        hit = hits[i];
+                        laserEndPos = hit.point;
+                        updateLaser(true);
+
                         if (interactionTrigger())
                         {
-                            if (canInteract)
+                            Collider c = hit.collider;
+                            if (c is SphereCollider)
                             {
-                                // filter by what we hit
-
-                                manager = SimulationManager.GetInstance();
-                                interactionController = FindObjectOfType<InteractionController>();
-                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true); 
-                                canInteract = false;
+                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
                             }
-                        }
-                        else
-                        {
-                            canInteract = true;
+                            else if (c is MeshCollider)
+                            {
+                                Renderer rend = hit.transform.GetComponent<Renderer>();
+                                // hit.textureCoord only possible on the Mesh collider
+                                manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
+                            }
                         }
                     }
-                    else if (hit.transform.tag == "Star")
+                }
+                else if(allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStars))
+                {
+                    // Handle stars separately
+                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                    if (nextStar != null)
                     {
-                        StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                        if (nextStar != null)
+                        if (nextStar != currentStar)
                         {
-                            if (nextStar != currentStar)
-                            {
-                                Debug.Log("New star! " + nextStar.starData.ProperName);
-                                // remove highlighting from previous star
-                                if (currentStar != null) currentStar.CursorHighlightStar(false);
-                            }
+                            Debug.Log("New star! " + nextStar.starData.ProperName);
+                            // remove highlighting from previous star
+                            if (currentStar != null) currentStar.CursorHighlightStar(false);
+                        }
 
-                            currentStar = nextStar;
-                            currentStar.CursorHighlightStar(true);
+                        currentStar = nextStar;
+                        currentStar.CursorHighlightStar(true);
 
-                            if (interactionTrigger())
-                            {
-                                if (canInteract)
-                                {
-                                    currentStar.HandleSelectStar(true);
-                                    canInteract = false;
-                                }
-                            }
-                            else
-                            {
-                                canInteract = true;
-                            }
+                        if (interactionTrigger())
+                        {
+                            currentStar.HandleSelectStar(true);
                         }
                     }
                 }
@@ -253,6 +218,6 @@ public class VRInteraction : MonoBehaviour
             laserLineRenderer.startWidth = inactiveLaserWidth;
             laserLineRenderer.endWidth = inactiveLaserWidth;
         }
-        
+
     }
 }

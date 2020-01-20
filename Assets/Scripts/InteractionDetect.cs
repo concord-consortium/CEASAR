@@ -6,7 +6,7 @@ public class InteractionDetect : MonoBehaviour
 {
     public GameObject indicator;
     Camera camera;
-    RaycastHit[] hits;
+    RaycastHit[] hits = new RaycastHit[2];
     RaycastHit hit;
     Ray ray;
     int layerMaskEarth;
@@ -14,6 +14,7 @@ public class InteractionDetect : MonoBehaviour
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
+    MainUIController mainUIController;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +23,7 @@ public class InteractionDetect : MonoBehaviour
         layerMaskSphere = LayerMask.GetMask("InsideCelestialSphere");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
+        mainUIController = FindObjectOfType<MainUIController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
     }
 
@@ -33,14 +35,14 @@ public class InteractionDetect : MonoBehaviour
         {
             ray = camera.ScreenPointToRay(Input.mousePosition);
             // We have two colliders on Earth, so we collect data on all ray hits
-            hits = Physics.RaycastAll(ray, 100.0F, layerMaskEarth);
+            Physics.RaycastNonAlloc(ray, hits, 100.0F, layerMaskEarth);
     
             // Do something with the object that was hit by the raycast.
             if (Input.GetMouseButtonDown(0))
             {
                 for (int i = 0; i < hits.Length; i++)
                 {
-                    RaycastHit hit = hits[i];
+                    hit = hits[i];
                     Collider c = hit.collider;
                     if (c is SphereCollider)
                     {
@@ -61,38 +63,28 @@ public class InteractionDetect : MonoBehaviour
                         {
                             Debug.Log("no renderer");
                             return;
+                        } 
+                        else
+                        {
+                            // hit.textureCoord only possible on the Mesh collider
+                            manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
                         }
-                        Texture2D tex = rend.material.GetTexture("_MainTex") as Texture2D;
-                        Vector2 pixelUV = hit.textureCoord; // Only possible on the Mesh collider
-                        pixelUV.x *= tex.width;
-                        pixelUV.y *= tex.height;
-                        // apply our offset on X axis
-                        pixelUV.x += ( rend.material.GetTextureOffset("_MainTex").x * tex.width);
-                        
-                        Color pixelColor = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
-                        Debug.Log(pixelColor);
-                        manager.HorizonGroundColor = pixelColor;
                     }
-                    
-                   
                 }
             }
             
         }
-        if (annotationTool)
+        if (mainUIController.IsDrawing && annotationTool)
         {
             if (Physics.Raycast(ray, out hit, manager.SceneRadius + 2, layerMaskSphere))
             {
 
                 if (Input.GetMouseButtonDown(0))
                 {
-
                     Debug.Log("Inside of sphere " + hit.point);
                     annotationTool.Annotate(hit.point);// camera.ScreenToWorldPoint(Input.mousePosition));
                 }
             }
         }
     }
-
-
 }
