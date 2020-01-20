@@ -458,6 +458,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
+      propertyPath: buttonsToDisable.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
       propertyPath: enabledPanels.Array.data[3]
       value: 
       objectReference: {fileID: 1101179313}
@@ -471,8 +476,24 @@ PrefabInstance:
       propertyPath: enabledPanels.Array.data[2]
       value: 
       objectReference: {fileID: 1101179312}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: buttonsToDisable.Array.data[0]
+      value: 
+      objectReference: {fileID: 1101179314}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: buttonsToDisable.Array.data[1]
+      value: 
+      objectReference: {fileID: 1101179311}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2f8e74f1a333614a8717f2c31eb93b6, type: 3}
+--- !u!1 &1101179311 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3356669929790196578, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1101179310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1101179312 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 800325147945508594, guid: f2f8e74f1a333614a8717f2c31eb93b6,
@@ -482,6 +503,12 @@ GameObject:
 --- !u!1 &1101179313 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2724144225927068395, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1101179310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1101179314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3587320027100643340, guid: f2f8e74f1a333614a8717f2c31eb93b6,
     type: 3}
   m_PrefabInstance: {fileID: 1101179310}
   m_PrefabAsset: {fileID: 0}

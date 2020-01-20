@@ -11,6 +11,7 @@ public class MainUIController : MonoBehaviour
     private SimulationManager manager;
 
     public List<GameObject> enabledPanels = new List<GameObject>();
+    public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
 
     private DataController dataController;
@@ -122,7 +123,11 @@ public class MainUIController : MonoBehaviour
             daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
             timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
         }
-        
+        foreach (GameObject buttonToDisable in buttonsToDisable)
+        {
+            buttonToDisable.GetComponent<Button>().enabled = false;
+            buttonToDisable.GetComponent<Image>().color = Color.gray;
+        }
     }
     public void AddPanel(GameObject panel)
     {

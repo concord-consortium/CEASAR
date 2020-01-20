@@ -10237,6 +10237,7 @@ MonoBehaviour:
   - {fileID: 1375357601579678647}
   - {fileID: 1751077039069735242}
   - {fileID: 2724144225927068395}
+  buttonsToDisable: []
   controlPanel: {fileID: 2724144227692342582}
   currentDateTimeText: {fileID: 6455473988152472224}
   setTimeToggle: {fileID: 2724144226941606514}
@@ -18917,7 +18918,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -19046,7 +19047,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -19331,7 +19332,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -20108,7 +20109,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -23319,7 +23320,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -23759,7 +23760,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -23889,7 +23890,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_PressedColor: {r: 1, g: 0.7647059, b: 0.1254902, a: 0.6862745}
     m_SelectedColor: {r: 0.91764706, g: 0.42745098, b: 0.18431373, a: 0.6862745}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
