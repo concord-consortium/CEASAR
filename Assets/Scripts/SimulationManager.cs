@@ -68,6 +68,8 @@ public class SimulationManager
         get { return localPlayerColor; }
     }
 
+    public Color HorizonGroundColor = Color.green;
+
     // initial setup scale
     public readonly float InitialRadius = 100;
     // Scene Radius will be set in DataController, but we can keep a reference here for lookups elsewhere

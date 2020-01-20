@@ -286,26 +286,28 @@ public class DataController : MonoBehaviour
                     SelectedCity = currentCity.Name;
                 }
             }
-            if (showHorizonView)
+           
+            // allow change of time in all scenes - should work in Earth scene to switch seasons
+            double lst;
+            if (userSpecifiedDateTime)
             {
-                double lst;
-                if (userSpecifiedDateTime)
+                if (simulationTimeScale > 0 && runSimulation)
                 {
-                    if (simulationTimeScale > 0 && runSimulation)
-                    {
-                        currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
-                    }
-                    else
-                    {
-                        currentSimulationTime = userStartDateTime;
-                    }
-                    lst = currentSimulationTime.ToSiderealTime();
+                    currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
                 }
                 else
                 {
-                    lst = DateTime.UtcNow.ToSiderealTime();
+                    currentSimulationTime = userStartDateTime;
                 }
+                lst = currentSimulationTime.ToSiderealTime();
+            }
+            else
+            {
+                lst = DateTime.UtcNow.ToSiderealTime();
+            }
 
+            if (showHorizonView)
+            {
                 // Filter and only update positions if changed time / latitude
                 if (lastTime != lst) shouldUpdate = true;
 
