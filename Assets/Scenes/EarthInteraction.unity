@@ -451,8 +451,40 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: enabledPanels.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: enabledPanels.Array.data[3]
+      value: 
+      objectReference: {fileID: 1101179313}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: enabledPanels.Array.data[4]
+      value: 
+      objectReference: {fileID: 1101179313}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: enabledPanels.Array.data[2]
+      value: 
+      objectReference: {fileID: 1101179312}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2f8e74f1a333614a8717f2c31eb93b6, type: 3}
+--- !u!1 &1101179312 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 800325147945508594, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1101179310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1101179313 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2724144225927068395, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1101179310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1107457398
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,6 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useLocalRotation: 0
 --- !u!1 &1644214714
 GameObject:
   m_ObjectHideFlags: 0

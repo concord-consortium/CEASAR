@@ -36,12 +36,6 @@ public class RemotePlayerMovement : MonoBehaviour
         lerpInterval = SimulationManager.GetInstance().MovementSendInterval * 0.8f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     IEnumerator moveAndRotate()
     {
         float elapsedTime = 0;

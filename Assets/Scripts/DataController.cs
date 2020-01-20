@@ -54,12 +54,6 @@ public class DataController : MonoBehaviour
         private set { localSiderialStartTime = value; }
     }
 
-    private DateTime currentSimulationTime = DateTime.Now;
-    public DateTime CurrentSimulationTime
-    {
-        get { return currentSimulationTime; }
-    }
-
     private bool userSpecifiedDateTime = false;
     private DateTime userStartDateTime = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private bool runSimulation = false;
@@ -87,6 +81,7 @@ public class DataController : MonoBehaviour
     private float simulationTimeScale = 10f;
     private float radius = 50;
 
+    private SimulationManager manager;
     public float Radius
     {
         get { return radius; }
@@ -104,6 +99,7 @@ public class DataController : MonoBehaviour
     void Awake()
     {
         SceneManager.sceneUnloaded += OnSceneUnloaded;
+        manager = SimulationManager.GetInstance();
         // Need this so the network UI persists across scenes
 
         DontDestroyOnLoad(this.gameObject);
@@ -237,12 +233,13 @@ public class DataController : MonoBehaviour
     }
     public void UpdateOnSceneLoad()
     {
+        if (manager == null) manager = SimulationManager.GetInstance();
         // Reset sphere
         isReady = false;
         this.transform.position = new Vector3(0, 0, 0f);
-        this.transform.localScale = new Vector3(1, 1, 1) * SimulationManager.GetInstance().CurrentScaleFactor(radius);
+        this.transform.localScale = new Vector3(1, 1, 1) * manager.CurrentScaleFactor(radius);
         this.transform.rotation = Quaternion.identity;
-        userSpecifiedDateTime = false;
+        userSpecifiedDateTime = manager.UseCustomSimulationTime;
         runSimulation = false;
 
         foreach (StarComponent starComponent in allStarComponents.Values)
@@ -288,23 +285,17 @@ public class DataController : MonoBehaviour
             }
            
             // allow change of time in all scenes - should work in Earth scene to switch seasons
-            double lst;
-            if (userSpecifiedDateTime)
+            //double lst;
+            if (manager == null) manager = SimulationManager.GetInstance();
+            if (manager.UseCustomSimulationTime)
             {
                 if (simulationTimeScale > 0 && runSimulation)
                 {
-                    currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
+                    manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
                 }
-                else
-                {
-                    currentSimulationTime = userStartDateTime;
-                }
-                lst = currentSimulationTime.ToSiderealTime();
             }
-            else
-            {
-                lst = DateTime.UtcNow.ToSiderealTime();
-            }
+
+            double lst = manager.CurrentSimulationTime.ToSiderealTime();
 
             if (showHorizonView)
             {
@@ -333,11 +324,8 @@ public class DataController : MonoBehaviour
     {
         get
         {
-            if (userSpecifiedDateTime) return currentSimulationTime;
-            else
-            {
-                return DateTime.UtcNow;
-            }
+            if (manager == null) manager = SimulationManager.GetInstance();
+            return manager.CurrentSimulationTime;
         }
     }
 
@@ -362,15 +350,11 @@ public class DataController : MonoBehaviour
     public void ToggleRunSimulation()
     {
         runSimulation = !runSimulation;
-        if (runSimulation)
-        {
-            currentSimulationTime = userStartDateTime;
-        }
-    }
-
-    public void SetUserStartDateTime(DateTime newStartDateTime)
-    {
-        userStartDateTime = newStartDateTime;
+        
+        //if (runSimulation)
+        //{
+        //    manager.CurrentSimulationTime = userStartDateTime;
+        //}
     }
 
     public void SetSimulationTimeScale(float newVal)

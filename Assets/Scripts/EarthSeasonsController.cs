@@ -16,10 +16,10 @@ public class EarthSeasonsController : MonoBehaviour
     void Update()
     {
         if (manager == null) manager = SimulationManager.GetInstance();
-        int currentMonth = manager.DataControllerComponent.CurrentSimUniversalTime.Month - 1;
+        int currentMonth = manager.CurrentSimulationTime.Month - 1;
         if (_month != currentMonth)
         {
-            Debug.Log(manager.DataControllerComponent.CurrentSimUniversalTime);
+            Debug.Log(manager.CurrentSimulationTime);
             GetComponent<Renderer>().material.SetTexture("_MainTex", seasons[currentMonth]);
             _month = currentMonth;
         }

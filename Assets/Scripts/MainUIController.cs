@@ -122,6 +122,7 @@ public class MainUIController : MonoBehaviour
             daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
             timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
         }
+        
     }
     public void AddPanel(GameObject panel)
     {
@@ -178,6 +179,14 @@ public class MainUIController : MonoBehaviour
         if (currentDateTimeText && dataController)
         {
             currentDateTimeText.text = dataController.CurrentSimUniversalTime.ToString() + " (UTC)";
+        }
+
+        // allow change of time in all scenes - should work in Earth scene to switch seasons
+        double lst;
+        if (manager == null) manager = SimulationManager.GetInstance();
+        if (setTimeToggle)
+        {
+            manager.UseCustomSimulationTime = setTimeToggle.isOn;
         }
 
         // Move our position a step closer to the target.
@@ -269,7 +278,7 @@ public class MainUIController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
-        dataController.SetUserStartDateTime(calculatedStartDateTime);
+        manager.CurrentSimulationTime = calculatedStartDateTime;
     }
 
     public void ChangeStarSelection(GameObject selectedStar)
