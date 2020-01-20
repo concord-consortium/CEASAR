@@ -129,7 +129,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 182548148}
-  - component: {fileID: 182548149}
   - component: {fileID: 182548150}
   m_Layer: 0
   m_Name: Avatar Camera
@@ -154,18 +153,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &182548149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 182548147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &182548150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -623,6 +610,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: 40, z: 0}
+--- !u!1 &1377291861 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 961596688562665789, guid: f2ed9c5a162c9413a80a675d8d657522,
+    type: 3}
+  m_PrefabInstance: {fileID: 2058020571811274024}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1377291862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377291861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1644214714
 GameObject:
   m_ObjectHideFlags: 0

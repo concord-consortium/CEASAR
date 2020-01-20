@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Quaternion lastRot;
     private float lastSend = 0;
     NetworkController network;
+    public bool useLocalRotation = false;
     private void Awake()
     {
         lastPos = transform.position;
@@ -24,16 +25,23 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Broadcast movement to network:
                 if (!network) network = FindObjectOfType<NetworkController>();
-                network.BroadcastPlayerMovement(transform.position, transform.rotation);
+                Quaternion rot = transform.rotation;
+                if (useLocalRotation)
+                {
+                    rot = transform.localRotation;
+                } 
+                network.BroadcastPlayerMovement(transform.position, rot);
+                
+                
 
                 // Log movement:
                 string movementInfo = "local player moved to P:" +
-                    transform.position.ToString() + " R:" + transform.rotation.ToString();
+                    transform.position.ToString() + " R:" + rot.ToString();
                 CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
 
                 // update local comparators
                 lastPos = transform.position;
-                lastRot = transform.rotation;
+                lastRot = rot;
                 lastSend = Time.time;
             }
             
