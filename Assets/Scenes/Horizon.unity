@@ -2101,16 +2101,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AnnotationTool
       objectReference: {fileID: 0}
-    - target: {fileID: 6292124330320294541, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: annotationLinePrefab
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6292124330320294541, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: annotationWidth
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4645685273363535909, guid: fc53445d18426c048ba405ce938df6ec,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2164,11 +2154,6 @@ PrefabInstance:
     - target: {fileID: 4645685273363535909, guid: fc53445d18426c048ba405ce938df6ec,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2597485841020170815, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
