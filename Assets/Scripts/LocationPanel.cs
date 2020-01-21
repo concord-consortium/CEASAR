@@ -6,12 +6,12 @@ public class LocationPanel : MonoBehaviour
     public TextMeshProUGUI latLongInfo;
     void Start ()
     {
-        InteractionController.EarthIneractionDelegates += handleInteraction;
+        InteractionController.EarthInteractionDelegates += handleInteraction;
     }
  
     void OnDisable()
     {
-        InteractionController.EarthIneractionDelegates += handleInteraction;
+        InteractionController.EarthInteractionDelegates -= handleInteraction;
     }
 
 
