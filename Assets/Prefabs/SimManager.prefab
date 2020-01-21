@@ -49,6 +49,7 @@ MonoBehaviour:
     type: 3}
   celestialSpherePrefab: {fileID: 3593076565269543302, guid: 37233d25d9339419abd3bbacedde00bc,
     type: 3}
+  starMaterial: {fileID: 2100000, guid: 47e79cbb5bb264818ad75173c0ceffdb, type: 2}
   maxStars: 10000
   radius: 50
   magnitudeScale: 0.5
@@ -63,6 +64,7 @@ MonoBehaviour:
   markerLineWidth: 0.1
   markerScale: 1
   lineWidth: 0.1
-  starPrefab: {fileID: 0}
+  starPrefab: {fileID: 5188296271615159055, guid: 69c731feafd4f40058f07a5156523556,
+    type: 3}
   sceneLoaderPrefab: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
     type: 3}
