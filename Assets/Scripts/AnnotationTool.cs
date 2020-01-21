@@ -30,11 +30,15 @@ public class AnnotationTool : MonoBehaviour
                 // start
                 startPointForDrawing = nextPoint;
                 annotations.Add(Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform));
+                
             }
             else if (endPointForDrawing == Vector3.zero)
             {
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
+                // Broadcast adding an annotation
+                SimulationEvents.GetInstance().AnnotationAdded.Invoke(startPointForDrawing, endPointForDrawing);
+
                 Vector3 offset = endPointForDrawing - startPointForDrawing;
                 Vector3 scale = new Vector3(annotationWidth, offset.magnitude, annotationWidth);
                 Vector3 midPosition = startPointForDrawing + (offset / 2.0f);
@@ -48,37 +52,46 @@ public class AnnotationTool : MonoBehaviour
         }
         else
         {
-            // fallback to line renderer
-            if (startPointForDrawing == Vector3.zero)
-            {
-                startPointForDrawing = nextPoint;
-                if (annotationLineRenderer.positionCount == 2 && annotationLineRenderer.GetPosition(0) == Vector3.zero)
-                {
-                    annotationLineRenderer.SetPosition(0, startPointForDrawing);
-                    annotationLineRenderer.SetPosition(1, startPointForDrawing);
-                    annotationLinePoints.Add(startPointForDrawing);
-                    annotationLinePoints.Add(startPointForDrawing);
-                }
-                else 
-                {
-                    annotationLinePoints.Add(nextPoint);
-                }
-                annotationLineRenderer.positionCount = annotationLinePoints.Count;
-                annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
-            }
-            else 
-            {
-                annotationLinePoints.Add(nextPoint);
-                annotationLineRenderer.positionCount = annotationLinePoints.Count;
-                annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
-            }
+            multipointLineDraw(nextPoint);
         }
     }
-    public void CleanLastLinePosition()
+
+    private void multipointLineDraw(Vector3 nextPoint)
     {
-        annotationLinePoints.RemoveAt(annotationLinePoints.Count - 1);
-        annotationLineRenderer.positionCount = annotationLinePoints.Count;
-        annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+        // line renderer
+        if (startPointForDrawing == Vector3.zero)
+        {
+            startPointForDrawing = nextPoint;
+            if (annotationLineRenderer.positionCount == 2 && annotationLineRenderer.GetPosition(0) == Vector3.zero)
+            {
+                annotationLineRenderer.SetPosition(0, startPointForDrawing);
+                annotationLineRenderer.SetPosition(1, startPointForDrawing);
+                annotationLinePoints.Add(startPointForDrawing);
+                annotationLinePoints.Add(startPointForDrawing);
+            }
+            else
+            {
+                annotationLinePoints.Add(nextPoint);
+            }
+            annotationLineRenderer.positionCount = annotationLinePoints.Count;
+            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+        }
+        else
+        {
+            annotationLinePoints.Add(nextPoint);
+            annotationLineRenderer.positionCount = annotationLinePoints.Count;
+            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+        }
+    }
+    public void EndDrawingMode()
+    {
+        if (annotationLinePoints.Count > 2)
+        {
+            annotationLinePoints.RemoveAt(annotationLinePoints.Count - 1);
+            annotationLineRenderer.positionCount = annotationLinePoints.Count;
+            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+        }
         startPointForDrawing = Vector3.zero;
+        endPointForDrawing = Vector3.zero;
     }
 }

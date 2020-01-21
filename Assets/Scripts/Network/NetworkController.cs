@@ -243,7 +243,8 @@ public class NetworkController : MonoBehaviour
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
-        Debug.Log(listOfPlayersForDebug);
+        if (!string.IsNullOrEmpty(listOfPlayersForDebug)) Debug.Log(listOfPlayersForDebug);
+
         networkUI.DebugMessage = listOfPlayersForDebug;
         networkUI.Username = manager.LocalUsername;
     }

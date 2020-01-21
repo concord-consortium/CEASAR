@@ -81,7 +81,7 @@ public class InteractionDetect : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Inside of sphere " + hit.point);
+                    // Debug.Log("Inside of sphere " + hit.point);
                     annotationTool.Annotate(hit.point);// camera.ScreenToWorldPoint(Input.mousePosition));
                 }
             }

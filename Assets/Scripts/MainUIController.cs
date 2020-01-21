@@ -10,6 +10,8 @@ public class MainUIController : MonoBehaviour
 {
     private SimulationManager manager;
 
+    public event Action<Vector2, string> OnLocationChanged = (location, description) => { };
+
     public List<GameObject> enabledPanels = new List<GameObject>();
     public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
@@ -81,7 +83,7 @@ public class MainUIController : MonoBehaviour
                 AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
                 if (annotationTool)
                 {
-                    annotationTool.CleanLastLinePosition();
+                    annotationTool.EndDrawingMode();
                 }
             }
         }
@@ -100,17 +102,15 @@ public class MainUIController : MonoBehaviour
         foreach (Transform t in controlPanel.transform) {
             allPanels.Add(t.name, t.gameObject);
         }
-        positionActivePanels();
-
+        
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
 
-
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, dataController.SelectedCity);
+            cityDropdown.InitCityNames(dataController.cities, dataController.StartCity);
         }
         if (constellationDropdown)
         {
@@ -136,6 +136,7 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
+        positionActivePanels();
     }
     public void AddPanel(GameObject panel)
     {
@@ -446,19 +447,13 @@ public class MainUIController : MonoBehaviour
     {
         dataController.ToggleRunSimulation();
     }
-    public void ChangeCitySelection(string location)
-    {
-        if (cityDropdown)
-        {
-            cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
-        }
-    }
+ 
 
     public void CreateSnapshot()
     {
         // get values from datacontroller
         DateTime snapshotDateTime = dataController.CurrentSimUniversalTime;
-        String location = dataController.SelectedCity;
+        String location = dataController.StartCity;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location);
         // add snapshot to dropdown list
@@ -482,7 +477,12 @@ public class MainUIController : MonoBehaviour
         userMin = snapshotDateTime.Minute;
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
-        ChangeCitySelection(location);
+        OnLocationChanged(Vector2.zero, location);
+        //if (cityDropdown)
+        //{
+        //    cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
+        //    //OnLocationChanged(Vector2.zero, location);
+        //}
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;

@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Events;
+
 
 public class DataController : MonoBehaviour
 {
@@ -59,8 +61,9 @@ public class DataController : MonoBehaviour
     private bool runSimulation = false;
 
     public List<string> cities;
-    public string SelectedCity;
+    public string StartCity;
     public City currentCity;
+    private City nextCity;
 
     private Quaternion initialRotation;
     // For storing a copy of the last known time to limit updates
@@ -96,6 +99,8 @@ public class DataController : MonoBehaviour
         public string fullName;
     }
 
+    bool shouldUpdate = false;
+
     void Awake()
     {
         SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -103,6 +108,15 @@ public class DataController : MonoBehaviour
         // Need this so the network UI persists across scenes
 
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void Start()
+    {
+        SimulationEvents.GetInstance().LocationSelected.AddListener(handleSelectNewLocation);
+    }
+    private void OnDisable()
+    {
+        SimulationEvents.GetInstance().LocationSelected.RemoveAllListeners();
     }
 
     void OnSceneUnloaded(Scene scene)
@@ -151,12 +165,15 @@ public class DataController : MonoBehaviour
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
-            if (string.IsNullOrEmpty(SelectedCity))
+            if (string.IsNullOrEmpty(StartCity))
             {
-                SelectedCity = "Boston";
+                StartCity = "Boston";
             }
-            currentCity = allCities.Where(c => c.Name == SelectedCity).FirstOrDefault();
-            SelectedCity = currentCity.Name;
+            currentCity = allCities.Where(c => c.Name == StartCity).FirstOrDefault();
+            StartCity = currentCity.Name;
+            // changes to nextCity trigger a change to Celestial Sphere orientation in Horizon view
+            // and are captured on the SimulationEvents.LocationSelected event handler
+            nextCity = currentCity; 
         }
         if (constellationConnectionData != null)
         {
@@ -266,22 +283,13 @@ public class DataController : MonoBehaviour
     {
         if (isReady)
         {
-            bool shouldUpdate = false;
+            shouldUpdate = false;
 
-            if (SelectedCity != currentCity?.Name)
+            if (currentCity.Name != nextCity.Name)
             {
-                // verify a valid city was entered
-                var newCity = allCities.Where(c => c.Name == SelectedCity).First();
-                if (newCity != null)
-                {
-                    currentCity = newCity;
-                    if (showHorizonView) positionNCP();
-                    shouldUpdate = true;
-                }
-                else
-                {
-                    SelectedCity = currentCity.Name;
-                }
+                currentCity = nextCity;
+                if (showHorizonView) positionNCP();
+                shouldUpdate = true;
             }
            
             // allow change of time in all scenes - should work in Earth scene to switch seasons
@@ -329,11 +337,25 @@ public class DataController : MonoBehaviour
         }
     }
 
-    public void SetSelectedCity(string newCity)
+    void handleSelectNewLocation(string newCity)
     {
-        SelectedCity = newCity;
+        Debug.Log("Got new location! " + newCity);
+        if (!string.IsNullOrEmpty(newCity) && !newCity.StartsWith("Custom"))
+        {
+            if (newCity != currentCity?.Name)
+            {
+                // verify a valid city was entered
+                var matchedCity = allCities.Where(c => c.Name == newCity).First();
+                if (matchedCity != null)
+                {
+                    nextCity = matchedCity;
+                    // Raise the event again with the matching lat/lng to update UI
+                    Vector2 newLocationLatLng = new Vector2(nextCity.Lat, nextCity.Lng);
+                    SimulationEvents.GetInstance().LocationChanged.Invoke(newLocationLatLng, nextCity.Name);
+                }
+            }
+        }
     }
-
     public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
@@ -350,11 +372,6 @@ public class DataController : MonoBehaviour
     public void ToggleRunSimulation()
     {
         runSimulation = !runSimulation;
-        
-        //if (runSimulation)
-        //{
-        //    manager.CurrentSimulationTime = userStartDateTime;
-        //}
     }
 
     public void SetSimulationTimeScale(float newVal)

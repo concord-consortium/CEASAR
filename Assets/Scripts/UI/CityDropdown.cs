@@ -24,7 +24,7 @@ public class CityDropdown : MonoBehaviour
     {
         if (dataController)
         {
-            dataController.SetSelectedCity(change.captionText.text);
+            SimulationEvents.GetInstance().LocationSelected.Invoke(change.captionText.text);
         }
     }
 
@@ -38,18 +38,7 @@ public class CityDropdown : MonoBehaviour
         {
             initialValue = 0;
         }
-        dropdown.value = initialValue;
+        dropdown.SetValueWithoutNotify(initialValue);
     }
 
-    public void UpdateCitySelection(string location)
-    {
-        dropdown = GetComponent<TMP_Dropdown>();
-        List<TMP_Dropdown.OptionData> dropdownOptions = dropdown.options;
-        int dropdownValue = dropdownOptions.FindIndex(el => el.text == location);
-        if (dropdownValue < 0)
-        {
-            dropdownValue = 0;
-        }
-        dropdown.value = dropdownValue;
-    }
 }
