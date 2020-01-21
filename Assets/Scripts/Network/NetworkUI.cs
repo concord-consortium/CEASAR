@@ -8,6 +8,8 @@ public class NetworkUI : MonoBehaviour
     // UI Buttons are attached through Unity Inspector
     public Button connectButton;
     public Button randomizeUsernameButton;
+    public GameObject roomButtonPanel;
+    public GameObject smallOrangeButtonPrefab;
     public TMPro.TMP_Text connectButtonText;
     public TMPro.TMP_InputField m_EndpointField;
     public TMPro.TMP_Text connectionStatusText;
@@ -76,6 +78,33 @@ public class NetworkUI : MonoBehaviour
             randomizeUsernameButton.enabled = true;
         }
         
+    }
+
+    private void Start()
+    {
+        foreach (string name in NetworkController.roomNames)
+        {
+            GameObject button = Instantiate(smallOrangeButtonPrefab);
+            button.GetComponent<RectTransform>().SetParent(roomButtonPanel.transform);
+            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            Button b = button.GetComponent<Button>();
+            if(label != null )
+            {
+                label.SetText(name);
+            }
+            Debug.Log("Label is " + label);
+            if(b != null)
+            {
+                b.onClick.AddListener(() => handleRoomClick(name));
+            }
+        }
+    }
+
+    public void handleRoomClick(string name)
+    {
+        NetworkController networkController = FindObjectOfType<NetworkController>();
+        networkController.roomName = name;
+        Debug.Log(name);
     }
 
     public string Username {

@@ -19,9 +19,6 @@ public class ColyseusClient : MonoBehaviour
 {
     public System.Random rng = new System.Random();
 
-    // todo: set up 4-digit pins for a collab room
-    public string roomName = "ceasar";
-
     protected Client client;
     protected Room<State> room;
     private NetworkController networkController;
@@ -80,7 +77,7 @@ public class ColyseusClient : MonoBehaviour
             client.Auth.Username = username;
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            await JoinRoom();
+            await JoinRoom(networkController.roomName);
             connecting = false;
         }
     }   
@@ -101,7 +98,7 @@ public class ColyseusClient : MonoBehaviour
         networkController.ServerStatusMessage = "Disconnected";
     }
 
-    async Task JoinRoom()
+    async Task JoinRoom(string roomName)
     {
         // For now, join / create the same room by name - if this is an existing room then both players will be in the
         // same room. This will likely need more work later.
@@ -131,7 +128,7 @@ public class ColyseusClient : MonoBehaviour
         room = null;
     }
 
-    async Task GetAvailableRooms()
+    async Task GetAvailableRooms(string roomName)
     {
         var roomsAvailable = await client.GetAvailableRooms(roomName);
 

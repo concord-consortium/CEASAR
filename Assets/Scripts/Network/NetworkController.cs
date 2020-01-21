@@ -18,8 +18,13 @@ public class NetworkController : MonoBehaviour
     private GameObject localPlayerAvatar;
     public GameObject interactionIndicator;
 
-    // todo: set up 4-digit pins for a collab room
     public string roomName = "ceasar";
+
+    public static string[] roomNames = {
+        "alpha", "beta", "gamma",
+        "delta", "epsilon", "zeta"
+        //"eta", "theta", "iota"
+    };
 
     protected ColyseusClient colyseusClient;
 
