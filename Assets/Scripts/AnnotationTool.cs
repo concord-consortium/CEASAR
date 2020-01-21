@@ -8,8 +8,9 @@ public class AnnotationTool : MonoBehaviour
     private Vector3 startPointForDrawing = Vector3.zero;
     private Vector3 endPointForDrawing = Vector3.zero;
 
+    public bool singleLines = true;
     public GameObject annotationLinePrefab;
-    public float annotationWidth = 10;
+    public float annotationWidth = 1;
     private List<GameObject> annotations;
 
     private LineRenderer annotationLineRenderer;
@@ -22,7 +23,7 @@ public class AnnotationTool : MonoBehaviour
     }
     public void Annotate(Vector3 nextPoint)
     {
-        if (annotationLinePrefab)
+        if (singleLines && annotationLinePrefab)
         {
             if (startPointForDrawing == Vector3.zero)
             {

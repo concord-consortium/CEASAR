@@ -141,6 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3def862afb2dcb34680f8069f05ab13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointToPointMode: 1
+  annotationLinePrefab: {fileID: 2034434946690713381, guid: 80dd72a098901304eaefa835cfebb414,
+    type: 3}
+  annotationWidth: 1
 --- !u!1001 &4645685271682883898
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -152,6 +156,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MeasurementCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7238645488347583237, guid: af49c52aee5ce4241b5692787852de08,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 51118337049979398, guid: af49c52aee5ce4241b5692787852de08,
         type: 3}
