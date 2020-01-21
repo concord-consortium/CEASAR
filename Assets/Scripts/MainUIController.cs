@@ -493,4 +493,9 @@ public class MainUIController : MonoBehaviour
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
+
+    public void QuitApplication()
+    {
+        Application.Quit();
+    }
 }
