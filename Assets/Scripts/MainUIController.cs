@@ -76,6 +76,14 @@ public class MainUIController : MonoBehaviour
         set { 
             isDrawing = value;
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+            if (!isDrawing)
+            {
+                AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+                if (annotationTool)
+                {
+                    annotationTool.CleanLastLinePosition();
+                }
+            }
         }
     }
     private void Awake()
