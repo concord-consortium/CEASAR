@@ -146,7 +146,7 @@ public class DataController : MonoBehaviour
         if (GameObject.Find("Icosphere"))
         {
             GameObject innerSphere = GameObject.Find("Icosphere");
-            innerSphere.transform.localScale = innerSphere.transform.localScale * (radius + 1);
+            innerSphere.transform.localScale = innerSphere.transform.localScale * (radius * 2);
         }
         if (allConstellations == null)
         {

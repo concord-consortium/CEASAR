@@ -76,7 +76,7 @@ public class InteractionDetect : MonoBehaviour
         }
         if (mainUIController.IsDrawing && annotationTool)
         {
-            if (Physics.Raycast(ray, out hit, manager.SceneRadius + 2, layerMaskSphere))
+            if (Physics.Raycast(ray, out hit, manager.SceneRadius * 3, layerMaskSphere))
             {
 
                 if (Input.GetMouseButtonDown(0))
