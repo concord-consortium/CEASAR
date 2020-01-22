@@ -9,6 +9,8 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     private ConstellationsController constellationsController;
     private Vector3 initialScale;
+    // Scene-specific value
+    private Vector3 sceneInitialScale;
     private float scaleFactor = 2f;
 
     public void Init(ConstellationsController controller, Star star, float maxMagnitude, float magnitudeScale, float radius)
@@ -17,6 +19,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         starData = star;
         transform.position = star.CalculateEquitorialPosition(radius);
         initialScale = transform.localScale;
+        sceneInitialScale = transform.localScale;
         SetStarScale(maxMagnitude, magnitudeScale);
         transform.LookAt(constellationsController.transform);
     }
@@ -24,8 +27,8 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     public void SetStarScale(float maxMagnitude, float magnitudeScale)
     {
         var magScaleValue = SimulationManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
-        Vector3 magScale = initialScale * magScaleValue;
-        transform.localScale = magScale;
+        sceneInitialScale = initialScale * magScaleValue;
+        transform.localScale = sceneInitialScale;
     }
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
@@ -58,10 +61,10 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         if (highlight)
         {
             // currentScale = transform.localScale;
-            transform.localScale = initialScale * scaleFactor;
+            transform.localScale = sceneInitialScale * scaleFactor;
         } else
         {
-            transform.localScale = initialScale;
+            transform.localScale = sceneInitialScale;
         }
     }
    

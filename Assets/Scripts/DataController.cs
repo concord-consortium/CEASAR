@@ -37,7 +37,8 @@ public class DataController : MonoBehaviour
     }
 
     public StarComponent starPrefab;
-
+    public Material starMaterial;
+    
     public GameObject allConstellations;
     private ConstellationsController constellationsController;
     public List<string> constellationFullNames;
@@ -127,7 +128,7 @@ public class DataController : MonoBehaviour
     // This is where we set the scene parameters
     public void SetSceneParameters(int maxStars, float magnitudeScale, float magnitudeThreshold,
         bool showHorizonView, float simulationTimeScale, float radius, bool colorByConstellation,
-        bool showConstellationConnections)
+        bool showConstellationConnections, Material starMaterial)
     {
         this.maxStars = maxStars;
         this.magnitudeScale = magnitudeScale;
@@ -137,6 +138,7 @@ public class DataController : MonoBehaviour
         this.radius = radius;
         this.colorByConstellation = colorByConstellation;
         this.showConstellationConnections = showConstellationConnections;
+        this.starMaterial = starMaterial;
     }
 
     public void Init()
@@ -222,6 +224,10 @@ public class DataController : MonoBehaviour
                     // Add star object in Equitorial position, child of constellation
                     StarComponent newStar = Instantiate(starPrefab, constellation.transform);
                     newStar.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
+                    if (starMaterial)
+                    {
+                        newStar.GetComponent<Renderer>().material = starMaterial;
+                    }
                     // Add star data, then position, scale and color
                     newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, SimulationManager.GetInstance().InitialRadius);
 
@@ -263,6 +269,10 @@ public class DataController : MonoBehaviour
         {
             Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
             starComponent.SetStarScale(maxMag, magnitudeScale);
+            if (starMaterial)
+            {
+                starComponent.GetComponent<Renderer>().material = starMaterial;
+            }
         }
         if (showHorizonView) positionNCP();
         Debug.Log("updated");
@@ -323,7 +333,6 @@ public class DataController : MonoBehaviour
                     // Set last timestamp so we only update when changed
                     lastTime = lst;
                 }
-
             }
         }
     }

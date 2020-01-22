@@ -16,7 +16,8 @@ public class SimulationManagerComponent : MonoBehaviour
     private GameObject interactionControllerPrefab;
     [SerializeField]
     private GameObject celestialSpherePrefab;
-
+    [SerializeField]
+    private Material starMaterial;
     // Celestial Sphere scene-specific settings
     [SerializeField]
     private int maxStars = 10000;
@@ -132,9 +133,10 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.DataControllerComponent.starPrefab = this.starPrefab;
             }
 
+            if (!starMaterial) starMaterial = starPrefab.GetComponent<Renderer>().material;
             // When creating, set parameters before Init
             manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
-                 showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections);
+                 showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections, starMaterial);
 
             // Create all the stars
             manager.DataControllerComponent.Init();
@@ -154,8 +156,9 @@ public class SimulationManagerComponent : MonoBehaviour
             // Applying scene-specific settings
             if (manager.DataControllerComponent)
             {
+                if (!starMaterial) starMaterial = starPrefab.GetComponent<Renderer>().material;
                 manager.DataControllerComponent.SetSceneParameters(maxStars, magnitudeScale, magnitudeThreshold,
-                  showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections);
+                  showHorizonView, simulationTimeScale, radius, colorByConstellation, showConstellationConnections, starMaterial);
                 manager.DataControllerComponent.UpdateOnSceneLoad();
             }
             if (manager.MarkersControllerComponent)
