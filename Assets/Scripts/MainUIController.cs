@@ -92,6 +92,10 @@ public class MainUIController : MonoBehaviour
     {
         manager = SimulationManager.GetInstance();
     }
+    void OnDisable()
+    {
+        SimulationEvents.GetInstance().LocationChanged.RemoveListener(updateLocationPanel);
+    }
     public void Init()
     {
         manager = SimulationManager.GetInstance();
@@ -136,8 +140,13 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
+        
+        // Listen to any relevant events
+        SimulationEvents.GetInstance().LocationChanged.AddListener(updateLocationPanel);
+        
         positionActivePanels();
     }
+    
     public void AddPanel(GameObject panel)
     {
         if (!enabledPanels.Contains(panel)) enabledPanels.Add(panel);
@@ -492,6 +501,14 @@ public class MainUIController : MonoBehaviour
     public void DeleteSnapshot(Snapshot deleteSnap)
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
+    }
+
+    private void updateLocationPanel(Vector2 latLng, string description)
+    {
+        if (FindObjectOfType<LocationPanel>())
+        {
+            FindObjectOfType<LocationPanel>().UpdateLocationPanel(latLng, description);
+        }
     }
 
     public void QuitApplication()
