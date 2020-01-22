@@ -44,6 +44,7 @@ public class DataController : MonoBehaviour
     public List<string> constellationFullNames;
     public Constellation constellationPrefab;
     private Dictionary<string, StarComponent> allStarComponents;
+
     public StarComponent GetStarById(string uniqueId)
     {
         return allStarComponents[uniqueId];
