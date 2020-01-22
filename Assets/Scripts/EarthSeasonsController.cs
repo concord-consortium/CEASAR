@@ -12,6 +12,8 @@ public class EarthSeasonsController : MonoBehaviour
     private void Start()
     {
         manager = SimulationManager.GetInstance();
+        // Reset the local month each time we load so that changes in the central time force a texture update
+        _month = -1;
     }
     void Update()
     {
@@ -20,6 +22,7 @@ public class EarthSeasonsController : MonoBehaviour
         if (_month != currentMonth)
         {
             Debug.Log(manager.CurrentSimulationTime);
+            // Change Earth texture to the matching texture for the current month
             GetComponent<Renderer>().material.SetTexture("_MainTex", seasons[currentMonth]);
             _month = currentMonth;
         }
