@@ -20,6 +20,7 @@ public class AnnotationTool : MonoBehaviour
         annotationLineRenderer = this.GetComponent<LineRenderer>();
         annotations = new List<GameObject>();
         annotationLinePoints = new List<Vector3>();
+        this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
     }
     public void Annotate(Vector3 nextPoint)
     {
