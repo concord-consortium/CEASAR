@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Events;
+
 
 public class DataController : MonoBehaviour
 {
@@ -54,19 +56,14 @@ public class DataController : MonoBehaviour
         private set { localSiderialStartTime = value; }
     }
 
-    private DateTime currentSimulationTime = DateTime.Now;
-    public DateTime CurrentSimulationTime
-    {
-        get { return currentSimulationTime; }
-    }
-
     private bool userSpecifiedDateTime = false;
     private DateTime userStartDateTime = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private bool runSimulation = false;
 
     public List<string> cities;
-    public string SelectedCity;
+    public string StartCity;
     public City currentCity;
+    private City nextCity;
 
     private Quaternion initialRotation;
     // For storing a copy of the last known time to limit updates
@@ -87,6 +84,7 @@ public class DataController : MonoBehaviour
     private float simulationTimeScale = 10f;
     private float radius = 50;
 
+    private SimulationManager manager;
     public float Radius
     {
         get { return radius; }
@@ -101,12 +99,24 @@ public class DataController : MonoBehaviour
         public string fullName;
     }
 
+    bool shouldUpdate = false;
+
     void Awake()
     {
         SceneManager.sceneUnloaded += OnSceneUnloaded;
+        manager = SimulationManager.GetInstance();
         // Need this so the network UI persists across scenes
 
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void Start()
+    {
+        SimulationEvents.GetInstance().LocationSelected.AddListener(handleSelectNewLocation);
+    }
+    private void OnDisable()
+    {
+        SimulationEvents.GetInstance().LocationSelected.RemoveAllListeners();
     }
 
     void OnSceneUnloaded(Scene scene)
@@ -131,6 +141,11 @@ public class DataController : MonoBehaviour
 
     public void Init()
     {
+        if (GameObject.Find("Icosphere"))
+        {
+            GameObject innerSphere = GameObject.Find("Icosphere");
+            innerSphere.transform.localScale = innerSphere.transform.localScale * (radius + 1);
+        }
         if (allConstellations == null)
         {
             allConstellations = new GameObject();
@@ -150,12 +165,15 @@ public class DataController : MonoBehaviour
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
-            if (string.IsNullOrEmpty(SelectedCity))
+            if (string.IsNullOrEmpty(StartCity))
             {
-                SelectedCity = "Boston";
+                StartCity = "Boston";
             }
-            currentCity = allCities.Where(c => c.Name == SelectedCity).FirstOrDefault();
-            SelectedCity = currentCity.Name;
+            currentCity = allCities.Where(c => c.Name == StartCity).FirstOrDefault();
+            StartCity = currentCity.Name;
+            // changes to nextCity trigger a change to Celestial Sphere orientation in Horizon view
+            // and are captured on the SimulationEvents.LocationSelected event handler
+            nextCity = currentCity; 
         }
         if (constellationConnectionData != null)
         {
@@ -232,12 +250,13 @@ public class DataController : MonoBehaviour
     }
     public void UpdateOnSceneLoad()
     {
+        if (manager == null) manager = SimulationManager.GetInstance();
         // Reset sphere
         isReady = false;
         this.transform.position = new Vector3(0, 0, 0f);
-        this.transform.localScale = new Vector3(1, 1, 1) * SimulationManager.GetInstance().CurrentScaleFactor(radius);
+        this.transform.localScale = new Vector3(1, 1, 1) * manager.CurrentScaleFactor(radius);
         this.transform.rotation = Quaternion.identity;
-        userSpecifiedDateTime = false;
+        userSpecifiedDateTime = manager.UseCustomSimulationTime;
         runSimulation = false;
 
         foreach (StarComponent starComponent in allStarComponents.Values)
@@ -264,43 +283,30 @@ public class DataController : MonoBehaviour
     {
         if (isReady)
         {
-            bool shouldUpdate = false;
+            shouldUpdate = false;
 
-            if (SelectedCity != currentCity?.Name)
+            if (currentCity.Name != nextCity.Name)
             {
-                // verify a valid city was entered
-                var newCity = allCities.Where(c => c.Name == SelectedCity).First();
-                if (newCity != null)
+                currentCity = nextCity;
+                if (showHorizonView) positionNCP();
+                shouldUpdate = true;
+            }
+           
+            // allow change of time in all scenes - should work in Earth scene to switch seasons
+            //double lst;
+            if (manager == null) manager = SimulationManager.GetInstance();
+            if (manager.UseCustomSimulationTime)
+            {
+                if (simulationTimeScale > 0 && runSimulation)
                 {
-                    currentCity = newCity;
-                    if (showHorizonView) positionNCP();
-                    shouldUpdate = true;
-                }
-                else
-                {
-                    SelectedCity = currentCity.Name;
+                    manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
                 }
             }
+
+            double lst = manager.CurrentSimulationTime.ToSiderealTime();
+
             if (showHorizonView)
             {
-                double lst;
-                if (userSpecifiedDateTime)
-                {
-                    if (simulationTimeScale > 0 && runSimulation)
-                    {
-                        currentSimulationTime = currentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
-                    }
-                    else
-                    {
-                        currentSimulationTime = userStartDateTime;
-                    }
-                    lst = currentSimulationTime.ToSiderealTime();
-                }
-                else
-                {
-                    lst = DateTime.UtcNow.ToSiderealTime();
-                }
-
                 // Filter and only update positions if changed time / latitude
                 if (lastTime != lst) shouldUpdate = true;
 
@@ -326,19 +332,30 @@ public class DataController : MonoBehaviour
     {
         get
         {
-            if (userSpecifiedDateTime) return currentSimulationTime;
-            else
-            {
-                return DateTime.UtcNow;
-            }
+            if (manager == null) manager = SimulationManager.GetInstance();
+            return manager.CurrentSimulationTime;
         }
     }
 
-    public void SetSelectedCity(string newCity)
+    void handleSelectNewLocation(string newCity)
     {
-        SelectedCity = newCity;
+        Debug.Log("Got new location! " + newCity);
+        if (!string.IsNullOrEmpty(newCity) && !newCity.StartsWith("Custom"))
+        {
+            if (newCity != currentCity?.Name)
+            {
+                // verify a valid city was entered
+                var matchedCity = allCities.Where(c => c.Name == newCity).First();
+                if (matchedCity != null)
+                {
+                    nextCity = matchedCity;
+                    // Raise the event again with the matching lat/lng to update UI
+                    Vector2 newLocationLatLng = new Vector2(nextCity.Lat, nextCity.Lng);
+                    SimulationEvents.GetInstance().LocationChanged.Invoke(newLocationLatLng, nextCity.Name);
+                }
+            }
+        }
     }
-
     public void SetMagnitudeThreshold(float newVal)
     {
         magnitudeThreshold = newVal;
@@ -355,15 +372,6 @@ public class DataController : MonoBehaviour
     public void ToggleRunSimulation()
     {
         runSimulation = !runSimulation;
-        if (runSimulation)
-        {
-            currentSimulationTime = userStartDateTime;
-        }
-    }
-
-    public void SetUserStartDateTime(DateTime newStartDateTime)
-    {
-        userStartDateTime = newStartDateTime;
     }
 
     public void SetSimulationTimeScale(float newVal)

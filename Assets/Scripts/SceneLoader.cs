@@ -96,6 +96,11 @@ public class SceneLoader : MonoBehaviour
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             vrCam.GetComponent<Camera>().backgroundColor = Color.black;
         }
+        GameObject avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
+        if (avatar != null)
+        {
+            avatar.SetActive(false);
+        }
     }
 
 

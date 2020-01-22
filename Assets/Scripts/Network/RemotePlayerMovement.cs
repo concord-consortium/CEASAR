@@ -32,13 +32,8 @@ public class RemotePlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lerpInterval = SimulationManager.GetInstance().MovementSendInterval;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // increase animation speed for avatars to make them feel a bit more snappy
+        lerpInterval = SimulationManager.GetInstance().MovementSendInterval * 0.8f;
     }
 
     IEnumerator moveAndRotate()

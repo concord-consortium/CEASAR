@@ -6,51 +6,85 @@ public class InteractionDetect : MonoBehaviour
 {
     public GameObject indicator;
     Camera camera;
+    RaycastHit[] hits = new RaycastHit[2];
     RaycastHit hit;
     Ray ray;
-    int layerMask;
+    int layerMaskEarth;
+    int layerMaskSphere;
     SimulationManager manager;
     InteractionController interactionController;
+    public AnnotationTool annotationTool;
+    MainUIController mainUIController;
     // Start is called before the first frame update
     void Start()
     {
         camera = GetComponent<Camera>();
-        layerMask = LayerMask.GetMask("Earth");
+        layerMaskEarth = LayerMask.GetMask("Earth");
+        layerMaskSphere = LayerMask.GetMask("InsideCelestialSphere");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
+        mainUIController = FindObjectOfType<MainUIController>();
+        if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-
-    }
-    void FixedUpdate()
-    {
+        if (manager == null) manager = SimulationManager.GetInstance();
+        if (interactionController == null) interactionController = FindObjectOfType<InteractionController>();
         if (camera)
         {
             ray = camera.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit, 100, layerMask))
+            // We have two colliders on Earth, so we collect data on all ray hits
+            Physics.RaycastNonAlloc(ray, hits, 100.0F, layerMaskEarth);
+    
+            // Do something with the object that was hit by the raycast.
+            if (Input.GetMouseButtonDown(0))
             {
-                // Do something with the object that was hit by the raycast.
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    hit = hits[i];
+                    Collider c = hit.collider;
+                    if (c is SphereCollider)
+                    {
+                        // The Sphere collider is used for the Latitude / Longitude calculations
+                        if (interactionController)
+                        {
+                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                        }
+                        else
+                        {
+                            Debug.Log("💀 cant find interaction manager");
+                        }
+                    }
+                    else if (c is MeshCollider)
+                    {
+                        Renderer rend = hit.transform.GetComponent<Renderer>();
+                        if (rend == null)
+                        {
+                            Debug.Log("no renderer");
+                            return;
+                        } 
+                        else
+                        {
+                            // hit.textureCoord only possible on the Mesh collider
+                            manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
+                        }
+                    }
+                }
+            }
+            
+        }
+        if (mainUIController.IsDrawing && annotationTool)
+        {
+            if (Physics.Raycast(ray, out hit, manager.SceneRadius + 2, layerMaskSphere))
+            {
+
                 if (Input.GetMouseButtonDown(0))
                 {
-                    manager = SimulationManager.GetInstance();
-                    interactionController = FindObjectOfType<InteractionController>();
-                    if(interactionController)
-                    {
-                        interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                    }
-                    else
-                    {
-                        Debug.Log("💀 cant find interaction manager");
-                    }
-                    
+                    // Debug.Log("Inside of sphere " + hit.point);
+                    annotationTool.Annotate(hit.point);// camera.ScreenToWorldPoint(Input.mousePosition));
                 }
             }
         }
     }
-
-
 }

@@ -4,9 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class InteractionController : MonoBehaviour
 {
-    public delegate void OnEarthInteraction(Vector2 LatLong);
-    public static OnEarthInteraction EarthInteractionDelegates;
-
     public GameObject interactionIndicator;
 
     // Cached reference to earth object for lat/lng
@@ -147,7 +144,7 @@ public class InteractionController : MonoBehaviour
             }
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
             Debug.Log(interactionInfo);
-            EarthInteractionDelegates(latLng);
+            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, "Custom: ");
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }

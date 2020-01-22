@@ -115,6 +115,24 @@ public static class Utils
         float lon = (float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI;
         return new Vector2(lat, lon);
     }
+
+    public static Color GetColorFromTexture(Renderer rend, Vector2 pixelUV)
+    {
+        if (rend == null)
+        {
+            Debug.Log("no renderer");
+            return Color.black;
+        }
+        Texture2D tex = rend.material.GetTexture("_MainTex") as Texture2D;
+        pixelUV.x *= tex.width;
+        pixelUV.y *= tex.height;
+        // apply our offset on X axis
+        pixelUV.x += (rend.material.GetTextureOffset("_MainTex").x * tex.width);
+
+        Color pixelColor = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
+        Debug.Log(pixelColor);
+        return pixelColor;
+    }
 }
 
 

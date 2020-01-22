@@ -6,6 +6,7 @@ public class PlayerOrbitMoveControl : MonoBehaviour
 {
     
     public Transform target;
+    private Transform avatar;
     public float distance = 20.0f;
     public float xSpeed = 40.0f;
     public float ySpeed = 80.0f;
@@ -25,6 +26,8 @@ public class PlayerOrbitMoveControl : MonoBehaviour
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
+
+        avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar").transform;
     }
 
     void LateUpdate () 
@@ -48,7 +51,9 @@ public class PlayerOrbitMoveControl : MonoBehaviour
             }
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
             Vector3 position = rotation * negDistance + target.position;
- 
+
+            // now get the avatar to look at the target
+            if (avatar) avatar.LookAt(target);
             transform.rotation = rotation;
             transform.position = position;
         }

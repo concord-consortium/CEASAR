@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -68,10 +69,15 @@ public class SimulationManager
         get { return localPlayerColor; }
     }
 
+    public Color HorizonGroundColor = Color.green;
+
     // initial setup scale
     public readonly float InitialRadius = 100;
+    // Scene Radius will be set in DataController, but we can keep a reference here for lookups elsewhere
+    public float SceneRadius = 100;
     public float CurrentScaleFactor(float sceneRadius)
     {
+        SceneRadius = sceneRadius;
         return sceneRadius / InitialRadius;
     }
     // Movement synchronization throttled for Heroku/Mongo
@@ -83,6 +89,17 @@ public class SimulationManager
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     public StarComponent CurrentlySelectedStar;
+
+    public DateTime UserStartTime = DateTime.UtcNow;
+    public DateTime CurrentSimulationTime = DateTime.UtcNow;
+    private bool useCustomSimTime = false;
+    public bool UseCustomSimulationTime {
+        get { return useCustomSimTime; }
+        set {
+            useCustomSimTime = value;
+            if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
+        }
+    }
 
     private string localUsername = "";
     // Random color (capitalized), random animal (capitalized), random number

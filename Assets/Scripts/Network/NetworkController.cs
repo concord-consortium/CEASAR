@@ -243,7 +243,8 @@ public class NetworkController : MonoBehaviour
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
-        Debug.Log(listOfPlayersForDebug);
+        if (!string.IsNullOrEmpty(listOfPlayersForDebug)) Debug.Log(listOfPlayersForDebug);
+
         networkUI.DebugMessage = listOfPlayersForDebug;
         networkUI.Username = manager.LocalUsername;
     }
@@ -308,6 +309,9 @@ public class NetworkController : MonoBehaviour
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(
                     updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y,
                     updatedPlayer.playerPosition.position.z);
+                remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextRotation = Quaternion.Euler(new Vector3(
+                    updatedPlayer.playerPosition.rotation.x, updatedPlayer.playerPosition.rotation.y,
+                    updatedPlayer.playerPosition.rotation.z));
             }
         }
     }

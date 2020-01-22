@@ -10,7 +10,10 @@ public class MainUIController : MonoBehaviour
 {
     private SimulationManager manager;
 
+    public event Action<Vector2, string> OnLocationChanged = (location, description) => { };
+
     public List<GameObject> enabledPanels = new List<GameObject>();
+    public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
 
     private DataController dataController;
@@ -68,9 +71,30 @@ public class MainUIController : MonoBehaviour
     // snapshots
     private SnapGrid snapshotGrid;
 
+    public GameObject drawModeIndicator;
+    private bool isDrawing = false;
+    public bool IsDrawing {
+        get { return isDrawing; }
+        set { 
+            isDrawing = value;
+            if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+            if (!isDrawing)
+            {
+                AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+                if (annotationTool)
+                {
+                    annotationTool.EndDrawingMode();
+                }
+            }
+        }
+    }
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
+    }
+    void OnDisable()
+    {
+        SimulationEvents.GetInstance().LocationChanged.RemoveListener(updateLocationPanel);
     }
     public void Init()
     {
@@ -82,17 +106,15 @@ public class MainUIController : MonoBehaviour
         foreach (Transform t in controlPanel.transform) {
             allPanels.Add(t.name, t.gameObject);
         }
-        positionActivePanels();
-
+        
         snapshotsController = FindObjectOfType<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
 
-
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, dataController.SelectedCity);
+            cityDropdown.InitCityNames(dataController.cities, dataController.StartCity);
         }
         if (constellationDropdown)
         {
@@ -113,7 +135,18 @@ public class MainUIController : MonoBehaviour
             daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
             timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
         }
+        foreach (GameObject buttonToDisable in buttonsToDisable)
+        {
+            buttonToDisable.GetComponent<Button>().enabled = false;
+            buttonToDisable.GetComponent<Image>().color = Color.gray;
+        }
+        
+        // Listen to any relevant events
+        SimulationEvents.GetInstance().LocationChanged.AddListener(updateLocationPanel);
+        
+        positionActivePanels();
     }
+    
     public void AddPanel(GameObject panel)
     {
         if (!enabledPanels.Contains(panel)) enabledPanels.Add(panel);
@@ -169,6 +202,14 @@ public class MainUIController : MonoBehaviour
         if (currentDateTimeText && dataController)
         {
             currentDateTimeText.text = dataController.CurrentSimUniversalTime.ToString() + " (UTC)";
+        }
+
+        // allow change of time in all scenes - should work in Earth scene to switch seasons
+        double lst;
+        if (manager == null) manager = SimulationManager.GetInstance();
+        if (setTimeToggle)
+        {
+            manager.UseCustomSimulationTime = setTimeToggle.isOn;
         }
 
         // Move our position a step closer to the target.
@@ -231,6 +272,10 @@ public class MainUIController : MonoBehaviour
         movingControlPanel = true;
     }
 
+    public void ToggleDrawMode()
+    {
+        IsDrawing = !IsDrawing;
+    }
     public void ChangeYear(float newYear)
     {
         userYear = (int)newYear;
@@ -256,7 +301,7 @@ public class MainUIController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
-        dataController.SetUserStartDateTime(calculatedStartDateTime);
+        manager.CurrentSimulationTime = calculatedStartDateTime;
     }
 
     public void ChangeStarSelection(GameObject selectedStar)
@@ -411,19 +456,13 @@ public class MainUIController : MonoBehaviour
     {
         dataController.ToggleRunSimulation();
     }
-    public void ChangeCitySelection(string location)
-    {
-        if (cityDropdown)
-        {
-            cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
-        }
-    }
+ 
 
     public void CreateSnapshot()
     {
         // get values from datacontroller
         DateTime snapshotDateTime = dataController.CurrentSimUniversalTime;
-        String location = dataController.SelectedCity;
+        String location = dataController.StartCity;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location);
         // add snapshot to dropdown list
@@ -447,7 +486,12 @@ public class MainUIController : MonoBehaviour
         userMin = snapshotDateTime.Minute;
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
-        ChangeCitySelection(location);
+        OnLocationChanged(Vector2.zero, location);
+        //if (cityDropdown)
+        //{
+        //    cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
+        //    //OnLocationChanged(Vector2.zero, location);
+        //}
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;
@@ -457,5 +501,18 @@ public class MainUIController : MonoBehaviour
     public void DeleteSnapshot(Snapshot deleteSnap)
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
+    }
+
+    private void updateLocationPanel(Vector2 latLng, string description)
+    {
+        if (FindObjectOfType<LocationPanel>())
+        {
+            FindObjectOfType<LocationPanel>().UpdateLocationPanel(latLng, description);
+        }
+    }
+
+    public void QuitApplication()
+    {
+        Application.Quit();
     }
 }

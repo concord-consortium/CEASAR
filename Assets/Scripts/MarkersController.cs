@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MarkersController : MonoBehaviour
 {
-    private DataController dataController;
+    private SimulationManager manager;
     public GameObject markerPrefab;
     public Material markerMaterial;
     private Color colorOrange = new Color(255f / 255f, 106f / 255f, 0f / 255f);
@@ -19,7 +19,7 @@ public class MarkersController : MonoBehaviour
 
     public void Init()
     {
-        dataController = SimulationManager.GetInstance().DataControllerComponent;
+        manager = SimulationManager.GetInstance();
     }
 
     public void SetSceneParameters(float markerLineWidth, float markerScale, bool markersVisible, bool poleLineVisible, bool equatorLineVisible)
@@ -34,9 +34,9 @@ public class MarkersController : MonoBehaviour
     {
         if (markerPrefab != null && markers.Count == 0)
         {
-            Vector3 NCP = AddMarker("NCP", 0f, 90f, dataController.CurrentSimulationTime.ToSiderealTime(), colorOrange);
-            Vector3 SCP = AddMarker("SCP", 0f, -90f, dataController.CurrentSimulationTime.ToSiderealTime(), colorOrange);
-            AddMarker("VE", 0f, 0f, dataController.CurrentSimulationTime.ToSiderealTime(), colorGreen);
+            Vector3 NCP = AddMarker("NCP", 0f, 90f, manager.CurrentSimulationTime.ToSiderealTime(), colorOrange);
+            Vector3 SCP = AddMarker("SCP", 0f, -90f, manager.CurrentSimulationTime.ToSiderealTime(), colorOrange);
+            AddMarker("VE", 0f, 0f, manager.CurrentSimulationTime.ToSiderealTime(), colorGreen);
             AddCircumferenceMarker("equator", colorBlue, markerLineWidth);
             AddLineMarker("poleLine", colorOrange, NCP, SCP);
         }
@@ -54,7 +54,7 @@ public class MarkersController : MonoBehaviour
         markerObject.name = markerName;
         Utils.SetObjectColor(markerObject, color);
 
-        float radius = SimulationManager.GetInstance().InitialRadius + SimulationManager.GetInstance().InitialRadius * .1f;
+        float radius = manager.InitialRadius + manager.InitialRadius * .1f;
         // Set marker positions in Equitorial position and move with celestial sphere
         switch (markerName)
         {
