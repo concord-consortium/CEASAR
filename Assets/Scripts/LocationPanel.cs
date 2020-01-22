@@ -4,20 +4,8 @@ using TMPro;
 public class LocationPanel : MonoBehaviour
 {
     public TextMeshProUGUI latLongInfo;
-    
-    void Start ()
-    {
-        SimulationEvents.GetInstance().LocationChanged.AddListener(updateLocationPanel);
-        // InteractionController.EarthInteractionDelegates += handleInteraction;
-    }
- 
-    void OnDisable()
-    {
-        SimulationEvents.GetInstance().LocationChanged.RemoveListener(updateLocationPanel);
-        // InteractionController.EarthInteractionDelegates -= handleInteraction;
-    }
 
-    private void updateLocationPanel(Vector2 latLng, string description)
+    public void UpdateLocationPanel(Vector2 latLng, string description)
     {
         Debug.Log("update location panel");
         string newText = "";
