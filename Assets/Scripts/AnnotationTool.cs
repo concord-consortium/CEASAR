@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +26,14 @@ public class AnnotationTool : MonoBehaviour
         annotations = new List<GameObject>();
         annotationLinePoints = new List<Vector3>();
         this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
+        SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
     }
+
+    private void OnDisable()
+    {
+        SimulationEvents.GetInstance().AnnotationReceived.RemoveListener(AddAnnotation);
+    }
+
     public void Annotate(Vector3 nextPoint)
     {
         if (singleLines && annotationLinePrefab)
@@ -51,7 +59,6 @@ public class AnnotationTool : MonoBehaviour
                 GameObject currentAnnotation = annotations[annotations.Count - 1];
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
-                //currentAnnotation.transform.up = offset;
                 currentAnnotation.transform.localScale = scale;
 
                 if (annotationLineHighlightPrefab)
@@ -78,6 +85,33 @@ public class AnnotationTool : MonoBehaviour
         }
     }
 
+    public void AddAnnotation(Vector3 startPos, Vector3 endPos, Color playerColor)
+    {
+        Vector3 distance = endPos - startPos;
+        Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
+        Vector3 midPosition = startPos + (distance / 2.0f);
+        GameObject currentAnnotation = Instantiate(annotationLinePrefab, startPos, Quaternion.identity, this.transform);
+        currentAnnotation.transform.LookAt(endPointForDrawing);
+        currentAnnotation.transform.position = midPosition;
+        currentAnnotation.transform.localScale = scale;
+        annotations.Add(currentAnnotation);
+
+        if (annotationLineHighlightPrefab)
+        {
+            Vector3 highlightScale = new Vector3(annotationWidth * annotationHighlightWidthMultiplier, annotationWidth * annotationHighlightWidthMultiplier, distance.magnitude);
+            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab);
+            highlightObject.transform.position = startPointForDrawing;
+            highlightObject.transform.LookAt(endPointForDrawing);
+            highlightObject.transform.position = midPosition * 1.005f;
+            highlightObject.transform.localScale = highlightScale;
+                    
+            highlightObject.GetComponent<Renderer>().material.color =
+                playerColor;
+                    
+            highlightObject.transform.parent = currentAnnotation.transform;
+        }
+    }
+    
     private void multipointLineDraw(Vector3 nextPoint)
     {
         // line renderer

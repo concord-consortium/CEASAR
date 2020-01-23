@@ -243,6 +243,7 @@ public class ColyseusClient : MonoBehaviour
             });
         }
     }
+    
     public async void SendCelestialInteraction(NetworkCelestialObject celestialObj)
     {
         if (IsConnected)
@@ -253,6 +254,22 @@ public class ColyseusClient : MonoBehaviour
             {
                 celestialObject = c,
                 message = "celestialinteraction"
+            });
+        }
+    }
+    public async void SendAnnotation(Vector3 start, Vector3 end)
+    {
+        if (IsConnected)
+        {
+            NetworkVector3 startPos = new NetworkVector3 { x = start.x, y = start.y, z = start.z };
+            NetworkVector3 endPos = new NetworkVector3 { x = end.x, y = end.y, z = end.z };
+            NetworkAnnotation newAnnotation = new NetworkAnnotation {startPosition = startPos, endPosition = endPos};
+            Debug.Log("Network sending: " + startPos + " " + endPos);
+            
+            await room.Send(new
+            {
+                annotation = newAnnotation,
+                message = "annotation"
             });
         }
     }

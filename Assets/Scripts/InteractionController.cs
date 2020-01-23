@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Colyseus.Schema;
 using UnityEngine.SceneManagement;
 
 public class InteractionController : MonoBehaviour
@@ -85,6 +86,14 @@ public class InteractionController : MonoBehaviour
             case "locationpin":
                 // add / move player pin
                 Debug.Log("remote player pinned a location");
+                break;
+            case "annotation":
+                // add annotation
+                ArraySchema<NetworkAnnotation> annotations = updatedPlayer.annotations;
+                NetworkAnnotation lastAnnotation = annotations[annotations.Count - 1];
+                Vector3 startPoint = Utils.NetworkPosToPosition(lastAnnotation.startPosition);
+                Vector3 endPoint = Utils.NetworkPosToPosition(lastAnnotation.endPosition);
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(startPoint, endPoint, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username));
                 break;
             default:
                 break;

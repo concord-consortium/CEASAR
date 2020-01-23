@@ -9,6 +9,8 @@ public class LocationChangeEvent : UnityEvent<Vector2, string> { }
 [System.Serializable]
 public class AnnotationAddedEvent : UnityEvent<Vector3, Vector3> { }
 [System.Serializable]
+public class AnnotationReceivedEvent : UnityEvent<Vector3, Vector3, Color> { }
+[System.Serializable]
 public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
@@ -19,6 +21,7 @@ public class SimulationEvents
         if (LocationSelected == null) LocationSelected = new LocationSelectedEvent();
         if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
+        if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
         if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
     }
@@ -42,9 +45,14 @@ public class SimulationEvents
     public LocationChangeEvent LocationChanged;
 
     /// <summary>
-    /// This is where we handle specific locations, set from Earth scene
+    /// This is where we handle specific annotations drawn in Horizon view
     /// </summary>
     public AnnotationAddedEvent AnnotationAdded;
+
+    /// <summary>
+    /// Receiving annotations from remote players
+    /// </summary>
+    public AnnotationReceivedEvent AnnotationReceived;
 
     /// <summary>
     /// When a user first creates a pushpin

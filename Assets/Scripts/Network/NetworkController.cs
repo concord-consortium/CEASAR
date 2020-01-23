@@ -63,6 +63,7 @@ public class NetworkController : MonoBehaviour
             ConnectToServer();
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -353,6 +354,12 @@ public class NetworkController : MonoBehaviour
         colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
     }
 
+    public void BroadcastAnnotation(Vector3 start, Vector3 end)
+    {
+        Debug.Log("Broadcasting new Annotation event " + start + " " + end);
+        colyseusClient.SendAnnotation(start, end);
+    }
+
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
         yield return new WaitForSeconds(3.0f);
@@ -366,6 +373,7 @@ public class NetworkController : MonoBehaviour
     {
         Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
     }
     
 }
