@@ -11,6 +11,8 @@ public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3> { }
 [System.Serializable]
 public class AnnotationReceivedEvent : UnityEvent<Vector3, Quaternion, Vector3, Player> { }
 [System.Serializable]
+public class AnnotationClearEvent : UnityEvent<string> { }
+[System.Serializable]
 public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
@@ -22,6 +24,7 @@ public class SimulationEvents
         if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
         if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
+        if (AnnotationClear == null) AnnotationClear = new AnnotationClearEvent();
         if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
     }
@@ -54,6 +57,10 @@ public class SimulationEvents
     /// </summary>
     public AnnotationReceivedEvent AnnotationReceived;
 
+    /// <summary>
+    /// When a player leaves, clear their annotations
+    /// </summary>
+    public AnnotationClearEvent AnnotationClear;
     /// <summary>
     /// When a user first creates a pushpin
     /// </summary>

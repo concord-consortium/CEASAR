@@ -27,11 +27,13 @@ public class AnnotationTool : MonoBehaviour
         annotationLinePoints = new List<Vector3>();
         this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
         SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
+        SimulationEvents.GetInstance().AnnotationClear.AddListener(ClearAnnotations);
     }
 
     private void OnDisable()
     {
         SimulationEvents.GetInstance().AnnotationReceived.RemoveListener(AddAnnotation);
+        SimulationEvents.GetInstance().AnnotationClear.RemoveListener(ClearAnnotations);
     }
 
     public void Annotate(Vector3 nextPoint)
@@ -58,9 +60,10 @@ public class AnnotationTool : MonoBehaviour
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
+                currentAnnotation.name = SimulationManager.GetInstance().LocalUsername + "_annotation";
                 
                 // Broadcast adding an annotation
-                SimulationEvents.GetInstance().AnnotationAdded.Invoke(currentAnnotation.transform.position, currentAnnotation.transform.rotation, currentAnnotation.transform.localScale);
+                SimulationEvents.GetInstance().AnnotationAdded.Invoke(currentAnnotation.transform.localPosition, currentAnnotation.transform.localRotation, currentAnnotation.transform.localScale);
                 
                 if (annotationLineHighlightPrefab)
                 {
@@ -89,22 +92,46 @@ public class AnnotationTool : MonoBehaviour
     public void AddAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, Player player)
     {
         Debug.Log("Received annotation " + pos + " " + rot + " " + scale);
-        GameObject currentAnnotation = Instantiate(annotationLinePrefab, pos, rot, this.transform);
+        GameObject currentAnnotation = Instantiate(annotationLinePrefab, this.transform);
+        currentAnnotation.transform.localPosition = pos;
+        currentAnnotation.transform.localRotation = rot;
         currentAnnotation.transform.localScale = scale;
         currentAnnotation.name = player.username + "_annotation";
         annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
         {
-            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, pos * 1.005f, rot);
-            
+            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, currentAnnotation.transform);
+            Transform ht = highlightObject.transform;
+            ht.position *= 1.005f;
+            ht.localScale = new Vector3(ht.localScale.x * annotationHighlightWidthMultiplier, ht.localScale.y * annotationHighlightWidthMultiplier, ht.localScale.z);
             highlightObject.GetComponent<Renderer>().material.color =
                 SimulationManager.GetInstance().GetColorForUsername(player.username);
                     
-            highlightObject.transform.parent = currentAnnotation.transform;
         }
     }
-    
+
+    public void SyncMyAnnotations()
+    {
+        foreach (GameObject annotation in GameObject.FindGameObjectsWithTag("Annotation"))
+        {
+            if (annotation.name.StartsWith(SimulationManager.GetInstance().LocalUsername))
+            {
+                SimulationEvents.GetInstance().AnnotationAdded.Invoke(annotation.transform.localPosition, annotation.transform.localRotation, annotation.transform.localScale);
+            }
+        }
+    }
+
+    public void ClearAnnotations(string playerName)
+    {
+        foreach (GameObject annotation in GameObject.FindGameObjectsWithTag("Annotation"))
+        {
+            if (annotation.name.StartsWith(playerName))
+            {
+                Destroy(annotation);
+            }
+        }
+    }
     private void multipointLineDraw(Vector3 nextPoint)
     {
         // line renderer

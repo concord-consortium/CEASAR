@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
 
@@ -259,6 +260,11 @@ public class NetworkController : MonoBehaviour
         if (isLocal)
         {
             localPlayer = player;
+            AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+            if (annotationTool)
+            {
+                annotationTool.SyncMyAnnotations();
+            }
             updateLocalAvatar();
         }
         else
@@ -278,12 +284,24 @@ public class NetworkController : MonoBehaviour
             {
                 remotePlayers[player.username] = remotePlayerAvatar;
             }
+            
+            // sync their annotations
+            for (int i = 0; i < player.annotations.Count; i++)
+            {
+                NetworkTransform annotation = player.annotations[i];
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(
+                    Utils.NetworkV3ToVector3(annotation.position), 
+                    Utils.NetworkV3ToQuaternion(annotation.rotation), 
+                    Utils.NetworkV3ToVector3(annotation.localScale),
+                    player);
+            }
         }
         updatePlayerList();
     }
 
     public void OnPlayerRemove(Player player)
     {
+        SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);

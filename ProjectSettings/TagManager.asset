@@ -9,6 +9,7 @@ TagManager:
   - LocalPlayerAvatar
   - VRPointer
   - Earth
+  - Annotation
   layers:
   - Default
   - TransparentFX

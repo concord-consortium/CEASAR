@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5282914682539080317}
   m_Layer: 16
   m_Name: AnnotationLine
-  m_TagString: Untagged
+  m_TagString: Annotation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -147,7 +147,7 @@ MonoBehaviour:
   annotationLineHighlightPrefab: {fileID: 2034434946690713381, guid: 3c5f44bbfc4184a08a643cbddf2a8ebd,
     type: 3}
   annotationWidth: 0.5
-  annotationHighlightWidthMultiplier: 1.5
+  annotationHighlightWidthMultiplier: 2
 --- !u!1001 &4645685271682883898
 PrefabInstance:
   m_ObjectHideFlags: 0
