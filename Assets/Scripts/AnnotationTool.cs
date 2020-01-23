@@ -91,6 +91,7 @@ public class AnnotationTool : MonoBehaviour
         Debug.Log("Received annotation " + pos + " " + rot + " " + scale);
         GameObject currentAnnotation = Instantiate(annotationLinePrefab, pos, rot, this.transform);
         currentAnnotation.transform.localScale = scale;
+        currentAnnotation.name = player.username + "_annotation";
         annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
@@ -98,7 +99,7 @@ public class AnnotationTool : MonoBehaviour
             GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, pos * 1.005f, rot);
             
             highlightObject.GetComponent<Renderer>().material.color =
-                player.playerColor;
+                SimulationManager.GetInstance().GetColorForUsername(player.username);
                     
             highlightObject.transform.parent = currentAnnotation.transform;
         }

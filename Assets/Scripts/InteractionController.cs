@@ -97,7 +97,7 @@ public class InteractionController : MonoBehaviour
                     Utils.NetworkV3ToVector3(lastAnnotation.position), 
                     Utils.NetworkV3ToQuaternion(lastAnnotation.rotation), 
                     Utils.NetworkV3ToVector3(lastAnnotation.localScale),
-                    SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username));
+                    updatedPlayer);
                 break;
             default:
                 break;
