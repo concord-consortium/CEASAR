@@ -16,14 +16,16 @@ public class AnnotationTool : MonoBehaviour
     
     public float annotationWidth = 1;
     public float annotationHighlightWidthMultiplier = 1.5f;
-    private List<GameObject> annotations;
+
+    private GameObject currentAnnotation;
+    private List<GameObject> myAnnotations;
 
     private LineRenderer annotationLineRenderer;
     private List<Vector3> annotationLinePoints;
     private void Start()
     {
         annotationLineRenderer = this.GetComponent<LineRenderer>();
-        annotations = new List<GameObject>();
+        myAnnotations = new List<GameObject>();
         annotationLinePoints = new List<Vector3>();
         this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
         SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
@@ -44,19 +46,18 @@ public class AnnotationTool : MonoBehaviour
             {
                 // start
                 startPointForDrawing = nextPoint;
-                annotations.Add(Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform));
+                currentAnnotation = Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform);
                 
             }
             else if (endPointForDrawing == Vector3.zero)
             {
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
-                
-                
+
                 Vector3 distance = endPointForDrawing - startPointForDrawing;
                 Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
                 Vector3 midPosition = startPointForDrawing + (distance / 2.0f);
-                GameObject currentAnnotation = annotations[annotations.Count - 1];
+                
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
@@ -79,8 +80,12 @@ public class AnnotationTool : MonoBehaviour
                     
                     highlightObject.transform.parent = currentAnnotation.transform;
                 }
+                myAnnotations.Add(currentAnnotation);
+                
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
+                currentAnnotation = null;
+
             }
         }
         else
@@ -97,7 +102,7 @@ public class AnnotationTool : MonoBehaviour
         currentAnnotation.transform.localRotation = rot;
         currentAnnotation.transform.localScale = scale;
         currentAnnotation.name = player.username + "_annotation";
-        annotations.Add(currentAnnotation);
+        // annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
         {
@@ -113,15 +118,20 @@ public class AnnotationTool : MonoBehaviour
 
     public void SyncMyAnnotations()
     {
-        foreach (GameObject annotation in GameObject.FindGameObjectsWithTag("Annotation"))
+        for (int i = 0; i < myAnnotations.Count; i++)
         {
-            if (annotation.name.StartsWith(SimulationManager.GetInstance().LocalUsername))
-            {
-                SimulationEvents.GetInstance().AnnotationAdded.Invoke(annotation.transform.localPosition, annotation.transform.localRotation, annotation.transform.localScale);
-            }
+            float delay = SimulationManager.GetInstance().MovementSendInterval * i;
+            // Need to delay sending each annotation so the network doesn't drop an update
+            StartCoroutine(sendAnnotationDelayed(myAnnotations[i], delay));
         }
     }
-
+    
+    IEnumerator sendAnnotationDelayed(GameObject annotation, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SimulationEvents.GetInstance().AnnotationAdded.Invoke(annotation.transform.localPosition,
+            annotation.transform.localRotation, annotation.transform.localScale);
+    }
     public void ClearAnnotations(string playerName)
     {
         foreach (GameObject annotation in GameObject.FindGameObjectsWithTag("Annotation"))
