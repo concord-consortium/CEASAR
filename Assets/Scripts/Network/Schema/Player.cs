@@ -29,8 +29,8 @@ public class Player : Schema {
 	[Type(6, "ref", typeof(NetworkCelestialObject))]
 	public NetworkCelestialObject celestialObjectTarget = new NetworkCelestialObject();
 
-	[Type(7, "array", typeof(ArraySchema<NetworkAnnotation>))]
-	public ArraySchema<NetworkAnnotation> annotations = new ArraySchema<NetworkAnnotation>();
+	[Type(7, "array", typeof(ArraySchema<NetworkTransform>))]
+	public ArraySchema<NetworkTransform> annotations = new ArraySchema<NetworkTransform>();
 
 	[Type(8, "boolean")]
 	public bool connected = false;

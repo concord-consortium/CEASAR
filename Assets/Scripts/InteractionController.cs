@@ -70,9 +70,10 @@ public class InteractionController : MonoBehaviour
                 Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," +
                             updatedPlayer.interactionTarget.position.y + "," +
                             updatedPlayer.interactionTarget.position.z);
-                Vector3 pos = Utils.NetworkPosToPosition(updatedPlayer.interactionTarget.position);
-                Quaternion rot = Utils.NetworkRotToRotation(updatedPlayer.interactionTarget.rotation);
-                ShowEarthMarkerInteraction(pos, rot,
+               
+                ShowEarthMarkerInteraction(
+                    Utils.NetworkV3ToVector3(updatedPlayer.interactionTarget.position), 
+                    Utils.NetworkV3ToQuaternion(updatedPlayer.interactionTarget.rotation),
                     SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
                 break;
             case "celestialinteraction":
@@ -89,11 +90,14 @@ public class InteractionController : MonoBehaviour
                 break;
             case "annotation":
                 // add annotation
-                ArraySchema<NetworkAnnotation> annotations = updatedPlayer.annotations;
-                NetworkAnnotation lastAnnotation = annotations[annotations.Count - 1];
-                Vector3 startPoint = Utils.NetworkPosToPosition(lastAnnotation.startPosition);
-                Vector3 endPoint = Utils.NetworkPosToPosition(lastAnnotation.endPosition);
-                SimulationEvents.GetInstance().AnnotationReceived.Invoke(startPoint, endPoint, SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username));
+                ArraySchema<NetworkTransform> annotations = updatedPlayer.annotations;
+                NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
+                
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(
+                    Utils.NetworkV3ToVector3(lastAnnotation.position), 
+                    Utils.NetworkV3ToQuaternion(lastAnnotation.rotation), 
+                    Utils.NetworkV3ToVector3(lastAnnotation.localScale),
+                    SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username));
                 break;
             default:
                 break;

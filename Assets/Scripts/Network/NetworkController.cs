@@ -254,8 +254,8 @@ public class NetworkController : MonoBehaviour
     {
         bool isLocal = manager.LocalUsername == player.username;
         Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id + "is local: " + isLocal);
-        Vector3 pos = Utils.NetworkPosToPosition(player.playerPosition.position);
-        Quaternion rot = Utils.NetworkRotToRotation(player.playerPosition.rotation);
+        Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
+        Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
         if (isLocal)
         {
             localPlayer = player;
@@ -341,7 +341,7 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, "interaction");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "interaction");
     }
 
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
@@ -351,13 +351,13 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "movement");
     }
 
-    public void BroadcastAnnotation(Vector3 start, Vector3 end)
+    public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale)
     {
-        Debug.Log("Broadcasting new Annotation event " + start + " " + end);
-        colyseusClient.SendAnnotation(start, end);
+        Debug.Log("Broadcasting new Annotation event " + pos);
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, "annotation");
     }
 
     IEnumerator selfDestruct(GameObject indicatorObj)

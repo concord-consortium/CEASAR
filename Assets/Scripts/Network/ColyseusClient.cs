@@ -226,7 +226,7 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerChange(player);
     }
     
-    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, string messageType)
+    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string messageType)
     {
         if (IsConnected)
         {
@@ -235,6 +235,7 @@ public class ColyseusClient : MonoBehaviour
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
+            t.localScale = new NetworkVector3 {x = scale.x, y = scale.y, z = scale.z};
             
             await room.Send(new
             {
@@ -257,22 +258,7 @@ public class ColyseusClient : MonoBehaviour
             });
         }
     }
-    public async void SendAnnotation(Vector3 start, Vector3 end)
-    {
-        if (IsConnected)
-        {
-            NetworkVector3 startPos = new NetworkVector3 { x = start.x, y = start.y, z = start.z };
-            NetworkVector3 endPos = new NetworkVector3 { x = end.x, y = end.y, z = end.z };
-            NetworkAnnotation newAnnotation = new NetworkAnnotation {startPosition = startPos, endPosition = endPos};
-            Debug.Log("Network sending: " + startPos + " " + endPos);
-            
-            await room.Send(new
-            {
-                annotation = newAnnotation,
-                message = "annotation"
-            });
-        }
-    }
+    
     void OnApplicationQuit()
     {
         Disconnect();

@@ -29,11 +29,11 @@ public static class Utils
                    (oldT.rotation.z != newT.rotation.z)) return true;
         return false;
     }
-    public static Vector3 NetworkPosToPosition(NetworkVector3 pos)
+    public static Vector3 NetworkV3ToVector3(NetworkVector3 pos)
     {
         return new Vector3(pos.x, pos.y, pos.z);
     }
-    public static Quaternion NetworkRotToRotation(NetworkVector3 rot)
+    public static Quaternion NetworkV3ToQuaternion(NetworkVector3 rot)
     {
         return Quaternion.Euler(rot.x, rot.y, rot.z);
     }

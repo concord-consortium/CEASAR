@@ -13,5 +13,8 @@ public class NetworkTransform : Schema {
 
 	[Type(1, "ref", typeof(NetworkVector3))]
 	public NetworkVector3 rotation = new NetworkVector3();
+
+	[Type(2, "ref", typeof(NetworkVector3))]
+	public NetworkVector3 localScale = new NetworkVector3();
 }
 

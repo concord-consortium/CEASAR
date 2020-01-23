@@ -50,9 +50,7 @@ public class AnnotationTool : MonoBehaviour
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
                 
-                // Broadcast adding an annotation
-                SimulationEvents.GetInstance().AnnotationAdded.Invoke(startPointForDrawing, endPointForDrawing);
-
+                
                 Vector3 distance = endPointForDrawing - startPointForDrawing;
                 Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
                 Vector3 midPosition = startPointForDrawing + (distance / 2.0f);
@@ -60,7 +58,10 @@ public class AnnotationTool : MonoBehaviour
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
-
+                
+                // Broadcast adding an annotation
+                SimulationEvents.GetInstance().AnnotationAdded.Invoke(currentAnnotation.transform.position, currentAnnotation.transform.rotation, currentAnnotation.transform.localScale);
+                
                 if (annotationLineHighlightPrefab)
                 {
                     Vector3 highlightScale = new Vector3(annotationWidth * annotationHighlightWidthMultiplier, annotationWidth * annotationHighlightWidthMultiplier, distance.magnitude);
@@ -85,28 +86,19 @@ public class AnnotationTool : MonoBehaviour
         }
     }
 
-    public void AddAnnotation(Vector3 startPos, Vector3 endPos, Color playerColor)
+    public void AddAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, Player player)
     {
-        Vector3 distance = endPos - startPos;
-        Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
-        Vector3 midPosition = startPos + (distance / 2.0f);
-        GameObject currentAnnotation = Instantiate(annotationLinePrefab, startPos, Quaternion.identity, this.transform);
-        currentAnnotation.transform.LookAt(endPointForDrawing);
-        currentAnnotation.transform.position = midPosition;
+        Debug.Log("Received annotation " + pos + " " + rot + " " + scale);
+        GameObject currentAnnotation = Instantiate(annotationLinePrefab, pos, rot, this.transform);
         currentAnnotation.transform.localScale = scale;
         annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
         {
-            Vector3 highlightScale = new Vector3(annotationWidth * annotationHighlightWidthMultiplier, annotationWidth * annotationHighlightWidthMultiplier, distance.magnitude);
-            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab);
-            highlightObject.transform.position = startPointForDrawing;
-            highlightObject.transform.LookAt(endPointForDrawing);
-            highlightObject.transform.position = midPosition * 1.005f;
-            highlightObject.transform.localScale = highlightScale;
-                    
+            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, pos * 1.005f, rot);
+            
             highlightObject.GetComponent<Renderer>().material.color =
-                playerColor;
+                player.playerColor;
                     
             highlightObject.transform.parent = currentAnnotation.transform;
         }

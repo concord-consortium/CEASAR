@@ -7,9 +7,9 @@ public class LocationSelectedEvent : UnityEvent<string> { }
 [System.Serializable]
 public class LocationChangeEvent : UnityEvent<Vector2, string> { }
 [System.Serializable]
-public class AnnotationAddedEvent : UnityEvent<Vector3, Vector3> { }
+public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3> { }
 [System.Serializable]
-public class AnnotationReceivedEvent : UnityEvent<Vector3, Vector3, Color> { }
+public class AnnotationReceivedEvent : UnityEvent<Vector3, Quaternion, Vector3, Color> { }
 [System.Serializable]
 public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]

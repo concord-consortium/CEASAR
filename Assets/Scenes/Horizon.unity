@@ -550,7 +550,7 @@ PrefabInstance:
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.size
-      value: 10
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
@@ -566,12 +566,12 @@ PrefabInstance:
         type: 3}
       propertyPath: enabledPanels.Array.data[4]
       value: 
-      objectReference: {fileID: 515667405}
+      objectReference: {fileID: 515667408}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[5]
       value: 
-      objectReference: {fileID: 515667406}
+      objectReference: {fileID: 515667409}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[6]
@@ -596,7 +596,7 @@ PrefabInstance:
         type: 3}
       propertyPath: enabledPanels.Array.data[2]
       value: 
-      objectReference: {fileID: 515667402}
+      objectReference: {fileID: 515667405}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: starInfoPanel
@@ -1914,12 +1914,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2f8e74f1a333614a8717f2c31eb93b6, type: 3}
---- !u!1 &515667402 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2724144226638478437, guid: f2f8e74f1a333614a8717f2c31eb93b6,
-    type: 3}
-  m_PrefabInstance: {fileID: 515667401}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &515667403 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6730335783260794567, guid: f2f8e74f1a333614a8717f2c31eb93b6,
@@ -1935,12 +1929,6 @@ GameObject:
 --- !u!1 &515667405 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2724144227810360787, guid: f2f8e74f1a333614a8717f2c31eb93b6,
-    type: 3}
-  m_PrefabInstance: {fileID: 515667401}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &515667406 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2724144226974315158, guid: f2f8e74f1a333614a8717f2c31eb93b6,
     type: 3}
   m_PrefabInstance: {fileID: 515667401}
   m_PrefabAsset: {fileID: 0}
