@@ -67,30 +67,37 @@ public static class TimeConverter
 
     private static double getJulianDate(DateTime sourceDate)
     {
-        double y, m, c;
-        if (sourceDate.Month <= 2)
-        {
-            y = sourceDate.Year - 1;
-            m = sourceDate.Month + 2;
-        }
+        bool isOldDate = sourceDate.Year < 1900;
+        if (!isOldDate) return SunCalcNet.Utils.DateTimeUtils.ToJulianDate(sourceDate); // a simple method
         else
         {
-            y = sourceDate.Year;
-            m = sourceDate.Month;
-        }
+            double y, m, c;
+            if (sourceDate.Month <= 2)
+            {
+                y = sourceDate.Year - 1;
+                m = sourceDate.Month + 2;
+            }
+            else
+            {
+                y = sourceDate.Year;
+                m = sourceDate.Month;
+            }
 
-        double leapDayCount = (sourceDate > GregorianReformDate) ? (2 - Math.Floor(y / 100) + Math.Floor(y / 400)) : 0;
-        if (sourceDate.Year < 0)
-        {
-            c = (int)(365.25 * (double)sourceDate.Year - 0.75);
+            double leapDayCount =
+                (sourceDate > GregorianReformDate) ? (2 - Math.Floor(y / 100) + Math.Floor(y / 400)) : 0;
+            if (sourceDate.Year < 0)
+            {
+                c = (int) (365.25 * (double) sourceDate.Year - 0.75);
+            }
+            else
+            {
+                c = (int) (365.25 * (double) sourceDate.Year);
+            }
+
+            double d = Math.Floor(30.6001 * (m + 1));
+            var retVal = leapDayCount + c + d + sourceDate.Day + 1720994.5;
+            return retVal + sourceDate.ToFractionalDay();
         }
-        else
-        {
-            c = (int)(365.25 * (double)sourceDate.Year);
-        }
-        double d = Math.Floor(30.6001 * (m + 1));
-        var retVal = leapDayCount + c + d + sourceDate.Day + 1720994.5;
-        return retVal + sourceDate.ToFractionalDay();
     }
 
     public static DateTime JulianToCalendarDate(this double sourceJulianDate)

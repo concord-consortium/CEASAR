@@ -85,7 +85,7 @@ public class SimulationManager
     
     // Server Address!
     public string LocalNetworkServer = "ws://localhost:2567";
-    public string DevNetworkServer = "ws://ceasar-serve-166903181-luo6i9u.herokuapp.com/";
+    public string DevNetworkServer = "ws://ceasar-serve-170822523-mftx7jq.herokuapp.com/";
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     public StarComponent CurrentlySelectedStar;
