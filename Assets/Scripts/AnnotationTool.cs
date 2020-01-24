@@ -3,13 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
 public class AnnotationTool : MonoBehaviour
 {
     private Vector3 startPointForDrawing = Vector3.zero;
     private Vector3 endPointForDrawing = Vector3.zero;
-
-    public bool singleLines = true;
     
     public GameObject annotationLinePrefab;
     public GameObject annotationLineHighlightPrefab;
@@ -20,13 +17,9 @@ public class AnnotationTool : MonoBehaviour
     private GameObject currentAnnotation;
     private List<GameObject> myAnnotations;
 
-    private LineRenderer annotationLineRenderer;
-    private List<Vector3> annotationLinePoints;
     private void Start()
     {
-        annotationLineRenderer = this.GetComponent<LineRenderer>();
         myAnnotations = new List<GameObject>();
-        annotationLinePoints = new List<Vector3>();
         this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
         SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
         SimulationEvents.GetInstance().AnnotationClear.AddListener(ClearAnnotations);
@@ -40,7 +33,7 @@ public class AnnotationTool : MonoBehaviour
 
     public void Annotate(Vector3 nextPoint)
     {
-        if (singleLines && annotationLinePrefab)
+        if (annotationLinePrefab)
         {
             if (startPointForDrawing == Vector3.zero)
             {
@@ -85,12 +78,7 @@ public class AnnotationTool : MonoBehaviour
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
                 currentAnnotation = null;
-
             }
-        }
-        else
-        {
-            multipointLineDraw(nextPoint);
         }
     }
 
@@ -142,40 +130,13 @@ public class AnnotationTool : MonoBehaviour
             }
         }
     }
-    private void multipointLineDraw(Vector3 nextPoint)
-    {
-        // line renderer
-        if (startPointForDrawing == Vector3.zero)
-        {
-            startPointForDrawing = nextPoint;
-            if (annotationLineRenderer.positionCount == 2 && annotationLineRenderer.GetPosition(0) == Vector3.zero)
-            {
-                annotationLineRenderer.SetPosition(0, startPointForDrawing);
-                annotationLineRenderer.SetPosition(1, startPointForDrawing);
-                annotationLinePoints.Add(startPointForDrawing);
-                annotationLinePoints.Add(startPointForDrawing);
-            }
-            else
-            {
-                annotationLinePoints.Add(nextPoint);
-            }
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
-        }
-        else
-        {
-            annotationLinePoints.Add(nextPoint);
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
-        }
-    }
+    
     public void EndDrawingMode()
     {
-        if (annotationLinePoints.Count > 2)
+        if (startPointForDrawing != Vector3.zero && currentAnnotation != null && endPointForDrawing == Vector3.zero)
         {
-            annotationLinePoints.RemoveAt(annotationLinePoints.Count - 1);
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+            // we were in the middle of drawing when we stopped. Remove in-progress drawing
+            Destroy(currentAnnotation);
         }
         startPointForDrawing = Vector3.zero;
         endPointForDrawing = Vector3.zero;
