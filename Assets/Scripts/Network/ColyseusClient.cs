@@ -23,7 +23,6 @@ public class ColyseusClient : MonoBehaviour
     protected Room<State> room;
     private NetworkController networkController;
 
-    //protected List<Player> players = new List<Player>();
     protected IndexedDictionary<string, Player> players = new IndexedDictionary<string, Player>();
     private Player localPlayer;
     private string localPlayerName = "";
@@ -57,13 +56,19 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async Task ConnectToServer(string serverEndpoint, string username)
+    public async Task ConnectToServer(string serverEndpoint, string username, string roomName)
     {
         networkController = GetComponent<NetworkController>();
+        Debug.Log($"Connection: {!connecting}");
+        Debug.Log($"Connection: {!IsConnected}");
+
         if (!connecting && !IsConnected)
         {
+            Debug.Log("HERE WE ARE 1" + serverEndpoint);
             connecting = true;
+            Debug.Log("HERE WE ARE 2" + serverEndpoint);
             networkController.ServerStatusMessage = "Connecting...";
+            Debug.Log("HERE WE ARE 3" + serverEndpoint);
             Debug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
@@ -77,7 +82,7 @@ public class ColyseusClient : MonoBehaviour
             client.Auth.Username = username;
             Debug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
-            await JoinRoom(networkController.roomName);
+            await JoinRoom(roomName);
             connecting = false;
         }
     }   

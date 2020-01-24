@@ -22,8 +22,8 @@ public class NetworkController : MonoBehaviour
 
     public static string[] roomNames = {
         "alpha", "beta", "gamma",
-        "delta", "epsilon", "zeta"
-        //"eta", "theta", "iota"
+        "delta", "epsilon", "zeta",
+        "eta", "theta", "iota"
     };
 
     protected ColyseusClient colyseusClient;
@@ -55,15 +55,15 @@ public class NetworkController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        networkUI = FindObjectOfType<NetworkUI>();
-        manager = SimulationManager.GetInstance();
-        ensureUsername();
+        FindDependencies();
+        EnsureUsername();
         networkUI.Username = manager.LocalUsername;
+        colyseusClient = GetComponent<ColyseusClient>();
     }
+
     void Start()
     {
-        colyseusClient = GetComponent<ColyseusClient>();
-
+        FindDependencies();
         if (autoConnect)
         {
             ConnectToServer();
@@ -76,9 +76,7 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
-        // instance of UI will have changed per scene
-        networkUI = FindObjectOfType<NetworkUI>();
-        ensureUsername();
+        FindDependencies();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(localPlayer);
@@ -88,9 +86,20 @@ public class NetworkController : MonoBehaviour
                 OnPlayerAdd(remotePlayer);
             }
         }
-        
+       
         refreshUI();
         CCLogger.Log(CCLogger.EVENT_SCENE, "OnSceneLoaded: " + scene.name);
+    }
+
+    // TODO: Decouple depedency tree using events
+    // For now we just need to ensure our peers exist OnSceneLoaded ...
+    private void FindDependencies()
+    {
+        manager = SimulationManager.GetInstance();
+        colyseusClient = GetComponent<ColyseusClient>();
+        networkUI = FindObjectOfType<NetworkUI>();
+        colyseusClient = GetComponent<ColyseusClient>();
+        EnsureUsername();
     }
 
     private void Update()
@@ -111,12 +120,17 @@ public class NetworkController : MonoBehaviour
             refreshUI();
         }
     }
+
     void refreshUI()
     {
         // refresh connection status on hide/show and on scene change
         networkUI = FindObjectOfType<NetworkUI>();
-        networkUI.ConnectButtonText = IsConnected ? "Disconnect" : "Connect";
-        updatePlayerList();
+        if(networkUI)
+        {
+            networkUI.ConnectButtonText = IsConnected ? "Disconnect" : "Connect";
+            updatePlayerList();
+        }
+        
     }
 
 
@@ -140,7 +154,8 @@ public class NetworkController : MonoBehaviour
 
         _selectedNetwork = destination;
     }
-    void ensureUsername()
+
+    void EnsureUsername()
     {
         if(!string.IsNullOrEmpty(manager.LocalUsername))
         {
@@ -153,8 +168,7 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
-            manager.LocalUsername = foundName;
-            updateLocalAvatar();
+            SetUsername(foundName);
         }
     }
 
@@ -172,6 +186,37 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+
+    public void SetUsername(string localUsername)
+    {
+        if(manager != null)
+        {
+            manager.LocalUsername = localUsername;
+            updateLocalAvatar();
+        }
+        else
+        {
+            Debug.Log("Null Manager ?");
+            SimulationManager.GetInstance().LocalUsername = localUsername;
+        }
+        
+    }
+
+    // Use this if you have a valid enpoint in mind:
+    public void ConnectToEndpoint(string endpoint)
+    {
+        if (!IsConnected)
+        {
+            string username = SimulationManager.GetInstance().LocalUsername;
+            FindDependencies();
+            colyseusClient.ConnectToServer(endpoint, username, roomName);
+            manager.NetworkStatus = _selectedNetwork;
+            refreshUI();
+            CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
+        }
+    }
+
+    // Use this if you want to connect with reasonable defaults
     public void ConnectToServer(string userDefinedEndpoint = null)
     {
         /*
@@ -180,7 +225,7 @@ public class NetworkController : MonoBehaviour
          */
         if (!IsConnected)
         {
-            ensureUsername();
+            EnsureUsername();
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
             string endpoint = string.Empty;
@@ -200,10 +245,7 @@ public class NetworkController : MonoBehaviour
             {
                 endpoint = userDefinedEndpoint;
             }
-            colyseusClient.ConnectToServer(endpoint, manager.LocalUsername);
-            manager.NetworkStatus = _selectedNetwork;
-            refreshUI();
-            CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
+            ConnectToEndpoint(endpoint);
         }
         else if (IsConnected)
         {
