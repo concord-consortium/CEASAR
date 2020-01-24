@@ -111,8 +111,9 @@ public static class Utils
     public static Vector2 LatLngFromPosition(Vector3 pos, float rad)
     {
         
-        float lat = 90 - (float) Math.Acos(pos.y / rad) * 180 / Mathf.PI;
-        float lon = (float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI;
+        float lat = (float) Math.Asin(pos.y / rad) * 180 / Mathf.PI;
+        float lon = ((float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI ) - 90;
+        if (pos.z > 0) lon += 180;
         return new Vector2(lat, lon);
     }
 

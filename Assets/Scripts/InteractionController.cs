@@ -131,7 +131,7 @@ public class InteractionController : MonoBehaviour
         Vector2 latLng = Vector2.zero; // unset value
         if (earth)
         {
-            Vector3 earthPos = pos - earth.transform.position;
+            Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
             float radius = size.x / 2;
             latLng = Utils.LatLngFromPosition(earthPos, radius);
