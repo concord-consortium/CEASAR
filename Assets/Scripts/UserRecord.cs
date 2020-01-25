@@ -40,7 +40,12 @@ public class UserRecord
 
     public void Randomize()
     {
+        string oldGroup = group;
         LoadRandomValues();
+        if (oldGroup != null)
+        {   // Retain previous group name by default.
+            group = oldGroup;
+        }
     }
 
     private void FromUsername(string username)
