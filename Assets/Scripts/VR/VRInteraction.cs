@@ -12,6 +12,7 @@ public class VRInteraction : MonoBehaviour
     Ray ray;
     int layerMaskEarth;
     int layerMaskStars;
+    private int layerMaskUI;
     public GameObject vrPointerPrefab;
 
     private GameObject _vrPointer;
@@ -57,6 +58,7 @@ public class VRInteraction : MonoBehaviour
 
         layerMaskEarth = LayerMask.GetMask("Earth");
         layerMaskStars = LayerMask.GetMask("Stars");
+        layerMaskUI = LayerMask.GetMask("UI");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
 
@@ -88,11 +90,18 @@ public class VRInteraction : MonoBehaviour
             // if we're drawing, no need to raycast
             if (mainUIController.IsDrawing && annotationTool != null)
             {
+
+                
+                ray = new Ray(laserStartPos, forwardDirection);
+                bool blockAnnotation = Physics.Raycast(ray, out hit, laserLongDistance, layerMaskUI);
+
                 if (interactionTrigger())
                 {
-                    annotationTool.Annotate(laserEndPos);
+                    if (!blockAnnotation)
+                    {
+                        annotationTool.Annotate(laserEndPos);
+                    }
                 }
-
             }
             else
             {
