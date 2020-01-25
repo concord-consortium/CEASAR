@@ -87,82 +87,96 @@ public class VRInteraction : MonoBehaviour
             // Next, detect if the user is holding down the Interact button also
 
             if (mainUIController == null) mainUIController = FindObjectOfType<MainUIController>();
-            // if we're drawing, no need to raycast
-            if (mainUIController.IsDrawing && annotationTool != null)
+
+            // Raycast, then if we hit the Earth or a star we can show the interaction
+            ray = new Ray(laserStartPos, forwardDirection);
+
+            // Look for close-by objects (Earth in the EarthInteraction scene)
+            if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
             {
-
-                
-                ray = new Ray(laserStartPos, forwardDirection);
-                bool blockAnnotation = Physics.Raycast(ray, out hit, laserLongDistance, layerMaskUI);
-
-                if (interactionTrigger())
+                for (int i = 0; i < hits.Length; i++)
                 {
-                    if (!blockAnnotation)
+                    hit = hits[i];
+                    laserEndPos = hit.point;
+                    updateLaser(true);
+
+                    if (interactionTrigger())
                     {
-                        annotationTool.Annotate(laserEndPos);
+                        Collider c = hit.collider;
+                        if (c is SphereCollider)
+                        {
+                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                        }
+                        else if (c is MeshCollider)
+                        {
+                            Renderer rend = hit.transform.GetComponent<Renderer>();
+                            // hit.textureCoord only possible on the Mesh collider
+                            manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
+                        }
+                    }
+                }
+            }
+            // Look for distant objects (stars in other views)
+            else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStars))
+            {
+                // Handle stars separately
+                StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                if (nextStar != null)
+                {
+                    if (nextStar != currentStar)
+                    {
+                        // remove highlighting from previous star
+                        if (currentStar != null) currentStar.CursorHighlightStar(false);
+                    }
+
+                    currentStar = nextStar;
+                    currentStar.CursorHighlightStar(true);
+
+                    if (interactionTrigger())
+                    {
+                        if (mainUIController.IsDrawing && annotationTool != null)
+                        {
+                            // allow annotation where the star is
+                            annotationTool.Annotate(laserEndPos);
+                        }
+                        else
+                        {
+                            // select the star
+                            currentStar.HandleSelectStar(true);
+                        }
+
                     }
                 }
             }
             else
             {
-                // Raycast, then if we hit the Earth or a star we can show the interaction
-                ray = new Ray(laserStartPos, forwardDirection);
-
-                if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+                if (currentStar != null)
                 {
-                    for (int i = 0; i < hits.Length; i++)
-                    {
-                        hit = hits[i];
-                        laserEndPos = hit.point;
-                        updateLaser(true);
-
-                        if (interactionTrigger())
-                        {
-                            Collider c = hit.collider;
-                            if (c is SphereCollider)
-                            {
-                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                            }
-                            else if (c is MeshCollider)
-                            {
-                                Renderer rend = hit.transform.GetComponent<Renderer>();
-                                // hit.textureCoord only possible on the Mesh collider
-                                manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
-                            }
-                        }
-                    }
+                    currentStar.CursorHighlightStar(false);
                 }
-                else if(allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStars))
+                updateLaser(false);
+
+                if (interactionTrigger())
                 {
-                    // Handle stars separately
-                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                    if (nextStar != null)
+                    if (mainUIController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
                     {
-                        if (nextStar != currentStar)
+                        // Seems like a crazy way to determine if the UI is in the way, but after multiple attempts at a more
+                        // elegant solution, settled on this since it works.
+                        if (FindObjectOfType<LaserPointer>().GetComponent<LineRenderer>().enabled)
                         {
-                            Debug.Log("New star! " + nextStar.starData.ProperName);
-                            // remove highlighting from previous star
-                            if (currentStar != null) currentStar.CursorHighlightStar(false);
+                            // Blocked by the UI layer
+                            return;
+                        }
+                        else
+                        {
+                            // allow annotation where the star is
+                            annotationTool.Annotate(laserEndPos);
                         }
 
-                        currentStar = nextStar;
-                        currentStar.CursorHighlightStar(true);
-
-                        if (interactionTrigger())
-                        {
-                            currentStar.HandleSelectStar(true);
-                        }
                     }
-                }
-                else
-                {
-                    if (currentStar != null)
-                    {
-                        currentStar.CursorHighlightStar(false);
-                    }
-                    updateLaser(false);
                 }
             }
+
         }
     }
     void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float distance)
