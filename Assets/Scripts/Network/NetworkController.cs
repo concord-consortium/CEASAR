@@ -11,14 +11,10 @@ public enum NetworkConnection { Local, Dev, Remote, None }
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
 {
-    public const string PLAYER_PREFS_NAME_KEY = "CAESAR_USERNAME";
-   
     public GameObject avatar;
     private Player localPlayer;
     private GameObject localPlayerAvatar;
     public GameObject interactionIndicator;
-
-    public string roomName = "ceasar";
 
     public static string[] roomNames = {
         "alpha", "beta", "gamma",
@@ -56,7 +52,6 @@ public class NetworkController : MonoBehaviour
     {
         DontDestroyOnLoad(this.gameObject);
         FindDependencies();
-        EnsureUsername();
         networkUI.Username = manager.LocalUsername;
         colyseusClient = GetComponent<ColyseusClient>();
     }
@@ -99,7 +94,6 @@ public class NetworkController : MonoBehaviour
         colyseusClient = GetComponent<ColyseusClient>();
         networkUI = FindObjectOfType<NetworkUI>();
         colyseusClient = GetComponent<ColyseusClient>();
-        EnsureUsername();
     }
 
     private void Update()
@@ -155,61 +149,14 @@ public class NetworkController : MonoBehaviour
         _selectedNetwork = destination;
     }
 
-    void EnsureUsername()
-    {
-        if(!string.IsNullOrEmpty(manager.LocalUsername))
-        {
-            return;
-        }
-        string foundName = PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
-        if (string.IsNullOrEmpty(foundName))
-        {
-            RandomizeUsername();
-        }
-        else
-        {
-            SetUsername(foundName);
-        }
-    }
-
-
-    public void RandomizeUsername()
-    {
-        if (!IsConnected)
-        {
-            manager.GenerateUsername();
-            localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
-            updateLocalAvatar();
-            PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, manager.LocalUsername);
-            networkUI.Username = manager.LocalUsername;
-            CCLogger.Log(CCLogger.EVENT_USERNAME, "Username set " + manager.LocalUsername);
-        }
-    }
-
-
-    public void SetUsername(string localUsername)
-    {
-        if(manager != null)
-        {
-            manager.LocalUsername = localUsername;
-            updateLocalAvatar();
-        }
-        else
-        {
-            Debug.Log("Null Manager ?");
-            SimulationManager.GetInstance().LocalUsername = localUsername;
-        }
-        
-    }
-
     // Use this if you have a valid enpoint in mind:
     public void ConnectToEndpoint(string endpoint)
     {
         if (!IsConnected)
         {
-            string username = SimulationManager.GetInstance().LocalUsername;
+            UserRecord user = SimulationManager.GetInstance().LocalPlayer; 
             FindDependencies();
-            colyseusClient.ConnectToServer(endpoint, username, roomName);
+            colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.NetworkStatus = _selectedNetwork;
             refreshUI();
             CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
@@ -225,7 +172,6 @@ public class NetworkController : MonoBehaviour
          */
         if (!IsConnected)
         {
-            EnsureUsername();
             string _localEndpoint = manager.LocalNetworkServer;
             string _remoteEndpoint = manager.ProductionNetworkServer;
             string endpoint = string.Empty;
@@ -318,7 +264,7 @@ public class NetworkController : MonoBehaviour
         else
         {
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
-            Color playerColor = SimulationManager.GetInstance().GetColorForUsername(player.username);
+            Color playerColor = UserRecord.GetColorForUsername(player.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();

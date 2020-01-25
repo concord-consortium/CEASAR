@@ -7,7 +7,10 @@ using UnityEngine;
 public class SimulationManager
 {
     // can't use constructor, guaranteed singleton
-    protected SimulationManager() { }
+    protected SimulationManager() {
+        LocalPlayer = new UserRecord();
+        Debug.Log($"User has been created {LocalPlayer.Username}");
+    }
     private static SimulationManager instance;
 
     public static SimulationManager GetInstance()
@@ -64,11 +67,20 @@ public class SimulationManager
     public List<string> ColorNames = new List<string>();
     public List<Color> ColorValues = new List<Color>();
 
-    private Color localPlayerColor = Color.white;
+    public UserRecord LocalPlayer { get; set; }
+
     public Color LocalPlayerColor {
-        get { return localPlayerColor; }
+        get { return LocalPlayer.color; }
     }
 
+    public string LocalUsername
+    {
+        get { return LocalPlayer.Username; }
+        set {
+            LocalPlayer = new UserRecord(value);
+            Debug.Log($"User has been Changed: {LocalPlayer.Username}");
+        }
+    }
     public Color HorizonGroundColor = Color.green;
 
     // initial setup scale
@@ -90,69 +102,7 @@ public class SimulationManager
 
     public StarComponent CurrentlySelectedStar;
 
-    public DateTime UserStartTime = DateTime.UtcNow;
-    public DateTime CurrentSimulationTime = DateTime.UtcNow;
-    private bool useCustomSimTime = false;
-    public bool UseCustomSimulationTime {
-        get { return useCustomSimTime; }
-        set {
-            useCustomSimTime = value;
-            if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
-        }
-    }
-
-    private string localUsername = "";
-    // Random color (capitalized), random animal (capitalized), random number
-    public void GenerateUsername()
-    {
-        int colorIndex = rng.Next(ColorNames.Count - 1);
-        int animalIndex = rng.Next(AnimalNames.Length - 1);
-        string randomNumber = rng.Next(999).ToString();
-        localUsername = ColorNames[colorIndex].FirstCharToUpper() + AnimalNames[animalIndex].FirstCharToUpper() + randomNumber;
-        localPlayerColor = ColorValues[colorIndex];
-    }
-
-    // We can find out the color value from the username
-    public Color GetColorForUsername(string name)
-    {
-        StringBuilder sb = new StringBuilder();
-        bool found = false;
-        int i = 0;
-        while (!found && i < name.Length)
-        {
-            if (char.IsUpper(name[i]) && i > 1)
-            {
-                found = true;
-            }
-            else
-            {
-                sb.Append(name[i]);
-                i++;
-            }
-        }
-
-        string colorName = sb.ToString();
-        // Don't forget to lowercase the name!
-        string color = colorName.ToLower();
-        if (ColorNames.Contains(color))
-        {
-            return ColorValues[ColorNames.IndexOf(color)];
-        }
-        else
-        {
-            Debug.Log("Color not found for " + color + " as part of " + name);
-            return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
-        }
-    }
-
-    public string LocalUsername {
-        get { return localUsername; }
-        set { 
-            localUsername = value;
-            localPlayerColor = GetColorForUsername(localUsername);
-        }
-    }
-
+    
     public float GetRelativeMagnitude(float starMagnitude)
     {
         //float min = DataControllerComponent.minMag;

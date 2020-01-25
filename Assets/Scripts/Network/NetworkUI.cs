@@ -35,9 +35,12 @@ public class NetworkUI : MonoBehaviour
 
     public void RandomizeUsername()
     {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
-        networkController.RandomizeUsername();
+        SimulationManager.GetInstance().LocalPlayer.Randomize();
+        UserRecord user = SimulationManager.GetInstance().LocalPlayer;
+        usernameText.text = user.Username;
+        usernameText.color = user.color;
     }
+
     public void SetNetworkAddress(string address)
     {
         NetworkController networkController = FindObjectOfType<NetworkController>();
@@ -82,29 +85,7 @@ public class NetworkUI : MonoBehaviour
 
     private void Start()
     {
-        foreach (string name in NetworkController.roomNames)
-        {
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(roomButtonPanel.transform);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
-            if(label != null )
-            {
-                label.SetText(name);
-            }
-            Debug.Log("Label is " + label);
-            if(b != null)
-            {
-                b.onClick.AddListener(() => handleRoomClick(name));
-            }
-        }
-    }
 
-    public void handleRoomClick(string name)
-    {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
-        networkController.roomName = name;
-        Debug.Log(name);
     }
 
     public string Username {

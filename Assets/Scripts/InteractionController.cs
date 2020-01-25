@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Colyseus.Schema;
 using UnityEngine.SceneManagement;
@@ -74,7 +74,7 @@ public class InteractionController : MonoBehaviour
                 ShowEarthMarkerInteraction(
                     Utils.NetworkV3ToVector3(updatedPlayer.interactionTarget.position), 
                     Utils.NetworkV3ToQuaternion(updatedPlayer.interactionTarget.rotation),
-                    SimulationManager.GetInstance().GetColorForUsername(updatedPlayer.username), false);
+                    UserRecord.GetColorForUsername(updatedPlayer.username), false);
                 break;
             case "celestialinteraction":
                 Debug.Log("remote player selected star");
