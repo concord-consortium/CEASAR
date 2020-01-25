@@ -2901,8 +2901,7 @@ MonoBehaviour:
   NextButton: {fileID: 1202694147}
   DirectionsText: {fileID: 736304512}
   NextScreen: {fileID: 1093943879}
-  networkController: {fileID: 2549443975885674652, guid: ab1c2ff2ac7bb4d0dabd42423d922349,
-    type: 3}
+  networkController: {fileID: 0}
 --- !u!1 &1521187702
 GameObject:
   m_ObjectHideFlags: 0
