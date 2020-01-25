@@ -275,6 +275,7 @@ public class MainUIController : MonoBehaviour
     public void ToggleDrawMode()
     {
         IsDrawing = !IsDrawing;
+        SimulationEvents.GetInstance().DrawMode.Invoke(IsDrawing);
     }
     public void ChangeYear(float newYear)
     {

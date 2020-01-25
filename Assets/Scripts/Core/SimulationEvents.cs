@@ -16,6 +16,8 @@ public class AnnotationClearEvent : UnityEvent<string> { }
 public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
+[System.Serializable]
+public class DrawModeEvent: UnityEvent<bool> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -27,6 +29,7 @@ public class SimulationEvents
         if (AnnotationClear == null) AnnotationClear = new AnnotationClearEvent();
         if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
+        if (DrawMode == null) DrawMode = new DrawModeEvent();
     }
     private static SimulationEvents instance;
 
@@ -69,4 +72,8 @@ public class SimulationEvents
     /// When a user updates a pushpin
     /// </summary>
     public PushPinUpdatedEvent PushPinUpdated;
+    /// <summary>
+    /// When a user enters / exits draw mode
+    /// </summary>
+    public DrawModeEvent DrawMode;
 }

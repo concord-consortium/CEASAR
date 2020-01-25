@@ -54,8 +54,7 @@ public class AnnotationTool : MonoBehaviour
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
-                currentAnnotation.name = SimulationManager.GetInstance().LocalUsername + "_annotation";
-                
+
                 // Broadcast adding an annotation
                 SimulationEvents.GetInstance().AnnotationAdded.Invoke(currentAnnotation.transform.localPosition, currentAnnotation.transform.localRotation, currentAnnotation.transform.localScale);
                 
@@ -73,7 +72,9 @@ public class AnnotationTool : MonoBehaviour
                     
                     highlightObject.transform.parent = currentAnnotation.transform;
                 }
+                currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
                 myAnnotations.Add(currentAnnotation);
+                currentAnnotation.name = SimulationManager.GetInstance().LocalUsername + "_annotation" + myAnnotations.Count;
                 
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
@@ -89,7 +90,7 @@ public class AnnotationTool : MonoBehaviour
         currentAnnotation.transform.localPosition = pos;
         currentAnnotation.transform.localRotation = rot;
         currentAnnotation.transform.localScale = scale;
-        currentAnnotation.name = player.username + "_annotation";
+        currentAnnotation.name = player.username + "_annotation" + player.annotations.Count;
         // annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
