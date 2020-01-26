@@ -7,15 +7,19 @@ public class LocationSelectedEvent : UnityEvent<string> { }
 [System.Serializable]
 public class LocationChangeEvent : UnityEvent<Vector2, string> { }
 [System.Serializable]
-public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3> { }
+public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3, string> { }
 [System.Serializable]
-public class AnnotationReceivedEvent : UnityEvent<Vector3, Quaternion, Vector3, Player> { }
+public class AnnotationDeletedEvent : UnityEvent<string> { }
+[System.Serializable]
+public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, Player> { }
 [System.Serializable]
 public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]
 public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
+[System.Serializable]
+public class DrawModeEvent: UnityEvent<bool> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -23,10 +27,12 @@ public class SimulationEvents
         if (LocationSelected == null) LocationSelected = new LocationSelectedEvent();
         if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
+        if (AnnotationDeleted == null) AnnotationDeleted = new AnnotationDeletedEvent();
         if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
         if (AnnotationClear == null) AnnotationClear = new AnnotationClearEvent();
         if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
+        if (DrawMode == null) DrawMode = new DrawModeEvent();
     }
     private static SimulationEvents instance;
 
@@ -51,7 +57,12 @@ public class SimulationEvents
     /// This is where we handle specific annotations drawn in Horizon view
     /// </summary>
     public AnnotationAddedEvent AnnotationAdded;
-
+    
+    /// <summary>
+    /// Deleting an annotation must be sync'd
+    /// </summary>
+    public AnnotationDeletedEvent AnnotationDeleted;
+    
     /// <summary>
     /// Receiving annotations from remote players
     /// </summary>
@@ -69,4 +80,8 @@ public class SimulationEvents
     /// When a user updates a pushpin
     /// </summary>
     public PushPinUpdatedEvent PushPinUpdated;
+    /// <summary>
+    /// When a user enters / exits draw mode
+    /// </summary>
+    public DrawModeEvent DrawMode;
 }

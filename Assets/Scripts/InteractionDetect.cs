@@ -11,8 +11,7 @@ public class InteractionDetect : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     private int layerMaskEarth;
-    private int layerMaskUI; 
-    private int layerMaskStars;
+    private int layerMaskStarsAnnotations;
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
@@ -22,8 +21,7 @@ public class InteractionDetect : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         layerMaskEarth = LayerMask.GetMask("Earth");
-        layerMaskUI = LayerMask.GetMask("UI");
-        layerMaskStars = LayerMask.GetMask("Stars");
+        layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MainUIController>();
@@ -80,7 +78,7 @@ public class InteractionDetect : MonoBehaviour
         if (mainUIController.IsDrawing && annotationTool)
         {
             ray = camera.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskStars);
+            Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskStarsAnnotations);
             if (Input.GetMouseButtonDown(0))
             {
                 if (!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
@@ -90,10 +88,6 @@ public class InteractionDetect : MonoBehaviour
                     Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
 
                     annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
-                }
-                else
-                {
-                    
                 }
             }
         }

@@ -16,5 +16,8 @@ public class NetworkTransform : Schema {
 
 	[Type(2, "ref", typeof(NetworkVector3))]
 	public NetworkVector3 localScale = new NetworkVector3();
+
+	[Type(3, "string")]
+	public string name = "";
 }
 

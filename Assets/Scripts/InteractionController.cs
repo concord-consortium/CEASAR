@@ -94,9 +94,7 @@ public class InteractionController : MonoBehaviour
                 NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
                 
                 SimulationEvents.GetInstance().AnnotationReceived.Invoke(
-                    Utils.NetworkV3ToVector3(lastAnnotation.position), 
-                    Utils.NetworkV3ToQuaternion(lastAnnotation.rotation), 
-                    Utils.NetworkV3ToVector3(lastAnnotation.localScale),
+                    lastAnnotation,
                     updatedPlayer);
                 break;
             default:

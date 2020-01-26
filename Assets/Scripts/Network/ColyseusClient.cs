@@ -185,7 +185,14 @@ public class ColyseusClient : MonoBehaviour
             var m = (UpdateMessage) msg;
             Debug.Log(m.updateType + " " + m.playerId);
             Player player = players.Values.First(p => p.id == m.playerId);
-            networkController.HandleNetworkInteraction(player, m.updateType);
+            if (m.updateType == "deleteannotation")
+            {
+                networkController.HandleAnnotationDelete(player, m.metadata);
+            }
+            else
+            {
+                networkController.HandleNetworkInteraction(player, m.updateType);
+            }
         }
         else
         {
@@ -226,7 +233,7 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerChange(player);
     }
     
-    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string messageType)
+    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string transformName, string messageType)
     {
         if (IsConnected)
         {
@@ -236,11 +243,23 @@ public class ColyseusClient : MonoBehaviour
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
             t.localScale = new NetworkVector3 {x = scale.x, y = scale.y, z = scale.z};
-            
+            t.name = transformName;
             await room.Send(new
             {
                 transform = t,
                 message = messageType
+            });
+        }
+    }
+
+    public async void SendAnnotationDelete(string annotationName)
+    {
+        if (IsConnected)
+        {
+            await room.Send(new
+            {
+                annotationName = annotationName,
+                message = "deleteannotation"
             });
         }
     }
