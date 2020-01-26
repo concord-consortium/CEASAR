@@ -13,5 +13,8 @@ public class UpdateMessage : Schema {
 
 	[Type(1, "string")]
 	public string playerId = "";
+
+	[Type(2, "string")]
+	public string metadata = "";
 }
 

@@ -57,6 +57,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
 
     public void HandleDeleteAnnotation()
     {
+        SimulationEvents.GetInstance().AnnotationDeleted.Invoke(this.name);
         Destroy(this.gameObject);
     }
     

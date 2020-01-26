@@ -65,6 +65,7 @@ public class NetworkController : MonoBehaviour
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -289,11 +290,7 @@ public class NetworkController : MonoBehaviour
             for (int i = 0; i < player.annotations.Count; i++)
             {
                 NetworkTransform annotation = player.annotations[i];
-                SimulationEvents.GetInstance().AnnotationReceived.Invoke(
-                    Utils.NetworkV3ToVector3(annotation.position), 
-                    Utils.NetworkV3ToQuaternion(annotation.rotation), 
-                    Utils.NetworkV3ToVector3(annotation.localScale),
-                    player);
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, player);
             }
         }
         updatePlayerList();
@@ -357,9 +354,23 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    public void HandleAnnotationDelete(Player player, string annotationName)
+    {
+        GameObject deletedAnnotation = GameObject.Find(annotationName);
+        if (deletedAnnotation != null)
+        {
+            Debug.Log("received AnnotationDelete for " + annotationName);
+            Destroy(deletedAnnotation);
+        }
+        else
+        {
+            Debug.Log("Could not delete " + annotationName + " for player " + player.username);
+        }
+        
+    }
     public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "interaction");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
 
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
@@ -369,13 +380,18 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "movement");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "","movement");
     }
 
-    public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale)
+    public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
     {
         Debug.Log("Broadcasting new Annotation event " + pos);
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, "annotation");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, "annotation");
+    }
+    public void BroadcastDeleteAnnotation(string annotationName)
+    {
+        Debug.Log("Broadcasting new Delete Annotation event " + annotationName);
+        colyseusClient.SendAnnotationDelete(annotationName);
     }
 
     IEnumerator selfDestruct(GameObject indicatorObj)
@@ -392,6 +408,7 @@ public class NetworkController : MonoBehaviour
         Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
     }
     
 }
