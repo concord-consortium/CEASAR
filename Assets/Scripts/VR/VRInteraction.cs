@@ -37,10 +37,24 @@ public class VRInteraction : MonoBehaviour
     MainUIController mainUIController;
     GameObject networkUI;
 
+    GameObject earthModel;
+
     private StarComponent currentStar;
     private AnnotationLine currentLine;
 
     public AnnotationTool annotationTool;
+
+    #region Camera Move for Earth view
+    private float distance = 20.0f;
+    private float xSpeed = 40.0f;
+    private float ySpeed = 80.0f;
+
+    private float yMinLimit = -60f;
+    private float yMaxLimit = 120f;
+
+    float x = 0.0f;
+    float y = 0.0f;
+    #endregion
 
 
     LineRenderer drawingLine;
@@ -72,6 +86,7 @@ public class VRInteraction : MonoBehaviour
 
         showIndicator(gameObject, shouldShowIndicator);
         toggleMenu();
+        moveAroundEarth();
     }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
@@ -235,6 +250,39 @@ public class VRInteraction : MonoBehaviour
         }
     }
 
+    void moveAroundEarth()
+    {
+        if (SceneManager.GetActiveScene().name == "EarthInteraction")
+        {
+            if (!earthModel) earthModel = GameObject.Find("EarthContainer");
+            if (grabTrigger())
+            {
+                // rotate VR camera around Earth
+                float distance = Vector3.Magnitude(transform.position - earthModel.transform.position);
+                x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance * 0.02f;
+                y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed * 0.02f;
+
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+                
+                Quaternion rotation = Quaternion.Euler(y, x, 0);
+
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                Vector3 position = rotation * negDistance + earthModel.transform.position;
+
+                transform.rotation = rotation;
+                transform.position = position;
+            }
+        }
+    }
+    float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360F)
+            angle += 360F;
+        if (angle > 360F)
+            angle -= 360F;
+        return Mathf.Clamp(angle, min, max);
+    }
     bool interactionTrigger()
     {
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
