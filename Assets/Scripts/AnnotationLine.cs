@@ -13,6 +13,9 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     private ParticleSystem selectedParticles;
     private bool isDrawing = true; // annotations are only added when drawing is enabled
 
+    public bool IsSelected {
+        get { return isSelected; }
+    }
     public void FinishDrawing()
     {
         initialScale = transform.localScale;

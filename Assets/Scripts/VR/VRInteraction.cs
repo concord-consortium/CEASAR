@@ -11,7 +11,7 @@ public class VRInteraction : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     int layerMaskEarth;
-    int layerMaskStars;
+    int layerMaskStarsAnnotations;
     private int layerMaskUI;
     public GameObject vrPointerPrefab;
 
@@ -38,6 +38,7 @@ public class VRInteraction : MonoBehaviour
     GameObject networkUI;
 
     private StarComponent currentStar;
+    private AnnotationLine currentLine;
 
     public AnnotationTool annotationTool;
 
@@ -57,7 +58,7 @@ public class VRInteraction : MonoBehaviour
         m_InputModule = FindObjectOfType<OVRInputModule>();
 
         layerMaskEarth = LayerMask.GetMask("Earth");
-        layerMaskStars = LayerMask.GetMask("Stars");
+        layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         layerMaskUI = LayerMask.GetMask("UI");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
@@ -117,7 +118,7 @@ public class VRInteraction : MonoBehaviour
                 }
             }
             // Look for distant objects (stars in other views)
-            else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStars))
+            else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStarsAnnotations))
             {
                 // Handle stars separately
                 StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
@@ -145,6 +146,39 @@ public class VRInteraction : MonoBehaviour
                             currentStar.HandleSelectStar(true);
                         }
 
+                    }
+                }
+                else
+                {
+                    AnnotationLine nextLine = hit.transform.GetComponent<AnnotationLine>();
+                    // we hit an annotation
+                    if (nextLine != null)
+                    {
+                        if (nextLine != currentLine)
+                        {
+                            // remove highlighting from previous line
+                            if (currentLine != null) currentLine.Highlight(false);
+                        }
+                        currentLine = nextLine;
+                        if (!mainUIController.IsDrawing)
+                        {
+                            // When we're not drawing we can highlight and delete annotations
+                            currentLine.Highlight(true);
+
+                            if (interactionTrigger())
+                            {
+                                // select the line
+                                currentLine.ToggleSelectAnnotation();
+                            } 
+                            if (grabTrigger())
+                            {
+                                if (currentLine.IsSelected)
+                                {
+                                    currentLine.HandleDeleteAnnotation();
+                                }
+                            }
+                        }
+                        
                     }
                 }
             }
