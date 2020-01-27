@@ -42,7 +42,7 @@ public class SimulationManager
     }
     public GameObject NetworkControllerObject;
     public GameObject InteractionControllerObject;
-    public NetworkConnection NetworkStatus = NetworkConnection.None; 
+    public ServerRecord server = null;
     private GameObject celestialSphereObject;
 
     public GameObject CelestialSphereObject

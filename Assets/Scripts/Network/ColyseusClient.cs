@@ -64,11 +64,8 @@ public class ColyseusClient : MonoBehaviour
 
         if (!connecting && !IsConnected)
         {
-            Debug.Log("HERE WE ARE 1" + serverEndpoint);
             connecting = true;
-            Debug.Log("HERE WE ARE 2" + serverEndpoint);
             networkController.ServerStatusMessage = "Connecting...";
-            Debug.Log("HERE WE ARE 3" + serverEndpoint);
             Debug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 

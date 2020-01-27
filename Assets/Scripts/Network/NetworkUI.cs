@@ -47,13 +47,13 @@ public class NetworkUI : MonoBehaviour
         switch (address)
         {
             case "local":
-                networkController.SetNetworkAddress(NetworkConnection.Local);
+                networkController.SetNetworkAddress(ServerList.Local);
                 break;
             case "dev":
-                networkController.SetNetworkAddress(NetworkConnection.Dev);
+                networkController.SetNetworkAddress(ServerList.Dev);
                 break;
             default:
-                networkController.SetNetworkAddress(NetworkConnection.Remote);
+                networkController.SetNetworkAddress(ServerList.Web);
                 break;
         }
     }
@@ -81,11 +81,6 @@ public class NetworkUI : MonoBehaviour
             randomizeUsernameButton.enabled = true;
         }
         
-    }
-
-    private void Start()
-    {
-
     }
 
     public string Username {

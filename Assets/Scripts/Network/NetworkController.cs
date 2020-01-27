@@ -6,7 +6,6 @@ using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
 
-public enum NetworkConnection { Local, Dev, Remote, None }
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
@@ -29,10 +28,10 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
-    public NetworkConnection networkConnection = NetworkConnection.Remote;
+    public ServerRecord networkConnection = ServerList.Web;
 
     public NetworkUI networkUI;
-    private NetworkConnection _selectedNetwork = NetworkConnection.None;
+    private ServerRecord _selectedNetwork = ServerList.Web;
 
     SimulationManager manager;
 
@@ -128,24 +127,9 @@ public class NetworkController : MonoBehaviour
     }
 
 
-    public void SetNetworkAddress(NetworkConnection destination)
+    public void SetNetworkAddress(ServerRecord destination)
     {
-        switch (destination)
-        {
-            case NetworkConnection.Local:
-                networkUI.NetworkAddress = manager.LocalNetworkServer;
-                break;
-            case NetworkConnection.Dev:
-                networkUI.NetworkAddress = manager.DevNetworkServer;
-                break;
-            case NetworkConnection.Remote:
-                networkUI.NetworkAddress = manager.ProductionNetworkServer;
-                break;
-            default:
-                networkUI.NetworkAddress = manager.ProductionNetworkServer;
-                break;
-        }
-
+        networkUI.NetworkAddress = destination.address;
         _selectedNetwork = destination;
     }
 
@@ -157,7 +141,8 @@ public class NetworkController : MonoBehaviour
             UserRecord user = SimulationManager.GetInstance().LocalPlayer; 
             FindDependencies();
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
-            manager.NetworkStatus = _selectedNetwork;
+            manager.server = ServerList.Custom;
+            manager.server.address = endpoint;
             refreshUI();
             CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
         }
@@ -172,19 +157,17 @@ public class NetworkController : MonoBehaviour
          */
         if (!IsConnected)
         {
-            string _localEndpoint = manager.LocalNetworkServer;
-            string _remoteEndpoint = manager.ProductionNetworkServer;
+
             string endpoint = string.Empty;
 
             if (string.IsNullOrEmpty(userDefinedEndpoint))
             {
                 // no user interaction with the network address, work on some defaults
 #if UNITY_EDITOR
-                endpoint = _localEndpoint;
-                if (_selectedNetwork == NetworkConnection.None) _selectedNetwork = NetworkConnection.Local;
+                endpoint = ServerList.Local.address;
 #else
-                endpoint = _remoteEndpoint;
-                if (_selectedNetwork == NetworkConnection.None) _selectedNetwork = NetworkConnection.Remote;
+                
+                endpoint = ServerList.Web.address;
 #endif
             }
             else

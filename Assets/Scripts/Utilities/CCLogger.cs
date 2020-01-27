@@ -89,7 +89,7 @@ public class CCLogger
     public static void Log(string eventType, string msg)
     {
         // only log if we're on the network to reduce clutter
-        if (SimulationManager.GetInstance().NetworkStatus == NetworkConnection.Remote)
+        if (SimulationManager.GetInstance().server != ServerList.Local)
         {
             Debug.Log("Logging: " + eventType + "-- " + msg);
 #pragma warning disable CS4014

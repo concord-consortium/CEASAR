@@ -31,19 +31,11 @@ public class GroupSelectionWizard : MonoBehaviour
         steps.Add(ShowColors);
         steps.Add(ShowAnimals);
         steps.Add(ShowNumbers);
-        //steps.Add(ShowNetworks);
         buttons = new List<GameObject>();
         ShowGroups();
         Button nextButton = NextButton.GetComponent<Button>();
         nextButton.onClick.AddListener(NextStep);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
 
     public void ShowGroups()
@@ -150,33 +142,6 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-    public void ShowNetworks()
-    {
-        ClearAllButtons();
-        List<ServerRecord> servers = ServerList.List();
-        SetTitleText("Connect to server:");
-        foreach (ServerRecord server in servers)
-        {
-            string name = server.name;
-            string address = server.address;
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(ButtonPanel.transform);
-            button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
-
-            buttons.Add(button);
-            if (label != null)
-            {
-                label.SetText(name);
-            }
-            if (b != null)
-            {
-                b.onClick.AddListener(() => HandleConnect(server));
-            }
-        }
-    }
-
     public void ClearAllButtons()
     {
         foreach (GameObject o in buttons) {
@@ -215,14 +180,6 @@ public class GroupSelectionWizard : MonoBehaviour
     {
         userRecord.number = name;
         DirectionsText.text = userRecord.Username;
-        EnableNext();
-    }
-
-    public void HandleConnect(ServerRecord server)
-    {
-        //networkController.roomName = studentRecord.group;
-        string username = userRecord.Username;
-        //networkController.ConnectToEndpoint(server.address);
         EnableNext();
     }
 
