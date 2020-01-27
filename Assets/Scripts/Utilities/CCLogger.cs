@@ -24,7 +24,7 @@ public class LogContext
         application = APP_NAME;
         scene = getSceneName();
         platformName = Application.platform.ToString();
-        username = PlayerPrefs.GetString(NetworkController.PLAYER_PREFS_NAME_KEY);
+        username = PlayerPrefs.GetString(UserRecord.PLAYER_PREFS_NAME_KEY);
     }
     private static double getTimeMillies()
     {
@@ -89,7 +89,7 @@ public class CCLogger
     public static void Log(string eventType, string msg)
     {
         // only log if we're on the network to reduce clutter
-        if (SimulationManager.GetInstance().NetworkStatus == NetworkConnection.Remote)
+        if (SimulationManager.GetInstance().server != ServerList.Local)
         {
             Debug.Log("Logging: " + eventType + "-- " + msg);
 #pragma warning disable CS4014

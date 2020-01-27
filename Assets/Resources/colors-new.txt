@@ -1,0 +1,9 @@
+﻿yellow:#FFFF00
+red:#FF0000
+orange:#FFA500
+lime:#00FF00
+green:#008000
+cyan:#00FFFF
+blue:#0000FF
+purple:#800080
+magenta:#FF00FF

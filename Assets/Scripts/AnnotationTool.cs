@@ -96,7 +96,7 @@ public class AnnotationTool : MonoBehaviour
         Quaternion rot = Utils.NetworkV3ToQuaternion(lastAnnotation.rotation);
         Vector3 scale = Utils.NetworkV3ToVector3(lastAnnotation.localScale);
         string annotationName = lastAnnotation.name;
-        Color c = SimulationManager.GetInstance().GetColorForUsername(p.username);
+        Color c = UserRecord.GetColorForUsername(p.username);
         this.addAnnotation(pos, rot, scale, annotationName, c);
         
     }

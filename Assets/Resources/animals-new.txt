@@ -1,0 +1,9 @@
+﻿bear
+crow
+fox
+goat
+meerkat
+octopus
+platypus
+squirrel
+turtle

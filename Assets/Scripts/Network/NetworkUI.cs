@@ -8,6 +8,8 @@ public class NetworkUI : MonoBehaviour
     // UI Buttons are attached through Unity Inspector
     public Button connectButton;
     public Button randomizeUsernameButton;
+    public GameObject roomButtonPanel;
+    public GameObject smallOrangeButtonPrefab;
     public TMPro.TMP_Text connectButtonText;
     public TMPro.TMP_InputField m_EndpointField;
     public TMPro.TMP_Text connectionStatusText;
@@ -33,22 +35,25 @@ public class NetworkUI : MonoBehaviour
 
     public void RandomizeUsername()
     {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
-        networkController.RandomizeUsername();
+        SimulationManager.GetInstance().LocalPlayer.Randomize();
+        UserRecord user = SimulationManager.GetInstance().LocalPlayer;
+        usernameText.text = user.Username;
+        usernameText.color = user.color;
     }
+
     public void SetNetworkAddress(string address)
     {
         NetworkController networkController = FindObjectOfType<NetworkController>();
         switch (address)
         {
             case "local":
-                networkController.SetNetworkAddress(NetworkConnection.Local);
+                networkController.SetNetworkAddress(ServerList.Local);
                 break;
             case "dev":
-                networkController.SetNetworkAddress(NetworkConnection.Dev);
+                networkController.SetNetworkAddress(ServerList.Dev);
                 break;
             default:
-                networkController.SetNetworkAddress(NetworkConnection.Remote);
+                networkController.SetNetworkAddress(ServerList.Web);
                 break;
         }
     }
