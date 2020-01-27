@@ -505,12 +505,12 @@ PrefabInstance:
     - target: {fileID: 2724144227377325203, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000061035156
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 2724144227377325203, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: -0.000000074257535
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226661976860, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
@@ -2335,6 +2335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sun: {fileID: 786008613}
   lineMaterial: {fileID: 2100000, guid: 745ead68fd115435e9d2308430546e8c, type: 2}
+  showSunArc: 0
 --- !u!1 &1134978273
 GameObject:
   m_ObjectHideFlags: 0

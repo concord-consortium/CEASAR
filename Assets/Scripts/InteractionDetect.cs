@@ -16,6 +16,8 @@ public class InteractionDetect : MonoBehaviour
     InteractionController interactionController;
     public AnnotationTool annotationTool;
     MainUIController mainUIController;
+
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +41,7 @@ public class InteractionDetect : MonoBehaviour
             Physics.RaycastNonAlloc(ray, hits, 100.0F, layerMaskEarth);
     
             // Do something with the object that was hit by the raycast.
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() )
             {
                 for (int i = 0; i < hits.Length; i++)
                 {
@@ -50,7 +52,15 @@ public class InteractionDetect : MonoBehaviour
                         // The Sphere collider is used for the Latitude / Longitude calculations
                         if (interactionController)
                         {
-                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            if (mainUIController.IsPinningLocation)
+                            {
+                                interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            }
+                            else
+                            {
+                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            }
+                            
                         }
                         else
                         {

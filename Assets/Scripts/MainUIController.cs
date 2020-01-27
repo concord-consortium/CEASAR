@@ -88,6 +88,14 @@ public class MainUIController : MonoBehaviour
             }
         }
     }
+    private bool isPinningLocation = false;
+    public bool IsPinningLocation {
+        get { return isPinningLocation; }
+        set { 
+            isPinningLocation = value;
+        }
+    }
+    
     private void Awake()
     {
         manager = SimulationManager.GetInstance();
@@ -276,6 +284,11 @@ public class MainUIController : MonoBehaviour
     {
         IsDrawing = !IsDrawing;
         SimulationEvents.GetInstance().DrawMode.Invoke(IsDrawing);
+    }
+    
+    public void TogglePinMode()
+    {
+        IsPinningLocation = !IsPinningLocation;
     }
     public void ChangeYear(float newYear)
     {
