@@ -10,7 +10,7 @@ public class UserRecord
     readonly private static int GROUP_INDEX = 3;
     readonly private static int NUM_FIELDS = 4;
     public const string PLAYER_PREFS_NAME_KEY = "CAESAR_USERNAME";
-
+    public const string DEFAULT_USER_COLOR = "red";
     // The username record items:
     public string group;
     public string animal;
@@ -94,7 +94,7 @@ public class UserRecord
 
     public string Username
     {
-        get { return $"{colorName} {animal} {number} {group}"; }
+        get { return $"{colorName.FirstCharToUpper()}{animal.FirstCharToUpper()}{number}"; }
     }
 
 
@@ -163,7 +163,14 @@ public class UserRecord
 
     public static string GetColorNameForUsername(string username)
     {
-        return username.Split(' ')[0];
+        foreach (string colorName in colorNames)
+        {
+            if (username.IndexOf(colorName, System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return colorName;
+            }
+        }
+        return DEFAULT_USER_COLOR;
     }
 
     public static Color GetColorForUsername(string username)
