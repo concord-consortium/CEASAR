@@ -8,6 +8,8 @@ public class InteractionController : MonoBehaviour
     public GameObject interactionIndicator;
     public GameObject locationPin;
 
+    private GameObject currentLocationPin;
+    
     // Cached reference to earth object for lat/lng
     private GameObject _earth;
     private GameObject earth
@@ -175,13 +177,15 @@ public class InteractionController : MonoBehaviour
             Debug.Log("No Earth found in interacion, using 0 for lat & lng");
         }
 
-        if (locationPin)
+        if (!currentLocationPin)
         {
-            GameObject indicatorObj = Instantiate(locationPin);
-            indicatorObj.transform.localRotation = rot;
-            indicatorObj.transform.position = pos;
-            indicatorObj.GetComponent<Renderer>().material.color = playerColor;
+            currentLocationPin = Instantiate(locationPin);
         }
+
+        currentLocationPin.transform.localRotation = rot;
+        currentLocationPin.transform.position = pos;
+        currentLocationPin.GetComponent<Renderer>().material.color = playerColor;
+        
         if (isLocal)
         {
             SimulationEvents.GetInstance()
