@@ -10,8 +10,6 @@ public class MainUIController : MonoBehaviour
 {
     private SimulationManager manager;
 
-    public event Action<Vector2, string> OnLocationChanged = (location, description) => { };
-
     public List<GameObject> enabledPanels = new List<GameObject>();
     public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
@@ -344,7 +342,8 @@ public class MainUIController : MonoBehaviour
             constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
         }
     }
-
+    
+    #region Sphere Movement
     public void MoveLeft()
     {
         Vector3 pos = sphere.transform.position;
@@ -455,6 +454,7 @@ public class MainUIController : MonoBehaviour
         sphere.transform.localScale = new Vector3(1f, 1f, 1f);
         sphere.transform.rotation = Quaternion.identity;
     }
+#endregion
 
     public void SetMagnitudeThreshold(float newVal)
     {
@@ -498,14 +498,11 @@ public class MainUIController : MonoBehaviour
         userDay = snapshotDateTime.DayOfYear;
         userHour = snapshotDateTime.Hour;
         userMin = snapshotDateTime.Minute;
+        // Update the current date/time in simulation manager
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
-        OnLocationChanged(Vector2.zero, location);
-        //if (cityDropdown)
-        //{
-        //    cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
-        //    //OnLocationChanged(Vector2.zero, location);
-        //}
+        // broadcast the change of location
+        SimulationEvents.GetInstance().LocationSelected.Invoke(location);
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;

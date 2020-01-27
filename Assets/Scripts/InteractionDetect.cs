@@ -12,11 +12,12 @@ public class InteractionDetect : MonoBehaviour
     Ray ray;
     private int layerMaskEarth;
     private int layerMaskStarsAnnotations;
+    private int layerMaskPushpins;
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
     MainUIController mainUIController;
-
+    private Pushpin lastPin;
     
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class InteractionDetect : MonoBehaviour
         camera = GetComponent<Camera>();
         layerMaskEarth = LayerMask.GetMask("Earth");
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
+        layerMaskPushpins = LayerMask.GetMask("Pushpin");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MainUIController>();
@@ -99,6 +101,34 @@ public class InteractionDetect : MonoBehaviour
 
                     annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
                 }
+            }
+        }
+        else
+        {
+            ray = camera.ScreenPointToRay(Input.mousePosition);
+            bool foundPin = Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskPushpins);
+            
+            if (foundPin && !EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
+            {
+                if (hit.transform)
+                {
+                    Pushpin pin = hit.transform.GetComponent<Pushpin>();
+                    if (pin != lastPin)
+                    {
+                        if (lastPin != null) lastPin.HighlightPin(false);
+                        lastPin = pin;
+                    }
+                    pin.HighlightPin(true);
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        pin.HandleSelectPin();
+                    }
+                } 
+            }
+            else if (lastPin)
+            {
+                lastPin.HighlightPin(false);
+                lastPin = null;
             }
         }
     }

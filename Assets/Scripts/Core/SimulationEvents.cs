@@ -15,7 +15,7 @@ public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, Player> { }
 [System.Serializable]
 public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]
-public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
+public class PushPinSelectedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
@@ -33,7 +33,7 @@ public class SimulationEvents
         if (AnnotationDeleted == null) AnnotationDeleted = new AnnotationDeletedEvent();
         if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
         if (AnnotationClear == null) AnnotationClear = new AnnotationClearEvent();
-        if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
+        if (PushPinSelected == null) PushPinSelected = new PushPinSelectedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
         if (DrawMode == null) DrawMode = new DrawModeEvent();
         if (PlayerJoined == null) PlayerJoined = new PlayerJoinedEvent();
@@ -78,11 +78,11 @@ public class SimulationEvents
     /// </summary>
     public AnnotationClearEvent AnnotationClear;
     /// <summary>
-    /// When a user first creates a pushpin
+    /// When a user wants to view the perspective of a pin
     /// </summary>
-    public PushPinCreatedEvent PushPinCreated;
+    public PushPinSelectedEvent PushPinSelected;
     /// <summary>
-    /// When a user updates a pushpin
+    /// When a user updates their own pushpin - this will network the event
     /// </summary>
     public PushPinUpdatedEvent PushPinUpdated;
     /// <summary>

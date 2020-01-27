@@ -158,7 +158,7 @@ public class InteractionController : MonoBehaviour
             }
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
             Debug.Log(interactionInfo);
-            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, "Custom: ");
+            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
@@ -185,6 +185,10 @@ public class InteractionController : MonoBehaviour
         currentLocationPin.transform.localRotation = rot;
         currentLocationPin.transform.position = pos;
         currentLocationPin.GetComponent<Renderer>().material.color = playerColor;
+        Pushpin pin = currentLocationPin.GetComponent<Pushpin>();
+        pin.latitude = latLng.x;
+        pin.longitude = latLng.y;
+        pin.selectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
         
         if (isLocal)
         {
@@ -193,7 +197,7 @@ public class InteractionController : MonoBehaviour
             
             string interactionInfo = "Pushpin set at: " + latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
             Debug.Log(interactionInfo);
-            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, "Custom: ");
+            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }

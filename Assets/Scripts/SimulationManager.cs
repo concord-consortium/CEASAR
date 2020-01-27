@@ -114,6 +114,18 @@ public class SimulationManager
         }
     }
 
+    private Vector2 currentLocation = new Vector2(0,0);
+
+    public Vector2 Currentlocation
+    {
+        get { return currentLocation; }
+        set
+        {
+            currentLocation = value;
+            SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, SimulationConstants.CUSTOM_LOCATION);
+        }
+    }
+
     public float GetRelativeMagnitude(float starMagnitude)
     {
         //float min = DataControllerComponent.minMag;

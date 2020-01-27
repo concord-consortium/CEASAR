@@ -355,21 +355,29 @@ public class DataController : MonoBehaviour
     void handleSelectNewLocation(string newCity)
     {
         Debug.Log("Got new location! " + newCity);
-        if (!string.IsNullOrEmpty(newCity) && !newCity.StartsWith("Custom"))
+        if (!string.IsNullOrEmpty(newCity))
         {
-            if (newCity != currentCity?.Name)
+            if (newCity != currentCity?.Name || newCity == SimulationConstants.CUSTOM_LOCATION)
             {
                 // verify a valid city was entered
                 var matchedCity = allCities.Where(c => c.Name == newCity).First();
                 if (matchedCity != null)
                 {
                     nextCity = matchedCity;
-                    // Raise the event again with the matching lat/lng to update UI
-                    Vector2 newLocationLatLng = new Vector2(nextCity.Lat, nextCity.Lng);
-                    SimulationEvents.GetInstance().LocationChanged.Invoke(newLocationLatLng, nextCity.Name);
+                    // check if this is a custom location
+                    if (nextCity.Name == SimulationConstants.CUSTOM_LOCATION)
+                    {
+                        SimulationEvents.GetInstance().LocationChanged.Invoke(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
+                    }
+                    else
+                    {
+                        // Raise the event again with the matching lat/lng to update UI
+                        Vector2 newLocationLatLng = new Vector2(nextCity.Lat, nextCity.Lng);
+                        SimulationEvents.GetInstance().LocationChanged.Invoke(newLocationLatLng, nextCity.Name);
+                    }
                 }
             }
-        }
+        } 
     }
     public void SetMagnitudeThreshold(float newVal)
     {
