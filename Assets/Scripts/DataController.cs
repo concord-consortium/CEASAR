@@ -44,6 +44,7 @@ public class DataController : MonoBehaviour
     public List<string> constellationFullNames;
     public Constellation constellationPrefab;
     private Dictionary<string, StarComponent> allStarComponents;
+
     public StarComponent GetStarById(string uniqueId)
     {
         return allStarComponents[uniqueId];
@@ -143,11 +144,6 @@ public class DataController : MonoBehaviour
 
     public void Init()
     {
-        if (GameObject.Find("Icosphere"))
-        {
-            GameObject innerSphere = GameObject.Find("Icosphere");
-            innerSphere.transform.localScale = innerSphere.transform.localScale * (radius * 2);
-        }
         if (allConstellations == null)
         {
             allConstellations = new GameObject();

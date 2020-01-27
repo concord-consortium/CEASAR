@@ -76,14 +76,14 @@ public class InteractionDetect : MonoBehaviour
         }
         if (mainUIController.IsDrawing && annotationTool)
         {
-            if (Physics.Raycast(ray, out hit, manager.SceneRadius * 3, layerMaskSphere))
+            
+            if (Input.GetMouseButtonDown(0))
             {
+                float r = SimulationManager.GetInstance().SceneRadius + 2f;
+                Vector2 mousePos = Input.mousePosition;
+                Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
 
-                if (Input.GetMouseButtonDown(0))
-                {
-                    // Debug.Log("Inside of sphere " + hit.point);
-                    annotationTool.Annotate(hit.point);// camera.ScreenToWorldPoint(Input.mousePosition));
-                }
+                annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
             }
         }
     }

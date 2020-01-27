@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0.18431373, g: 0.11764707, b: 0.003921569, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
@@ -2156,29 +2156,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
+    - target: {fileID: 4645685273363535908, guid: fc53445d18426c048ba405ce938df6ec,
         type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6323769109201059075, guid: fc53445d18426c048ba405ce938df6ec,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
