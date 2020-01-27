@@ -29,7 +29,10 @@ public class Player : Schema {
 	[Type(6, "ref", typeof(NetworkCelestialObject))]
 	public NetworkCelestialObject celestialObjectTarget = new NetworkCelestialObject();
 
-	[Type(7, "boolean")]
+	[Type(7, "array", typeof(ArraySchema<NetworkTransform>))]
+	public ArraySchema<NetworkTransform> annotations = new ArraySchema<NetworkTransform>();
+
+	[Type(8, "boolean")]
 	public bool connected = false;
 }
 

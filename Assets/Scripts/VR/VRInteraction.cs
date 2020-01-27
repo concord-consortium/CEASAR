@@ -11,7 +11,8 @@ public class VRInteraction : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     int layerMaskEarth;
-    int layerMaskStars;
+    int layerMaskStarsAnnotations;
+    private int layerMaskUI;
     public GameObject vrPointerPrefab;
 
     private GameObject _vrPointer;
@@ -36,9 +37,24 @@ public class VRInteraction : MonoBehaviour
     MainUIController mainUIController;
     GameObject networkUI;
 
+    GameObject earthModel;
+
     private StarComponent currentStar;
+    private AnnotationLine currentLine;
 
     public AnnotationTool annotationTool;
+
+    #region Camera Move for Earth view
+    private float distance = 20.0f;
+    private float xSpeed = 40.0f;
+    private float ySpeed = 80.0f;
+
+    private float yMinLimit = -60f;
+    private float yMaxLimit = 120f;
+
+    float x = 0.0f;
+    float y = 0.0f;
+    #endregion
 
 
     LineRenderer drawingLine;
@@ -56,7 +72,8 @@ public class VRInteraction : MonoBehaviour
         m_InputModule = FindObjectOfType<OVRInputModule>();
 
         layerMaskEarth = LayerMask.GetMask("Earth");
-        layerMaskStars = LayerMask.GetMask("Stars");
+        layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
+        layerMaskUI = LayerMask.GetMask("UI");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
 
@@ -69,6 +86,7 @@ public class VRInteraction : MonoBehaviour
 
         showIndicator(gameObject, shouldShowIndicator);
         toggleMenu();
+        moveAroundEarth();
     }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
@@ -85,75 +103,129 @@ public class VRInteraction : MonoBehaviour
             // Next, detect if the user is holding down the Interact button also
 
             if (mainUIController == null) mainUIController = FindObjectOfType<MainUIController>();
-            // if we're drawing, no need to raycast
-            if (mainUIController.IsDrawing && annotationTool != null)
-            {
-                if (interactionTrigger())
-                {
-                    annotationTool.Annotate(laserEndPos);
-                }
 
-            }
-            else
-            {
-                // Raycast, then if we hit the Earth or a star we can show the interaction
-                ray = new Ray(laserStartPos, forwardDirection);
+            // Raycast, then if we hit the Earth or a star we can show the interaction
+            ray = new Ray(laserStartPos, forwardDirection);
 
-                if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+            // Look for close-by objects (Earth in the EarthInteraction scene)
+            if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+            {
+                for (int i = 0; i < hits.Length; i++)
                 {
-                    for (int i = 0; i < hits.Length; i++)
+                    hit = hits[i];
+                    laserEndPos = hit.point;
+                    updateLaser(true);
+
+                    if (interactionTrigger())
                     {
-                        hit = hits[i];
-                        laserEndPos = hit.point;
-                        updateLaser(true);
-
-                        if (interactionTrigger())
+                        Collider c = hit.collider;
+                        if (c is SphereCollider)
                         {
-                            Collider c = hit.collider;
-                            if (c is SphereCollider)
-                            {
-                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-                            }
-                            else if (c is MeshCollider)
-                            {
-                                Renderer rend = hit.transform.GetComponent<Renderer>();
-                                // hit.textureCoord only possible on the Mesh collider
-                                manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
-                            }
+                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                        }
+                        else if (c is MeshCollider)
+                        {
+                            Renderer rend = hit.transform.GetComponent<Renderer>();
+                            // hit.textureCoord only possible on the Mesh collider
+                            manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
                         }
                     }
                 }
-                else if(allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStars))
+            }
+            // Look for distant objects (stars in other views)
+            else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStarsAnnotations))
+            {
+                // Handle stars separately
+                StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                if (nextStar != null)
                 {
-                    // Handle stars separately
-                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                    if (nextStar != null)
+                    if (nextStar != currentStar)
                     {
-                        if (nextStar != currentStar)
+                        // remove highlighting from previous star
+                        if (currentStar != null) currentStar.CursorHighlightStar(false);
+                    }
+
+                    currentStar = nextStar;
+                    currentStar.CursorHighlightStar(true);
+
+                    if (interactionTrigger())
+                    {
+                        if (mainUIController.IsDrawing && annotationTool != null)
                         {
-                            Debug.Log("New star! " + nextStar.starData.ProperName);
-                            // remove highlighting from previous star
-                            if (currentStar != null) currentStar.CursorHighlightStar(false);
+                            // allow annotation where the star is
+                            annotationTool.Annotate(laserEndPos);
                         }
-
-                        currentStar = nextStar;
-                        currentStar.CursorHighlightStar(true);
-
-                        if (interactionTrigger())
+                        else
                         {
+                            // select the star
                             currentStar.HandleSelectStar(true);
                         }
+
                     }
                 }
                 else
                 {
-                    if (currentStar != null)
+                    AnnotationLine nextLine = hit.transform.GetComponent<AnnotationLine>();
+                    // we hit an annotation
+                    if (nextLine != null)
                     {
-                        currentStar.CursorHighlightStar(false);
+                        if (nextLine != currentLine)
+                        {
+                            // remove highlighting from previous line
+                            if (currentLine != null) currentLine.Highlight(false);
+                        }
+                        currentLine = nextLine;
+                        if (!mainUIController.IsDrawing)
+                        {
+                            // When we're not drawing we can highlight and delete annotations
+                            currentLine.Highlight(true);
+
+                            if (interactionTrigger())
+                            {
+                                // select the line
+                                currentLine.ToggleSelectAnnotation();
+                            } 
+                            if (grabTrigger())
+                            {
+                                if (currentLine.IsSelected)
+                                {
+                                    currentLine.HandleDeleteAnnotation();
+                                }
+                            }
+                        }
+                        
                     }
-                    updateLaser(false);
                 }
             }
+            else
+            {
+                if (currentStar != null)
+                {
+                    currentStar.CursorHighlightStar(false);
+                }
+                updateLaser(false);
+
+                if (interactionTrigger())
+                {
+                    if (mainUIController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
+                    {
+                        // Seems like a crazy way to determine if the UI is in the way, but after multiple attempts at a more
+                        // elegant solution, settled on this since it works.
+                        if (FindObjectOfType<LaserPointer>().GetComponent<LineRenderer>().enabled)
+                        {
+                            // Blocked by the UI layer
+                            return;
+                        }
+                        else
+                        {
+                            // allow annotation where the star is
+                            annotationTool.Annotate(laserEndPos);
+                        }
+
+                    }
+                }
+            }
+
         }
     }
     void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float distance)
@@ -178,6 +250,39 @@ public class VRInteraction : MonoBehaviour
         }
     }
 
+    void moveAroundEarth()
+    {
+        if (SceneManager.GetActiveScene().name == "EarthInteraction")
+        {
+            if (!earthModel) earthModel = GameObject.Find("EarthContainer");
+            if (grabTrigger())
+            {
+                // rotate VR camera around Earth
+                float distance = Vector3.Magnitude(transform.position - earthModel.transform.position);
+                x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance * 0.02f;
+                y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed * 0.02f;
+
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+                
+                Quaternion rotation = Quaternion.Euler(y, x, 0);
+
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                Vector3 position = rotation * negDistance + earthModel.transform.position;
+
+                transform.rotation = rotation;
+                transform.position = position;
+            }
+        }
+    }
+    float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360F)
+            angle += 360F;
+        if (angle > 360F)
+            angle -= 360F;
+        return Mathf.Clamp(angle, min, max);
+    }
     bool interactionTrigger()
     {
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||

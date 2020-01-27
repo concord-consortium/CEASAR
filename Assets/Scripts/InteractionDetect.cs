@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InteractionDetect : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class InteractionDetect : MonoBehaviour
     RaycastHit[] hits = new RaycastHit[2];
     RaycastHit hit;
     Ray ray;
-    int layerMaskEarth;
-    int layerMaskSphere;
+    private int layerMaskEarth;
+    private int layerMaskStarsAnnotations;
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
@@ -20,7 +21,7 @@ public class InteractionDetect : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         layerMaskEarth = LayerMask.GetMask("Earth");
-        layerMaskSphere = LayerMask.GetMask("InsideCelestialSphere");
+        layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MainUIController>();
@@ -76,14 +77,18 @@ public class InteractionDetect : MonoBehaviour
         }
         if (mainUIController.IsDrawing && annotationTool)
         {
-            
+            ray = camera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskStarsAnnotations);
             if (Input.GetMouseButtonDown(0))
             {
-                float r = SimulationManager.GetInstance().SceneRadius + 2f;
-                Vector2 mousePos = Input.mousePosition;
-                Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
+                if (!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
+                {
+                    float r = SimulationManager.GetInstance().SceneRadius + 2f;
+                    Vector2 mousePos = Input.mousePosition;
+                    Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
 
-                annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
+                    annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
+                }
             }
         }
     }

@@ -26,8 +26,11 @@ public class PlayerOrbitMoveControl : MonoBehaviour
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
-
-        avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar").transform;
+        GameObject avatarObject = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
+        if (avatarObject)
+        {
+            avatar = avatarObject.transform;
+        }
     }
 
     void LateUpdate () 

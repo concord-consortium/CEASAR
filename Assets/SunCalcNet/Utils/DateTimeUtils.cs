@@ -29,7 +29,7 @@ namespace SunCalcNet.Utils
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        private static double ToJulianDate(this DateTime date)
+        public static double ToJulianDate(this DateTime date)
         {
             return date.ToOADate() + J1899;
         }

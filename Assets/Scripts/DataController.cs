@@ -87,6 +87,13 @@ public class DataController : MonoBehaviour
     private float radius = 50;
 
     private SimulationManager manager;
+
+    [SerializeField]
+    private double lst;
+    [SerializeField]
+    private double julianDate;
+    [SerializeField]
+    private double longitudeTimeOffset;
     public float Radius
     {
         get { return radius; }
@@ -308,9 +315,11 @@ public class DataController : MonoBehaviour
                     manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
                 }
             }
-
-            double lst = manager.CurrentSimulationTime.ToSiderealTime();
-
+            
+            julianDate = manager.CurrentSimulationTime.ToJulianDate();
+            longitudeTimeOffset = currentCity.Lng/15d;
+            lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
+            
             if (showHorizonView)
             {
                 // Filter and only update positions if changed time / latitude
@@ -318,14 +327,15 @@ public class DataController : MonoBehaviour
 
                 if (shouldUpdate)
                 {
-                    float celestialSphereOffsetR = -45f; 
+                    float rotationDueToUnityOrientation = 90;
+                    
                     float siderealHoursPerDay = 23.9344696f;
                     float fractionOfDay = (float)lst / siderealHoursPerDay;
-                    float planetRotation = fractionOfDay * 360;
+                    float planetRotation = (fractionOfDay * 360); // + longitudeRotation;
                     
                     // Start from initial rotation then rotate around for the current time and offset
                     transform.rotation = initialRotation;
-                    transform.Rotate(0, (celestialSphereOffsetR + planetRotation), 0, Space.Self);
+                    transform.Rotate(0, (planetRotation + rotationDueToUnityOrientation), 0, Space.Self);
                     // Set last timestamp so we only update when changed
                     lastTime = lst;
                 }

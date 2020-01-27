@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
 
@@ -63,6 +64,8 @@ public class NetworkController : MonoBehaviour
             ConnectToServer();
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -253,11 +256,16 @@ public class NetworkController : MonoBehaviour
     {
         bool isLocal = manager.LocalUsername == player.username;
         Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id + "is local: " + isLocal);
-        Vector3 pos = Utils.NetworkPosToPosition(player.playerPosition.position);
-        Quaternion rot = Utils.NetworkRotToRotation(player.playerPosition.rotation);
+        Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
+        Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
         if (isLocal)
         {
             localPlayer = player;
+            AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+            if (annotationTool)
+            {
+                annotationTool.SyncMyAnnotations();
+            }
             updateLocalAvatar();
         }
         else
@@ -277,12 +285,20 @@ public class NetworkController : MonoBehaviour
             {
                 remotePlayers[player.username] = remotePlayerAvatar;
             }
+            
+            // sync their annotations
+            for (int i = 0; i < player.annotations.Count; i++)
+            {
+                NetworkTransform annotation = player.annotations[i];
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, player);
+            }
         }
         updatePlayerList();
     }
 
     public void OnPlayerRemove(Player player)
     {
+        SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
@@ -338,9 +354,23 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    public void HandleAnnotationDelete(Player player, string annotationName)
+    {
+        GameObject deletedAnnotation = GameObject.Find(annotationName);
+        if (deletedAnnotation != null)
+        {
+            Debug.Log("received AnnotationDelete for " + annotationName);
+            Destroy(deletedAnnotation);
+        }
+        else
+        {
+            Debug.Log("Could not delete " + annotationName + " for player " + player.username);
+        }
+        
+    }
     public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, "interaction");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
 
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
@@ -350,7 +380,18 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, "movement");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "","movement");
+    }
+
+    public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
+    {
+        Debug.Log("Broadcasting new Annotation event " + pos);
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, "annotation");
+    }
+    public void BroadcastDeleteAnnotation(string annotationName)
+    {
+        Debug.Log("Broadcasting new Delete Annotation event " + annotationName);
+        colyseusClient.SendAnnotationDelete(annotationName);
     }
 
     IEnumerator selfDestruct(GameObject indicatorObj)
@@ -366,6 +407,8 @@ public class NetworkController : MonoBehaviour
     {
         Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
     }
     
 }

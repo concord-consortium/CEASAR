@@ -29,11 +29,11 @@ public static class Utils
                    (oldT.rotation.z != newT.rotation.z)) return true;
         return false;
     }
-    public static Vector3 NetworkPosToPosition(NetworkVector3 pos)
+    public static Vector3 NetworkV3ToVector3(NetworkVector3 pos)
     {
         return new Vector3(pos.x, pos.y, pos.z);
     }
-    public static Quaternion NetworkRotToRotation(NetworkVector3 rot)
+    public static Quaternion NetworkV3ToQuaternion(NetworkVector3 rot)
     {
         return Quaternion.Euler(rot.x, rot.y, rot.z);
     }
@@ -111,8 +111,9 @@ public static class Utils
     public static Vector2 LatLngFromPosition(Vector3 pos, float rad)
     {
         
-        float lat = 90 - (float) Math.Acos(pos.y / rad) * 180 / Mathf.PI;
-        float lon = (float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI;
+        float lat = (float) Math.Asin(pos.y / rad) * 180 / Mathf.PI;
+        float lon = ((float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI ) - 90;
+        if (pos.z > 0) lon += 180;
         return new Vector2(lat, lon);
     }
 

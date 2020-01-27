@@ -15,6 +15,7 @@ public class SceneLoader : MonoBehaviour
     [SerializeField]
     private GameObject defaultEventSystem;
 
+    private GameObject vrCamera;
     public void Start()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
@@ -44,7 +45,7 @@ public class SceneLoader : MonoBehaviour
         {
             existingCamera.SetActive(false);
         }
-        Instantiate(vrCameraRig);
+        vrCamera = Instantiate(vrCameraRig);
 
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
@@ -95,6 +96,10 @@ public class SceneLoader : MonoBehaviour
             Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             vrCam.GetComponent<Camera>().backgroundColor = Color.black;
+        }
+        if (SceneManager.GetActiveScene().name == "Horizon")
+        {
+            vrCamera.transform.position = new Vector3(0, 2, 0);
         }
         GameObject avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
         if (avatar != null)

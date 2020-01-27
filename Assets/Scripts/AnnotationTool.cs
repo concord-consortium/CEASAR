@@ -1,57 +1,60 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
 public class AnnotationTool : MonoBehaviour
 {
     private Vector3 startPointForDrawing = Vector3.zero;
     private Vector3 endPointForDrawing = Vector3.zero;
-
-    public bool singleLines = true;
     
     public GameObject annotationLinePrefab;
     public GameObject annotationLineHighlightPrefab;
     
     public float annotationWidth = 1;
     public float annotationHighlightWidthMultiplier = 1.5f;
-    private List<GameObject> annotations;
 
-    private LineRenderer annotationLineRenderer;
-    private List<Vector3> annotationLinePoints;
+    private GameObject currentAnnotation;
+    private List<GameObject> myAnnotations;
+
     private void Start()
     {
-        annotationLineRenderer = this.GetComponent<LineRenderer>();
-        annotations = new List<GameObject>();
-        annotationLinePoints = new List<Vector3>();
+        myAnnotations = new List<GameObject>();
         this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
+        SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.AddListener(DeleteAnnotation);
+        SimulationEvents.GetInstance().AnnotationClear.AddListener(ClearAnnotations);
     }
+
+    private void OnDisable()
+    {
+        SimulationEvents.GetInstance().AnnotationReceived.RemoveListener(AddAnnotation);
+        SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(DeleteAnnotation);
+        SimulationEvents.GetInstance().AnnotationClear.RemoveListener(ClearAnnotations);
+    }
+
     public void Annotate(Vector3 nextPoint)
     {
-        if (singleLines && annotationLinePrefab)
+        if (annotationLinePrefab)
         {
             if (startPointForDrawing == Vector3.zero)
             {
                 // start
                 startPointForDrawing = nextPoint;
-                annotations.Add(Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform));
+                currentAnnotation = Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform);
                 
             }
             else if (endPointForDrawing == Vector3.zero)
             {
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
-                
-                // Broadcast adding an annotation
-                SimulationEvents.GetInstance().AnnotationAdded.Invoke(startPointForDrawing, endPointForDrawing);
 
                 Vector3 distance = endPointForDrawing - startPointForDrawing;
                 Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
                 Vector3 midPosition = startPointForDrawing + (distance / 2.0f);
-                GameObject currentAnnotation = annotations[annotations.Count - 1];
+                
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
-                //currentAnnotation.transform.up = offset;
                 currentAnnotation.transform.localScale = scale;
 
                 if (annotationLineHighlightPrefab)
@@ -68,50 +71,96 @@ public class AnnotationTool : MonoBehaviour
                     
                     highlightObject.transform.parent = currentAnnotation.transform;
                 }
+                currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
+                myAnnotations.Add(currentAnnotation);
+                currentAnnotation.name = SimulationManager.GetInstance().LocalUsername + "_annotation" + myAnnotations.Count;
+                
+                // Broadcast adding an annotation
+                SimulationEvents.GetInstance().AnnotationAdded.Invoke(
+                    currentAnnotation.transform.localPosition, 
+                    currentAnnotation.transform.localRotation, 
+                    currentAnnotation.transform.localScale, 
+                    currentAnnotation.name);
+                
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
+                currentAnnotation = null;
             }
         }
-        else
+    }
+    
+
+    public void AddAnnotation(NetworkTransform lastAnnotation, Player p)
+    {
+        Vector3 pos = Utils.NetworkV3ToVector3(lastAnnotation.position);
+        Quaternion rot = Utils.NetworkV3ToQuaternion(lastAnnotation.rotation);
+        Vector3 scale = Utils.NetworkV3ToVector3(lastAnnotation.localScale);
+        string annotationName = lastAnnotation.name;
+        Color c = SimulationManager.GetInstance().GetColorForUsername(p.username);
+        this.addAnnotation(pos, rot, scale, annotationName, c);
+        
+    }
+    private void addAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName, Color playerColor)
+    {
+        Debug.Log("Received annotation " + pos + " " + rot + " " + scale);
+        GameObject currentAnnotation = Instantiate(annotationLinePrefab, this.transform);
+        currentAnnotation.transform.localPosition = pos;
+        currentAnnotation.transform.localRotation = rot;
+        currentAnnotation.transform.localScale = scale;
+        currentAnnotation.name = annotationName;
+        // annotations.Add(currentAnnotation);
+
+        if (annotationLineHighlightPrefab)
         {
-            multipointLineDraw(nextPoint);
+            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, currentAnnotation.transform);
+            Transform ht = highlightObject.transform;
+            ht.position *= 1.005f;
+            ht.localScale = new Vector3(ht.localScale.x * annotationHighlightWidthMultiplier, ht.localScale.y * annotationHighlightWidthMultiplier, ht.localScale.z);
+            highlightObject.GetComponent<Renderer>().material.color = playerColor;
         }
     }
 
-    private void multipointLineDraw(Vector3 nextPoint)
+    void DeleteAnnotation(string annotationName)
     {
-        // line renderer
-        if (startPointForDrawing == Vector3.zero)
+        GameObject deletedAnnotation = myAnnotations.Find(a => a.name == annotationName);
+        if (deletedAnnotation != null)
         {
-            startPointForDrawing = nextPoint;
-            if (annotationLineRenderer.positionCount == 2 && annotationLineRenderer.GetPosition(0) == Vector3.zero)
-            {
-                annotationLineRenderer.SetPosition(0, startPointForDrawing);
-                annotationLineRenderer.SetPosition(1, startPointForDrawing);
-                annotationLinePoints.Add(startPointForDrawing);
-                annotationLinePoints.Add(startPointForDrawing);
-            }
-            else
-            {
-                annotationLinePoints.Add(nextPoint);
-            }
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
-        }
-        else
-        {
-            annotationLinePoints.Add(nextPoint);
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+            myAnnotations.Remove(deletedAnnotation);
         }
     }
+    public void SyncMyAnnotations()
+    {
+        for (int i = 0; i < myAnnotations.Count; i++)
+        {
+            float delay = SimulationManager.GetInstance().MovementSendInterval * i;
+            // Need to delay sending each annotation so the network doesn't drop an update
+            StartCoroutine(sendAnnotationDelayed(myAnnotations[i], delay));
+        }
+    }
+    
+    IEnumerator sendAnnotationDelayed(GameObject annotation, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SimulationEvents.GetInstance().AnnotationAdded.Invoke(annotation.transform.localPosition,
+            annotation.transform.localRotation, annotation.transform.localScale, annotation.transform.name);
+    }
+    public void ClearAnnotations(string playerName)
+    {
+        foreach (GameObject annotation in GameObject.FindGameObjectsWithTag("Annotation"))
+        {
+            if (annotation.name.StartsWith(playerName))
+            {
+                Destroy(annotation);
+            }
+        }
+    }
+    
     public void EndDrawingMode()
     {
-        if (annotationLinePoints.Count > 2)
+        if (startPointForDrawing != Vector3.zero && currentAnnotation != null && endPointForDrawing == Vector3.zero)
         {
-            annotationLinePoints.RemoveAt(annotationLinePoints.Count - 1);
-            annotationLineRenderer.positionCount = annotationLinePoints.Count;
-            annotationLineRenderer.SetPositions(annotationLinePoints.ToArray());
+            // we were in the middle of drawing when we stopped. Remove in-progress drawing
+            Destroy(currentAnnotation);
         }
         startPointForDrawing = Vector3.zero;
         endPointForDrawing = Vector3.zero;
