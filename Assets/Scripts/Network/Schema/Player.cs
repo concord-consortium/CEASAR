@@ -23,8 +23,8 @@ public class Player : Schema {
 	[Type(4, "ref", typeof(NetworkTransform))]
 	public NetworkTransform interactionTarget = new NetworkTransform();
 
-	[Type(5, "ref", typeof(NetworkTransform))]
-	public NetworkTransform locationPin = new NetworkTransform();
+	[Type(5, "ref", typeof(NetworkPerspectivePin))]
+	public NetworkPerspectivePin locationPin = new NetworkPerspectivePin();
 
 	[Type(6, "ref", typeof(NetworkCelestialObject))]
 	public NetworkCelestialObject celestialObjectTarget = new NetworkCelestialObject();

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class InteractionController : MonoBehaviour
 {
     public GameObject interactionIndicator;
+    public GameObject locationPin;
 
     // Cached reference to earth object for lat/lng
     private GameObject _earth;
@@ -159,7 +160,39 @@ public class InteractionController : MonoBehaviour
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
+    public void SetEarthLocationPin(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
+    {
+        Vector2 latLng = Vector2.zero; // unset value
+        if (earth)
+        {
+            Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
+            Vector3 size = earth.GetComponent<Renderer>().bounds.size;
+            float radius = size.x / 2;
+            latLng = Utils.LatLngFromPosition(earthPos, radius);
+        }
+        else
+        {
+            Debug.Log("No Earth found in interacion, using 0 for lat & lng");
+        }
 
+        if (locationPin)
+        {
+            GameObject indicatorObj = Instantiate(locationPin);
+            indicatorObj.transform.localRotation = rot;
+            indicatorObj.transform.position = pos;
+            indicatorObj.GetComponent<Renderer>().material.color = playerColor;
+        }
+        if (isLocal)
+        {
+            SimulationEvents.GetInstance()
+                .PushPinUpdated.Invoke(latLng, SimulationManager.GetInstance().CurrentSimulationTime);
+            
+            string interactionInfo = "Pushpin set at: " + latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
+            Debug.Log(interactionInfo);
+            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, "Custom: ");
+            // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+        }
+    }
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
         yield return new WaitForSeconds(3.0f);
