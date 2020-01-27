@@ -10,6 +10,7 @@ public class SunPositionController : MonoBehaviour
 
     public Material lineMaterial;
     private LineRenderer sunArcLine;
+    public bool showSunArc = false;
     int secondsInADay = 24 * 60 * 60;
     int desiredLineNodeCount = 60;
     
@@ -45,13 +46,16 @@ public class SunPositionController : MonoBehaviour
     }
     void renderSunArc()
     {
-        if (sunArcLine == null)
+        if (showSunArc)
         {
-            createSunArc();
-        }
-        else
-        {
-            sunArcLine.SetPositions(getArcPoints().ToArray());
+            if (sunArcLine == null)
+            {
+                createSunArc();
+            }
+            else
+            {
+                sunArcLine.SetPositions(getArcPoints().ToArray());
+            }
         }
     }
 

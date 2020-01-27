@@ -46,8 +46,8 @@ public class VRInteraction : MonoBehaviour
 
     #region Camera Move for Earth view
     private float distance = 20.0f;
-    private float xSpeed = 40.0f;
-    private float ySpeed = 80.0f;
+    private float xSpeed = 0.2f;
+    private float ySpeed = 0.4f;
 
     private float yMinLimit = -60f;
     private float yMaxLimit = 120f;
@@ -139,10 +139,13 @@ public class VRInteraction : MonoBehaviour
                 StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
                 if (nextStar != null)
                 {
+                    
                     if (nextStar != currentStar)
                     {
                         // remove highlighting from previous star
                         if (currentStar != null) currentStar.CursorHighlightStar(false);
+                        // vibrate only on new star highlight
+                        hapticFeedback();
                     }
 
                     currentStar = nextStar;
@@ -150,6 +153,7 @@ public class VRInteraction : MonoBehaviour
 
                     if (interactionTrigger())
                     {
+                        hapticFeedback();
                         if (mainUIController.IsDrawing && annotationTool != null)
                         {
                             // allow annotation where the star is
@@ -173,6 +177,7 @@ public class VRInteraction : MonoBehaviour
                         {
                             // remove highlighting from previous line
                             if (currentLine != null) currentLine.Highlight(false);
+                            hapticFeedback();
                         }
                         currentLine = nextLine;
                         if (!mainUIController.IsDrawing)
@@ -190,6 +195,7 @@ public class VRInteraction : MonoBehaviour
                                 if (currentLine.IsSelected)
                                 {
                                     currentLine.HandleDeleteAnnotation();
+                                    hapticFeedback();
                                 }
                             }
                         }
@@ -233,10 +239,10 @@ public class VRInteraction : MonoBehaviour
         Transform origin = this.transform;
         if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
         canvasObject.transform.position = origin.position + (origin.forward * 6);
-        Vector3 newRotation = Camera.main.transform.rotation.eulerAngles;
+        Vector3 newRotation = Camera.main.transform.localRotation.eulerAngles;
         newRotation.x = 0;
         newRotation.z = 0;
-        canvasObject.transform.rotation = Quaternion.Euler(newRotation);
+        canvasObject.transform.localRotation = Quaternion.Euler(newRotation);
     }
     void toggleMenu()
     {
@@ -255,16 +261,22 @@ public class VRInteraction : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "EarthInteraction")
         {
             if (!earthModel) earthModel = GameObject.Find("EarthContainer");
+           
             if (grabTrigger())
             {
+                if (mainUI == null) mainUI = GameObject.Find("MainUI");
+                if (mainUI && mainUI.transform.parent == null)
+                {
+                    mainUI.transform.parent = this.transform;
+                }
+                SimulationManager.GetInstance().CelestialSphereObject.SetActive( false);
                 // rotate VR camera around Earth
                 float distance = Vector3.Magnitude(transform.position - earthModel.transform.position);
-                x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance * 0.02f;
-                y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed * 0.02f;
+                x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance;
+                y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed;
 
                 y = ClampAngle(y, yMinLimit, yMaxLimit);
 
-                
                 Quaternion rotation = Quaternion.Euler(y, x, 0);
 
                 Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
@@ -272,6 +284,14 @@ public class VRInteraction : MonoBehaviour
 
                 transform.rotation = rotation;
                 transform.position = position;
+                
+            } else
+            {
+                if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+                {
+                    SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+                }
+               
             }
         }
     }
@@ -307,6 +327,17 @@ public class VRInteraction : MonoBehaviour
     void setDrawStartPoint()
     {
 
+    }
+
+    void hapticFeedback()
+    {
+        OVRInput.SetControllerVibration(0.1f, 0.2f, OVRInput.GetActiveController());
+        StartCoroutine(stopHaptic());
+    }
+    IEnumerator stopHaptic()
+    {
+        yield return new WaitForSeconds(0.1f);
+        OVRInput.SetControllerVibration(0f, 0f, OVRInput.GetActiveController());
     }
 
     void updateLaser(bool activeTarget)

@@ -47,6 +47,8 @@ public class SceneLoader : MonoBehaviour
         }
         vrCamera = Instantiate(vrCameraRig);
 
+        string currentScene = SceneManager.GetActiveScene().name;
+
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
         {
@@ -64,6 +66,11 @@ public class SceneLoader : MonoBehaviour
             {
                 c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
                 c.transform.position = new Vector3(3, 3, 5);
+                if (currentScene == "EarthInteraction")
+                {
+                    c.transform.position = new Vector3(5, 1, 1);
+                    c.transform.rotation = Quaternion.Euler(0, 30, 0);
+                }
 
             }
             else if (c.gameObject.name == "NetworkUI")
@@ -90,14 +97,14 @@ public class SceneLoader : MonoBehaviour
         {
             horizonCamControls.SetActive(false);
         }
-
-        if (SceneManager.GetActiveScene().name == "EarthInteraction" || SceneManager.GetActiveScene().name == "Stars")
+        if (currentScene == "EarthInteraction" || currentScene == "Stars")
         {
             Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             vrCam.GetComponent<Camera>().backgroundColor = Color.black;
+
         }
-        if (SceneManager.GetActiveScene().name == "Horizon")
+        if (currentScene == "Horizon")
         {
             vrCamera.transform.position = new Vector3(0, 2, 0);
         }
