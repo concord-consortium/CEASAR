@@ -409,12 +409,12 @@ PrefabInstance:
     - target: {fileID: 2724144227377325203, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000061035156
+      value: -0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 2724144227377325203, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000019013882
+      value: 0.00001793541
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226661976860, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
@@ -491,10 +491,20 @@ PrefabInstance:
       propertyPath: buttonsToDisable.Array.data[1]
       value: 
       objectReference: {fileID: 1101179311}
-    - target: {fileID: 1109977202957443843, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    - target: {fileID: 2724144226074643660, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2724144227174876450, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2724144227174876450, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_Size
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2f8e74f1a333614a8717f2c31eb93b6, type: 3}
