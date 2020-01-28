@@ -49,23 +49,15 @@ public class DataController : MonoBehaviour
     {
         return allStarComponents[uniqueId];
     }
-
-    private DateTime simulationStartTime = DateTime.Now;
-    private double localSiderialStartTime;
-    public double LocalSiderialStartTime
-    {
-        get { return localSiderialStartTime; }
-        private set { localSiderialStartTime = value; }
-    }
-
-    private bool userSpecifiedDateTime = false;
-    private DateTime userStartDateTime = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private bool runSimulation = false;
 
     public List<string> cities;
-    public string StartCity;
+    private string startCity = SimulationConstants.CUSTOM_LOCATION;
     public City currentCity;
-    private City nextCity;
+    // private City nextCity;
+
+    private LatLng currentLocation;
+    private LatLng nextLocation;
 
     private Quaternion initialRotation;
     // For storing a copy of the last known time to limit updates
@@ -125,7 +117,7 @@ public class DataController : MonoBehaviour
     }
     private void OnDisable()
     {
-        SimulationEvents.GetInstance().LocationSelected.RemoveAllListeners();
+        SimulationEvents.GetInstance().LocationSelected.RemoveListener(handleSelectNewLocation);
     }
 
     void OnSceneUnloaded(Scene scene)
@@ -170,15 +162,16 @@ public class DataController : MonoBehaviour
             allCities = DataImport.ImportCityData(cityData.text);
             Debug.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
-            if (string.IsNullOrEmpty(StartCity))
+            if (string.IsNullOrEmpty(startCity))
             {
-                StartCity = "Boston";
+                startCity = "Boston";
             }
-            currentCity = allCities.Where(c => c.Name == StartCity).FirstOrDefault();
-            StartCity = currentCity.Name;
-            // changes to nextCity trigger a change to Celestial Sphere orientation in Horizon view
+            currentCity = allCities.Where(c => c.Name == startCity).FirstOrDefault();
+            startCity = currentCity.Name;
+            // changes to nextLocation trigger a change to Celestial Sphere orientation in Horizon view
             // and are captured on the SimulationEvents.LocationSelected event handler
-            nextCity = currentCity; 
+            currentLocation = new LatLng {Latitude = currentCity.Lat, Longitude = currentCity.Lng};
+            nextLocation = currentLocation;
         }
         if (constellationConnectionData != null)
         {
@@ -186,7 +179,6 @@ public class DataController : MonoBehaviour
             Debug.Log(allConstellationConnections.Count + " connections imported");
         }
 
-        localSiderialStartTime = simulationStartTime.Add(TimeSpan.FromHours(currentCity.Lng / 15d)).ToSiderealTime();
         int starCount = 0;
         if (starPrefab != null && allStars != null && allStars.Count > 0)
         {
@@ -265,7 +257,7 @@ public class DataController : MonoBehaviour
         this.transform.position = new Vector3(0, 0, 0f);
         this.transform.localScale = new Vector3(1, 1, 1) * manager.CurrentScaleFactor(radius);
         this.transform.rotation = Quaternion.identity;
-        userSpecifiedDateTime = manager.UseCustomSimulationTime;
+        // userSpecifiedDateTime = manager.UseCustomSimulationTime;
         runSimulation = false;
 
         foreach (StarComponent starComponent in allStarComponents.Values)
@@ -277,7 +269,19 @@ public class DataController : MonoBehaviour
                 starComponent.GetComponent<Renderer>().material = starMaterial;
             }
         }
-        if (showHorizonView) positionNCP();
+        
+        // if we're in Horizon view, set location and date / time
+        if (showHorizonView)
+        {
+            if (manager.UserHasSetLocation)
+            {
+                nextLocation = manager.LocalUserPin.Location;
+                // Force an update once ready
+                currentLocation = new LatLng();
+            }
+            positionNCP();
+        }
+
         Debug.Log("updated");
         isReady = true;
     }
@@ -288,20 +292,20 @@ public class DataController : MonoBehaviour
         transform.rotation = Quaternion.identity;
         // NCP for selected latitude is due North, elevated at the same angle as latitude
         // this is our axis for siderial daily rotation.
-        transform.rotation = Quaternion.Euler(90 - currentCity.Lat, 0, 0);
+        transform.rotation = Quaternion.Euler(90 - currentLocation.Latitude, 0, 0);
         initialRotation = transform.rotation;
     }
 
     void FixedUpdate()
     {
-        if (isReady)
+        if (isReady && showHorizonView)
         {
             shouldUpdate = false;
 
-            if (currentCity.Name != nextCity.Name)
+            if (currentLocation != nextLocation)
             {
-                currentCity = nextCity;
-                if (showHorizonView) positionNCP();
+                currentLocation = nextLocation;
+                positionNCP();
                 shouldUpdate = true;
             }
            
@@ -317,28 +321,26 @@ public class DataController : MonoBehaviour
             }
             
             julianDate = manager.CurrentSimulationTime.ToJulianDate();
-            longitudeTimeOffset = currentCity.Lng/15d;
+            // Longitude relates to a time offset from UTC, 15 degrees per hour (24 hours in 360 degrees)
+            longitudeTimeOffset = currentLocation.Longitude/15d;
             lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
             
-            if (showHorizonView)
-            {
-                // Filter and only update positions if changed time / latitude
-                if (lastTime != lst) shouldUpdate = true;
+            // Filter and only update positions if changed time / latitude
+            if (lastTime != lst) shouldUpdate = true;
 
-                if (shouldUpdate)
-                {
-                    float rotationDueToUnityOrientation = 90;
-                    
-                    float siderealHoursPerDay = 23.9344696f;
-                    float fractionOfDay = (float)lst / siderealHoursPerDay;
-                    float planetRotation = (fractionOfDay * 360); // + longitudeRotation;
-                    
-                    // Start from initial rotation then rotate around for the current time and offset
-                    transform.rotation = initialRotation;
-                    transform.Rotate(0, (planetRotation + rotationDueToUnityOrientation), 0, Space.Self);
-                    // Set last timestamp so we only update when changed
-                    lastTime = lst;
-                }
+            if (shouldUpdate)
+            {
+                float rotationDueToUnityOrientation = 90;
+                
+                float siderealHoursPerDay = 23.9344696f;
+                float fractionOfDay = (float)lst / siderealHoursPerDay;
+                float planetRotation = (fractionOfDay * 360); // + longitudeRotation;
+                
+                // Start from initial rotation then rotate around for the current time and offset
+                transform.rotation = initialRotation;
+                transform.Rotate(0, (planetRotation + rotationDueToUnityOrientation), 0, Space.Self);
+                // Set last timestamp so we only update when changed
+                lastTime = lst;
             }
         }
     }
@@ -363,17 +365,18 @@ public class DataController : MonoBehaviour
                 var matchedCity = allCities.Where(c => c.Name == newCity).First();
                 if (matchedCity != null)
                 {
-                    nextCity = matchedCity;
+                    currentCity = matchedCity;
                     // check if this is a custom location
-                    if (nextCity.Name == SimulationConstants.CUSTOM_LOCATION)
+                    if (matchedCity.Name == SimulationConstants.CUSTOM_LOCATION)
                     {
+                        nextLocation = SimulationManager.GetInstance().LocalUserPin.Location;
                         SimulationEvents.GetInstance().LocationChanged.Invoke(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
                     }
                     else
                     {
                         // Raise the event again with the matching lat/lng to update UI
-                        Vector2 newLocationLatLng = new Vector2(nextCity.Lat, nextCity.Lng);
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(newLocationLatLng, nextCity.Name);
+                        nextLocation = new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng};
+                        SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, matchedCity.Name);
                     }
                 }
             }
@@ -390,7 +393,8 @@ public class DataController : MonoBehaviour
 
     public void ToggleUserTime()
     {
-        userSpecifiedDateTime = !userSpecifiedDateTime;
+        SimulationManager.GetInstance().UseCustomSimulationTime =
+            !SimulationManager.GetInstance().UseCustomSimulationTime;
     }
     public void ToggleRunSimulation()
     {

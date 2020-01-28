@@ -129,7 +129,7 @@ public class InteractionController : MonoBehaviour
 
     public void ShowEarthMarkerInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
-        Vector2 latLng = Vector2.zero; // unset value
+        LatLng latLng = new LatLng(); // unset value
         if (earth)
         {
             Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
@@ -164,7 +164,7 @@ public class InteractionController : MonoBehaviour
     }
     public void SetEarthLocationPin(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
-        Vector2 latLng = Vector2.zero; // unset value
+        LatLng latLng = new LatLng(); // unset value
         if (earth)
         {
             Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
@@ -185,17 +185,17 @@ public class InteractionController : MonoBehaviour
         currentLocationPin.transform.localRotation = rot;
         currentLocationPin.transform.position = pos;
         currentLocationPin.GetComponent<Renderer>().material.color = playerColor;
-        Pushpin pin = currentLocationPin.GetComponent<Pushpin>();
-        pin.latitude = latLng.x;
-        pin.longitude = latLng.y;
-        pin.selectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
+        PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
+        pinObject.pin.Location = latLng;
+        pinObject.pin.SelectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
         
         if (isLocal)
         {
             SimulationEvents.GetInstance()
                 .PushPinUpdated.Invoke(latLng, SimulationManager.GetInstance().CurrentSimulationTime);
-            
-            string interactionInfo = "Pushpin set at: " + latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
+
+            SimulationManager.GetInstance().LocalUserPin = pinObject.pin;
+            string interactionInfo = "Pushpin set at: " + pinObject.pin.ToString(); // latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
             Debug.Log(interactionInfo);
             SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);

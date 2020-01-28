@@ -1,11 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using TMPro;
 
 public class LocationPanel : MonoBehaviour
 {
     public TextMeshProUGUI latLongInfo;
 
-    public void UpdateLocationPanel(Vector2 latLng, string description)
+    void Start()
+    {
+        if (SimulationManager.GetInstance().UserHasSetLocation)
+        {
+            UpdateLocationPanel(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
+        }
+    }
+    public void UpdateLocationPanel(LatLng latLng, string description)
     {
         Debug.Log("update location panel");
         string newText = "";
@@ -13,18 +21,15 @@ public class LocationPanel : MonoBehaviour
         {
             newText += description + " ";
         }
-        if (latLng != Vector2.zero)
-        {
-            newText += latLng.ToString();
-        }
+        newText += latLng.ToDisplayString();
+        
         if (latLongInfo)
         {
             latLongInfo.text = newText;
         }
-        
     }
 
-    private void handleInteraction(Vector2 latLong)
+    private void handleInteraction(LatLng latLong)
     {
         if (latLongInfo)
         {

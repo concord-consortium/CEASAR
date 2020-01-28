@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Pushpin : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
+public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
 {
-    public float latitude = 0;
-    public float longitude = 0;
-    public DateTime selectedDateTime;
+    public Pushpin pin;
     
     private Material defaultMaterial;
     public Material highlightPinMaterial;
@@ -16,12 +14,25 @@ public class Pushpin : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, 
     private void Start()
     {
         defaultMaterial = GetComponent<Renderer>().material;
+        if (SimulationManager.GetInstance().UserHasSetLocation)
+        {
+            pin = SimulationManager.GetInstance().LocalUserPin;
+        }
+        else
+        {
+            pin = new Pushpin
+            {
+                Location = new LatLng {Latitude = 0, Longitude = 0},
+                SelectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime
+            };
+        }
     }
 
     public void HandleSelectPin()
     {
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(new Vector2(latitude, longitude), selectedDateTime);
-        SimulationEvents.GetInstance().LocationChanged.Invoke(new Vector2(latitude, longitude), SimulationConstants.CUSTOM_LOCATION);
+        LatLng latlng = pin.Location;
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(latlng, pin.SelectedDateTime);
+        SimulationEvents.GetInstance().LocationChanged.Invoke(latlng, SimulationConstants.CUSTOM_LOCATION);
     }
 
     public void HighlightPin(bool highlight)

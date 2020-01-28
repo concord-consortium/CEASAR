@@ -5,6 +5,7 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
 {
@@ -86,7 +87,7 @@ public class MainUIController : MonoBehaviour
             }
         }
     }
-    private bool isPinningLocation = false;
+    private bool isPinningLocation = true;
     public bool IsPinningLocation {
         get { return isPinningLocation; }
         set { 
@@ -120,7 +121,7 @@ public class MainUIController : MonoBehaviour
 
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, dataController.StartCity);
+            cityDropdown.InitCityNames(dataController.cities, "Boston");
         }
         if (constellationDropdown)
         {
@@ -283,10 +284,21 @@ public class MainUIController : MonoBehaviour
         IsDrawing = !IsDrawing;
         SimulationEvents.GetInstance().DrawMode.Invoke(IsDrawing);
     }
-    
+
     public void TogglePinMode()
     {
-        IsPinningLocation = !IsPinningLocation;
+        // This is now used to change the view in Horizon mode to your current pin
+        // Or to take you to the horizon for your current pin from Earth view
+        SimulationManager manager = SimulationManager.GetInstance();
+        Pushpin pin = manager.LocalUserPin;
+        Debug.Log(pin);
+        manager.UseCustomSimulationTime = true;
+        // manager.CurrentSimulationTime = pin.SelectedDateTime;
+        // manager.Currentlocation = pin.Location;
+        if (SceneManager.GetActiveScene().name != "Horizon")
+        {
+            SceneManager.LoadScene("Horizon");
+        }
     }
     public void ChangeYear(float newYear)
     {
@@ -475,10 +487,11 @@ public class MainUIController : MonoBehaviour
     public void CreateSnapshot()
     {
         // get values from datacontroller
-        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime;
-        String location = dataController.StartCity;
+        DateTime snapshotDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
+        String location = dataController.currentCity.Name;
+        LatLng locationCoordinates = SimulationManager.GetInstance().Currentlocation;
         // add a snapshot to the controller
-        snapshotsController.CreateSnapshot(snapshotDateTime, location);
+        snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
         // add snapshot to dropdown list
         AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
@@ -514,11 +527,17 @@ public class MainUIController : MonoBehaviour
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
 
-    private void updateLocationPanel(Vector2 latLng, string description)
+    private void updateLocationPanel(LatLng latLng, string description)
     {
         if (FindObjectOfType<LocationPanel>())
         {
+            Debug.Log("Updating drop down" + latLng.ToString() + " " + description);
             FindObjectOfType<LocationPanel>().UpdateLocationPanel(latLng, description);
+        }
+
+        if (cityDropdown)
+        {
+            cityDropdown.SetCity(description);
         }
     }
 

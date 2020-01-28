@@ -108,13 +108,16 @@ public static class Utils
         return CalculatePositionByAzAlt((float)azimuth, (float)altitude, radius);
     }
     
-    public static Vector2 LatLngFromPosition(Vector3 pos, float rad)
+    public static LatLng LatLngFromPosition(Vector3 pos, float rad)
     {
-        
         float lat = (float) Math.Asin(pos.y / rad) * 180 / Mathf.PI;
-        float lon = ((float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI ) - 90;
-        if (pos.z > 0) lon += 180;
-        return new Vector2(lat, lon);
+        float lng = ((float) Math.Atan(pos.x / pos.z) * -180 / Mathf.PI ) - 90;
+        if (pos.z > 0) lng += 180;
+
+        LatLng latlng = new LatLng();
+        latlng.Latitude = lat;
+        latlng.Longitude = lng;
+        return latlng;
     }
 
     public static Color GetColorFromTexture(Renderer rend, Vector2 pixelUV)

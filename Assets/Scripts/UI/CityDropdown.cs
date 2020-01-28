@@ -7,6 +7,7 @@ using TMPro;
 public class CityDropdown : MonoBehaviour
 {
     private DataController dataController;
+    private List<string> allCityNames;
     TMP_Dropdown dropdown;
 
     void Start()
@@ -28,6 +29,11 @@ public class CityDropdown : MonoBehaviour
         }
     }
 
+    public void SetCity(string city)
+    {
+        dropdown.SetValueWithoutNotify(allCityNames.IndexOf(city));
+    }
+
     public void InitCityNames(List<string> cityNames, string currentCity)
     {
         // Get dropdown reference in case InitCityNames is called before Start
@@ -39,6 +45,8 @@ public class CityDropdown : MonoBehaviour
             initialValue = 0;
         }
         dropdown.SetValueWithoutNotify(initialValue);
+        // cache the list of names
+        allCityNames = cityNames;
     }
 
 }

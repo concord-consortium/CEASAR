@@ -5,7 +5,7 @@ using UnityEngine.Events;
 [System.Serializable]
 public class LocationSelectedEvent : UnityEvent<string> { }
 [System.Serializable]
-public class LocationChangeEvent : UnityEvent<Vector2, string> { }
+public class LocationChangeEvent : UnityEvent<LatLng, string> { }
 [System.Serializable]
 public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3, string> { }
 [System.Serializable]
@@ -15,9 +15,9 @@ public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, Player> { }
 [System.Serializable]
 public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]
-public class PushPinSelectedEvent : UnityEvent<Vector2, DateTime> { }
+public class PushPinSelectedEvent : UnityEvent<LatLng, DateTime> { }
 [System.Serializable]
-public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
+public class PushPinUpdatedEvent : UnityEvent<LatLng, DateTime> { }
 [System.Serializable]
 public class DrawModeEvent: UnityEvent<bool> { }
 [System.Serializable]
