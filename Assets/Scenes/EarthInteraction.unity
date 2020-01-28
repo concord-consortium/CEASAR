@@ -171,7 +171,7 @@ MonoBehaviour:
   ySpeed: 80
   yMinLimit: -50
   yMaxLimit: 100
-  distanceMin: 0.8
+  distanceMin: 1.8
   distanceMax: 40
 --- !u!4 &584737428 stripped
 Transform:
