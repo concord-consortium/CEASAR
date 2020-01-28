@@ -119,6 +119,18 @@ public static class Utils
         return latlng;
     }
 
+    public static Vector3 PositionFromLatLng(LatLng latlng, float radius)
+    {
+        var lat = latlng.Latitude * Mathf.Deg2Rad;
+        var lng = latlng.Longitude * Mathf.Deg2Rad;
+        // y is up
+        var x = radius * Mathf.Cos(lat) * Mathf.Cos(lng);
+        var y = radius * Mathf.Sin(lat);
+        var z = radius * Mathf.Cos(lat) * Mathf.Sin(lng);
+        
+        return new Vector3((float)x, (float)y, (float)z);
+    }
+
     public static Color GetColorFromTexture(Renderer rend, Vector2 pixelUV)
     {
         if (rend == null)

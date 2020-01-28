@@ -378,6 +378,7 @@ public class DataController : MonoBehaviour
                         manager.CurrentLocationName = matchedCity.Name;
                         SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, matchedCity.Name);
                     }
+                    
                 }
             }
         } 

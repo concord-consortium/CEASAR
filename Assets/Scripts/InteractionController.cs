@@ -57,15 +57,25 @@ public class InteractionController : MonoBehaviour
 
     void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoad;
         SceneManager.sceneUnloaded -= OnSceneUnload;
+        events.LocationChanged.RemoveListener(UpdatePinForLocalPlayer);
     }
 
     void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoad;
         SceneManager.sceneUnloaded += OnSceneUnload;
+        
+        events.LocationChanged.AddListener(UpdatePinForLocalPlayer);
     }
 
-
+    private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+    {
+        bool showPins = scene.name == "EarthInteraction";
+        pushpinController.ShowPins(showPins);
+    }
+    
     private void OnSceneUnload(Scene scene)
     {
         // Forget about our cached earth object.
@@ -194,6 +204,26 @@ public class InteractionController : MonoBehaviour
         }
 
         return latLng;
+    }
+    
+    void UpdatePinForLocalPlayer(LatLng latlng, string locationName)
+    {
+        // get 3d pos from latlng
+        if (earth)
+        {
+            Vector3 size = earth.GetComponent<Renderer>().bounds.size;
+            float radius = size.x / 2;
+            Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
+            Vector3 earthRelativePos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
+
+            pushpinController.CurrentLocationPin.transform.position = earthRelativePos;
+            pushpinController.CurrentLocationPin.transform.rotation = Quaternion.LookRotation(earthRelativePos);
+        }
+        else
+        {
+            Debug.Log("No Earth found in interaction");
+        }
+
     }
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
