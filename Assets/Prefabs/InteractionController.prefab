@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1113959076393538665}
   - component: {fileID: 1113959076393538666}
+  - component: {fileID: 8485927413433827825}
   m_Layer: 0
   m_Name: InteractionController
   m_TagString: Untagged
@@ -45,5 +46,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionIndicator: {fileID: 3837293221611235267, guid: bea5abd67e7974abb8b55180a88d1311,
     type: 3}
-  locationPin: {fileID: 6662295844099714890, guid: cf644284c9f7b42e0b6da428dd1ae980,
+--- !u!114 &8485927413433827825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113959076393538667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21fa4c42365ba4a539041e5e0e6aa82b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locationPinPrefab: {fileID: 6662295844099714890, guid: cf644284c9f7b42e0b6da428dd1ae980,
     type: 3}

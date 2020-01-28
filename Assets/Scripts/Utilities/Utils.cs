@@ -107,7 +107,6 @@ public static class Utils
     {
         return CalculatePositionByAzAlt((float)azimuth, (float)altitude, radius);
     }
-    
     public static LatLng LatLngFromPosition(Vector3 pos, float rad)
     {
         float lat = (float) Math.Asin(pos.y / rad) * 180 / Mathf.PI;

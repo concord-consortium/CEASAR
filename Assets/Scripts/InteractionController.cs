@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using Colyseus.Schema;
@@ -6,9 +7,6 @@ using UnityEngine.SceneManagement;
 public class InteractionController : MonoBehaviour
 {
     public GameObject interactionIndicator;
-    public GameObject locationPin;
-
-    private GameObject currentLocationPin;
     
     // Cached reference to earth object for lat/lng
     private GameObject _earth;
@@ -41,6 +39,16 @@ public class InteractionController : MonoBehaviour
 
     private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
     private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
+
+    private PushpinController _pushpinController;
+    private PushpinController pushpinController
+    {
+        get
+        {
+            if (_pushpinController == null) _pushpinController = this.GetComponent<PushpinController>();
+            return _pushpinController;
+        }
+    }
     
     private void Awake()
     {
@@ -92,6 +100,16 @@ public class InteractionController : MonoBehaviour
             case "locationpin":
                 // add / move player pin
                 Debug.Log("remote player pinned a location");
+                Vector3 pos = Utils.NetworkV3ToVector3(updatedPlayer.locationPin.location.position);
+                LatLng latLng = getEarthRelativeLatLng(pos);
+                pushpinController.AddPin(
+                    pos,
+                    Utils.NetworkV3ToQuaternion(updatedPlayer.locationPin.location.rotation),
+                    UserRecord.GetColorForUsername(updatedPlayer.username),
+                    updatedPlayer.username, 
+                    latLng,
+                    new DateTime((long)updatedPlayer.locationPin.datetime), 
+                    false); 
                 break;
             case "annotation":
                 // add annotation
@@ -131,18 +149,7 @@ public class InteractionController : MonoBehaviour
 
     public void ShowEarthMarkerInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
-        LatLng latLng = new LatLng(); // unset value
-        if (earth)
-        {
-            Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
-            Vector3 size = earth.GetComponent<Renderer>().bounds.size;
-            float radius = size.x / 2;
-            latLng = Utils.LatLngFromPosition(earthPos, radius);
-        }
-        else
-        {
-            Debug.Log("No Earth found in interacion, using 0 for lat & lng");
-        }
+        LatLng latLng = getEarthRelativeLatLng(pos);
 
         if (interactionIndicator)
         {
@@ -166,6 +173,13 @@ public class InteractionController : MonoBehaviour
     }
     public void SetEarthLocationPin(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
+        LatLng latLng = getEarthRelativeLatLng(pos);
+
+        pushpinController.AddPin(pos, rot, playerColor, manager.LocalUsername, latLng, manager.CurrentSimulationTime, true);
+    }
+
+    LatLng getEarthRelativeLatLng(Vector3 pos)
+    {
         LatLng latLng = new LatLng(); // unset value
         if (earth)
         {
@@ -176,34 +190,10 @@ public class InteractionController : MonoBehaviour
         }
         else
         {
-            Debug.Log("No Earth found in interacion, using 0 for lat & lng");
+            Debug.Log("No Earth found in interaction, using 0 for lat & lng");
         }
 
-        if (!currentLocationPin)
-        {
-            currentLocationPin = Instantiate(locationPin);
-        }
-
-        currentLocationPin.transform.localRotation = rot;
-        currentLocationPin.transform.position = pos;
-        currentLocationPin.GetComponent<Renderer>().material.color = playerColor;
-        PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
-        pinObject.pin.Location = latLng;
-        pinObject.pin.SelectedDateTime = manager.CurrentSimulationTime;
-        
-        if (isLocal)
-        {
-            manager.LocalUserPin = pinObject.pin;
-            manager.Currentlocation = pinObject.pin.Location;
-            manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
-            
-            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime);
-            events.LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
-            
-            string interactionInfo = "Pushpin set at: " + pinObject.pin.ToString(); // latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
-            Debug.Log(interactionInfo);
-            // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
-        }
+        return latLng;
     }
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
