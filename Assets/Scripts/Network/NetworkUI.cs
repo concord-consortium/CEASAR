@@ -6,19 +6,25 @@ using UnityEngine.UI;
 public class NetworkUI : MonoBehaviour
 {
     // UI Buttons are attached through Unity Inspector
-    public Button connectButton;
+    public GameObject disconnectButton;
     public Button randomizeUsernameButton;
-    public GameObject roomButtonPanel;
+    public GameObject usersPanel;
     public GameObject smallOrangeButtonPrefab;
-    public TMPro.TMP_Text connectButtonText;
-    public TMPro.TMP_InputField m_EndpointField;
+    public GameObject localButton;
+    public GameObject webButton;
+    public GameObject devButton;
+    public GameObject playerNamePrefab;
+    public TMPro.TMP_Text disconnectButtonText;
     public TMPro.TMP_Text connectionStatusText;
     public TMPro.TMP_Text usernameText;
+    public TMPro.TMP_Text groupNameText;
     public TMPro.TMP_Text debugMessages;
 
-    public string ConnectButtonText {
+    private List<GameObject> playerList;
+
+    public string DisconnectButtonText {
         set {
-            if (connectButtonText) connectButtonText.text = value;
+            if (disconnectButtonText) disconnectButtonText.text = value;
         }
     }
     public string ConnectionStatusText {
@@ -41,39 +47,52 @@ public class NetworkUI : MonoBehaviour
         usernameText.color = user.color;
     }
 
-    public void SetNetworkAddress(string address)
+    public void Start()
     {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
-        switch (address)
-        {
-            case "local":
-                networkController.SetNetworkAddress(ServerList.Local);
-                break;
-            case "dev":
-                networkController.SetNetworkAddress(ServerList.Dev);
-                break;
-            default:
-                networkController.SetNetworkAddress(ServerList.Web);
-                break;
-        }
+        UserRecord user = SimulationManager.GetInstance().LocalPlayer;
+        usernameText.text = user.Username;
+        usernameText.color = user.color;
+        groupNameText.text = user.group;
+        groupNameText.color = Color.white;
+        playerList = new List<GameObject>();
+        connectButtons();
     }
-    public string NetworkAddress {
-        get {
-            return m_EndpointField.text;
+
+    private void connectButtons()
+    {
+        if(localButton != null)
+        {
+            Button localButtonButton = localButton.GetComponent<Button>();
+            localButtonButton.onClick.AddListener(() => HandleConnectClick(ServerList.Local));
         }
-        set {
-            m_EndpointField.text = value;
+        if (devButton != null)
+        {
+            Button devButtonButton = devButton.GetComponent<Button>();
+            devButtonButton.onClick.AddListener(() => HandleConnectClick(ServerList.Dev));
+        }
+
+        if (webButton != null)
+        {
+            Button webButtonButton = webButton.GetComponent<Button>();
+            webButtonButton.onClick.AddListener(() => HandleConnectClick(ServerList.Web));
+        }
+        if (disconnectButton != null)
+        {
+            Button disconnectButtonButton = disconnectButton.GetComponent<Button>();
+            disconnectButtonButton.onClick.AddListener(() => HandleDisconnect());
         }
     }
 
-    public void HandleConnectClick()
+
+    public void HandleConnectClick(ServerRecord server)
     {
         NetworkController networkController = FindObjectOfType<NetworkController>();
+        Debug.Log($"Connecting to #{server.name}");
+
         if (!networkController.IsConnected)
         {
-            networkController.ConnectToServer(m_EndpointField.text);
+            networkController.ConnectToServer(server.address);
             if (randomizeUsernameButton != null) randomizeUsernameButton.enabled = false;
-
         }
         else
         {
@@ -83,10 +102,39 @@ public class NetworkUI : MonoBehaviour
         
     }
 
+    public void HandleDisconnect()
+    {
+        NetworkController networkController = FindObjectOfType<NetworkController>();
+        networkController.Disconnect();
+        randomizeUsernameButton.enabled = true;
+    }
+
     public string Username {
         set { 
             usernameText.text = value;
             usernameText.color = SimulationManager.GetInstance().LocalPlayerColor;
+        }
+    }
+
+    public void ClearPlayers()
+    {
+        foreach(GameObject playertext in playerList)
+        {
+            Destroy(playertext);
+        }
+        playerList.Clear();
+    }
+
+    public void AddPlayer(string name)
+    {
+        if(playerNamePrefab != null)
+        {
+            GameObject playerText = Instantiate(playerNamePrefab);
+            playerText.GetComponent<RectTransform>().SetParent(usersPanel.transform);
+            TMPro.TextMeshProUGUI label = playerText.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            label.text = name;
+            label.color = UserRecord.GetColorForUsername(name);
+            playerList.Add(playerText);
         }
     }
 }

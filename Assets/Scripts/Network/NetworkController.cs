@@ -120,7 +120,21 @@ public class NetworkController : MonoBehaviour
         networkUI = FindObjectOfType<NetworkUI>();
         if(networkUI)
         {
-            networkUI.ConnectButtonText = IsConnected ? "Disconnect" : "Connect";
+            if (IsConnected)
+            {
+                networkUI.disconnectButton.SetActive(true);
+                networkUI.localButton.SetActive(false);
+                networkUI.webButton.SetActive(false);
+                networkUI.devButton.SetActive(false);
+            }
+            else
+            {
+                networkUI.disconnectButton.SetActive(false);
+                networkUI.localButton.SetActive(true);
+                networkUI.webButton.SetActive(true);
+                networkUI.devButton.SetActive(true);
+            }
+            
             updatePlayerList();
         }
         
@@ -129,7 +143,6 @@ public class NetworkController : MonoBehaviour
 
     public void SetNetworkAddress(ServerRecord destination)
     {
-        networkUI.NetworkAddress = destination.address;
         _selectedNetwork = destination;
     }
 
@@ -216,11 +229,12 @@ public class NetworkController : MonoBehaviour
 
     void updatePlayerList()
     {
-        // networkUI.DebugMessage = colyseusClient.GetClientList();
         string listOfPlayersForDebug = "";
+        networkUI.ClearPlayers();
         foreach (var p in remotePlayers.Keys)
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
+            networkUI.AddPlayer(p);
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) Debug.Log(listOfPlayersForDebug);
 
