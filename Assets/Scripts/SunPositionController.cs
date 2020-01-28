@@ -6,7 +6,7 @@ using UnityEngine;
 public class SunPositionController : MonoBehaviour
 {
     public GameObject sun;
-    private DataController dataController;
+    private SimulationManager manager;
 
     public Material lineMaterial;
     private LineRenderer sunArcLine;
@@ -17,11 +17,11 @@ public class SunPositionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dataController = SimulationManager.GetInstance().DataControllerComponent;
+        manager = SimulationManager.GetInstance();
 
         // move sun game object
         sun.transform.position =
-            getSolarPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
+            getSolarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
 
         renderSunArc();
     }
@@ -62,12 +62,12 @@ public class SunPositionController : MonoBehaviour
     List<Vector3> getArcPoints()
     {
         List<Vector3> points = new List<Vector3>();
-        DateTime d = dataController.CurrentSimUniversalTime;
+        DateTime d = manager.CurrentSimulationTime;
         DateTime midnight = new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
             DateTime t = midnight.AddSeconds(i);
-            points.Add(getSolarPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng));
+            points.Add(getSolarPosition(t, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude));
         }
         return points;
     }
@@ -78,7 +78,7 @@ public class SunPositionController : MonoBehaviour
 
         if (sun != null)
         {
-            sun.transform.position = getSolarPosition(dataController.CurrentSimUniversalTime, dataController.currentCity.Lat, dataController.currentCity.Lng);
+            sun.transform.position = getSolarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
             sun.transform.LookAt(new Vector3(0,0,0));
         }
         
@@ -88,6 +88,6 @@ public class SunPositionController : MonoBehaviour
     {
         var solarPosition = SunCalc.GetSunPosition(t, lat, lng);
 
-        return Utils.CalculatePositionByAzAlt(solarPosition.Azimuth, solarPosition.Altitude, dataController.Radius);
+        return Utils.CalculatePositionByAzAlt(solarPosition.Azimuth, solarPosition.Altitude, manager.SceneRadius);
     }
 }

@@ -344,38 +344,38 @@ public class DataController : MonoBehaviour
             }
         }
     }
-
-    public DateTime CurrentSimUniversalTime
-    {
-        get
-        {
-            if (manager == null) manager = SimulationManager.GetInstance();
-            return manager.CurrentSimulationTime;
-        }
-    }
-
+    
     void handleSelectNewLocation(string newCity)
     {
         Debug.Log("Got new location! " + newCity);
+        SimulationManager manager = SimulationManager.GetInstance();
+        
         if (!string.IsNullOrEmpty(newCity))
         {
-            if (newCity != currentCity?.Name || newCity == SimulationConstants.CUSTOM_LOCATION)
+            // If we have selected a new city by using the dropdown
+            if (newCity != currentCity?.Name)
             {
                 // verify a valid city was entered
                 var matchedCity = allCities.Where(c => c.Name == newCity).First();
                 if (matchedCity != null)
                 {
+                    // Raise the change event with the matching lat/lng to update UI
                     currentCity = matchedCity;
                     // check if this is a custom location
                     if (matchedCity.Name == SimulationConstants.CUSTOM_LOCATION)
                     {
-                        nextLocation = SimulationManager.GetInstance().LocalUserPin.Location;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
+                        // Grab the custom location from the simulation manager
+                        nextLocation = manager.LocalUserPin.Location;
+                        manager.Currentlocation = nextLocation;
+                        manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
+                        SimulationEvents.GetInstance().LocationChanged.Invoke(manager.Currentlocation, SimulationConstants.CUSTOM_LOCATION);
                     }
                     else
                     {
-                        // Raise the event again with the matching lat/lng to update UI
+                        // Set up the city lat lng
                         nextLocation = new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng};
+                        manager.Currentlocation = nextLocation;
+                        manager.CurrentLocationName = matchedCity.Name;
                         SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, matchedCity.Name);
                     }
                 }

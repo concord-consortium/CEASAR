@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
 {
-    private SimulationManager manager;
+    private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
+    private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
 
     public List<GameObject> enabledPanels = new List<GameObject>();
     public List<GameObject> buttonsToDisable = new List<GameObject>();
@@ -95,17 +96,12 @@ public class MainUIController : MonoBehaviour
         }
     }
     
-    private void Awake()
-    {
-        manager = SimulationManager.GetInstance();
-    }
     void OnDisable()
     {
-        SimulationEvents.GetInstance().LocationChanged.RemoveListener(updateLocationPanel);
+        events.LocationChanged.RemoveListener(updateLocationPanel);
     }
     public void Init()
     {
-        manager = SimulationManager.GetInstance();
         markersController = manager.MarkersControllerComponent;
         dataController = manager.DataControllerComponent;
         sphere = manager.CelestialSphereObject;
@@ -121,7 +117,7 @@ public class MainUIController : MonoBehaviour
 
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, "Boston");
+            cityDropdown.InitCityNames(dataController.cities, manager.CurrentLocationName);
         }
         if (constellationDropdown)
         {
@@ -138,9 +134,9 @@ public class MainUIController : MonoBehaviour
 
         if (yearSlider && daySlider && timeSlider)
         {
-            yearSlider.value = dataController.CurrentSimUniversalTime.Year;
-            daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
-            timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
+            yearSlider.value = manager.CurrentSimulationTime.Year;
+            daySlider.value = manager.CurrentSimulationTime.DayOfYear;
+            timeSlider.value = manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable)
         {
@@ -149,7 +145,7 @@ public class MainUIController : MonoBehaviour
         }
         
         // Listen to any relevant events
-        SimulationEvents.GetInstance().LocationChanged.AddListener(updateLocationPanel);
+        events.LocationChanged.AddListener(updateLocationPanel);
         
         positionActivePanels();
     }
@@ -208,12 +204,11 @@ public class MainUIController : MonoBehaviour
     {
         if (currentDateTimeText && dataController)
         {
-            currentDateTimeText.text = dataController.CurrentSimUniversalTime.ToString() + " (UTC)";
+            currentDateTimeText.text = manager.CurrentSimulationTime.ToString() + " (UTC)";
         }
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
-        if (manager == null) manager = SimulationManager.GetInstance();
         if (setTimeToggle)
         {
             manager.UseCustomSimulationTime = setTimeToggle.isOn;
@@ -282,14 +277,13 @@ public class MainUIController : MonoBehaviour
     public void ToggleDrawMode()
     {
         IsDrawing = !IsDrawing;
-        SimulationEvents.GetInstance().DrawMode.Invoke(IsDrawing);
+        events.DrawMode.Invoke(IsDrawing);
     }
 
     public void TogglePinMode()
     {
         // This is now used to change the view in Horizon mode to your current pin
         // Or to take you to the horizon for your current pin from Earth view
-        SimulationManager manager = SimulationManager.GetInstance();
         Pushpin pin = manager.LocalUserPin;
         Debug.Log(pin);
         manager.UseCustomSimulationTime = true;
@@ -515,7 +509,7 @@ public class MainUIController : MonoBehaviour
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
         // broadcast the change of location
-        SimulationEvents.GetInstance().LocationSelected.Invoke(location);
+        events.LocationSelected.Invoke(location);
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;

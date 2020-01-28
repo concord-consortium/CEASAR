@@ -2,6 +2,9 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// This panel displays the currently-selected location in a user friendly manner
+/// </summary>
 public class LocationPanel : MonoBehaviour
 {
     public TextMeshProUGUI latLongInfo;
@@ -26,14 +29,6 @@ public class LocationPanel : MonoBehaviour
         if (latLongInfo)
         {
             latLongInfo.text = newText;
-        }
-    }
-
-    private void handleInteraction(LatLng latLong)
-    {
-        if (latLongInfo)
-        {
-            latLongInfo.text = latLong.ToString();
         }
     }
 }

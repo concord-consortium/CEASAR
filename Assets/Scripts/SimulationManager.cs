@@ -122,8 +122,22 @@ public class SimulationManager
         set
         {
             currentLocation = value;
-            SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, SimulationConstants.CUSTOM_LOCATION);
         }
+    }
+
+    private string currentLocationName;
+    public string CurrentLocationName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(currentLocationName))
+            {
+                currentLocationName = "Boston";
+            }
+
+            return currentLocationName;
+        }
+        set { currentLocationName = value; }
     }
     
     public bool UserHasSetLocation { get; private set; }

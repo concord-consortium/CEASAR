@@ -39,6 +39,8 @@ public class InteractionController : MonoBehaviour
         }
     }
 
+    private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
+    private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
     
     private void Awake()
     {
@@ -85,7 +87,7 @@ public class InteractionController : MonoBehaviour
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
                 // maintain a dict of stars by ID for easier lookups. 
-                SimulationManager.GetInstance().DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar();
+                manager.DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar();
                 break;
             case "locationpin":
                 // add / move player pin
@@ -96,7 +98,7 @@ public class InteractionController : MonoBehaviour
                 ArraySchema<NetworkTransform> annotations = updatedPlayer.annotations;
                 NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
                 
-                SimulationEvents.GetInstance().AnnotationReceived.Invoke(
+                events.AnnotationReceived.Invoke(
                     lastAnnotation,
                     updatedPlayer);
                 break;
@@ -187,17 +189,19 @@ public class InteractionController : MonoBehaviour
         currentLocationPin.GetComponent<Renderer>().material.color = playerColor;
         PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
         pinObject.pin.Location = latLng;
-        pinObject.pin.SelectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
+        pinObject.pin.SelectedDateTime = manager.CurrentSimulationTime;
         
         if (isLocal)
         {
-            SimulationEvents.GetInstance()
-                .PushPinUpdated.Invoke(latLng, SimulationManager.GetInstance().CurrentSimulationTime);
-
-            SimulationManager.GetInstance().LocalUserPin = pinObject.pin;
+            manager.LocalUserPin = pinObject.pin;
+            manager.Currentlocation = pinObject.pin.Location;
+            manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
+            
+            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime);
+            events.LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
+            
             string interactionInfo = "Pushpin set at: " + pinObject.pin.ToString(); // latLng.ToString() + " " + SimulationManager.GetInstance().CurrentSimulationTime;
             Debug.Log(interactionInfo);
-            SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
