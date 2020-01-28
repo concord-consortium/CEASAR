@@ -37,18 +37,25 @@ public class GroupSelectionWizard : MonoBehaviour
         nextButton.onClick.AddListener(NextStep);
     }
 
+    private Button addButton()
+    {
+        GameObject button = Instantiate(smallOrangeButtonPrefab);
+        RectTransform buttonTransform = button.GetComponent<RectTransform>();
+        buttonTransform.SetParent(ButtonPanel.transform);
+        buttonTransform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        buttonTransform.localPosition = new Vector3(buttonTransform.localPosition.x, buttonTransform.localPosition.y, 0);
+
+        return button.GetComponent<Button>();
+    }
 
     public void ShowGroups()
     {
         SetTitleText("Pick a Group");
         foreach (string name in NetworkController.roomNames)
         {
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(ButtonPanel.transform);
-            button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
-            buttons.Add(button);
+            Button b = addButton();
+            TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            buttons.Add(b.gameObject);
             if (label != null)
             {
                 label.SetText(name);
@@ -68,18 +75,16 @@ public class GroupSelectionWizard : MonoBehaviour
         foreach (string name in UserRecord.ColorNames)
         {
             Color color = UserRecord.ColorValues[index++];
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(ButtonPanel.transform);
-            button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
+            Button b = addButton();
+            TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+
             ColorBlock c = b.colors;
             c.normalColor = color;
             c.highlightedColor = Color.Lerp(color, Color.white, 0.5f);
             c.pressedColor = Color.Lerp(color, Color.white, 0.5f);
             c.selectedColor = Color.Lerp(color, Color.black, 0.5f);
             b.colors = c;
-            buttons.Add(button);
+            buttons.Add(b.gameObject);
             if (label != null)
             {
                 label.SetText(name);
@@ -98,13 +103,10 @@ public class GroupSelectionWizard : MonoBehaviour
         SetTitleText("Pick an animal name");
         foreach (string name in UserRecord.AnimalNames)
         {
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(ButtonPanel.transform);
-            button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
+            Button b = addButton();
             
-            buttons.Add(button);
+            buttons.Add(b.gameObject);
+            TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (label != null)
             {
                 label.SetText(name);
@@ -124,13 +126,10 @@ public class GroupSelectionWizard : MonoBehaviour
         foreach (int number in numbers)
         {
             string numberString = number.ToString();
-            GameObject button = Instantiate(smallOrangeButtonPrefab);
-            button.GetComponent<RectTransform>().SetParent(ButtonPanel.transform);
-            button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            TMPro.TextMeshProUGUI label = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            Button b = button.GetComponent<Button>();
-
-            buttons.Add(button);
+           
+            Button b = addButton();
+            buttons.Add(b.gameObject);
+            TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (label != null)
             {
                 label.SetText(numberString);
@@ -202,7 +201,7 @@ public class GroupSelectionWizard : MonoBehaviour
         SimulationManager.GetInstance().LocalPlayer = userRecord;
         if(NextScreen)
         {
-            gameObject.SetActive(false);
+            ButtonPanel.SetActive(false);
             NextScreen.SetActive(true);
         }
     }

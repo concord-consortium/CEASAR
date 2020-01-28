@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,41 +11,44 @@ public class PlayerMovement : MonoBehaviour
     private float lastSend = 0;
     NetworkController network;
     public bool useLocalRotation = false;
+    string sceneName = "";
     private void Awake()
     {
         lastPos = transform.position;
         lastRot = transform.rotation;
+        sceneName = SceneManager.GetActiveScene().name;
     }
 
     void FixedUpdate()
     {
-        if (lastPos != transform.position || lastRot != transform.rotation)
-        {
-            // send update - no more frequently than once per second
-            if (Time.time - SimulationManager.GetInstance().MovementSendInterval > lastSend)
+        if (sceneName.ToLower() != "loadsim") {
+            if (lastPos != transform.position || lastRot != transform.rotation)
             {
-                // Broadcast movement to network:
-                if (!network) network = FindObjectOfType<NetworkController>();
-                Quaternion rot = transform.rotation;
-                if (useLocalRotation)
+                // send update - no more frequently than once per second
+                if (Time.time - SimulationManager.GetInstance().MovementSendInterval > lastSend)
                 {
-                    rot = transform.localRotation;
-                } 
-                network.BroadcastPlayerMovement(transform.position, rot);
-                
-                
+                    // Broadcast movement to network:
+                    if (!network) network = FindObjectOfType<NetworkController>();
+                    Quaternion rot = transform.rotation;
+                    if (useLocalRotation)
+                    {
+                        rot = transform.localRotation;
+                    }
+                    network.BroadcastPlayerMovement(transform.position, rot);
 
-                // Log movement:
-                string movementInfo = "local player moved to P:" +
-                    transform.position.ToString() + " R:" + rot.ToString();
-                CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
 
-                // update local comparators
-                lastPos = transform.position;
-                lastRot = rot;
-                lastSend = Time.time;
+
+                    // Log movement:
+                    string movementInfo = "local player moved to P:" +
+                        transform.position.ToString() + " R:" + rot.ToString();
+                    CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
+
+                    // update local comparators
+                    lastPos = transform.position;
+                    lastRot = rot;
+                    lastSend = Time.time;
+                }
             }
-            
         }
     }
 }

@@ -80,7 +80,7 @@ public class SceneLoader : MonoBehaviour
             }
             else
             {
-                c.transform.position = new Vector3(0, 3, 5);
+                c.transform.position = new Vector3(0, 1, 4);
             }
             
         }
