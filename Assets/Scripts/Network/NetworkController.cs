@@ -230,11 +230,9 @@ public class NetworkController : MonoBehaviour
     void updatePlayerList()
     {
         string listOfPlayersForDebug = "";
-        networkUI.ClearPlayers();
         foreach (var p in remotePlayers.Keys)
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
-            networkUI.AddPlayer(p);
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) Debug.Log(listOfPlayersForDebug);
 
@@ -265,7 +263,7 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
-
+            SimulationEvents.GetInstance().PlayerJoined.Invoke(player.username);
             // add "player" to map of players
             if (!remotePlayers.ContainsKey(player.username))
             {
@@ -288,6 +286,7 @@ public class NetworkController : MonoBehaviour
 
     public void OnPlayerRemove(Player player)
     {
+        SimulationEvents.GetInstance().PlayerLeft.Invoke(player.username);
         SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);

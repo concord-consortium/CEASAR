@@ -20,7 +20,7 @@ public class NetworkUI : MonoBehaviour
     public TMPro.TMP_Text groupNameText;
     public TMPro.TMP_Text debugMessages;
 
-    private List<GameObject> playerList;
+    private Dictionary<string, GameObject> playerList;
 
     public string DisconnectButtonText {
         set {
@@ -54,8 +54,20 @@ public class NetworkUI : MonoBehaviour
         usernameText.color = user.color;
         groupNameText.text = user.group;
         groupNameText.color = Color.white;
-        playerList = new List<GameObject>();
+        playerList = new Dictionary<string, GameObject>();
         connectButtons();
+    }
+
+    private void OnEnable()
+    {
+        SimulationEvents.GetInstance().PlayerJoined.AddListener(AddPlayer);
+        SimulationEvents.GetInstance().PlayerLeft.AddListener(RemovePlayer);
+    }
+
+    private void OnDisable()
+    {
+        SimulationEvents.GetInstance().PlayerJoined.RemoveListener(AddPlayer);
+        SimulationEvents.GetInstance().PlayerLeft.RemoveListener(RemovePlayer);
     }
 
     private void connectButtons()
@@ -116,25 +128,62 @@ public class NetworkUI : MonoBehaviour
         }
     }
 
-    public void ClearPlayers()
+    //public void RepaintPlayerList()
+    //{
+    //    // Remove them all first:
+    //    foreach(string name in playerList.Keys)
+    //    {
+    //        Destroy(playerList[name]);
+    //    }
+    //    // Add them all:
+    //}
+
+    private GameObject MakePlayerLabel(string name)
     {
-        foreach(GameObject playertext in playerList)
+        GameObject playerLabel = null;
+        if (playerNamePrefab != null)
         {
-            Destroy(playertext);
+            playerLabel = Instantiate(playerNamePrefab);
+            playerLabel.GetComponent<RectTransform>().SetParent(usersPanel.transform);
+            TMPro.TextMeshProUGUI label = playerLabel.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            Image pin = playerLabel.transform.Find("pin").GetComponent<Image>();
+            label.text = name;
+            label.color = UserRecord.GetColorForUsername(name);
+            pin.color = UserRecord.GetColorForUsername(name);
         }
-        playerList.Clear();
+        // Return null if it didn't work...
+        return playerLabel;
     }
 
     public void AddPlayer(string name)
     {
-        if(playerNamePrefab != null)
+        Debug.Log($"Player ADDED to panel #{name}");
+        if (playerList.ContainsKey(name))
         {
-            GameObject playerText = Instantiate(playerNamePrefab);
-            playerText.GetComponent<RectTransform>().SetParent(usersPanel.transform);
-            TMPro.TextMeshProUGUI label = playerText.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            label.text = name;
-            label.color = UserRecord.GetColorForUsername(name);
-            playerList.Add(playerText);
+            Debug.Log($"Player {name} exists already");
+            if(playerList[name] == null)
+            {
+                Debug.Log($"Player {name} needs a label; making one");
+                playerList[name] = MakePlayerLabel(name);
+            }
+        }
+        else
+        {
+            playerList.Add(name, MakePlayerLabel(name));
+        }
+    }
+
+    public void RemovePlayer(string name)
+    {
+        Debug.Log($"Player REMOVED from panel #{name}");
+        if(playerList.ContainsKey(name))
+        {
+            Destroy(playerList[name]);
+            playerList.Remove(name);
+        }
+        else
+        {
+            Debug.LogError($"No Label for {name} found in roster");
         }
     }
 }
