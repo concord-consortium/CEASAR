@@ -10605,7 +10605,7 @@ MonoBehaviour:
   localButton: {fileID: 5172499211701978776}
   webButton: {fileID: 2993004584013212192}
   devButton: {fileID: 6616147851321283676}
-  playerNamePrefab: {fileID: 2593387911928334006, guid: 18c8d6d638b8943f6996265cf22f90fe,
+  playerNamePrefab: {fileID: 6136766715340228121, guid: e0839036a2ad84cb181f470f8317141f,
     type: 3}
   disconnectButtonText: {fileID: 7941238143244201353}
   connectionStatusText: {fileID: 4608457446977862588}
@@ -13413,7 +13413,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23269,21 +23269,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7160219525408267391}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 5
+    m_Right: 5
+    m_Top: 5
+    m_Bottom: 5
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 190, y: 20}
-  m_Spacing: {x: 0, y: 0}
+  m_CellSize: {x: 180, y: 30}
+  m_Spacing: {x: 5, y: 5}
   m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!1 &7442912885140222367
