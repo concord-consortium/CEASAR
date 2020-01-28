@@ -150,6 +150,8 @@ public class NetworkUI : MonoBehaviour
             label.text = name;
             label.color = UserRecord.GetColorForUsername(name);
             pin.color = UserRecord.GetColorForUsername(name);
+            Button b = playerLabel.GetComponent<Button>();
+            b.onClick.AddListener( () => PlayerLabelClicked(name));
         }
         // Return null if it didn't work...
         return playerLabel;
@@ -186,4 +188,11 @@ public class NetworkUI : MonoBehaviour
             Debug.LogError($"No Label for {name} found in roster");
         }
     }
+
+    private void PlayerLabelClicked(string username)
+    {
+        // TODO: Look up the user, see if they have a locaation pin
+        // If they do, open the horizon view at that pin location.
+        Debug.Log($"{username} was clicked");
+    } 
 }
