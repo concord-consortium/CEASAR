@@ -20,7 +20,7 @@ public class ServerList
 
     public static ServerRecord Local = new ServerRecord("Local", "ws://localhost:2567");
     public static ServerRecord Custom = new ServerRecord("Custom", "ws://localhost:2567");
-    public static ServerRecord Dev = new ServerRecord("Dev", "ws://ceasar-serve-170822523-mftx7jq.herokuapp.com/");
+    public static ServerRecord Dev = new ServerRecord("Dev", "ws://ceasar-serve-170349161-ceutdkz.herokuapp.com/");
     public static ServerRecord Web = new ServerRecord("Web", "ws://ceasar-server-staging.herokuapp.com/");
 
     // track our single instance:
