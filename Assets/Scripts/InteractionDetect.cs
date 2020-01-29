@@ -55,7 +55,7 @@ public class InteractionDetect : MonoBehaviour
                             // Default is now set so that pinning = true all the time - leaving this in place for future
                             if (mainUIController.IsPinningLocation)
                             {
-                                interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                                interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
                             }
                             else
                             {

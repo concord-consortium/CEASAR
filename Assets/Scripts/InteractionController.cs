@@ -195,12 +195,16 @@ public class InteractionController : MonoBehaviour
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
-    public void SetEarthLocationPin(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
+    public void SetEarthLocationPin(Vector3 pos, Quaternion rot)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-        AddOrUpdatePin(latLng, playerColor, manager.LocalUsername, manager.CurrentSimulationTime, true, true);
+        AddOrUpdatePin(latLng, manager.LocalPlayerColor, manager.LocalUsername, manager.CurrentSimulationTime, true, true);
     }
 
+    string getPinName(string pinOwner)
+    {
+        return SimulationConstants.PIN_PREFIX + pinOwner;
+    }
     LatLng getEarthRelativeLatLng(Vector3 pos)
     {
         LatLng latLng = new LatLng(); // unset value
@@ -236,49 +240,37 @@ public class InteractionController : MonoBehaviour
         return earthRelativePos;
     }
 
+    /// <summary>
+    /// When the scene changes, refresh the pin location if it was changed in Horizon view
+    /// </summary>
     public void UpdateLocalUserPin()
     {
-        string pinName = "pin_" + manager.LocalUsername;
-        if (!currentLocationPin)
+        if (manager.UserHasSetLocation && manager.LocalUserPin != null)
         {
-            currentLocationPin = Instantiate(locationPinPrefab);
-            currentLocationPin.name = pinName;
-            currentLocationPin.transform.parent = this.transform;
-        }
+            string pinName = getPinName(manager.LocalUsername);
+            if (currentLocationPin == null)
+            {
+                currentLocationPin = getPinObject(pinName);
+            }
 
-        Pushpin p = manager.LocalUserPin;
-        Vector3 pos = getEarthRelativePos(p.Location);
-        currentLocationPin.transform.localRotation = Quaternion.LookRotation(pos);
-        currentLocationPin.transform.position = pos;
-        currentLocationPin.GetComponent<Renderer>().material.color = manager.LocalPlayerColor;
-        PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
-        pinObject.pin = p;
+            Pushpin p = manager.LocalUserPin;
+            updatePinObject(currentLocationPin, p.Location, p.SelectedDateTime, pinName, manager.LocalPlayerColor);
+        }
     }
     
+    // This is used for local pins and remote pins
     public void AddOrUpdatePin(LatLng latLng, Color c, string pinOwner, DateTime pinDateTime, bool isLocal,
         bool broadcast = false)
     {
-        string pinName = "pin_" + pinOwner;
+        string pinName = getPinName(pinOwner);
         if (isLocal)
         {
-            if (!currentLocationPin)
-            {
-                currentLocationPin = Instantiate(locationPinPrefab);
-                currentLocationPin.name = pinName;
-                currentLocationPin.transform.parent = this.transform;
-            }
+            currentLocationPin = getPinObject(pinName);
+            Pushpin p = updatePinObject(currentLocationPin, latLng, manager.CurrentSimulationTime, pinName, manager.LocalPlayerColor);
 
-            Vector3 pos = getEarthRelativePos(latLng);
-            currentLocationPin.transform.localRotation = Quaternion.LookRotation(pos);
-            currentLocationPin.transform.position = pos;
-            currentLocationPin.GetComponent<Renderer>().material.color = c;
-            PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
-            pinObject.pin.Location = latLng;
-            pinObject.pin.SelectedDateTime = manager.CurrentSimulationTime;
-            
             // Update Simulation Manager with our pin
-            manager.LocalUserPin = pinObject.pin;
-            manager.Currentlocation = pinObject.pin.Location;
+            manager.LocalUserPin = p;
+            manager.Currentlocation = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
 
             events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime);
@@ -289,7 +281,7 @@ public class InteractionController : MonoBehaviour
                 events.LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             }
 
-            string interactionInfo = "Pushpin set at: " + pinObject.pin.ToString(); 
+            string interactionInfo = "Pushpin set at: " + p.ToString(); 
             Debug.Log(interactionInfo);
             // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
@@ -298,19 +290,10 @@ public class InteractionController : MonoBehaviour
             GameObject remotePin = GameObject.Find(pinName);
             if (remotePin == null)
             {
-                remotePin = Instantiate(locationPinPrefab);
-                remotePin.name = pinName;
-                remotePin.transform.parent = this.transform;
+                remotePin = getPinObject(pinName);
                 remotePins.Add(remotePin);
             }
-            Vector3 pos = getEarthRelativePos(latLng);
-            remotePin.transform.localRotation = Quaternion.LookRotation(pos);;
-            remotePin.transform.position = pos;
-            remotePin.GetComponent<Renderer>().material.color = c;
-                
-            PushpinComponent pinObject = remotePin.GetComponent<PushpinComponent>();
-            pinObject.pin.Location = latLng;
-            pinObject.pin.SelectedDateTime = pinDateTime;
+            updatePinObject(remotePin, latLng, pinDateTime, pinName, c);
         }
         
     }
@@ -320,6 +303,29 @@ public class InteractionController : MonoBehaviour
         // via dropdown
         AddOrUpdatePin(latlng, manager.LocalPlayer.color, manager.LocalPlayer.Username, manager.CurrentSimulationTime,
             true, false);
+    }
+
+    GameObject getPinObject(string pinName)
+    {
+        GameObject pinObject = GameObject.Find(pinName);
+        if (pinObject == null)
+        {
+            pinObject = Instantiate(locationPinPrefab);
+            pinObject.name = pinName;
+            pinObject.transform.parent = this.transform;
+        }
+
+        return pinObject;
+    }
+    Pushpin updatePinObject(GameObject pinObject, LatLng latLng, DateTime pinDateTime, string pinName, Color c)
+    {
+        Vector3 pos = getEarthRelativePos(latLng);
+        pinObject.transform.localRotation = Quaternion.LookRotation(pos);;
+        pinObject.transform.position = pos;
+        pinObject.GetComponent<Renderer>().material.color = c;
+        PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
+        pinComponent.UpdatePin(latLng, pinDateTime);
+        return pinComponent.pin;
     }
     
     IEnumerator selfDestruct(GameObject indicatorObj)

@@ -22,7 +22,11 @@ public class PushPinUpdatedEvent : UnityEvent<LatLng, DateTime> { }
 public class DrawModeEvent: UnityEvent<bool> { }
 [System.Serializable]
 public class PlayerJoinedEvent : UnityEvent<string> { }
+[System.Serializable]
 public class PlayerLeftEvent : UnityEvent<string> { }
+[System.Serializable]
+public class SimulationTimeChangedEvent : UnityEvent { }
+
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -38,6 +42,7 @@ public class SimulationEvents
         if (DrawMode == null) DrawMode = new DrawModeEvent();
         if (PlayerJoined == null) PlayerJoined = new PlayerJoinedEvent();
         if (PlayerLeft == null) PlayerLeft = new PlayerLeftEvent();
+        if (SimulationTimeChanged == null) SimulationTimeChanged = new SimulationTimeChangedEvent();
     }
     private static SimulationEvents instance;
 
@@ -97,4 +102,9 @@ public class SimulationEvents
     /// When a user enters / exits draw mode
     /// </summary>
     public PlayerLeftEvent PlayerLeft;
+
+    /// <summary>
+    /// When the simulation time changes, the user's pushpin needs to be updated
+    /// </summary>
+    public SimulationTimeChangedEvent SimulationTimeChanged;
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public struct Pushpin
+public class Pushpin
 {
     public LatLng Location;
     public DateTime SelectedDateTime;

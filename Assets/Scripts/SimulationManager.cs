@@ -101,8 +101,16 @@ public class SimulationManager
     public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
 
     public StarComponent CurrentlySelectedStar;
-    public DateTime UserStartTime = DateTime.UtcNow;
-    public DateTime CurrentSimulationTime = DateTime.UtcNow;
+    private DateTime _currentSimulationTime = DateTime.UtcNow;
+
+    public DateTime CurrentSimulationTime
+    {
+        get { return _currentSimulationTime; }
+        set
+        {
+            _currentSimulationTime = value;
+        }
+    }
     private bool useCustomSimTime = false;
     public bool UseCustomSimulationTime
     {

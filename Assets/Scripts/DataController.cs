@@ -139,6 +139,7 @@ public class DataController : MonoBehaviour
         this.colorByConstellation = colorByConstellation;
         this.showConstellationConnections = showConstellationConnections;
         this.starMaterial = starMaterial;
+        this.lastTime = 0;
     }
 
     public void Init()

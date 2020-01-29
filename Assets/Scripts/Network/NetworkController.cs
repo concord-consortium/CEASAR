@@ -294,6 +294,7 @@ public class NetworkController : MonoBehaviour
                 LatLng latLng = new LatLng
                     {Latitude = player.locationPin.latitude, Longitude = player.locationPin.longitude};
                 DateTime dt = TimeConverter.JulianToCalendarDate(player.locationPin.datetime);
+                Debug.LogWarning(dt + " " + player.locationPin.datetime);
                 interactionController.AddOrUpdatePin(latLng, playerColor, player.username, dt,
                     false, false);
             }
@@ -305,6 +306,7 @@ public class NetworkController : MonoBehaviour
     {
         SimulationEvents.GetInstance().PlayerLeft.Invoke(player.username);
         SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
+        // TODO: clear pushpins for player
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
