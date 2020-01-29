@@ -144,7 +144,10 @@ public class NetworkUI : MonoBehaviour
         if (playerNamePrefab != null)
         {
             playerLabel = Instantiate(playerNamePrefab);
-            playerLabel.GetComponent<RectTransform>().SetParent(usersPanel.transform);
+            RectTransform buttonTransform = playerLabel.GetComponent<RectTransform>();
+            buttonTransform.SetParent(usersPanel.transform);
+            buttonTransform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            buttonTransform.localPosition = new Vector3(buttonTransform.localPosition.x, buttonTransform.localPosition.y, 0);
             TMPro.TextMeshProUGUI label = playerLabel.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             Image pin = playerLabel.transform.Find("pin").GetComponent<Image>();
             label.text = name;
