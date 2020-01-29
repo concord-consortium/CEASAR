@@ -95,7 +95,7 @@ public class InteractionController : MonoBehaviour
             currentLocationPin.SetActive(show);
         } 
         
-        if (manager.UserHasSetLocation)
+        if (show && manager.UserHasSetLocation)
         {
             updateLocalUserPin();
         }
