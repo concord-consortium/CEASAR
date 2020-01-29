@@ -135,10 +135,14 @@ public class MainUIController : MonoBehaviour
 
         if (yearSlider && daySlider && timeSlider)
         {
-            yearSlider.value = manager.CurrentSimulationTime.Year;
-            daySlider.value = manager.CurrentSimulationTime.DayOfYear;
-            timeSlider.value = manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute;
-            setTimeToggle.isOn = manager.UseCustomSimulationTime;
+            yearSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Year);
+            daySlider.SetValueWithoutNotify(manager.CurrentSimulationTime.DayOfYear);
+            timeSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute);
+            setTimeToggle.SetIsOnWithoutNotify(manager.UseCustomSimulationTime);
+            userYear = manager.CurrentSimulationTime.Year;
+            userDay = manager.CurrentSimulationTime.DayOfYear;
+            userHour = manager.CurrentSimulationTime.Hour;
+            userMin = manager.CurrentSimulationTime.Minute;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable)
         {
