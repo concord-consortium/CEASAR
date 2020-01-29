@@ -13,6 +13,7 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
 
     private void Start()
     {
+        if (pin == null) pin = new Pushpin();
         defaultMaterial = GetComponent<Renderer>().material;
         if (SimulationManager.GetInstance().UserHasSetLocation)
         {
@@ -26,6 +27,13 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
                 SelectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime
             };
         }
+    }
+
+    public void UpdatePin(LatLng latLng, DateTime dt)
+    {
+        if (pin == null) pin = new Pushpin();
+        pin.Location = latLng;
+        pin.SelectedDateTime = dt;
     }
 
     public void HandleSelectPin()

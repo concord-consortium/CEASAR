@@ -7,6 +7,18 @@ public class SnapshotsController : MonoBehaviour
 {
     public List<Snapshot> snapshots = new List<Snapshot>();
 
+    string locationKey
+    {
+        get { return SimulationConstants.SNAPSHOT_LOCATION_PREF_KEY; }
+    }
+    string datetimeKey
+    {
+        get { return SimulationConstants.SNAPSHOT_DATETIME_PREF_KEY; }
+    }
+    string coordsKey
+    {
+        get { return SimulationConstants.SNAPSHOT_LOCATION_COORDS_PREF_KEY; }
+    }
     public void Init()
     {
         // load snapshots from playerprefs
@@ -17,13 +29,13 @@ public class SnapshotsController : MonoBehaviour
             snapshotFound = false;
             // snapshots are stored in playerprefs as paired entries with an index suffix
             // e.g., "SnapshotLocation0", "SnapshotDateTime0"
-            if (PlayerPrefs.HasKey("SnapshotLocation" + count) && PlayerPrefs.HasKey("SnapshotDateTime" + count))
+            if (PlayerPrefs.HasKey(locationKey + count) && PlayerPrefs.HasKey(datetimeKey + count))
             {
                 snapshotFound = true;
-                string location = PlayerPrefs.GetString("SnapshotLocation" + count, "");
-                string dts = PlayerPrefs.GetString("SnapshotDateTime" + count, "");
+                string location = PlayerPrefs.GetString(locationKey + count, "");
+                string dts = PlayerPrefs.GetString(datetimeKey + count, "");
                 DateTime dt = DateTime.Parse(dts);
-                LatLng locationCoords = new LatLng(PlayerPrefs.GetString("SnapshotLocationCoords", ""));
+                LatLng locationCoords = new LatLng(PlayerPrefs.GetString(coordsKey + count, ""));
                 snapshots.Add(new Snapshot(dt, location, locationCoords));
             }
             count++;
@@ -33,9 +45,9 @@ public class SnapshotsController : MonoBehaviour
     public void CreateSnapshot(DateTime dt, String location, LatLng locationCoords)
     {
         snapshots.Add(new Snapshot(dt, location, locationCoords));
-        PlayerPrefs.SetString("SnapshotLocation" + (snapshots.Count - 1).ToString(), location);
-        PlayerPrefs.SetString("SnapshotDateTime" + (snapshots.Count - 1).ToString(), dt.ToString());
-        PlayerPrefs.SetString("SnapshotLocationCoords" + (snapshots.Count - 1).ToString(), locationCoords.ToString());
+        PlayerPrefs.SetString(locationKey + (snapshots.Count - 1).ToString(), location);
+        PlayerPrefs.SetString(datetimeKey + (snapshots.Count - 1).ToString(), dt.ToString());
+        PlayerPrefs.SetString(coordsKey + (snapshots.Count - 1).ToString(), locationCoords.ToString());
     }
 
     public void DeleteSnapshot(Snapshot snapshot)
@@ -49,12 +61,12 @@ public class SnapshotsController : MonoBehaviour
         do
         {
             snapshotFound = false;
-            if (PlayerPrefs.HasKey("SnapshotLocation" + count) && PlayerPrefs.HasKey("SnapshotDateTime" + count))
+            if (PlayerPrefs.HasKey(locationKey + count) && PlayerPrefs.HasKey(datetimeKey + count))
             {
                 snapshotFound = true;
-                PlayerPrefs.DeleteKey("SnapshotLocation" + count);
-                PlayerPrefs.DeleteKey("SnapshotDateTime" + count);
-                PlayerPrefs.DeleteKey("SnapshotLocationCoords" + count);
+                PlayerPrefs.DeleteKey(locationKey + count);
+                PlayerPrefs.DeleteKey(datetimeKey + count);
+                PlayerPrefs.DeleteKey(coordsKey + count);
             }
             count++;
         } while (snapshotFound);
@@ -62,9 +74,9 @@ public class SnapshotsController : MonoBehaviour
         // add them back in
         for (int i = 0; i < snapshots.Count; i++)
         {
-            PlayerPrefs.SetString("SnapshotLocation" + (i).ToString(), snapshots[i].location);
-            PlayerPrefs.SetString("SnapshotDateTime" + (i).ToString(), snapshots[i].dateTime.ToString());
-            PlayerPrefs.SetString("SnapshotLocationCoords" + (i).ToString(), snapshots[i].locationCoordinates.ToString());
+            PlayerPrefs.SetString(locationKey + (i).ToString(), snapshots[i].location);
+            PlayerPrefs.SetString(datetimeKey + (i).ToString(), snapshots[i].dateTime.ToString());
+            PlayerPrefs.SetString(coordsKey + (i).ToString(), snapshots[i].locationCoordinates.ToString());
         }
     }
 }

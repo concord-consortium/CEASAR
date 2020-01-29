@@ -5,6 +5,7 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
@@ -134,10 +135,14 @@ public class MainUIController : MonoBehaviour
 
         if (yearSlider && daySlider && timeSlider)
         {
-            yearSlider.value = manager.CurrentSimulationTime.Year;
-            daySlider.value = manager.CurrentSimulationTime.DayOfYear;
-            timeSlider.value = manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute;
-            setTimeToggle.isOn = manager.UseCustomSimulationTime;
+            yearSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Year);
+            daySlider.SetValueWithoutNotify(manager.CurrentSimulationTime.DayOfYear);
+            timeSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute);
+            setTimeToggle.SetIsOnWithoutNotify(manager.UseCustomSimulationTime);
+            userYear = manager.CurrentSimulationTime.Year;
+            userDay = manager.CurrentSimulationTime.DayOfYear;
+            userHour = manager.CurrentSimulationTime.Hour;
+            userMin = manager.CurrentSimulationTime.Minute;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable)
         {
@@ -321,6 +326,18 @@ public class MainUIController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
         manager.CurrentSimulationTime = calculatedStartDateTime;
+        if (manager.LocalUserPin != null)
+        {
+            manager.LocalUserPin.SelectedDateTime = calculatedStartDateTime;
+        }
+        else
+        {
+            Pushpin p = new Pushpin();
+            p.SelectedDateTime = calculatedStartDateTime;
+            p.Location = manager.Currentlocation;
+            manager.LocalUserPin = p;
+            Debug.Log(p);
+        }
     }
 
     public void ChangeStarSelection(GameObject selectedStar)
@@ -501,20 +518,42 @@ public class MainUIController : MonoBehaviour
     {
         int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
         // user restores snapshot from UI
-        DateTime snapshotDateTime = snapshotsController.snapshots[snapshotIndex].dateTime;
-        userYear = snapshotDateTime.Year;
-        userDay = snapshotDateTime.DayOfYear;
-        userHour = snapshotDateTime.Hour;
-        userMin = snapshotDateTime.Minute;
+        Snapshot snap = snapshotsController.snapshots[snapshotIndex];
+        Debug.Log(snap.dateTime + " " + snap.location + " " + snap.locationCoordinates);
+        
+        RestoreSnapshotOrPin(snap.dateTime, snap.location, snap.locationCoordinates);
+        //
+        // userYear = snapshotDateTime.Year;
+        // userDay = snapshotDateTime.DayOfYear;
+        // userHour = snapshotDateTime.Hour;
+        // userMin = snapshotDateTime.Minute;
+        // // Update the current date/time in simulation manager
+        // CalculateUserDateTime();
+        //
+        // // broadcast the change of location
+        // events.LocationSelected.Invoke(location);
+        // setTimeToggle.isOn = true;
+        // yearSlider.value = userYear;
+        // daySlider.value = userDay;
+        // timeSlider.value = userHour * 60 + userMin;
+    }
+
+    public void RestoreSnapshotOrPin(DateTime dt, string locationName, LatLng latLng)
+    {
+        userYear = dt.Year;
+        userDay = dt.DayOfYear;
+        userHour = dt.Hour;
+        userMin = dt.Minute;
         // Update the current date/time in simulation manager
         CalculateUserDateTime();
-        String location = snapshotsController.snapshots[snapshotIndex].location;
-        // broadcast the change of location
-        events.LocationSelected.Invoke(location);
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;
         timeSlider.value = userHour * 60 + userMin;
+
+        // events.LocationSelected.Invoke(locationName);
+        events.LocationChanged.Invoke(latLng,locationName);
+        events.PushPinSelected.Invoke(latLng, dt);
     }
 
     public void DeleteSnapshot(Snapshot deleteSnap)

@@ -114,10 +114,12 @@ public class DataController : MonoBehaviour
     private void Start()
     {
         SimulationEvents.GetInstance().LocationSelected.AddListener(handleSelectNewLocation);
+        SimulationEvents.GetInstance().PushPinSelected.AddListener(handlePinSelected);
     }
     private void OnDisable()
     {
         SimulationEvents.GetInstance().LocationSelected.RemoveListener(handleSelectNewLocation);
+        SimulationEvents.GetInstance().PushPinSelected.RemoveListener(handlePinSelected);
     }
 
     void OnSceneUnloaded(Scene scene)
@@ -139,6 +141,7 @@ public class DataController : MonoBehaviour
         this.colorByConstellation = colorByConstellation;
         this.showConstellationConnections = showConstellationConnections;
         this.starMaterial = starMaterial;
+        this.lastTime = 0;
     }
 
     public void Init()
@@ -382,6 +385,12 @@ public class DataController : MonoBehaviour
                 }
             }
         } 
+    }
+
+    void handlePinSelected(LatLng latLng, DateTime dt)
+    {
+        manager.CurrentSimulationTime = dt;
+        nextLocation = latLng;
     }
     public void SetMagnitudeThreshold(float newVal)
     {
