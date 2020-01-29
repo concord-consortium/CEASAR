@@ -120,7 +120,21 @@ public class NetworkController : MonoBehaviour
         networkUI = FindObjectOfType<NetworkUI>();
         if(networkUI)
         {
-            networkUI.ConnectButtonText = IsConnected ? "Disconnect" : "Connect";
+            if (IsConnected)
+            {
+                networkUI.disconnectButton.SetActive(true);
+                networkUI.localButton.SetActive(false);
+                networkUI.webButton.SetActive(false);
+                networkUI.devButton.SetActive(false);
+            }
+            else
+            {
+                networkUI.disconnectButton.SetActive(false);
+                networkUI.localButton.SetActive(true);
+                networkUI.webButton.SetActive(true);
+                networkUI.devButton.SetActive(true);
+            }
+            
             updatePlayerList();
         }
         
@@ -129,7 +143,6 @@ public class NetworkController : MonoBehaviour
 
     public void SetNetworkAddress(ServerRecord destination)
     {
-        networkUI.NetworkAddress = destination.address;
         _selectedNetwork = destination;
     }
 
@@ -216,7 +229,6 @@ public class NetworkController : MonoBehaviour
 
     void updatePlayerList()
     {
-        // networkUI.DebugMessage = colyseusClient.GetClientList();
         string listOfPlayersForDebug = "";
         foreach (var p in remotePlayers.Keys)
         {
@@ -251,7 +263,7 @@ public class NetworkController : MonoBehaviour
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + player.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
-
+            SimulationEvents.GetInstance().PlayerJoined.Invoke(player.username);
             // add "player" to map of players
             if (!remotePlayers.ContainsKey(player.username))
             {
@@ -274,6 +286,7 @@ public class NetworkController : MonoBehaviour
 
     public void OnPlayerRemove(Player player)
     {
+        SimulationEvents.GetInstance().PlayerLeft.Invoke(player.username);
         SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
         GameObject remotePlayerAvatar;
         remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);

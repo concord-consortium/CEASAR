@@ -20,6 +20,9 @@ public class PushPinCreatedEvent : UnityEvent<Vector2, DateTime> { }
 public class PushPinUpdatedEvent : UnityEvent<Vector2, DateTime> { }
 [System.Serializable]
 public class DrawModeEvent: UnityEvent<bool> { }
+[System.Serializable]
+public class PlayerJoinedEvent : UnityEvent<string> { }
+public class PlayerLeftEvent : UnityEvent<string> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -33,6 +36,8 @@ public class SimulationEvents
         if (PushPinCreated == null) PushPinCreated = new PushPinCreatedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
         if (DrawMode == null) DrawMode = new DrawModeEvent();
+        if (PlayerJoined == null) PlayerJoined = new PlayerJoinedEvent();
+        if (PlayerLeft == null) PlayerLeft = new PlayerLeftEvent();
     }
     private static SimulationEvents instance;
 
@@ -84,4 +89,12 @@ public class SimulationEvents
     /// When a user enters / exits draw mode
     /// </summary>
     public DrawModeEvent DrawMode;
+    /// <summary>
+    /// When a user enters / exits draw mode
+    /// </summary>
+    public PlayerJoinedEvent PlayerJoined;
+    /// <summary>
+    /// When a user enters / exits draw mode
+    /// </summary>
+    public PlayerLeftEvent PlayerLeft;
 }
