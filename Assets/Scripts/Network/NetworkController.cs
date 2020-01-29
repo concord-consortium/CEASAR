@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,6 +66,7 @@ public class NetworkController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
         SimulationEvents.GetInstance().AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
+        SimulationEvents.GetInstance().PushPinUpdated.AddListener(BroadcastPinUpdated);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -361,7 +363,10 @@ public class NetworkController : MonoBehaviour
     {
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
-
+    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime)
+    {
+        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime);
+    }
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
     {
         colyseusClient.SendCelestialInteraction(celestialObj);
@@ -398,6 +403,7 @@ public class NetworkController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
         SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
+        SimulationEvents.GetInstance().PushPinUpdated.RemoveListener(BroadcastPinUpdated);
     }
     
 }

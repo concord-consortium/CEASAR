@@ -376,7 +376,7 @@ public class DataController : MonoBehaviour
                         nextLocation = new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng};
                         manager.Currentlocation = nextLocation;
                         manager.CurrentLocationName = matchedCity.Name;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(currentLocation, matchedCity.Name);
+                        SimulationEvents.GetInstance().LocationChanged.Invoke(nextLocation, matchedCity.Name);
                     }
                     
                 }
