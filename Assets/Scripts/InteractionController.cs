@@ -93,6 +93,11 @@ public class InteractionController : MonoBehaviour
         if (currentLocationPin)
         {
             currentLocationPin.SetActive(show);
+        } 
+        
+        if (manager.UserHasSetLocation)
+        {
+            updateLocalUserPin();
         }
     }
 
@@ -231,6 +236,25 @@ public class InteractionController : MonoBehaviour
         return earthRelativePos;
     }
 
+    void updateLocalUserPin()
+    {
+        string pinName = "pin_" + manager.LocalUsername;
+        if (!currentLocationPin)
+        {
+            currentLocationPin = Instantiate(locationPinPrefab);
+            currentLocationPin.name = pinName;
+            currentLocationPin.transform.parent = this.transform;
+        }
+
+        Pushpin p = manager.LocalUserPin;
+        Vector3 pos = getEarthRelativePos(p.Location);
+        currentLocationPin.transform.localRotation = Quaternion.LookRotation(pos);
+        currentLocationPin.transform.position = pos;
+        currentLocationPin.GetComponent<Renderer>().material.color = manager.LocalPlayerColor;
+        PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
+        pinObject.pin = p;
+    }
+    
     public void AddOrUpdatePin(LatLng latLng, Color c, string pinOwner, DateTime pinDateTime, bool isLocal,
         bool broadcast = false)
     {

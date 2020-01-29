@@ -248,6 +248,7 @@ public class NetworkController : MonoBehaviour
         Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id + "is local: " + isLocal);
         Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
+        // TODO: Sync pushpins 
         if (isLocal)
         {
             localPlayer = player;
