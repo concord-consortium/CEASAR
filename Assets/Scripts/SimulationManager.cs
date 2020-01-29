@@ -140,7 +140,7 @@ public class SimulationManager
         {
             if (string.IsNullOrEmpty(currentLocationName))
             {
-                currentLocationName = "Boston";
+                currentLocationName = SimulationConstants.CUSTOM_LOCATION;
             }
 
             return currentLocationName;
