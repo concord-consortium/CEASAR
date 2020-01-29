@@ -114,6 +114,46 @@ public class SimulationManager
         }
     }
 
+    private LatLng currentLocation = new LatLng {Latitude = 0, Longitude = 0};
+
+    public LatLng Currentlocation
+    {
+        get { return currentLocation; }
+        set
+        {
+            currentLocation = value;
+        }
+    }
+
+    private string currentLocationName;
+    public string CurrentLocationName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(currentLocationName))
+            {
+                currentLocationName = "Boston";
+            }
+
+            return currentLocationName;
+        }
+        set { currentLocationName = value; }
+    }
+    
+    public bool UserHasSetLocation { get; private set; }
+    private Pushpin localUserPin;
+
+    public Pushpin LocalUserPin
+    {
+        get { return localUserPin; }
+        set
+        {
+            localUserPin = value;
+            currentLocation = value.Location;
+            UserHasSetLocation = true;
+        }
+    }
+    
     public float GetRelativeMagnitude(float starMagnitude)
     {
         //float min = DataControllerComponent.minMag;

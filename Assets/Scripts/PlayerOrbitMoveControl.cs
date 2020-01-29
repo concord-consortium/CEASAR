@@ -36,7 +36,7 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     void LateUpdate () 
     {
         #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        if (target && Input.GetMouseButton(0)) 
+        if (target && Input.GetMouseButton(1)) 
         {
             x += Input.GetAxis("Mouse X") * xSpeed * distance * 0.02f;
             y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;

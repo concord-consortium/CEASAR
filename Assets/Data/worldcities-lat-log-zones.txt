@@ -1,4 +1,5 @@
 city_ascii	lat	lng	country	time zone
+(Custom Location)	0	0	Custom	0
 Alert	82.4833	-62.25	Nunavut, Canada	-5
 Ankara	39.9272	32.8644	Turkey	3
 Astana	51.1811	71.4278	Kazakhstan	6

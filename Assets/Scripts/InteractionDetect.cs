@@ -16,7 +16,7 @@ public class InteractionDetect : MonoBehaviour
     InteractionController interactionController;
     public AnnotationTool annotationTool;
     MainUIController mainUIController;
-
+    private PushpinComponent lastPin;
     
     // Start is called before the first frame update
     void Start()
@@ -52,6 +52,7 @@ public class InteractionDetect : MonoBehaviour
                         // The Sphere collider is used for the Latitude / Longitude calculations
                         if (interactionController)
                         {
+                            // Default is now set so that pinning = true all the time - leaving this in place for future
                             if (mainUIController.IsPinningLocation)
                             {
                                 interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
@@ -82,8 +83,7 @@ public class InteractionDetect : MonoBehaviour
                         }
                     }
                 }
-            }
-            
+            } 
         }
         if (mainUIController.IsDrawing && annotationTool)
         {

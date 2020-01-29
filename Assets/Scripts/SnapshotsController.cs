@@ -23,17 +23,19 @@ public class SnapshotsController : MonoBehaviour
                 string location = PlayerPrefs.GetString("SnapshotLocation" + count, "");
                 string dts = PlayerPrefs.GetString("SnapshotDateTime" + count, "");
                 DateTime dt = DateTime.Parse(dts);
-                snapshots.Add(new Snapshot(dt, location));
+                LatLng locationCoords = new LatLng(PlayerPrefs.GetString("SnapshotLocationCoords", ""));
+                snapshots.Add(new Snapshot(dt, location, locationCoords));
             }
             count++;
         } while (snapshotFound);
     }
 
-    public void CreateSnapshot(DateTime dt, String location)
+    public void CreateSnapshot(DateTime dt, String location, LatLng locationCoords)
     {
-        snapshots.Add(new Snapshot(dt, location));
+        snapshots.Add(new Snapshot(dt, location, locationCoords));
         PlayerPrefs.SetString("SnapshotLocation" + (snapshots.Count - 1).ToString(), location);
         PlayerPrefs.SetString("SnapshotDateTime" + (snapshots.Count - 1).ToString(), dt.ToString());
+        PlayerPrefs.SetString("SnapshotLocationCoords" + (snapshots.Count - 1).ToString(), locationCoords.ToString());
     }
 
     public void DeleteSnapshot(Snapshot snapshot)
@@ -52,6 +54,7 @@ public class SnapshotsController : MonoBehaviour
                 snapshotFound = true;
                 PlayerPrefs.DeleteKey("SnapshotLocation" + count);
                 PlayerPrefs.DeleteKey("SnapshotDateTime" + count);
+                PlayerPrefs.DeleteKey("SnapshotLocationCoords" + count);
             }
             count++;
         } while (snapshotFound);
@@ -61,6 +64,7 @@ public class SnapshotsController : MonoBehaviour
         {
             PlayerPrefs.SetString("SnapshotLocation" + (i).ToString(), snapshots[i].location);
             PlayerPrefs.SetString("SnapshotDateTime" + (i).ToString(), snapshots[i].dateTime.ToString());
+            PlayerPrefs.SetString("SnapshotLocationCoords" + (i).ToString(), snapshots[i].locationCoordinates.ToString());
         }
     }
 }

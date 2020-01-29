@@ -6,7 +6,7 @@ using UnityEngine;
 public class MoonPositionController : MonoBehaviour
 {
     public GameObject moon;
-    private DataController dataController;
+    private SimulationManager manager;
 
     public bool showMoonArc = false;
     public Material lineMaterial;
@@ -17,11 +17,10 @@ public class MoonPositionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dataController = SimulationManager.GetInstance().DataControllerComponent;
-
+        manager = SimulationManager.GetInstance();
         // move sun game object
         moon.transform.position =
-            getLunarPosition(DateTime.Now, dataController.currentCity.Lat, dataController.currentCity.Lng);
+            getLunarPosition(manager.CurrentSimulationTime,manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
 
         renderMoonArc();
     }
@@ -60,12 +59,12 @@ public class MoonPositionController : MonoBehaviour
     List<Vector3> getArcPoints()
     {
         List<Vector3> points = new List<Vector3>();
-        DateTime d = dataController.CurrentSimUniversalTime;
+        DateTime d = SimulationManager.GetInstance().CurrentSimulationTime;
         DateTime midnight = new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
             DateTime t = midnight.AddSeconds(i);
-            points.Add(getLunarPosition(t, dataController.currentCity.Lat, dataController.currentCity.Lng));
+            points.Add(getLunarPosition(t, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude));
         }
         return points;
     }
@@ -74,13 +73,13 @@ public class MoonPositionController : MonoBehaviour
     {
         renderMoonArc();
 
-        if (moon != null) moon.transform.position = getLunarPosition(dataController.CurrentSimUniversalTime, dataController.currentCity.Lat, dataController.currentCity.Lng);
+        if (moon != null) moon.transform.position = getLunarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
     }
 
     Vector3 getLunarPosition(DateTime t, double lat, double lng)
     {
         var lunarPosition = MoonCalc.GetMoonPosition(t, lat, lng);
 
-        return Utils.CalculatePositionByAzAlt(lunarPosition.Azimuth, lunarPosition.Altitude, dataController.Radius);
+        return Utils.CalculatePositionByAzAlt(lunarPosition.Azimuth, lunarPosition.Altitude, manager.SceneRadius);
     }
 }

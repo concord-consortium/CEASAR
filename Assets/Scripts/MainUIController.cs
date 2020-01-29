@@ -5,12 +5,12 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
 {
-    private SimulationManager manager;
-
-    public event Action<Vector2, string> OnLocationChanged = (location, description) => { };
+    private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
+    private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
 
     public List<GameObject> enabledPanels = new List<GameObject>();
     public List<GameObject> buttonsToDisable = new List<GameObject>();
@@ -88,7 +88,7 @@ public class MainUIController : MonoBehaviour
             }
         }
     }
-    private bool isPinningLocation = false;
+    private bool isPinningLocation = true;
     public bool IsPinningLocation {
         get { return isPinningLocation; }
         set { 
@@ -96,17 +96,12 @@ public class MainUIController : MonoBehaviour
         }
     }
     
-    private void Awake()
-    {
-        manager = SimulationManager.GetInstance();
-    }
     void OnDisable()
     {
-        SimulationEvents.GetInstance().LocationChanged.RemoveListener(updateLocationPanel);
+        events.LocationChanged.RemoveListener(updateLocationPanel);
     }
     public void Init()
     {
-        manager = SimulationManager.GetInstance();
         markersController = manager.MarkersControllerComponent;
         dataController = manager.DataControllerComponent;
         sphere = manager.CelestialSphereObject;
@@ -122,7 +117,7 @@ public class MainUIController : MonoBehaviour
 
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, dataController.StartCity);
+            cityDropdown.InitCityNames(dataController.cities, manager.CurrentLocationName);
         }
         if (constellationDropdown)
         {
@@ -139,9 +134,10 @@ public class MainUIController : MonoBehaviour
 
         if (yearSlider && daySlider && timeSlider)
         {
-            yearSlider.value = dataController.CurrentSimUniversalTime.Year;
-            daySlider.value = dataController.CurrentSimUniversalTime.DayOfYear;
-            timeSlider.value = dataController.CurrentSimUniversalTime.Hour * 60 + dataController.CurrentSimUniversalTime.Minute;
+            yearSlider.value = manager.CurrentSimulationTime.Year;
+            daySlider.value = manager.CurrentSimulationTime.DayOfYear;
+            timeSlider.value = manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute;
+            setTimeToggle.isOn = manager.UseCustomSimulationTime;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable)
         {
@@ -150,7 +146,7 @@ public class MainUIController : MonoBehaviour
         }
         
         // Listen to any relevant events
-        SimulationEvents.GetInstance().LocationChanged.AddListener(updateLocationPanel);
+        events.LocationChanged.AddListener(updateLocationPanel);
         
         positionActivePanels();
     }
@@ -209,12 +205,11 @@ public class MainUIController : MonoBehaviour
     {
         if (currentDateTimeText && dataController)
         {
-            currentDateTimeText.text = dataController.CurrentSimUniversalTime.ToString() + " (UTC)";
+            currentDateTimeText.text = manager.CurrentSimulationTime.ToString() + " (UTC)";
         }
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
-        if (manager == null) manager = SimulationManager.GetInstance();
         if (setTimeToggle)
         {
             manager.UseCustomSimulationTime = setTimeToggle.isOn;
@@ -283,12 +278,22 @@ public class MainUIController : MonoBehaviour
     public void ToggleDrawMode()
     {
         IsDrawing = !IsDrawing;
-        SimulationEvents.GetInstance().DrawMode.Invoke(IsDrawing);
+        events.DrawMode.Invoke(IsDrawing);
     }
-    
-    public void TogglePinMode()
+
+    public void JumpToMyPin()
     {
-        IsPinningLocation = !IsPinningLocation;
+        // This is now used to change the view in Horizon mode to your current pin
+        // Or to take you to the horizon for your current pin from Earth view
+        Pushpin pin = manager.LocalUserPin;
+        Debug.Log(pin);
+        manager.UseCustomSimulationTime = true;
+        manager.CurrentSimulationTime = pin.SelectedDateTime;
+        manager.Currentlocation = pin.Location;
+        if (SceneManager.GetActiveScene().name != "Horizon")
+        {
+            SceneManager.LoadScene("Horizon");
+        }
     }
     public void ChangeYear(float newYear)
     {
@@ -344,7 +349,8 @@ public class MainUIController : MonoBehaviour
             constellationDropdown.GetComponent<ConstellationDropdown>().UpdateConstellationSelection(highlightConstellation);
         }
     }
-
+    
+    #region Sphere Movement
     public void MoveLeft()
     {
         Vector3 pos = sphere.transform.position;
@@ -455,6 +461,7 @@ public class MainUIController : MonoBehaviour
         sphere.transform.localScale = new Vector3(1f, 1f, 1f);
         sphere.transform.rotation = Quaternion.identity;
     }
+#endregion
 
     public void SetMagnitudeThreshold(float newVal)
     {
@@ -475,10 +482,11 @@ public class MainUIController : MonoBehaviour
     public void CreateSnapshot()
     {
         // get values from datacontroller
-        DateTime snapshotDateTime = dataController.CurrentSimUniversalTime;
-        String location = dataController.StartCity;
+        DateTime snapshotDateTime = manager.CurrentSimulationTime;
+        String location = dataController.currentCity.Name;
+        LatLng locationCoordinates = manager.Currentlocation;
         // add a snapshot to the controller
-        snapshotsController.CreateSnapshot(snapshotDateTime, location);
+        snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
         // add snapshot to dropdown list
         AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
@@ -498,14 +506,11 @@ public class MainUIController : MonoBehaviour
         userDay = snapshotDateTime.DayOfYear;
         userHour = snapshotDateTime.Hour;
         userMin = snapshotDateTime.Minute;
+        // Update the current date/time in simulation manager
         CalculateUserDateTime();
         String location = snapshotsController.snapshots[snapshotIndex].location;
-        OnLocationChanged(Vector2.zero, location);
-        //if (cityDropdown)
-        //{
-        //    cityDropdown.GetComponent<CityDropdown>().UpdateCitySelection(location);
-        //    //OnLocationChanged(Vector2.zero, location);
-        //}
+        // broadcast the change of location
+        events.LocationSelected.Invoke(location);
         setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;
@@ -517,11 +522,17 @@ public class MainUIController : MonoBehaviour
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
 
-    private void updateLocationPanel(Vector2 latLng, string description)
+    private void updateLocationPanel(LatLng latLng, string description)
     {
         if (FindObjectOfType<LocationPanel>())
         {
+            Debug.Log("Updating drop down" + latLng.ToString() + " " + description);
             FindObjectOfType<LocationPanel>().UpdateLocationPanel(latLng, description);
+        }
+
+        if (cityDropdown)
+        {
+            cityDropdown.SetCity(description);
         }
     }
 

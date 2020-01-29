@@ -7,6 +7,7 @@ using TMPro;
 public class CityDropdown : MonoBehaviour
 {
     private DataController dataController;
+    private List<string> allCityNames;
     TMP_Dropdown dropdown;
 
     void Start()
@@ -28,17 +29,33 @@ public class CityDropdown : MonoBehaviour
         }
     }
 
+    // When the location is set elsewhere (from a pushpin interaction etc) sync the drop down to match if possible
+    public void SetCity(string city)
+    {
+        dropdown.SetValueWithoutNotify(allCityNames.IndexOf(city));
+    }
+
     public void InitCityNames(List<string> cityNames, string currentCity)
     {
-        // Get dropdown reference in case InitCityNames is called before Start
-        dropdown = GetComponent<TMP_Dropdown>();
-        dropdown.AddOptions(cityNames);
-        int initialValue = cityNames.IndexOf(currentCity);
-        if (initialValue < 0)
+        if (allCityNames == null || allCityNames.Count == 0)
         {
-            initialValue = 0;
+            // Get dropdown reference in case InitCityNames is called before Start
+            dropdown = GetComponent<TMP_Dropdown>();
+            dropdown.AddOptions(cityNames);
+            int initialValue = cityNames.IndexOf(currentCity);
+            if (initialValue < 0)
+            {
+                initialValue = 0;
+            }
+
+            dropdown.SetValueWithoutNotify(initialValue);
+            // cache the list of names
+            allCityNames = cityNames;
         }
-        dropdown.SetValueWithoutNotify(initialValue);
+        else
+        {
+            SetCity(currentCity);
+        }
     }
 
 }

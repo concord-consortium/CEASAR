@@ -45,5 +45,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionIndicator: {fileID: 3837293221611235267, guid: bea5abd67e7974abb8b55180a88d1311,
     type: 3}
-  locationPin: {fileID: 6662295844099714890, guid: cf644284c9f7b42e0b6da428dd1ae980,
+  locationPinPrefab: {fileID: 6662295844099714890, guid: cf644284c9f7b42e0b6da428dd1ae980,
     type: 3}

@@ -276,6 +276,22 @@ public class ColyseusClient : MonoBehaviour
             });
         }
     }
+
+    public async void SendPinUpdate(float latitude, float longitude, DateTime dateTime)
+    {
+        if (IsConnected)
+        {
+            NetworkPerspectivePin pin = new NetworkPerspectivePin();
+            pin.datetime = (float)TimeConverter.ToJulianDate(dateTime);
+            pin.latitude = latitude;
+            pin.longitude = longitude;
+            await room.Send(new
+            {
+                perspectivePin = pin,
+                message = "locationpin"
+            });
+        }
+    }
     
     void OnApplicationQuit()
     {

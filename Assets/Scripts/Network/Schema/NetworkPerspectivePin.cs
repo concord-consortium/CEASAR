@@ -8,10 +8,13 @@
 using Colyseus.Schema;
 
 public class NetworkPerspectivePin : Schema {
-	[Type(0, "ref", typeof(NetworkTransform))]
-	public NetworkTransform location = new NetworkTransform();
+	[Type(0, "number")]
+	public float latitude = 0;
 
 	[Type(1, "number")]
+	public float longitude = 0;
+
+	[Type(2, "number")]
 	public float datetime = 0;
 }
 

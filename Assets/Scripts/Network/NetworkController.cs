@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,6 +66,7 @@ public class NetworkController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
         SimulationEvents.GetInstance().AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
+        SimulationEvents.GetInstance().PushPinUpdated.AddListener(BroadcastPinUpdated);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -246,6 +248,8 @@ public class NetworkController : MonoBehaviour
         Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id + "is local: " + isLocal);
         Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
+        // TODO: Sync pushpins 
+        InteractionController interactionController = FindObjectOfType<InteractionController>();
         if (isLocal)
         {
             localPlayer = player;
@@ -253,6 +257,11 @@ public class NetworkController : MonoBehaviour
             if (annotationTool)
             {
                 annotationTool.SyncMyAnnotations();
+            }
+
+            if (interactionController && manager.UserHasSetLocation)
+            {
+                interactionController.UpdateLocalUserPin();
             }
             updateLocalAvatar();
         }
@@ -279,6 +288,14 @@ public class NetworkController : MonoBehaviour
             {
                 NetworkTransform annotation = player.annotations[i];
                 SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, player);
+            }
+            if (interactionController && player.locationPin != null)
+            {
+                LatLng latLng = new LatLng
+                    {Latitude = player.locationPin.latitude, Longitude = player.locationPin.longitude};
+                DateTime dt = TimeConverter.JulianToCalendarDate(player.locationPin.datetime);
+                interactionController.AddOrUpdatePin(latLng, playerColor, player.username, dt,
+                    false, false);
             }
         }
         updatePlayerList();
@@ -361,7 +378,10 @@ public class NetworkController : MonoBehaviour
     {
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
-
+    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime)
+    {
+        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime);
+    }
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
     {
         colyseusClient.SendCelestialInteraction(celestialObj);
@@ -398,6 +418,7 @@ public class NetworkController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
         SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
+        SimulationEvents.GetInstance().PushPinUpdated.RemoveListener(BroadcastPinUpdated);
     }
     
 }
