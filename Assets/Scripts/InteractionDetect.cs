@@ -12,7 +12,6 @@ public class InteractionDetect : MonoBehaviour
     Ray ray;
     private int layerMaskEarth;
     private int layerMaskStarsAnnotations;
-    private int layerMaskPushpins;
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
@@ -25,7 +24,6 @@ public class InteractionDetect : MonoBehaviour
         camera = GetComponent<Camera>();
         layerMaskEarth = LayerMask.GetMask("Earth");
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
-        layerMaskPushpins = LayerMask.GetMask("Pushpin");
         manager = SimulationManager.GetInstance();
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MainUIController>();
@@ -86,27 +84,6 @@ public class InteractionDetect : MonoBehaviour
                     }
                 }
             } 
-            // else if (Input.GetMouseButtonDown(1) && !EventSystem.current.IsPointerOverGameObject())
-            // {
-            //     for (int i = 0; i < hits.Length; i++)
-            //     {
-            //         hit = hits[i];
-            //         Collider c = hit.collider;
-            //         if (c is SphereCollider)
-            //         {
-            //             // The Sphere collider is used for the Latitude / Longitude calculations
-            //             if (interactionController)
-            //             {
-            //                 interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
-            //             }
-            //             else
-            //             {
-            //                 Debug.Log("💀 cant find interaction manager");
-            //             }
-            //         }
-            //     }
-            // }
-
         }
         if (mainUIController.IsDrawing && annotationTool)
         {
@@ -124,37 +101,5 @@ public class InteractionDetect : MonoBehaviour
                 }
             }
         }
-        // else
-        // {
-        //     ray = camera.ScreenPointToRay(Input.mousePosition);
-        //     bool foundPin = Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskPushpins);
-        //     
-        //     if (foundPin && !EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
-        //     {
-        //         if (hit.transform)
-        //         {
-        //             PushpinComponent pin = hit.transform.GetComponent<PushpinComponent>();
-        //             if (pin)
-        //             {
-        //                 if (pin != lastPin)
-        //                 {
-        //                     if (lastPin != null) lastPin.HighlightPin(false);
-        //                     lastPin = pin;
-        //                 }
-        //
-        //                 pin.HighlightPin(true);
-        //                 if (Input.GetMouseButtonDown(0))
-        //                 {
-        //                     pin.HandleSelectPin();
-        //                 }
-        //             }
-        //         } 
-        //     }
-        //     else if (lastPin)
-        //     {
-        //         lastPin.HighlightPin(false);
-        //         lastPin = null;
-        //     }
-        // }
     }
 }
