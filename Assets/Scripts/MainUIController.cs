@@ -553,7 +553,7 @@ public class MainUIController : MonoBehaviour
 
         // events.LocationSelected.Invoke(locationName);
         events.LocationChanged.Invoke(latLng,locationName);
-        
+        events.PushPinSelected.Invoke(latLng, dt);
     }
 
     public void DeleteSnapshot(Snapshot deleteSnap)
