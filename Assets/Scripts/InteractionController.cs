@@ -284,7 +284,7 @@ public class InteractionController : MonoBehaviour
             remotePin.transform.position = pos;
             remotePin.GetComponent<Renderer>().material.color = c;
                 
-            PushpinComponent pinObject = currentLocationPin.GetComponent<PushpinComponent>();
+            PushpinComponent pinObject = remotePin.GetComponent<PushpinComponent>();
             pinObject.pin.Location = latLng;
             pinObject.pin.SelectedDateTime = pinDateTime;
         }
