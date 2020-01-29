@@ -121,7 +121,14 @@ public class VRInteraction : MonoBehaviour
                         Collider c = hit.collider;
                         if (c is SphereCollider)
                         {
-                            interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            if (mainUIController.IsPinningLocation)
+                            {
+                                interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            }
+                            else
+                            {
+                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                            }
                         }
                         else if (c is MeshCollider)
                         {
