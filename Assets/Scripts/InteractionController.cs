@@ -97,7 +97,7 @@ public class InteractionController : MonoBehaviour
         
         if (show && manager.UserHasSetLocation)
         {
-            updateLocalUserPin();
+            UpdateLocalUserPin();
         }
     }
 
@@ -236,7 +236,7 @@ public class InteractionController : MonoBehaviour
         return earthRelativePos;
     }
 
-    void updateLocalUserPin()
+    public void UpdateLocalUserPin()
     {
         string pinName = "pin_" + manager.LocalUsername;
         if (!currentLocationPin)

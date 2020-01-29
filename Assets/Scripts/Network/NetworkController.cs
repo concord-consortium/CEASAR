@@ -249,6 +249,7 @@ public class NetworkController : MonoBehaviour
         Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
         // TODO: Sync pushpins 
+        InteractionController interactionController = FindObjectOfType<InteractionController>();
         if (isLocal)
         {
             localPlayer = player;
@@ -256,6 +257,11 @@ public class NetworkController : MonoBehaviour
             if (annotationTool)
             {
                 annotationTool.SyncMyAnnotations();
+            }
+
+            if (interactionController && manager.UserHasSetLocation)
+            {
+                interactionController.UpdateLocalUserPin();
             }
             updateLocalAvatar();
         }
@@ -282,6 +288,14 @@ public class NetworkController : MonoBehaviour
             {
                 NetworkTransform annotation = player.annotations[i];
                 SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, player);
+            }
+            if (interactionController && player.locationPin != null)
+            {
+                LatLng latLng = new LatLng
+                    {Latitude = player.locationPin.latitude, Longitude = player.locationPin.longitude};
+                DateTime dt = TimeConverter.JulianToCalendarDate(player.locationPin.datetime);
+                interactionController.AddOrUpdatePin(latLng, playerColor, player.username, dt,
+                    false, false);
             }
         }
         updatePlayerList();
