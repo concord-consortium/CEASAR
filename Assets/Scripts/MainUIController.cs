@@ -137,6 +137,7 @@ public class MainUIController : MonoBehaviour
             yearSlider.value = manager.CurrentSimulationTime.Year;
             daySlider.value = manager.CurrentSimulationTime.DayOfYear;
             timeSlider.value = manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute;
+            setTimeToggle.isOn = manager.UseCustomSimulationTime;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable)
         {
@@ -280,15 +281,15 @@ public class MainUIController : MonoBehaviour
         events.DrawMode.Invoke(IsDrawing);
     }
 
-    public void TogglePinMode()
+    public void JumpToMyPin()
     {
         // This is now used to change the view in Horizon mode to your current pin
         // Or to take you to the horizon for your current pin from Earth view
         Pushpin pin = manager.LocalUserPin;
         Debug.Log(pin);
         manager.UseCustomSimulationTime = true;
-        // manager.CurrentSimulationTime = pin.SelectedDateTime;
-        // manager.Currentlocation = pin.Location;
+        manager.CurrentSimulationTime = pin.SelectedDateTime;
+        manager.Currentlocation = pin.Location;
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -481,9 +482,9 @@ public class MainUIController : MonoBehaviour
     public void CreateSnapshot()
     {
         // get values from datacontroller
-        DateTime snapshotDateTime = SimulationManager.GetInstance().CurrentSimulationTime;
+        DateTime snapshotDateTime = manager.CurrentSimulationTime;
         String location = dataController.currentCity.Name;
-        LatLng locationCoordinates = SimulationManager.GetInstance().Currentlocation;
+        LatLng locationCoordinates = manager.Currentlocation;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
         // add snapshot to dropdown list
