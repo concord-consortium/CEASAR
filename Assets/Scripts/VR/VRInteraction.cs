@@ -90,7 +90,7 @@ public class VRInteraction : MonoBehaviour
     }
     private void OnDisable()
     {
-        if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+        if (SimulationManager.GetInstance().CelestialSphereObject && !SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
         {
             SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
         }
