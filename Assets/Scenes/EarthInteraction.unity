@@ -172,7 +172,7 @@ MonoBehaviour:
   yMinLimit: -50
   yMaxLimit: 100
   distanceMin: 1.8
-  distanceMax: 40
+  distanceMax: 10
 --- !u!4 &584737428 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2083978893715968183, guid: dab45e85c8683430fbb06a5522886e8f,
@@ -446,16 +446,6 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2724144226074643658, guid: f2f8e74f1a333614a8717f2c31eb93b6,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2724144227174876448, guid: f2f8e74f1a333614a8717f2c31eb93b6,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.size
@@ -496,6 +486,16 @@ PrefabInstance:
       propertyPath: enabledPanels.Array.data[5]
       value: 
       objectReference: {fileID: 1101179315}
+    - target: {fileID: 2724144226074643658, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2724144227174876448, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2724144226074643660, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_Value
