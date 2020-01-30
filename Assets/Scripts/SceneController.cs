@@ -1,48 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
-{
-    int firstSceneIndex = 0;
-    string[] scenes;
-    // Start is called before the first frame update
+{    
     void Start()
     {
-        // simulation manager uses platform-dependent compilation to filter list of scenes
-        scenes = SimulationManager.GetInstance().Scenes;
-
-        string sceneName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(0));
-        if (sceneName == "LoadSim") firstSceneIndex = 1;
+        UpdateButtons();
     }
 
-    public void LoadPreviousScene ()
+    public void LoadNamedScene(string name)
     {
-        int currentIdx = Array.IndexOf(scenes, SceneManager.GetActiveScene().name);
-        Debug.Log("LoadPreviousScene");
-        if (currentIdx <= firstSceneIndex)
+        SceneManager.LoadScene(name);
+    }
+
+    public void UpdateButtons() {
+        int buttonCounter = 0;
+        string thisScene = SceneManager.GetActiveScene().name;
+        string[] playableScenes = SimulationConstants.SCENES_PLAYABLE;
+        foreach(string sceneName in playableScenes)
         {
-            SceneManager.LoadScene(scenes[scenes.Length - 1]);
-        }
-        else
-        {
-            SceneManager.LoadScene(scenes[currentIdx - 1]);
+            if(thisScene != sceneName)
+            {
+                UpdateButton(buttonCounter, sceneName);
+                buttonCounter++;
+            }
         }
     }
 
-    public void LoadNextScene ()
+    public void UpdateButton(int buttonIndex, string name)
     {
-        int currentIdx = Array.IndexOf(scenes, SceneManager.GetActiveScene().name);
-        Debug.Log("LoadNextScene");
-        if (currentIdx + 1 >= scenes.Length)
-        {
-            SceneManager.LoadScene(firstSceneIndex);
-        }
-        else
-        {
-            SceneManager.LoadScene(scenes[currentIdx + 1]);
-        }
+        Button[] buttons = this.GetComponentsInChildren<Button>();
+        Button button = buttons[buttonIndex];
+
+        // Add the event handler:
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => LoadNamedScene(name));
+
+        // Change the text label:
+        TMPro.TextMeshProUGUI label = button.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        label.text = SceneNameForDispaly(name);
+    }
+
+    private string SceneNameForDispaly(string name)
+    {
+        // EarthInteraction was too long:
+        if (name == SimulationConstants.SCENE_EARTH) return "Earth";
+
+        // Other scene names are fine for now.
+        return name;
     }
 }
