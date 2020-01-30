@@ -11,6 +11,7 @@ public class GroupSelectionWizard : MonoBehaviour
     public GameObject ButtonPanel;
     public GameObject smallOrangeButtonPrefab;
     public GameObject NextButton;
+    public GameObject FastLoginButton;
     public TMPro.TextMeshProUGUI DirectionsText;
     public GameObject NextScreen;
    
@@ -35,6 +36,7 @@ public class GroupSelectionWizard : MonoBehaviour
         ShowGroups();
         Button nextButton = NextButton.GetComponent<Button>();
         nextButton.onClick.AddListener(NextStep);
+        ShowFastLogin();
     }
 
     private Button addButton()
@@ -46,6 +48,27 @@ public class GroupSelectionWizard : MonoBehaviour
         buttonTransform.localPosition = new Vector3(buttonTransform.localPosition.x, buttonTransform.localPosition.y, 0);
 
         return button.GetComponent<Button>();
+    }
+
+    private void ShowFastLogin()
+    {
+        if (UserRecord.PlayerHasValidPrefs())
+        {
+            FastLoginButton.SetActive(true);
+            Button b = FastLoginButton.GetComponent<Button>();
+            TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            tgui.text = $"{userRecord.Username} {userRecord.group}";
+            b.onClick.AddListener(LaunchScene);
+        }
+        else
+        {
+            DisableFastLogin();
+        }
+    }
+
+    private void DisableFastLogin()
+    {
+        FastLoginButton.SetActive(false);
     }
 
     public void ShowGroups()
@@ -153,7 +176,7 @@ public class GroupSelectionWizard : MonoBehaviour
     public void HandleGroupClick(string name)
     {
         userRecord.group = name;
-        DirectionsText.text = name;
+        SetTitleText(name);
         EnableNext();
     }
 
@@ -161,7 +184,7 @@ public class GroupSelectionWizard : MonoBehaviour
     public void HandleAnimalClick(string name)
     {
         userRecord.animal = name;
-        DirectionsText.text = userRecord.Username;
+        SetTitleText(name);
         EnableNext();
     }
 
@@ -169,38 +192,43 @@ public class GroupSelectionWizard : MonoBehaviour
     {
         userRecord.color = color;
         userRecord.colorName = name;
-        DirectionsText.text = userRecord.Username;
+        SetTitleText(name);
         DirectionsText.color = color;
         EnableNext();
     }
 
 
-    public void HandleNumberClick(string name)
+    public void HandleNumberClick(string number)
     {
-        userRecord.number = name;
-        DirectionsText.text = userRecord.Username;
+        userRecord.number = number;
+        SetTitleText(number);
         EnableNext();
     }
 
     private void NextStep()
     {
-        this.currentStep++;
-        if(currentStep < steps.Count)
+        currentStep++;
+        DisableNext();
+        DisableFastLogin(); // If we are partially changed, its no good.
+        if (currentStep < steps.Count)
         {
             steps[currentStep]();
-            DisableNext();
         } else
         {
             LaunchScene();
         }
     }
 
-    private void LaunchScene()
+    public void LaunchScene()
     {
-        Debug.Log("Launching ...");
+        DisableNext();
+        DisableFastLogin();
+        DirectionsText.color = userRecord.color;
         SimulationManager.GetInstance().LocalPlayer = userRecord;
+        userRecord.SaveToPrefs();
         if(NextScreen)
         {
+            SetTitleText($"{userRecord.Username} in {userRecord.group}");
             ButtonPanel.SetActive(false);
             NextScreen.SetActive(true);
         }
@@ -222,6 +250,7 @@ public class GroupSelectionWizard : MonoBehaviour
             NextButton.SetActive(false);
         }
     }
+
     private void SetTitleText(string newText) {
         if(DirectionsText)
         {
