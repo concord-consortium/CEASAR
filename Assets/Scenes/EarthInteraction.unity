@@ -459,7 +459,7 @@ PrefabInstance:
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
@@ -491,6 +491,11 @@ PrefabInstance:
       propertyPath: buttonsToDisable.Array.data[1]
       value: 
       objectReference: {fileID: 1101179311}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: enabledPanels.Array.data[5]
+      value: 
+      objectReference: {fileID: 1101179315}
     - target: {fileID: 2724144226074643660, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_Value
@@ -529,6 +534,12 @@ GameObject:
 --- !u!1 &1101179314 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3587320027100643340, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1101179310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1101179315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4804519207395640183, guid: f2f8e74f1a333614a8717f2c31eb93b6,
     type: 3}
   m_PrefabInstance: {fileID: 1101179310}
   m_PrefabAsset: {fileID: 0}
