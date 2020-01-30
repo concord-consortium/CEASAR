@@ -1,20 +1,24 @@
 ﻿using System.Linq;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This panel displays the currently-selected location in a user friendly manner
 /// </summary>
 public class LocationPanel : MonoBehaviour
 {
+    public bool showLocationCoordinates = false;
+    
     public TextMeshProUGUI latLongInfo;
-
     void Start()
     {
         if (SimulationManager.GetInstance().UserHasSetLocation)
         {
             UpdateLocationPanel(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
         }
+
+        latLongInfo.enabled = SceneManager.GetActiveScene().name == "EarthInteraction" || showLocationCoordinates;
     }
     public void UpdateLocationPanel(LatLng latLng, string description)
     {
@@ -29,6 +33,15 @@ public class LocationPanel : MonoBehaviour
         if (latLongInfo)
         {
             latLongInfo.text = newText;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            showLocationCoordinates = !showLocationCoordinates;
+            latLongInfo.enabled = showLocationCoordinates;
         }
     }
 }
