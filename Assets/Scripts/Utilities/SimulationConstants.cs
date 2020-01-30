@@ -22,4 +22,5 @@ public static class SimulationConstants
     public static readonly string[] SCENES_VR = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
     public static readonly string[] SCENES_AR = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
     public static readonly string[] SCENES_PC = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
+    public static readonly string[] SCENES_PLAYABLE = { SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
 }
