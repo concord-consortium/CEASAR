@@ -88,6 +88,13 @@ public class VRInteraction : MonoBehaviour
         toggleMenu();
         moveAroundEarth();
     }
+    private void OnDisable()
+    {
+        if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+        {
+            SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+        }
+    }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
@@ -276,11 +283,14 @@ public class VRInteraction : MonoBehaviour
                 {
                     mainUI.transform.parent = this.transform;
                 }
-                SimulationManager.GetInstance().CelestialSphereObject.SetActive( false);
+                
                 // rotate VR camera around Earth
                 float distance = Vector3.Magnitude(transform.position - earthModel.transform.position);
+                
                 x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance;
                 y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed;
+                x += OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x * xSpeed * distance;
+                y -= OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y * ySpeed;
 
                 y = ClampAngle(y, yMinLimit, yMaxLimit);
 
@@ -288,9 +298,18 @@ public class VRInteraction : MonoBehaviour
 
                 Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
                 Vector3 position = rotation * negDistance + earthModel.transform.position;
-
-                transform.rotation = rotation;
-                transform.position = position;
+                if (rotation != transform.rotation || position != transform.position)
+                {
+                    SimulationManager.GetInstance().CelestialSphereObject.SetActive(false);
+                    transform.rotation = rotation;
+                    transform.position = position;
+                } else
+                {
+                    if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+                    {
+                        SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+                    }
+                }
                 
             } else
             {

@@ -12,9 +12,32 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     private bool isSelected = false;
     private ParticleSystem selectedParticles;
     private bool isDrawing = true; // annotations are only added when drawing is enabled
+    private float holdClickDuration = 0;
+    private float holdToDeleteTime = 1f;
+    private float startParticleSpeed = 0.12f;
 
     public bool IsSelected {
         get { return isSelected; }
+    }
+
+    void Update()
+    {
+        if (isSelected && Input.GetMouseButton(0))
+        {
+            holdClickDuration += Time.deltaTime;
+            selectedParticles.startSpeed = selectedParticles.startSpeed + (holdClickDuration / 2);
+            if (holdClickDuration > holdToDeleteTime)
+            {
+                isSelected = false;
+                holdClickDuration = 0;
+                
+                HandleDeleteAnnotation();
+            }
+        } else if (isSelected && holdClickDuration > 0)
+        {
+            selectedParticles.startSpeed = startParticleSpeed;
+            holdClickDuration = 0;
+        }
     }
     public void FinishDrawing()
     {
@@ -36,6 +59,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             isSelected = false;
             transform.localScale = initialScale;
             selectedParticles.Stop();
+            GetComponent<Collider>().enabled = !drawModeActive;
             isDrawing = drawModeActive;
         }
     }
@@ -67,23 +91,19 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     #region MouseEvent Handling
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!isDrawing)
+       /* if (!isDrawing)
         {
-            if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                ToggleSelectAnnotation();
-            }
-            else if (isSelected)
-            {
-                HandleDeleteAnnotation();
-            }
-        }
+            ToggleSelectAnnotation();
+        }*/
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!isDrawing)
         {
             Highlight(true);
+            isSelected = true;
+            selectedParticles.Play();
+           
         }
     }
 
@@ -92,6 +112,8 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         if (!isDrawing)
         {
             Highlight(false);
+            isSelected = false;
+            selectedParticles.Stop();
         }
     }
 
