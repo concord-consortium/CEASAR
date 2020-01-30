@@ -13,8 +13,10 @@ public class GroupSelectionWizard : MonoBehaviour
     public GameObject NextButton;
     public GameObject FastLoginButton;
     public TMPro.TextMeshProUGUI DirectionsText;
+    public GameObject GroupLabel;
     public GameObject NextScreen;
-   
+    public GameObject Restart;
+
     private List<Action> steps;
     private int currentStep;
     private List<GameObject> buttons;
@@ -36,6 +38,8 @@ public class GroupSelectionWizard : MonoBehaviour
         ShowGroups();
         Button nextButton = NextButton.GetComponent<Button>();
         nextButton.onClick.AddListener(NextStep);
+        Button restartButton = Restart.GetComponent<Button>();
+        restartButton.onClick.AddListener(restart);
         ShowFastLogin();
     }
 
@@ -71,7 +75,7 @@ public class GroupSelectionWizard : MonoBehaviour
         FastLoginButton.SetActive(false);
     }
 
-    public void ShowGroups()
+    private void ShowGroups()
     {
         SetTitleText("Pick a Group");
         foreach (string name in NetworkController.roomNames)
@@ -90,9 +94,8 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-    public void ShowColors()
+    private void ShowColors()
     {
-        ClearAllButtons();
         SetTitleText("Pick a Color");
         int index = 0;
         foreach (string name in UserRecord.ColorNames)
@@ -120,9 +123,8 @@ public class GroupSelectionWizard : MonoBehaviour
     }
 
 
-    public void ShowAnimals()
+    private void ShowAnimals()
     { 
-        ClearAllButtons();
         SetTitleText("Pick an animal name");
         foreach (string name in UserRecord.AnimalNames)
         {
@@ -141,9 +143,8 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-    public void ShowNumbers()
+    private void ShowNumbers()
     {
-        ClearAllButtons();
         int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         SetTitleText("Pick an number");
         foreach (int number in numbers)
@@ -164,7 +165,7 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-    public void ClearAllButtons()
+    private void ClearAllButtons()
     {
         foreach (GameObject o in buttons) {
             Destroy(o);
@@ -173,22 +174,28 @@ public class GroupSelectionWizard : MonoBehaviour
     }
 
 
-    public void HandleGroupClick(string name)
+    private void HandleGroupClick(string name)
     {
         userRecord.group = name;
+        if (GroupLabel)
+        {
+            TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
+            GroupLabel.SetActive(true);
+            textMesh.text = userRecord.group;
+        }
         SetTitleText(name);
         EnableNext();
     }
 
-    
-    public void HandleAnimalClick(string name)
+
+    private void HandleAnimalClick(string name)
     {
         userRecord.animal = name;
         SetTitleText(name);
         EnableNext();
     }
 
-    public void HandleColorClick(string name, Color color)
+    private void HandleColorClick(string name, Color color)
     {
         userRecord.color = color;
         userRecord.colorName = name;
@@ -198,7 +205,7 @@ public class GroupSelectionWizard : MonoBehaviour
     }
 
 
-    public void HandleNumberClick(string number)
+    private void HandleNumberClick(string number)
     {
         userRecord.number = number;
         SetTitleText(number);
@@ -212,16 +219,30 @@ public class GroupSelectionWizard : MonoBehaviour
         DisableFastLogin(); // If we are partially changed, its no good.
         if (currentStep < steps.Count)
         {
+            ClearAllButtons();
             steps[currentStep]();
+            EnableRestart();
         } else
         {
             LaunchScene();
         }
     }
 
-    public void LaunchScene()
+
+    private void restart()
+    {
+        currentStep = 0;
+        GroupLabel.SetActive(false);
+        DisableRestart();
+        DisableNext();
+        ClearAllButtons();
+        steps[currentStep]();
+    }
+
+    private void LaunchScene()
     {
         DisableNext();
+        DisableRestart();
         DisableFastLogin();
         DirectionsText.color = userRecord.color;
         SimulationManager.GetInstance().LocalPlayer = userRecord;
@@ -251,10 +272,28 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
+    private void DisableRestart()
+    {
+        if (Restart)
+        {
+            Restart.SetActive(false);
+        }
+    }
+
+    private void EnableRestart()
+    {
+        if (Restart)
+        {
+            Restart.SetActive(true);
+        }
+    }
+
     private void SetTitleText(string newText) {
         if(DirectionsText)
         {
             DirectionsText.text = newText;
         }
     }
+
+  
 }
