@@ -20,12 +20,14 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     
     float x = 0.0f;
     float y = 0.0f;
+    float d = 0.0f;
     // Start is called before the first frame update
     void Start()
     {
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
+        d = distance;
         GameObject avatarObject = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
         if (avatarObject)
         {
@@ -33,24 +35,24 @@ public class PlayerOrbitMoveControl : MonoBehaviour
         }
     }
 
-    void LateUpdate () 
+    void LateUpdate()
     {
-        #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        if (target && Input.GetMouseButton(1)) 
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+        if (target && (Input.GetKey(KeyCode.LeftShift)))
         {
             x += Input.GetAxis("Mouse X") * xSpeed * distance * 0.02f;
             y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
- 
+
             y = ClampAngle(y, yMinLimit, yMaxLimit);
- 
+
             Quaternion rotation = Quaternion.Euler(y, x, 0);
- 
-            distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel")*5, distanceMin, distanceMax);
- 
+
+            distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
+
             RaycastHit hit;
-            if (Physics.Linecast (target.position, transform.position, out hit)) 
+            if (Physics.Linecast(target.position, transform.position, out hit))
             {
-                distance -=  hit.distance;
+                distance -= hit.distance;
             }
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
             Vector3 position = rotation * negDistance + target.position;
@@ -60,9 +62,25 @@ public class PlayerOrbitMoveControl : MonoBehaviour
             transform.rotation = rotation;
             transform.position = position;
         }
-        #endif
+        if (target && (Input.GetKey(KeyCode.LeftControl)))
+        {
+            d -= Input.GetAxisRaw("Mouse Y");
+
+            distance = Mathf.Clamp(d, distanceMin, distanceMax);
+
+            RaycastHit hit;
+            if (Physics.Linecast(target.position, transform.position, out hit))
+            {
+                distance -= hit.distance;
+            }
+            Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+            Vector3 position = transform.rotation * negDistance + target.position;
+
+            transform.position = position;
+        }
+#endif
     }
- 
+
     public static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360F)
