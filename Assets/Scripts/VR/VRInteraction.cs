@@ -199,19 +199,13 @@ public class VRInteraction : MonoBehaviour
                             // When we're not drawing we can highlight and delete annotations
                             currentLine.Highlight(true);
 
-                            if (interactionTrigger())
+                            if (interactionFingerTrigger())
                             {
-                                // select the line
-                                currentLine.ToggleSelectAnnotation();
+                                // delete the line
+                                currentLine.HandleDeleteAnnotation();
+                                hapticFeedback();
                             } 
-                            if (grabTrigger())
-                            {
-                                if (currentLine.IsSelected)
-                                {
-                                    currentLine.HandleDeleteAnnotation();
-                                    hapticFeedback();
-                                }
-                            }
+                           
                         }
                         
                     }
@@ -329,12 +323,23 @@ public class VRInteraction : MonoBehaviour
             angle -= 360F;
         return Mathf.Clamp(angle, min, max);
     }
-    bool interactionTrigger()
+    bool interactionTrigger(bool oneShot = true)
     {
+        if (oneShot)
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.One) ||
                         OVRInput.GetDown(OVRInput.Button.Three));
+        else
+            return (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.One) ||
+                        OVRInput.Get(OVRInput.Button.Three));
+    }
+    bool interactionFingerTrigger()
+    {
+        return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger));
     }
     bool grabTrigger()
     {

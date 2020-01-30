@@ -18,25 +18,15 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
 
     public bool IsSelected {
         get { return isSelected; }
+        set { isSelected = value; }
     }
 
     void Update()
     {
-        if (isSelected && Input.GetMouseButton(0))
+        if (isSelected)
         {
-            holdClickDuration += Time.deltaTime;
-            selectedParticles.startSpeed = selectedParticles.startSpeed + (holdClickDuration / 2);
-            if (holdClickDuration > holdToDeleteTime)
-            {
-                isSelected = false;
-                holdClickDuration = 0;
-                
-                HandleDeleteAnnotation();
-            }
-        } else if (isSelected && holdClickDuration > 0)
-        {
-            selectedParticles.startSpeed = startParticleSpeed;
-            holdClickDuration = 0;
+            HoldToDeleteAnnotation(Input.GetMouseButton(0));
+           
         }
     }
     public void FinishDrawing()
@@ -68,18 +58,38 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         if (showHighlight)
         {
             transform.localScale = hoverScale;
+            isSelected = true;
         }
         else
         {
             transform.localScale = initialScale;
+            isSelected = false;
         }
     }
 
-    public void ToggleSelectAnnotation()
+    public void HoldToDeleteAnnotation(bool holdToDelete)
     {
-        isSelected = !isSelected;
-        if (isSelected) selectedParticles.Play();
-        else selectedParticles.Stop();
+        if (isSelected)
+        {
+            selectedParticles.Play();
+            if (holdToDelete)
+            {
+                holdClickDuration += Time.deltaTime;
+                selectedParticles.startSpeed = selectedParticles.startSpeed + (holdClickDuration / 2);
+                if (holdClickDuration > holdToDeleteTime)
+                {
+                    isSelected = false;
+                    holdClickDuration = 0;
+
+                    HandleDeleteAnnotation();
+                }
+            }
+            else if (holdClickDuration > 0)
+            {
+                selectedParticles.startSpeed = startParticleSpeed;
+                holdClickDuration = 0;
+            }
+        }
     }
 
     public void HandleDeleteAnnotation()
