@@ -11,7 +11,8 @@ public static class SimulationConstants
     public static readonly string SNAPSHOT_LOCATION_PREF_KEY = "SnapshotLocation";
     public static readonly string SNAPSHOT_DATETIME_PREF_KEY = "SnapshotDateTime";
     public static readonly string SNAPSHOT_LOCATION_COORDS_PREF_KEY = "SnapshotLocationCoords";
-
+    public static readonly string USERNAME_PREF_KEY = "CEASAR_USERNAME";
+    public static readonly string USER_GROUP_PREF_KEY = "CEASAR_GROUP";
     // Scene Names:
     public static readonly string SCENE_LOAD = "LoadSim";
     public static readonly string SCENE_STARS = "Stars";

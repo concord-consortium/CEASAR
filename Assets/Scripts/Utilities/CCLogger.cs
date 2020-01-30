@@ -24,7 +24,7 @@ public class LogContext
         application = APP_NAME;
         scene = getSceneName();
         platformName = Application.platform.ToString();
-        username = PlayerPrefs.GetString(UserRecord.PLAYER_PREFS_NAME_KEY);
+        username = PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
     }
     private static double getTimeMillies()
     {

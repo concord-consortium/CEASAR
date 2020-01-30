@@ -9,7 +9,7 @@ public class UserRecord
     readonly private static int NUMBER_INDEX = 2;
     readonly private static int GROUP_INDEX = 3;
     readonly private static int NUM_FIELDS = 4;
-    public const string PLAYER_PREFS_NAME_KEY = "CAESAR_USERNAME";
+    
     public const string DEFAULT_USER_COLOR = "red";
     // The username record items:
     public string group;
@@ -21,7 +21,7 @@ public class UserRecord
     public UserRecord()
     {
         LoadRandomValues();
-        string username = PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
+        string username = PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
         if(username != null && username.Length > 0)
         {
             FromUsername(username);
@@ -35,7 +35,8 @@ public class UserRecord
 
     public void SaveToPrefs()
     {
-        PlayerPrefs.SetString(PLAYER_PREFS_NAME_KEY, Username);
+        PlayerPrefs.SetString(SimulationConstants.USERNAME_PREF_KEY, Username);
+        PlayerPrefs.SetString(SimulationConstants.USER_GROUP_PREF_KEY, group);
     }
 
     public void Randomize()
@@ -50,31 +51,14 @@ public class UserRecord
 
     private void FromUsername(string username)
     {
-        string[] values = username.Split(' ');
-        string status = "Username parse error. Created new randomized user";
-        if (values.Length >= NUM_FIELDS)
+        if (UsernameIsValid(username))
         {
-
-            string _animal = values[ANIMAL_INDEX];
-            string _group = values[GROUP_INDEX];
-            string _color = values[COLOR_INDEX];
-            string _number = values[NUMBER_INDEX];
-
-            if (
-                ColorNames.Contains(_color) &&
-                AnimalNames.Contains(_animal) &&
-                GroupNames.Contains(_group)
-            )
-            {
-                animal = _animal;
-                colorName = _color;
-                color = GetColorForUsername(username);
-                number = _number;
-                group = _group;
-                status = "New user parsed OK.";
-            }
+            colorName = UsernameListItem(username, ColorNames);
+            color = ColorForColorName(colorName);
+            group = PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
+            animal = UsernameListItem(username, AnimalNames);
+            number = UsernameListItem(username, Numbers);
         }
-        Debug.Log(status);
     }
 
     private void LoadRandomValues()
@@ -101,7 +85,7 @@ public class UserRecord
     /**************************** Static Methods *****************************/
 
     public static List<string> GroupNames { get; } = new List<string>(NetworkController.roomNames);
-
+    private static List<string> Numbers = new List<string>("1,2,3,4,5,6,7,8,9".Split(','));
     private static List<string> colorNames;
     public static List<string> ColorNames
     {
@@ -173,6 +157,11 @@ public class UserRecord
         return DEFAULT_USER_COLOR;
     }
 
+    public static Color ColorForColorName(string colorName)
+    {
+        return ColorValues[ColorNames.IndexOf(colorName)];
+    }
+
     public static Color GetColorForUsername(string username)
     {
         string colorName = GetColorNameForUsername(username);
@@ -189,7 +178,61 @@ public class UserRecord
 
     public static string UsernameFromPrefs()
     {
-        return PlayerPrefs.GetString(PLAYER_PREFS_NAME_KEY);
+        return PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
+    }
+
+    public static string UserGroupFromPrefs()
+    {
+        return PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
+    }
+
+    private static string UsernameListItem(string username, List<string> list)
+    {
+        foreach (string item in list)
+        {
+            if (username.IndexOf(item, System.StringComparison.CurrentCultureIgnoreCase) >= 0)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private static bool UsernameContainsListItem(string username, List<string> list)
+    {
+        string match = UsernameListItem(username, list);
+        if (match != null && match.Length > 0) return true;
+        return false;
+    }
+
+    public static bool UsernameContainsColor(string username) {
+        return UsernameContainsListItem(username, ColorNames);
+    }
+
+    public static bool UsernameContainsAnimal(string username)
+    {
+        return UsernameContainsListItem(username, AnimalNames);
+    }
+
+    public static bool UsernameContainsNumber(string username)
+    {
+        return UsernameContainsListItem(username, Numbers);
+    }
+
+    public static bool UsernameIsValid(string username)
+    {
+        return UsernameContainsColor(username) &&
+            UsernameContainsAnimal(username) &&
+            UsernameContainsNumber(username);
+    }
+
+    public static bool PlayerHasValidPrefs()
+    {
+        string username = UsernameFromPrefs();
+        string group = UserGroupFromPrefs();
+        return (username != null) &&
+            (group != null) &&
+            UsernameIsValid(username);
     }
 
     public static UserRecord FromUserName(string username)
