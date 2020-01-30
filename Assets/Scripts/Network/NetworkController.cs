@@ -45,7 +45,8 @@ public class NetworkController : MonoBehaviour
     public string ServerStatusMessage {
         set { networkUI.ConnectionStatusText = value; }
     }
-    
+
+    public bool useDev = true;
  
     // Need this so the network UI persists across scenes
     private void Awake()
@@ -188,6 +189,11 @@ public class NetworkController : MonoBehaviour
             else
             {
                 endpoint = userDefinedEndpoint;
+            }
+
+            if (useDev)
+            {
+                endpoint = ServerList.Dev.address;
             }
             ConnectToEndpoint(endpoint);
         }

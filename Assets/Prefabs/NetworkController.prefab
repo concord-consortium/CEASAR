@@ -47,11 +47,9 @@ MonoBehaviour:
   avatar: {fileID: 961596688562665789, guid: f2ed9c5a162c9413a80a675d8d657522, type: 3}
   interactionIndicator: {fileID: 3837293221611235267, guid: bea5abd67e7974abb8b55180a88d1311,
     type: 3}
-  roomName: ceasar
-  autoConnect: 0
+  autoConnect: 1
   scenesWithAvatars:
   - EarthInteraction
-  networkConnection: 2
   networkUI: {fileID: 0}
 --- !u!114 &2549443975885674654
 MonoBehaviour:
@@ -65,4 +63,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e1fb4f0ca880486ab13254747428623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomName: ceasar
