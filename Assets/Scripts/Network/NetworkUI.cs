@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections.ObjectModel;
 
 public class NetworkUI : MonoBehaviour
 {
@@ -60,8 +62,10 @@ public class NetworkUI : MonoBehaviour
 
     private void OnEnable()
     {
+        playerList = new Dictionary<string, GameObject>();
         SimulationEvents.GetInstance().PlayerJoined.AddListener(AddPlayer);
         SimulationEvents.GetInstance().PlayerLeft.AddListener(RemovePlayer);
+        NetworkController networkController = FindObjectOfType<NetworkController>();
     }
 
     private void OnDisable()
@@ -128,15 +132,6 @@ public class NetworkUI : MonoBehaviour
         }
     }
 
-    //public void RepaintPlayerList()
-    //{
-    //    // Remove them all first:
-    //    foreach(string name in playerList.Keys)
-    //    {
-    //        Destroy(playerList[name]);
-    //    }
-    //    // Add them all:
-    //}
 
     private GameObject MakePlayerLabel(string name)
     {
@@ -194,8 +189,31 @@ public class NetworkUI : MonoBehaviour
 
     private void PlayerLabelClicked(string username)
     {
-        // TODO: Look up the user, see if they have a locaation pin
-        // If they do, open the horizon view at that pin location.
-        Debug.Log($"{username} was clicked");
+        string pinName = $"{SimulationConstants.PIN_PREFIX}{username}";
+        Debug.Log($"Push Pin clicked for {username} / {pinName}");
+        GameObject pinObject = GameObject.Find(pinName);
+        if(pinObject != null)
+        {
+            PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
+            Pushpin pin = pinComponent.pin;
+            Debug.Log(pin.ToString());
+            SimulationManager manager = SimulationManager.GetInstance();
+
+            // Set simulation time and location;
+            manager.UseCustomSimulationTime = true;
+            manager.CurrentSimulationTime = pin.SelectedDateTime;
+            manager.Currentlocation = pin.Location;
+
+            // NP I thought that maybe just triggering this would do the trick, but no:
+            // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);
+
+            // Switch to Horizon view
+            if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
+            {
+                SceneManager.LoadScene(SimulationConstants.SCENE_HORIZON);
+            }
+
+
+        }
     } 
 }
