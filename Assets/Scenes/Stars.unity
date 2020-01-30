@@ -630,6 +630,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2724144226661976860, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2724144227609589290, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -648,28 +653,28 @@ PrefabInstance:
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.size
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: buttonsToDisable.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[2]
       value: 
-      objectReference: {fileID: 627985509}
+      objectReference: {fileID: 627985507}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[3]
       value: 
-      objectReference: {fileID: 627985507}
+      objectReference: {fileID: 627985508}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[4]
       value: 
-      objectReference: {fileID: 627985508}
+      objectReference: {fileID: 627985506}
     - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
         type: 3}
       propertyPath: enabledPanels.Array.data[5]
@@ -710,6 +715,41 @@ PrefabInstance:
       propertyPath: buttonsToDisable.Array.data[3]
       value: 
       objectReference: {fileID: 627985512}
+    - target: {fileID: 2724144226800310060, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: buttonsToDisable.Array.data[4]
+      value: 
+      objectReference: {fileID: 1187147128}
+    - target: {fileID: 1751175847982400702, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2861630780694165428, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: horizonCam
+      value: 
+      objectReference: {fileID: 298385714}
+    - target: {fileID: 3809221925809837007, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: onHoldClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6535919772445005624, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: onHoldClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4435718868607564881, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: onHoldClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7483780070494094937, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+        type: 3}
+      propertyPath: onHoldClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: -40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2f8e74f1a333614a8717f2c31eb93b6, type: 3}
 --- !u!1 &627985506 stripped
@@ -730,12 +770,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 627985505}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &627985509 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2489800313946923596, guid: f2f8e74f1a333614a8717f2c31eb93b6,
-    type: 3}
-  m_PrefabInstance: {fileID: 627985505}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &627985510 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6730335783260794567, guid: f2f8e74f1a333614a8717f2c31eb93b6,
@@ -751,6 +785,12 @@ GameObject:
 --- !u!1 &627985512 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3587320027100643340, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 627985505}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1187147128 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3356669929790196578, guid: f2f8e74f1a333614a8717f2c31eb93b6,
     type: 3}
   m_PrefabInstance: {fileID: 627985505}
   m_PrefabAsset: {fileID: 0}
