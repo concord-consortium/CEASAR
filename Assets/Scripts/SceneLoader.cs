@@ -16,7 +16,7 @@ public class SceneLoader : MonoBehaviour
     private GameObject defaultEventSystem;
 
     private GameObject vrCamera;
-    public void Start()
+    public void SetupCameras()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
         string model = UnityEngine.XR.XRDevice.model != null ? UnityEngine.XR.XRDevice.model : "";

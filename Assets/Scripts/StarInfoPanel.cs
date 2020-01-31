@@ -9,13 +9,12 @@ public class StarInfoPanel : MonoBehaviour
     private SimulationManager manager;
     public TextMeshProUGUI starInfoText;
 
-    private void Start()
+    public void Setup(MainUIController mainUIController)
     {
         manager = SimulationManager.GetInstance();
         if (manager.CurrentlySelectedStar == null)
         {
             starInfoText.text = "";
-            MainUIController mainUIController = FindObjectOfType<MainUIController>();
             mainUIController.HidePanel("StarInfoPanel");
         }
         else if (string.IsNullOrEmpty(starInfoText.text))

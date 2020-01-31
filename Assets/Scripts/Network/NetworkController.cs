@@ -57,7 +57,7 @@ public class NetworkController : MonoBehaviour
         colyseusClient = GetComponent<ColyseusClient>();
     }
 
-    void Start()
+    public void Setup()
     {
         FindDependencies();
         if (autoConnect)

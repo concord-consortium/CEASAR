@@ -96,7 +96,12 @@ public class MainUIController : MonoBehaviour
             isPinningLocation = value;
         }
     }
-    
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     void OnDisable()
     {
         events.LocationChanged.RemoveListener(updateLocationPanel);
@@ -149,7 +154,7 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
-        
+        if (starInfoPanel) starInfoPanel.GetComponent<StarInfoPanel>().Setup(this);
         // Listen to any relevant events
         events.LocationChanged.AddListener(updateLocationPanel);
         
