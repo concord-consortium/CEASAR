@@ -99,13 +99,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     }
     
     #region MouseEvent Handling
-    public void OnPointerDown(PointerEventData eventData)
-    {
-       /* if (!isDrawing)
-        {
-            ToggleSelectAnnotation();
-        }*/
-    }
+    public void OnPointerDown(PointerEventData eventData) { }
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!isDrawing)
@@ -113,7 +107,6 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             Highlight(true);
             isSelected = true;
             selectedParticles.Play();
-           
         }
     }
 
