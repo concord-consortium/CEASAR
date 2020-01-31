@@ -52,14 +52,13 @@ public class NetworkController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        FindDependencies();
-        networkUI.Username = manager.LocalUsername;
         colyseusClient = GetComponent<ColyseusClient>();
     }
 
     public void Setup()
     {
         FindDependencies();
+        networkUI.Username = manager.LocalUsername;
         if (autoConnect)
         {
             ConnectToServer();

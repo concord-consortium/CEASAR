@@ -177,7 +177,6 @@ public class SimulationManagerComponent : MonoBehaviour
         if (!mainUIController) 
         {
             mainUIController = Instantiate(mainUIPrefab).GetComponent<MainUIController>();
-            mainUIController.Init();
             sceneLoader.SetupCameras();
             manager.NetworkControllerObject.GetComponent<NetworkController>().Setup();
         }

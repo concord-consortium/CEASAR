@@ -17,6 +17,8 @@ public class MainUIController : MonoBehaviour
     public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
 
+    public GameObject horizonCameraControls;
+
     private DataController dataController;
     private SnapshotsController snapshotsController;
 
@@ -97,16 +99,29 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    private bool hasCompletedSetup = false;
+    
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
     }
 
+    private void Start()
+    {
+        // Should only happen once, but just in case
+        if (!hasCompletedSetup)
+        {
+            Init();
+            hasCompletedSetup = true;
+        }
+    }
+
     void OnDisable()
     {
         events.LocationChanged.RemoveListener(updateLocationPanel);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-    public void Init()
+    private void Init()
     {
         markersController = manager.MarkersControllerComponent;
         dataController = manager.DataControllerComponent;
@@ -149,15 +164,17 @@ public class MainUIController : MonoBehaviour
             userHour = manager.CurrentSimulationTime.Hour;
             userMin = manager.CurrentSimulationTime.Minute;
         }
-        foreach (GameObject buttonToDisable in buttonsToDisable)
-        {
-            buttonToDisable.GetComponent<Button>().enabled = false;
-            buttonToDisable.GetComponent<Image>().color = Color.gray;
-        }
+        
         if (starInfoPanel) starInfoPanel.GetComponent<StarInfoPanel>().Setup(this);
         // Listen to any relevant events
         events.LocationChanged.AddListener(updateLocationPanel);
         
+        positionActivePanels();
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
         positionActivePanels();
     }
     
@@ -208,6 +225,25 @@ public class MainUIController : MonoBehaviour
         float hiddenY = controlPanelRect.rect.height * .5f - totalPanelHeight + 50f;
         hiddenPosition = new Vector2(controlPanelRect.anchoredPosition.x, hiddenY);
         targetPosition = initialPosition;
+        
+        // buttons
+        foreach (GameObject buttonToDisable in buttonsToDisable) 
+        {
+            buttonToDisable.GetComponent<Button>().enabled = false;
+            buttonToDisable.GetComponent<Image>().color = Color.gray;
+        }
+#if !UNITY_ANDROID
+        if (horizonCameraControls != null)
+        {
+            bool show = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ||
+                        SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
+            horizonCameraControls.SetActive(show);
+            if (show)
+            {
+                horizonCameraControls.GetComponent<UIControlCamera>().horizonCam = Camera.main.transform;
+            }
+        }
+        #endif
     }
 
     // Update is called once per frame
@@ -471,8 +507,6 @@ public class MainUIController : MonoBehaviour
     {
         if (rotating)
         {
-            sphere.transform.Rotate(Vector3.right, autoRotateSpeed * Time.deltaTime);
-            sphere.transform.Rotate(Vector3.back, autoRotateSpeed * Time.deltaTime);
             sphere.transform.Rotate(Vector3.down, autoRotateSpeed * Time.deltaTime);
         }
     }

@@ -10575,6 +10575,7 @@ MonoBehaviour:
   - {fileID: 1751077039069735242}
   - {fileID: 2724144225927068395}
   buttonsToDisable: []
+  horizonCameraControls: {fileID: 1751175847982400702}
   controlPanel: {fileID: 2724144227692342582}
   currentDateTimeText: {fileID: 6455473988152472224}
   setTimeToggle: {fileID: 2724144226941606514}
@@ -13414,7 +13415,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999997
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
