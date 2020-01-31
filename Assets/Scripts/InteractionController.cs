@@ -132,7 +132,7 @@ public class InteractionController : MonoBehaviour
                     latLng,
                     UserRecord.GetColorForUsername(updatedPlayer.username),
                     updatedPlayer.username, 
-                    TimeConverter.JulianToCalendarDate(updatedPlayer.locationPin.datetime), 
+                    TimeConverter.EpochTimeToDate(updatedPlayer.locationPin.datetime), 
                     false); 
                 break;
             case "annotation":
