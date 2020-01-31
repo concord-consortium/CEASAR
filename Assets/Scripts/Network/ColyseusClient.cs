@@ -162,7 +162,11 @@ public class ColyseusClient : MonoBehaviour
 
     public Player GetPlayerById(string username)
     {
-        return players[username];
+        if (players != null && players.ContainsKey(username))
+        {
+            return players[username];
+        }
+        else return null;
     }
     public void SendNetworkMessage(string message)
     {
@@ -277,19 +281,26 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async void SendPinUpdate(float latitude, float longitude, DateTime dateTime)
+    public async void SendPinUpdate(float latitude, float longitude, DateTime dateTime, Vector3 cameraRotationEuler)
     {
         if (IsConnected)
         {
             NetworkPerspectivePin pin = new NetworkPerspectivePin();
-            pin.datetime = (float)TimeConverter.ToJulianDate(dateTime);
+            pin.datetime = (float)dateTime.ToEpochTime();
             pin.latitude = latitude;
             pin.longitude = longitude;
+            NetworkTransform t = new NetworkTransform();
+            t.position = new NetworkVector3 { x = 0, y = 0, z = 0 };
+            t.rotation = new NetworkVector3 { x = cameraRotationEuler.x, y = cameraRotationEuler.y, z = cameraRotationEuler.z };
+            t.localScale = new NetworkVector3 {x = 1, y = 1, z = 1};
+            t.name = "mainCamera";
+            pin.cameraTransform = t;
             await room.Send(new
             {
                 perspectivePin = pin,
                 message = "locationpin"
             });
+            Debug.LogWarning(pin.datetime);
         }
     }
     

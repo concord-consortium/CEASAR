@@ -192,7 +192,7 @@ public class NetworkUI : MonoBehaviour
         string pinName = $"{SimulationConstants.PIN_PREFIX}{username}";
         Debug.Log($"Push Pin clicked for {username} / {pinName}");
         GameObject pinObject = GameObject.Find(pinName);
-        if(pinObject != null)
+        if (pinObject != null)
         {
             PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
             Pushpin pin = pinComponent.pin;
@@ -204,6 +204,7 @@ public class NetworkUI : MonoBehaviour
             manager.CurrentSimulationTime = pin.SelectedDateTime;
             manager.Currentlocation = pin.Location;
 
+
             // NP I thought that maybe just triggering this would do the trick, but no:
             // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);
 
@@ -212,8 +213,30 @@ public class NetworkUI : MonoBehaviour
             {
                 SceneManager.LoadScene(SimulationConstants.SCENE_HORIZON);
             }
+            else
+            {
+                NetworkController networkController = FindObjectOfType<NetworkController>();
+                Player updatedPlayer = networkController.GetNetworkPlayerByName(username);
+                if (updatedPlayer != null && updatedPlayer.locationPin.cameraTransform != null)
+                {
+                    Quaternion remotePlayerCameraRotationRaw =
+                        Utils.NetworkV3ToQuaternion(updatedPlayer.locationPin.cameraTransform.rotation);
+                    Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
+                    // for desktop / non-VR:
+                    // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
 
-
+#if !UNITY_ANDROID
+                    Transform mainCameraTransform = Camera.main.transform;
+                    mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
+                    mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
+#else
+                    GameObject vrCameraRig = GameObject.Find("VRCameraRig");
+                    if (vrCameraRig != null){
+                      vrCameraRig.transform.rotation = Quaternion.Euler(0, rot.y, 0);
+                    }
+#endif
+                }
+            }
         }
     } 
 }

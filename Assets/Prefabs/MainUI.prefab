@@ -1768,7 +1768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5394293043302102518
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10575,6 +10575,7 @@ MonoBehaviour:
   - {fileID: 1751077039069735242}
   - {fileID: 2724144225927068395}
   buttonsToDisable: []
+  horizonCameraControls: {fileID: 1751175847982400702}
   controlPanel: {fileID: 2724144227692342582}
   currentDateTimeText: {fileID: 6455473988152472224}
   setTimeToggle: {fileID: 2724144226941606514}
@@ -13413,7 +13414,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2724144226661976861}
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -25309,15 +25310,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
---- !u!1 &1375357601579678647 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-    type: 3}
-  m_PrefabInstance: {fileID: 2724144227769456519}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1375357601579678646 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+    type: 3}
+  m_PrefabInstance: {fileID: 2724144227769456519}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1375357601579678647 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
     type: 3}
   m_PrefabInstance: {fileID: 2724144227769456519}
   m_PrefabAsset: {fileID: 0}

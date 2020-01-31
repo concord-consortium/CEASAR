@@ -16,6 +16,8 @@ public class SimulationManagerComponent : MonoBehaviour
     private GameObject interactionControllerPrefab;
     [SerializeField]
     private GameObject celestialSpherePrefab;
+
+    [SerializeField] private GameObject mainUIPrefab;
     [SerializeField]
     private Material starMaterial;
     // Celestial Sphere scene-specific settings
@@ -100,6 +102,7 @@ public class SimulationManagerComponent : MonoBehaviour
         {
             sceneLoader = Instantiate(sceneLoaderPrefab);
         }
+        
         if (manager.NetworkControllerObject == null)
         {
             if (FindObjectOfType<NetworkController>() != null)
@@ -171,7 +174,13 @@ public class SimulationManagerComponent : MonoBehaviour
             }
         }
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
-        if (mainUIController) mainUIController.Init();
+        if (!mainUIController) 
+        {
+            mainUIController = Instantiate(mainUIPrefab).GetComponent<MainUIController>();
+            manager.NetworkControllerObject.GetComponent<NetworkController>().Setup();
+        } 
+        sceneLoader.SetupCameras();
+        
     }
 
 }
