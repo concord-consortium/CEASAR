@@ -17,7 +17,7 @@ public class SceneLoader : MonoBehaviour
 
     private GameObject vrCamera;
     
-    public GameObject horizonCameraControls;
+    private GameObject cameraControlUI;
     public void SetupCameras()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
@@ -94,10 +94,10 @@ public class SceneLoader : MonoBehaviour
         lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
 
         // some scene-specific pieces to remove
-        GameObject horizonCamControls = GameObject.Find("HorizonCameraControls");
-        if (horizonCamControls != null)
+        cameraControlUI = GameObject.Find("CameraControlUI");
+        if (cameraControlUI != null)
         {
-            horizonCamControls.SetActive(false);
+            cameraControlUI.SetActive(false);
         }
         if (currentScene == "EarthInteraction" || currentScene == "Stars")
         {
@@ -128,14 +128,15 @@ public class SceneLoader : MonoBehaviour
             mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             mainCam.GetComponent<Camera>().backgroundColor = Color.black;
         }
-        if (horizonCameraControls != null)
+        if (cameraControlUI == null) cameraControlUI = GameObject.Find("CameraControlUI");
+        if (cameraControlUI != null)
         {
             bool show = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ||
                         SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
-            horizonCameraControls.SetActive(show);
+            cameraControlUI.GetComponent<UIControlCamera>().enableControls = show;
             if (show)
             {
-                horizonCameraControls.GetComponent<UIControlCamera>().cameraContainer = Camera.main.transform;
+                cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = Camera.main.transform;
             }
         }
     }

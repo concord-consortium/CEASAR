@@ -181,7 +181,6 @@ public class MainUIController : MonoBehaviour
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        
         positionActivePanels();
     }
     
