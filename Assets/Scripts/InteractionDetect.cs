@@ -88,7 +88,7 @@ public class InteractionDetect : MonoBehaviour
         if (mainUIController.IsDrawing && annotationTool)
         {
             ray = camera.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out hit, manager.SceneRadius, layerMaskStarsAnnotations);
+            Physics.Raycast(ray, out hit, manager.SceneRadius);// layerMaskStarsAnnotations);
             if (Input.GetMouseButtonDown(0))
             {
                 if (!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)

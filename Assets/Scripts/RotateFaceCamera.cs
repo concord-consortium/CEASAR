@@ -5,18 +5,19 @@ using UnityEngine;
 public class RotateFaceCamera : MonoBehaviour
 {
     private Camera mainCam;
-    // Start is called before the first frame update
-    void Start()
+
+    private void OnDisable()
     {
-        mainCam = Camera.main;   
+        mainCam = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!mainCam || mainCam.enabled == false)
+        if (!mainCam)
         {
             mainCam = Camera.main;
+            Debug.LogWarning("Camera: " + mainCam.gameObject.name);
         }
 
         if (mainCam)

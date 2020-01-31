@@ -88,6 +88,13 @@ public class VRInteraction : MonoBehaviour
         toggleMenu();
         moveAroundEarth();
     }
+    private void OnDisable()
+    {
+        if (SimulationManager.GetInstance().CelestialSphereObject && !SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+        {
+            SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+        }
+    }
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
@@ -192,19 +199,13 @@ public class VRInteraction : MonoBehaviour
                             // When we're not drawing we can highlight and delete annotations
                             currentLine.Highlight(true);
 
-                            if (interactionTrigger())
+                            if (interactionFingerTrigger())
                             {
-                                // select the line
-                                currentLine.ToggleSelectAnnotation();
+                                // delete the line
+                                currentLine.HandleDeleteAnnotation();
+                                hapticFeedback();
                             } 
-                            if (grabTrigger())
-                            {
-                                if (currentLine.IsSelected)
-                                {
-                                    currentLine.HandleDeleteAnnotation();
-                                    hapticFeedback();
-                                }
-                            }
+                           
                         }
                         
                     }
@@ -276,11 +277,14 @@ public class VRInteraction : MonoBehaviour
                 {
                     mainUI.transform.parent = this.transform;
                 }
-                SimulationManager.GetInstance().CelestialSphereObject.SetActive( false);
+                
                 // rotate VR camera around Earth
                 float distance = Vector3.Magnitude(transform.position - earthModel.transform.position);
+                
                 x += OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x * xSpeed * distance;
                 y -= OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y * ySpeed;
+                x += OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x * xSpeed * distance;
+                y -= OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y * ySpeed;
 
                 y = ClampAngle(y, yMinLimit, yMaxLimit);
 
@@ -288,9 +292,18 @@ public class VRInteraction : MonoBehaviour
 
                 Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
                 Vector3 position = rotation * negDistance + earthModel.transform.position;
-
-                transform.rotation = rotation;
-                transform.position = position;
+                if (rotation != transform.rotation || position != transform.position)
+                {
+                    SimulationManager.GetInstance().CelestialSphereObject.SetActive(false);
+                    transform.rotation = rotation;
+                    transform.position = position;
+                } else
+                {
+                    if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+                    {
+                        SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+                    }
+                }
                 
             } else
             {
@@ -310,12 +323,23 @@ public class VRInteraction : MonoBehaviour
             angle -= 360F;
         return Mathf.Clamp(angle, min, max);
     }
-    bool interactionTrigger()
+    bool interactionTrigger(bool oneShot = true)
     {
+        if (oneShot)
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.One) ||
                         OVRInput.GetDown(OVRInput.Button.Three));
+        else
+            return (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) ||
+                        OVRInput.Get(OVRInput.Button.One) ||
+                        OVRInput.Get(OVRInput.Button.Three));
+    }
+    bool interactionFingerTrigger()
+    {
+        return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
+                        OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger));
     }
     bool grabTrigger()
     {

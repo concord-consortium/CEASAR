@@ -2410,6 +2410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c645f856a7ef447418565d4d1bd82a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showLocationCoordinates: 0
   latLongInfo: {fileID: 4573265557031391451}
 --- !u!1 &2237223974848995427
 GameObject:
@@ -5146,7 +5147,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2724144227609589291}
   m_HandleRect: {fileID: 2724144227609589290}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -13413,7 +13414,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.9999999
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23729,6 +23730,7 @@ GameObject:
   - component: {fileID: 7941238143143742175}
   - component: {fileID: 7941238143143742174}
   - component: {fileID: 7941238143143742173}
+  - component: {fileID: 4941550400980591230}
   m_Layer: 2
   m_Name: Debug Text
   m_TagString: Untagged
@@ -23777,7 +23779,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -23873,6 +23875,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!225 &4941550400980591230
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7941238143143742172}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &7941238143244201351
 GameObject:
   m_ObjectHideFlags: 0
@@ -25145,6 +25159,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2724144227692342583}
     m_Modifications:
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_Name
+      value: SceneSelectionPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -25250,16 +25274,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_Name
-      value: SceneSelectionPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_Colors.m_NormalColor.a
       value: 1
@@ -25295,15 +25309,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
---- !u!224 &1375357601579678646 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-    type: 3}
-  m_PrefabInstance: {fileID: 2724144227769456519}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1375357601579678647 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+    type: 3}
+  m_PrefabInstance: {fileID: 2724144227769456519}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1375357601579678646 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
     type: 3}
   m_PrefabInstance: {fileID: 2724144227769456519}
   m_PrefabAsset: {fileID: 0}

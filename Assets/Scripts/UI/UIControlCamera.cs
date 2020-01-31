@@ -16,7 +16,14 @@ public class UIControlCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            // Read the user input
+            var x = Input.GetAxisRaw("Mouse X");
+            var y = Input.GetAxisRaw("Mouse Y");
+            LookUpDown(y * 100);
+            LookLeftRight(x * 100);
+        }
     }
     // rotate camera up/down
     public void LookUpDown(float speed)
