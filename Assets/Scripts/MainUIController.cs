@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -16,7 +16,17 @@ public class MainUIController : MonoBehaviour
     public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
 
-    private DataController dataController;
+    private DataController dataController
+    {
+        get {
+            DataController dController = manager.DataControllerComponent;
+            if (dController == null)
+            {
+                Debug.Log("Missing Data Controller");
+            }
+            return dController;
+        }
+    }
     private SnapshotsController snapshotsController;
 
     // main control panel where we slot tools
@@ -121,7 +131,6 @@ public class MainUIController : MonoBehaviour
     private void Init()
     {
         markersController = manager.MarkersControllerComponent;
-        dataController = manager.DataControllerComponent;
         sphere = manager.CelestialSphereObject;
         allPanels = new Dictionary<string, GameObject>();
         foreach (Transform t in controlPanel.transform) {
@@ -508,30 +517,43 @@ public class MainUIController : MonoBehaviour
 
     public void SetMagnitudeThreshold(float newVal)
     {
-        dataController.SetMagnitudeThreshold(newVal);
+        if (dataController)
+        {
+            dataController.SetMagnitudeThreshold(newVal);
+        }
+        
     }
 
     public void ToggleUserTime()
     {
-        dataController.ToggleUserTime();
+        if (dataController)
+        {
+            dataController.ToggleUserTime();
+        }
     }
 
     public void ToggleRunSimulation()
     {
-        dataController.ToggleRunSimulation();
+        if (dataController)
+        {
+            dataController.ToggleRunSimulation();
+        }
     }
  
 
     public void CreateSnapshot()
     {
-        // get values from datacontroller
-        DateTime snapshotDateTime = manager.CurrentSimulationTime;
-        String location = dataController.currentCity.Name;
-        LatLng locationCoordinates = manager.Currentlocation;
-        // add a snapshot to the controller
-        snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
-        // add snapshot to dropdown list
-        AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+        if (dataController)
+        {
+            // get values from datacontroller
+            DateTime snapshotDateTime = manager.CurrentSimulationTime;
+            String location = dataController.currentCity.Name;
+            LatLng locationCoordinates = manager.Currentlocation;
+            // add a snapshot to the controller
+            snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
+            // add snapshot to dropdown list
+            AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+        }
     }
 
     public void AddSnapshotToGrid(Snapshot snapshot)
