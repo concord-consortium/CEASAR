@@ -5,7 +5,6 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
@@ -16,8 +15,6 @@ public class MainUIController : MonoBehaviour
     public List<GameObject> enabledPanels = new List<GameObject>();
     public List<GameObject> buttonsToDisable = new List<GameObject>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
-
-    public GameObject horizonCameraControls;
 
     private DataController dataController;
     private SnapshotsController snapshotsController;
@@ -175,6 +172,7 @@ public class MainUIController : MonoBehaviour
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        
         positionActivePanels();
     }
     
@@ -232,18 +230,7 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
-#if !UNITY_ANDROID
-        if (horizonCameraControls != null)
-        {
-            bool show = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ||
-                        SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
-            horizonCameraControls.SetActive(show);
-            if (show)
-            {
-                horizonCameraControls.GetComponent<UIControlCamera>().horizonCam = Camera.main.transform;
-            }
-        }
-        #endif
+
     }
 
     // Update is called once per frame

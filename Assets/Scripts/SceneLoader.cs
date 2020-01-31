@@ -16,6 +16,8 @@ public class SceneLoader : MonoBehaviour
     private GameObject defaultEventSystem;
 
     private GameObject vrCamera;
+    
+    public GameObject horizonCameraControls;
     public void SetupCameras()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
@@ -125,6 +127,16 @@ public class SceneLoader : MonoBehaviour
             mainCam.tag = "MainCamera";
             mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             mainCam.GetComponent<Camera>().backgroundColor = Color.black;
+        }
+        if (horizonCameraControls != null)
+        {
+            bool show = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ||
+                        SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
+            horizonCameraControls.SetActive(show);
+            if (show)
+            {
+                horizonCameraControls.GetComponent<UIControlCamera>().cameraContainer = Camera.main.transform;
+            }
         }
     }
 }

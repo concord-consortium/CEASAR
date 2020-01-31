@@ -1,16 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIControlCamera : MonoBehaviour
 {
     Camera mainCam;
-    public Transform horizonCam;
+    public Transform cameraContainer;
 
     // Start is called before the first frame update
     void Start()
     {
         mainCam = Camera.main;
+    
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        mainCam = Camera.main;
+        if (mainCam.transform.parent)
+        {
+            cameraContainer = mainCam.transform.parent;
+        }
+        else
+        {
+            cameraContainer = mainCam.transform;
+        }
     }
 
     // Update is called once per frame
@@ -34,7 +56,10 @@ public class UIControlCamera : MonoBehaviour
     // Rotate parent left/right
     public void LookLeftRight(float speed)
     {
-        if (horizonCam) horizonCam.transform.Rotate(Vector3.up, speed * Time.deltaTime, Space.World);
+        if (cameraContainer == null && mainCam.transform.parent)
+            cameraContainer = mainCam.transform.parent;
+        cameraContainer.transform.Rotate(Vector3.up, speed * Time.deltaTime, Space.World);
+
     }
 
 }
