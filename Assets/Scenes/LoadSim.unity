@@ -167,12 +167,12 @@ PrefabInstance:
     - target: {fileID: 4033858752995139617, guid: f4bb7c6062d7543a186eef6da1c06eae,
         type: 3}
       propertyPath: m_Name
-      value: NextButton (1)
+      value: RestartButton
       objectReference: {fileID: 0}
     - target: {fileID: 4033858752995139617, guid: f4bb7c6062d7543a186eef6da1c06eae,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8938227003259741186, guid: f4bb7c6062d7543a186eef6da1c06eae,
         type: 3}
@@ -1607,7 +1607,7 @@ PrefabInstance:
     - target: {fileID: 4033858752995139617, guid: f4bb7c6062d7543a186eef6da1c06eae,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8938227003259741186, guid: f4bb7c6062d7543a186eef6da1c06eae,
         type: 3}
@@ -2968,7 +2968,9 @@ MonoBehaviour:
   NextButton: {fileID: 1202694147}
   FastLoginButton: {fileID: 1246524297}
   DirectionsText: {fileID: 736304512}
+  GroupLabel: {fileID: 246011450}
   NextScreen: {fileID: 2040435219}
+  Restart: {fileID: 2076861833}
 --- !u!114 &1514835426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3724,6 +3726,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2040435219}
   m_CullTransparentMesh: 0
+--- !u!1 &2076861833 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4033858752995139617, guid: f4bb7c6062d7543a186eef6da1c06eae,
+    type: 3}
+  m_PrefabInstance: {fileID: 13746148}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2099276065
 GameObject:
   m_ObjectHideFlags: 0
