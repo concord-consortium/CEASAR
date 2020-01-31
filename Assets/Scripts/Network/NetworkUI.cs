@@ -11,7 +11,6 @@ public class NetworkUI : MonoBehaviour
     public GameObject disconnectButton;
     public Button randomizeUsernameButton;
     public GameObject usersPanel;
-    public GameObject smallOrangeButtonPrefab;
     public GameObject localButton;
     public GameObject webButton;
     public GameObject devButton;

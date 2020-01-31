@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {    
-    void Start()
+    void OnEnable()
     {
         UpdateButtons();
         SceneManager.sceneLoaded += OnSceneLoaded;
