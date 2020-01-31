@@ -46,7 +46,7 @@ public class NetworkController : MonoBehaviour
         set { networkUI.ConnectionStatusText = value; }
     }
 
-    public bool useDev = true;
+    public bool useDev = false;
  
     // Need this so the network UI persists across scenes
     private void Awake()
@@ -299,7 +299,13 @@ public class NetworkController : MonoBehaviour
             {
                 LatLng latLng = new LatLng
                     {Latitude = player.locationPin.latitude, Longitude = player.locationPin.longitude};
-                DateTime dt = TimeConverter.JulianToCalendarDate(player.locationPin.datetime);
+                DateTime dt = DateTime.UtcNow;
+                if (player.locationPin != null )
+                {
+                    Debug.Log("Player joined with locationPin time: " + player.locationPin.datetime);
+                    dt = TimeConverter.EpochTimeToDate(player.locationPin.datetime);
+                }
+
                 Debug.LogWarning(dt + " " + player.locationPin.datetime);
                 interactionController.AddOrUpdatePin(latLng, playerColor, player.username, dt,
                     false, false);
@@ -386,9 +392,9 @@ public class NetworkController : MonoBehaviour
     {
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
-    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime)
+    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime, Vector3 cameraRotationEuler)
     {
-        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime);
+        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime, cameraRotationEuler);
     }
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
     {
@@ -429,4 +435,8 @@ public class NetworkController : MonoBehaviour
         SimulationEvents.GetInstance().PushPinUpdated.RemoveListener(BroadcastPinUpdated);
     }
     
+    public Player GetNetworkPlayerByName(string name)
+    {
+        return colyseusClient.GetPlayerById(name);
+    }
 }

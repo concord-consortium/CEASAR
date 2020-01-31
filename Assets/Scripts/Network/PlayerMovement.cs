@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     NetworkController network;
     public bool useLocalRotation = false;
     string sceneName = "";
+    private Transform cameraTransform;
+    private Transform cameraParentTransform;
     private void Awake()
     {
         lastPos = transform.position;
@@ -21,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (sceneName.ToLower() != "loadsim") {
+        if (sceneName != SimulationConstants.SCENE_LOAD) {
             if (lastPos != transform.position || lastRot != transform.rotation)
             {
                 // send update - no more frequently than once per second
@@ -34,10 +36,10 @@ public class PlayerMovement : MonoBehaviour
                     {
                         rot = transform.localRotation;
                     }
+                    
                     network.BroadcastPlayerMovement(transform.position, rot);
-
-
-
+                    GetCameraRotationAndUpdatePin();
+                    
                     // Log movement:
                     string movementInfo = "local player moved to P:" +
                         transform.position.ToString() + " R:" + rot.ToString();
@@ -49,6 +51,34 @@ public class PlayerMovement : MonoBehaviour
                     lastSend = Time.time;
                 }
             }
+        }
+    }
+
+    public void GetCameraRotationAndUpdatePin()
+    {
+        if (sceneName == SimulationConstants.SCENE_HORIZON)
+        {
+#if !UNITY_ANDROID
+            if (cameraTransform == null)
+            {
+                cameraTransform = Camera.main.transform;
+            }
+            if (cameraParentTransform == null)
+            {
+                cameraParentTransform = cameraTransform.parent;
+            }
+#else
+                        if (cameraTransform == null)
+                        {
+                            cameraTransform = Camera.main.transform;
+                        }
+                        if (cameraParentTransform == null)
+                        {
+                            cameraParentTransform = cameraTransform;
+                        }
+#endif
+            Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraParentTransform.rotation.eulerAngles.y, 0);
+            SimulationEvents.GetInstance().PushPinUpdated.Invoke(SimulationManager.GetInstance().Currentlocation, SimulationManager.GetInstance().CurrentSimulationTime, cameraRotation);
         }
     }
 }

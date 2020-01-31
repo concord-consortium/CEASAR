@@ -17,7 +17,7 @@ public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]
 public class PushPinSelectedEvent : UnityEvent<LatLng, DateTime> { }
 [System.Serializable]
-public class PushPinUpdatedEvent : UnityEvent<LatLng, DateTime> { }
+public class PushPinUpdatedEvent : UnityEvent<LatLng, DateTime, Vector3> { }
 [System.Serializable]
 public class DrawModeEvent: UnityEvent<bool> { }
 [System.Serializable]

@@ -273,7 +273,13 @@ public class InteractionController : MonoBehaviour
             manager.Currentlocation = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
 
-            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime);
+            // TODO: Change this to use a SimulationManager static instead of looking up movement
+            PlayerMovement playerMovement = FindObjectOfType<PlayerMovement>();
+            if (playerMovement != null)
+            {
+                playerMovement.GetCameraRotationAndUpdatePin();
+            }
+            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime, Vector3.zero);
             if (broadcast)
             {
                 // this can cause a feedback loop if we're merely moving the pin in response to a location change
@@ -336,5 +342,4 @@ public class InteractionController : MonoBehaviour
             Destroy(indicatorObj);
         }
     }
-
 }

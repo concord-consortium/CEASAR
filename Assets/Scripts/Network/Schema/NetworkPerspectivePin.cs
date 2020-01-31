@@ -16,5 +16,8 @@ public class NetworkPerspectivePin : Schema {
 
 	[Type(2, "number")]
 	public float datetime = 0;
+
+	[Type(3, "ref", typeof(NetworkTransform))]
+	public NetworkTransform cameraTransform = new NetworkTransform();
 }
 
