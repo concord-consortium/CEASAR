@@ -11,7 +11,7 @@ using System.Collections;
 [RequireComponent(typeof(Camera))]
 public class GenerateSkybox : MonoBehaviour
 {
-    const int TEXTURE_SIZE = 2048;
+    const int TEXTURE_SIZE = 4096;
 
     void Update()
     {
@@ -24,12 +24,12 @@ public class GenerateSkybox : MonoBehaviour
     void Capture()
     {
         Cubemap cubemap = new Cubemap(TEXTURE_SIZE, TextureFormat.ARGB32, true);
-        cubemap.name = "StarSkyboxCubemap";
+        cubemap.name = "StarSkybox";
         GetComponent<Camera>().RenderToCubemap(cubemap);
 #if UNITY_EDITOR
         AssetDatabase.CreateAsset(
           cubemap,
-          "Assets/Textures/Skybox/StarSkyboxCubemap.cubemap"
+          "Assets/Textures/Skybox/StarSkybox.cubemap"
         );
 #endif
     }
