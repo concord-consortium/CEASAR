@@ -15,7 +15,6 @@ public class StarInfoPanel : MonoBehaviour
         if (manager.CurrentlySelectedStar == null)
         {
             starInfoText.text = "";
-            mainUIController.HidePanel("StarInfoPanel");
         }
         else if (string.IsNullOrEmpty(starInfoText.text))
         {

@@ -10621,11 +10621,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2492cb52583cff41a27ff02e8b6a8db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enabledPanels:
-  - {fileID: 1375357601579678647}
-  - {fileID: 1751077039069735242}
-  - {fileID: 2724144225927068395}
-  buttonsToDisable: []
   controlPanel: {fileID: 2724144227692342582}
   currentDateTimeText: {fileID: 6455473988152472224}
   setTimeToggle: {fileID: 2724144226941606514}
@@ -19361,7 +19356,7 @@ GameObject:
   - component: {fileID: 894451809490460472}
   m_Layer: 5
   m_Name: ButtonToggleConstellation
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19799,7 +19794,7 @@ GameObject:
   - component: {fileID: 3356669929790196576}
   m_Layer: 5
   m_Name: ButtonToggleMovement
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19941,7 +19936,7 @@ GameObject:
   - component: {fileID: 3356669929826658231}
   m_Layer: 5
   m_Name: ButtonToggleLocation
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20393,7 +20388,7 @@ GameObject:
   - component: {fileID: 9096275076939642803}
   m_Layer: 5
   m_Name: ButtonToggleDraw
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24106,7 +24101,7 @@ GameObject:
   - component: {fileID: 8250517386214083562}
   m_Layer: 5
   m_Name: ButtonToggleNetwork
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24248,7 +24243,7 @@ GameObject:
   - component: {fileID: 3412411397727337774}
   m_Layer: 5
   m_Name: ButtonToggleSnapshot
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25074,7 +25069,7 @@ GameObject:
   - component: {fileID: 4889853090718717061}
   m_Layer: 5
   m_Name: ButtonToggleDate
-  m_TagString: Untagged
+  m_TagString: ToggleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25362,12 +25357,6 @@ PrefabInstance:
 --- !u!224 &1375357601579678646 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-    type: 3}
-  m_PrefabInstance: {fileID: 2724144227769456519}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1375357601579678647 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
     type: 3}
   m_PrefabInstance: {fileID: 2724144227769456519}
   m_PrefabAsset: {fileID: 0}

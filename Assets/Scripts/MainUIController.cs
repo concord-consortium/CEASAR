@@ -12,10 +12,13 @@ public class MainUIController : MonoBehaviour
     private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
     private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
 
-    public List<GameObject> enabledPanels = new List<GameObject>();
-    public List<GameObject> buttonsToDisable = new List<GameObject>();
+    private Dictionary<string, List<GameObject>> enabledPanels = new Dictionary<string, List<GameObject>>();
+    private Dictionary<string, List<GameObject>> buttonsToDisable = new Dictionary<string, List<GameObject>>();
     private Dictionary<string, GameObject> allPanels = new Dictionary<string, GameObject>();
-
+    private string _currentSceneName
+    {
+        get { return SceneManager.GetActiveScene().name; }
+    }
     private DataController dataController
     {
         get {
@@ -175,6 +178,46 @@ public class MainUIController : MonoBehaviour
         // Listen to any relevant events
         events.LocationChanged.AddListener(updateLocationPanel);
         
+        
+        // Setup panels for each scene
+        List<GameObject> horizonPanels = new List<GameObject>();
+        foreach (string panelName in SimulationConstants.PANELS_HORIZON.Concat(SimulationConstants.PANELS_ALWAYS))
+        {
+            horizonPanels.Add(GameObject.Find(panelName));
+        }
+        List<GameObject> starsPanels = new List<GameObject>();
+        foreach (string panelName in SimulationConstants.PANELS_STARS.Concat(SimulationConstants.PANELS_ALWAYS))
+        {
+            starsPanels.Add(GameObject.Find(panelName));
+        }
+        List<GameObject> earthPanels = new List<GameObject>();
+        foreach (string panelName in SimulationConstants.PANELS_EARTH.Concat(SimulationConstants.PANELS_ALWAYS))
+        {
+            earthPanels.Add(GameObject.Find(panelName));
+        }
+        enabledPanels.Add(SimulationConstants.SCENE_HORIZON, horizonPanels);
+        enabledPanels.Add(SimulationConstants.SCENE_EARTH, earthPanels);
+        enabledPanels.Add(SimulationConstants.SCENE_STARS, starsPanels);
+
+        List<GameObject> horizonToggleButtonsToDisable = new List<GameObject>();
+        foreach (string toggleButton in SimulationConstants.BUTTONS_HORIZON)
+        {
+            horizonToggleButtonsToDisable.Add(GameObject.Find(toggleButton));
+        }
+        List<GameObject> earthToggleButtonsToDisable = new List<GameObject>();
+        foreach (string toggleButton in SimulationConstants.BUTTONS_EARTH)
+        {
+            earthToggleButtonsToDisable.Add(GameObject.Find(toggleButton));
+        }
+        List<GameObject> starsToggleButtonsToDisable = new List<GameObject>();
+        foreach (string toggleButton in SimulationConstants.BUTTONS_STARS)
+        {
+            starsToggleButtonsToDisable.Add(GameObject.Find(toggleButton));
+        }
+        buttonsToDisable.Add(SimulationConstants.SCENE_HORIZON, horizonToggleButtonsToDisable);
+        buttonsToDisable.Add(SimulationConstants.SCENE_EARTH, earthToggleButtonsToDisable);
+        buttonsToDisable.Add(SimulationConstants.SCENE_STARS, starsToggleButtonsToDisable);
+        
         positionActivePanels();
         
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -186,12 +229,12 @@ public class MainUIController : MonoBehaviour
     
     public void AddPanel(GameObject panel)
     {
-        if (!enabledPanels.Contains(panel)) enabledPanels.Add(panel);
+        if (!enabledPanels[_currentSceneName].Contains(panel)) enabledPanels[_currentSceneName].Add(panel);
         positionActivePanels();
     }
     public void RemovePanel(GameObject panel)
     {
-        if (enabledPanels.Contains(panel)) enabledPanels.Remove(panel);
+        if (enabledPanels[_currentSceneName].Contains(panel)) enabledPanels[_currentSceneName].Remove(panel);
         positionActivePanels();
     }
 
@@ -204,6 +247,7 @@ public class MainUIController : MonoBehaviour
         {
             t.gameObject.SetActive(false);
         }
+
         // UI sub-panels are added to the enabledPanels list and then ordered and positioned
         // vertically starting at the bottom of the Main UI panel (add or remove from list to
         // enable or disable)
@@ -215,7 +259,7 @@ public class MainUIController : MonoBehaviour
         for (int i = allPanels.Count - 1; i >= 0; i--)
         {
             GameObject go = allPanels.Values.ToArray()[i];
-            if (enabledPanels.Contains(go))
+            if (enabledPanels[_currentSceneName].Contains(go))
             {
                 go.SetActive(true);
                 RectTransform goRect = go.GetComponent<RectTransform>();
@@ -233,12 +277,16 @@ public class MainUIController : MonoBehaviour
         targetPosition = initialPosition;
         
         // buttons
-        foreach (GameObject buttonToDisable in buttonsToDisable) 
+        foreach (GameObject toggleButton in GameObject.FindGameObjectsWithTag("ToggleButton"))
+        {
+            toggleButton.GetComponent<Button>().enabled = true;
+            toggleButton.GetComponent<Image>().color = Color.white;
+        }
+        foreach (GameObject buttonToDisable in buttonsToDisable[_currentSceneName]) 
         {
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
-
     }
 
     // Update is called once per frame
@@ -274,10 +322,11 @@ public class MainUIController : MonoBehaviour
 
     public void TogglePanel(string panelName)
     {
+        
         GameObject togglePanelObject = allPanels[panelName];
         if (togglePanelObject != null)
         {
-            if (enabledPanels.Contains(togglePanelObject))
+            if (enabledPanels[_currentSceneName].Contains(togglePanelObject))
                 RemovePanel(togglePanelObject);
             else
                 AddPanel(togglePanelObject);
@@ -288,7 +337,7 @@ public class MainUIController : MonoBehaviour
         GameObject togglePanelObject = allPanels[panelName];
         if (togglePanelObject != null)
         {
-            if (!enabledPanels.Contains(togglePanelObject))
+            if (!enabledPanels[_currentSceneName].Contains(togglePanelObject))
                 AddPanel(togglePanelObject);
         }
     }
@@ -297,7 +346,7 @@ public class MainUIController : MonoBehaviour
         GameObject togglePanelObject = allPanels[panelName];
         if (togglePanelObject != null)
         {
-            if (enabledPanels.Contains(togglePanelObject))
+            if (enabledPanels[_currentSceneName].Contains(togglePanelObject))
                 RemovePanel(togglePanelObject);
         }
     }

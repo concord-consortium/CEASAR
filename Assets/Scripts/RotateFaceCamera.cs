@@ -17,7 +17,6 @@ public class RotateFaceCamera : MonoBehaviour
         if (!mainCam)
         {
             mainCam = Camera.main;
-            Debug.LogWarning("Camera: " + mainCam.gameObject.name);
         }
 
         if (mainCam)
