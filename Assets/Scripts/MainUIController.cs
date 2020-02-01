@@ -555,11 +555,36 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    
+    public void ZoomOut()
+    {
+        GameObject camObject = Camera.main.gameObject;
+        if (camObject.GetComponent<AnimateCamera>() != null)
+        {
+            camObject.GetComponent<AnimateCamera>().ZoomOut();
+        }
+    }
+    public void ZoomIn()
+    {
+        GameObject camObject = Camera.main.gameObject;
+        if (camObject.GetComponent<AnimateCamera>() != null)
+        {
+            camObject.GetComponent<AnimateCamera>().ZoomIn();
+        }
+    }
+    
     public void Reset()
     {
         sphere.transform.position = new Vector3(0, 0, 0f);
         sphere.transform.localScale = new Vector3(1f, 1f, 1f);
         sphere.transform.rotation = Quaternion.identity;
+        GameObject camObject = Camera.main.gameObject;
+        if (camObject.GetComponent<AnimateCamera>() != null)
+        {
+            camObject.GetComponent<AnimateCamera>().ZoomIn();
+        }
+
+        rotating = false;
     }
 #endregion
 
