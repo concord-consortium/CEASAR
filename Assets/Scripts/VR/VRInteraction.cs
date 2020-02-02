@@ -254,9 +254,9 @@ public class VRInteraction : MonoBehaviour
     }
     void toggleMenu()
     {
-        if (leftMenuTrigger())
+        if (menuButton())
         {
-            if (mainUI == null) mainUI = GameObject.Find("MainUI");
+            if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
             if (mainUI)
             {
                 positionCanvasTransformRelativeToOrigin(mainUI, 6f);
@@ -353,6 +353,10 @@ public class VRInteraction : MonoBehaviour
     bool rightMenuTrigger()
     {
         return (OVRInput.Get(OVRInput.Button.Four));
+    }
+    bool menuButton()
+    {
+        return leftMenuTrigger() || rightMenuTrigger();
     }
 
     void setDrawStartPoint()

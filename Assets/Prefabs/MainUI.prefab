@@ -9668,7 +9668,7 @@ GameObject:
   - component: {fileID: 41853685691157846}
   m_Layer: 5
   m_Name: MainUI
-  m_TagString: Untagged
+  m_TagString: MainUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23166,16 +23166,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2724144227692342583}
     m_Modifications:
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_Name
-      value: SceneSelectionPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -23280,6 +23270,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_Name
+      value: SceneSelectionPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

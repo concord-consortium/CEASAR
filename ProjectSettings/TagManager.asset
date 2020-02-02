@@ -12,6 +12,7 @@ TagManager:
   - Annotation
   - pushpin
   - ToggleButton
+  - MainUI
   layers:
   - Default
   - TransparentFX
