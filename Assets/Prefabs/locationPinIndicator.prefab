@@ -106,7 +106,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe98f5ae2ceb4ab6be0ad5eaef75efd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  latitude: 0
-  longitude: 0
   highlightPinMaterial: {fileID: 2100000, guid: 18e338f4ae39649b8a9ef66df5224ad0,
     type: 2}

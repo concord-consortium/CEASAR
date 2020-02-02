@@ -228,7 +228,7 @@ public class InteractionController : MonoBehaviour
         if (earth)
         {
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
-            float radius = size.x / 2;
+            float radius = (size.x / 2) - 0.1f;
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
             earthRelativePos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
