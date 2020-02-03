@@ -9,7 +9,6 @@ public class NetworkUI : MonoBehaviour
 {
     // UI Buttons are attached through Unity Inspector
     public GameObject disconnectButton;
-    public Button randomizeUsernameButton;
     public GameObject usersPanel;
     public GameObject localButton;
     public GameObject webButton;
@@ -18,19 +17,23 @@ public class NetworkUI : MonoBehaviour
     public TMPro.TMP_Text disconnectButtonText;
     public TMPro.TMP_Text connectionStatusText;
     public TMPro.TMP_Text usernameText;
+    public Image usernamePin;
     public TMPro.TMP_Text groupNameText;
     public TMPro.TMP_Text debugMessages;
 
     private Dictionary<string, GameObject> playerList;
-
-    public string DisconnectButtonText {
-        set {
-            if (disconnectButtonText) disconnectButtonText.text = value;
-        }
+    private bool isConnecting = false;
+    private SimulationManager manager
+    {
+        get { return SimulationManager.GetInstance(); }
     }
+    
     public string ConnectionStatusText {
         set {
-            if (connectionStatusText) connectionStatusText.text = value;
+            if (connectionStatusText)
+            {
+                connectionStatusText.text = value;
+            }
         }
     }
 
@@ -42,17 +45,17 @@ public class NetworkUI : MonoBehaviour
 
     public void RandomizeUsername()
     {
-        SimulationManager.GetInstance().LocalPlayer.Randomize();
-        UserRecord user = SimulationManager.GetInstance().LocalPlayer;
+        manager.LocalPlayer.Randomize();
+        UserRecord user = manager.LocalPlayer;
         usernameText.text = user.Username;
-        usernameText.color = user.color;
+        usernamePin.color = user.color;
     }
 
     public void Start()
     {
-        UserRecord user = SimulationManager.GetInstance().LocalPlayer;
+        UserRecord user = manager.LocalPlayer;
         usernameText.text = user.Username;
-        usernameText.color = user.color;
+        usernamePin.color = user.color;
         groupNameText.text = user.group;
         groupNameText.color = Color.white;
         playerList = new Dictionary<string, GameObject>();
@@ -61,10 +64,9 @@ public class NetworkUI : MonoBehaviour
 
     private void OnEnable()
     {
-        playerList = new Dictionary<string, GameObject>();
+        // playerList = new Dictionary<string, GameObject>();
         SimulationEvents.GetInstance().PlayerJoined.AddListener(AddPlayer);
         SimulationEvents.GetInstance().PlayerLeft.AddListener(RemovePlayer);
-        NetworkController networkController = FindObjectOfType<NetworkController>();
     }
 
     private void OnDisable()
@@ -73,6 +75,41 @@ public class NetworkUI : MonoBehaviour
         SimulationEvents.GetInstance().PlayerLeft.RemoveListener(RemovePlayer);
     }
 
+    void Update()
+    {
+
+        if (isConnecting)
+        {
+            bool networkIsConnecting =
+                manager.NetworkControllerComponent && manager.NetworkControllerComponent.IsConnecting;
+            if (networkIsConnecting && localButton.activeInHierarchy)
+            {
+                localButton.SetActive(false);
+                webButton.SetActive(false);
+                devButton.SetActive(false);
+            }
+            // Only update UI while we're attempting to connect to hide the connection buttons and prevent reclicks
+            if (!networkIsConnecting) isConnecting = false;
+        } 
+    }
+    public void ConnectedStatusUpdate(bool isConnected)
+    {
+        if (isConnected)
+        {
+            disconnectButton.SetActive(true);
+            localButton.SetActive(false);
+            webButton.SetActive(false);
+            devButton.SetActive(false);
+        }
+        else
+        {
+            disconnectButton.SetActive(false);
+            localButton.SetActive(true);
+            webButton.SetActive(true);
+            devButton.SetActive(true);
+        }
+    }
+    
     private void connectButtons()
     {
         if(localButton != null)
@@ -101,33 +138,36 @@ public class NetworkUI : MonoBehaviour
 
     public void HandleConnectClick(ServerRecord server)
     {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
+        NetworkController networkController = manager.NetworkControllerComponent;
         Debug.Log($"Connecting to #{server.name}");
 
         if (!networkController.IsConnected)
         {
-            networkController.ConnectToServer(server.address);
-            if (randomizeUsernameButton != null) randomizeUsernameButton.enabled = false;
+            // Only allow connection attempt if we're not currently waiting on a connect operation
+            if (!networkController.IsConnecting)
+            {
+                // monitor connection locally for UI update
+                isConnecting = true;
+                networkController.ConnectToServer(server.address);
+            }
         }
         else
         {
             networkController.Disconnect();
-            randomizeUsernameButton.enabled = true;
         }
         
     }
 
     public void HandleDisconnect()
     {
-        NetworkController networkController = FindObjectOfType<NetworkController>();
+        NetworkController networkController = manager.NetworkControllerComponent;
         networkController.Disconnect();
-        randomizeUsernameButton.enabled = true;
     }
 
     public string Username {
         set { 
             usernameText.text = value;
-            usernameText.color = SimulationManager.GetInstance().LocalPlayerColor;
+            usernamePin.color = manager.LocalPlayerColor;
         }
     }
 
@@ -145,7 +185,6 @@ public class NetworkUI : MonoBehaviour
             TMPro.TextMeshProUGUI label = playerLabel.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             Image pin = playerLabel.transform.Find("pin").GetComponent<Image>();
             label.text = name;
-            label.color = UserRecord.GetColorForUsername(name);
             pin.color = UserRecord.GetColorForUsername(name);
             Button b = playerLabel.GetComponent<Button>();
             b.onClick.AddListener( () => PlayerLabelClicked(name));
@@ -190,52 +229,47 @@ public class NetworkUI : MonoBehaviour
     {
         string pinName = $"{SimulationConstants.PIN_PREFIX}{username}";
         Debug.Log($"Push Pin clicked for {username} / {pinName}");
-        GameObject pinObject = GameObject.Find(pinName);
-        if (pinObject != null)
+        
+        Pushpin pin = manager.RemotePlayerPins[username];
+        Debug.Log(pin.ToString());
+
+        // Set simulation time and location;
+        manager.UseCustomSimulationTime = true;
+        manager.CurrentSimulationTime = pin.SelectedDateTime;
+        manager.Currentlocation = pin.Location;
+        
+        // NP I thought that maybe just triggering this would do the trick, but no:
+        // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);
+
+        // Switch to Horizon view
+        if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
         {
-            PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
-            Pushpin pin = pinComponent.pin;
-            Debug.Log(pin.ToString());
-            SimulationManager manager = SimulationManager.GetInstance();
-
-            // Set simulation time and location;
-            manager.UseCustomSimulationTime = true;
-            manager.CurrentSimulationTime = pin.SelectedDateTime;
-            manager.Currentlocation = pin.Location;
-
-
-            // NP I thought that maybe just triggering this would do the trick, but no:
-            // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);
-
-            // Switch to Horizon view
-            if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
+            SceneManager.LoadScene(SimulationConstants.SCENE_HORIZON);
+        }
+        else
+        {
+            NetworkController networkController = manager.NetworkControllerComponent;
+            Player updatedPlayer = networkController.GetNetworkPlayerByName(username);
+            if (updatedPlayer != null && updatedPlayer.locationPin.cameraTransform != null)
             {
-                SceneManager.LoadScene(SimulationConstants.SCENE_HORIZON);
-            }
-            else
-            {
-                NetworkController networkController = FindObjectOfType<NetworkController>();
-                Player updatedPlayer = networkController.GetNetworkPlayerByName(username);
-                if (updatedPlayer != null && updatedPlayer.locationPin.cameraTransform != null)
-                {
-                    Quaternion remotePlayerCameraRotationRaw =
-                        Utils.NetworkV3ToQuaternion(updatedPlayer.locationPin.cameraTransform.rotation);
-                    Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
-                    // for desktop / non-VR:
-                    // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
+                Quaternion remotePlayerCameraRotationRaw =
+                    Utils.NetworkV3ToQuaternion(updatedPlayer.locationPin.cameraTransform.rotation);
+                Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
+                // for desktop / non-VR:
+                // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
 
 #if !UNITY_ANDROID
-                    Transform mainCameraTransform = Camera.main.transform;
-                    mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
-                    mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
+                Transform mainCameraTransform = Camera.main.transform;
+                mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
+                mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
 #else
-                    GameObject vrCameraRig = GameObject.Find("VRCameraRig");
-                    if (vrCameraRig != null){
-                      vrCameraRig.transform.rotation = Quaternion.Euler(0, rot.y, 0);
-                    }
-#endif
+                GameObject vrCameraRig = GameObject.Find("VRCameraRig");
+                if (vrCameraRig != null){
+                  vrCameraRig.transform.rotation = Quaternion.Euler(0, rot.y, 0);
                 }
+#endif
             }
         }
+        
     } 
 }

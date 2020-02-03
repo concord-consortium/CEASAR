@@ -62,6 +62,13 @@ public class GroupSelectionWizard : MonoBehaviour
             Button b = FastLoginButton.GetComponent<Button>();
             TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             tgui.text = $"{userRecord.Username} {userRecord.group}";
+            
+            if (!string.IsNullOrEmpty(userRecord.group))
+            {
+                TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
+                textMesh.text = userRecord.group;
+            }
+            
             b.onClick.AddListener(LaunchScene);
         }
         else

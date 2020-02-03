@@ -41,6 +41,10 @@ public class NetworkController : MonoBehaviour
     {
         get { return colyseusClient != null && colyseusClient.IsConnected; }
     }
+    public bool IsConnecting
+    {
+        get { return colyseusClient != null && colyseusClient.IsConnecting; }
+    }
 
     public string ServerStatusMessage {
         set { networkUI.ConnectionStatusText = value; }
@@ -122,21 +126,7 @@ public class NetworkController : MonoBehaviour
         networkUI = FindObjectOfType<NetworkUI>();
         if(networkUI)
         {
-            if (IsConnected)
-            {
-                networkUI.disconnectButton.SetActive(true);
-                networkUI.localButton.SetActive(false);
-                networkUI.webButton.SetActive(false);
-                networkUI.devButton.SetActive(false);
-            }
-            else
-            {
-                networkUI.disconnectButton.SetActive(false);
-                networkUI.localButton.SetActive(true);
-                networkUI.webButton.SetActive(true);
-                networkUI.devButton.SetActive(true);
-            }
-            
+            networkUI.ConnectedStatusUpdate(IsConnected);
             updatePlayerList();
         }
         

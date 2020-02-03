@@ -29,6 +29,10 @@ public class ColyseusClient : MonoBehaviour
 
     private float lastUpdate;
     private bool connecting = false;
+    public bool IsConnecting
+    {
+        get { return connecting; }
+    }
     public bool IsConnected
     {
         get { return client != null && room != null; }
@@ -97,7 +101,7 @@ public class ColyseusClient : MonoBehaviour
             localPlayerName = "";
         }
         client = null;
-        networkController.ServerStatusMessage = "Disconnected";
+        networkController.ServerStatusMessage = "";
     }
 
     async Task JoinRoom(string roomName)

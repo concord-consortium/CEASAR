@@ -381,7 +381,6 @@ public class MainUIController : MonoBehaviour
         // This is now used to change the view in Horizon mode to your current pin
         // Or to take you to the horizon for your current pin from Earth view
         Pushpin pin = manager.LocalUserPin;
-        Debug.Log(pin);
         manager.UseCustomSimulationTime = true;
         manager.CurrentSimulationTime = pin.SelectedDateTime;
         manager.Currentlocation = pin.Location;

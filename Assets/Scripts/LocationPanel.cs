@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class LocationPanel : MonoBehaviour
 {
     public bool showLocationCoordinates = false;
-    
+    public bool showCompass = false;
     public TextMeshProUGUI latLongInfo;
     void Start()
     {
@@ -18,7 +18,7 @@ public class LocationPanel : MonoBehaviour
             UpdateLocationPanel(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
         }
 
-        latLongInfo.enabled = SceneManager.GetActiveScene().name == "EarthInteraction" || showLocationCoordinates;
+        latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
     }
     public void UpdateLocationPanel(LatLng latLng, string description)
     {
@@ -43,5 +43,6 @@ public class LocationPanel : MonoBehaviour
             showLocationCoordinates = !showLocationCoordinates;
             latLongInfo.enabled = showLocationCoordinates;
         }
+
     }
 }

@@ -157,6 +157,14 @@ public class SimulationManager
             UserHasSetLocation = true;
         }
     }
+
+    private Dictionary<string, Pushpin> remotePlayerPins = new Dictionary<string, Pushpin>();
+
+    public Dictionary<string, Pushpin> RemotePlayerPins
+    {
+        get { return remotePlayerPins; }
+        set { remotePlayerPins = value; }
+    }
     
     public float GetRelativeMagnitude(float starMagnitude)
     {

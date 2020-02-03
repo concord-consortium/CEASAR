@@ -299,7 +299,8 @@ public class InteractionController : MonoBehaviour
                 remotePin = getPinObject(pinName);
                 remotePins.Add(remotePin);
             }
-            updatePinObject(remotePin, latLng, pinDateTime, pinName, c);
+            Pushpin p = updatePinObject(remotePin, latLng, pinDateTime, pinName, c);
+            manager.RemotePlayerPins[pinOwner] = p;
         }
         
     }
