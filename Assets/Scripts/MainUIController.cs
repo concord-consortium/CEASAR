@@ -140,7 +140,7 @@ public class MainUIController : MonoBehaviour
             allPanels.Add(t.name, t.gameObject);
         }
         
-        snapshotsController = FindObjectOfType<SnapshotsController>();
+        snapshotsController = GetComponent<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
@@ -289,7 +289,7 @@ public class MainUIController : MonoBehaviour
         }
         if (!snapshotsController)
         {
-            snapshotsController = FindObjectOfType<SnapshotsController>();
+            snapshotsController = GetComponent<SnapshotsController>();
             if (snapshotsController != null) snapshotsController.Init();
         }
     }
@@ -621,17 +621,14 @@ public class MainUIController : MonoBehaviour
 
     public void CreateSnapshot()
     {
-        if (dataController)
-        {
-            // get values from datacontroller
-            DateTime snapshotDateTime = manager.CurrentSimulationTime;
-            String location = dataController.currentCity.Name;
-            LatLng locationCoordinates = manager.Currentlocation;
-            // add a snapshot to the controller
-            snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
-            // add snapshot to dropdown list
-            AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
-        }
+        // get values from simulation manager
+        DateTime snapshotDateTime = manager.CurrentSimulationTime;
+        String location = manager.CurrentLocationName;
+        LatLng locationCoordinates = manager.Currentlocation;
+        // add a snapshot to the controller
+        snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
+        // add snapshot to dropdown list
+        AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
     public void AddSnapshotToGrid(Snapshot snapshot)
@@ -642,31 +639,12 @@ public class MainUIController : MonoBehaviour
 
     public void RestoreSnapshot(Snapshot snapshot)
     {
-        if (!snapshotsController)
-        {
-            snapshotsController = FindObjectOfType<SnapshotsController>();
-            snapshotsController.Init();
-        }
         int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
         // user restores snapshot from UI
         Snapshot snap = snapshotsController.snapshots[snapshotIndex];
         Debug.Log(snap.dateTime + " " + snap.location + " " + snap.locationCoordinates);
         
         RestoreSnapshotOrPin(snap.dateTime, snap.location, snap.locationCoordinates);
-        //
-        // userYear = snapshotDateTime.Year;
-        // userDay = snapshotDateTime.DayOfYear;
-        // userHour = snapshotDateTime.Hour;
-        // userMin = snapshotDateTime.Minute;
-        // // Update the current date/time in simulation manager
-        // CalculateUserDateTime();
-        //
-        // // broadcast the change of location
-        // events.LocationSelected.Invoke(location);
-        // setTimeToggle.isOn = true;
-        // yearSlider.value = userYear;
-        // daySlider.value = userDay;
-        // timeSlider.value = userHour * 60 + userMin;
     }
 
     public void RestoreSnapshotOrPin(DateTime dt, string locationName, LatLng latLng)

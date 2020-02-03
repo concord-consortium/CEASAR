@@ -9666,6 +9666,7 @@ GameObject:
   - component: {fileID: 2724144226800310060}
   - component: {fileID: 3762703317251944033}
   - component: {fileID: 41853685691157846}
+  - component: {fileID: 4698325232804886158}
   m_Layer: 5
   m_Name: MainUI
   m_TagString: MainUI
@@ -9907,6 +9908,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4698325232804886158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2724144226800310059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 031f320b9d4e76645aee2dc87daf9554, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2724144226802008455
 GameObject:
   m_ObjectHideFlags: 0
@@ -12238,8 +12251,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2724144226661976861}
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.9999997
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23166,6 +23179,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2724144227692342583}
     m_Modifications:
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_Name
+      value: SceneSelectionPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3952008515243682865, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -23270,16 +23293,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_Name
-      value: SceneSelectionPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
