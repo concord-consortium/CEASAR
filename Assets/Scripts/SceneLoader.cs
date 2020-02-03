@@ -18,6 +18,14 @@ public class SceneLoader : MonoBehaviour
     private GameObject vrCamera;
     
     private GameObject cameraControlUI;
+
+    private void Start()
+    {
+        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_LOAD)
+        {
+            SetupCameras();
+        }
+    }
     public void SetupCameras()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
@@ -109,6 +117,10 @@ public class SceneLoader : MonoBehaviour
         if (currentScene == "Horizon")
         {
             vrCamera.transform.position = new Vector3(0, 2, 0);
+        }
+        if (currentScene == "Stars")
+        {
+            vrCamera.transform.position = new Vector3(0, 0, 0);
         }
         GameObject avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
         if (avatar != null)

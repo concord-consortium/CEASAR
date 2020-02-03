@@ -11,6 +11,8 @@ TagManager:
   - Earth
   - Annotation
   - pushpin
+  - ToggleButton
+  - MainUI
   layers:
   - Default
   - TransparentFX

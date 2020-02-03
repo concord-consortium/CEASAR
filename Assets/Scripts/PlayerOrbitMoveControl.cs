@@ -17,6 +17,7 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     public float distanceMin = 10f;
     public float distanceMax = 40f;
 
+    private int layerMaskEarth;
     
     float x = 0.0f;
     float y = 0.0f;
@@ -24,6 +25,8 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        layerMaskEarth = LayerMask.GetMask("Earth");
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
@@ -50,7 +53,7 @@ public class PlayerOrbitMoveControl : MonoBehaviour
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
             RaycastHit hit;
-            if (Physics.Linecast(target.position, transform.position, out hit))
+            if (Physics.Linecast(target.position, transform.position, out hit, layerMaskEarth))
             {
                 distance -= hit.distance;
             }
