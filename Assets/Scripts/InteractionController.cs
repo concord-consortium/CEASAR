@@ -122,7 +122,7 @@ public class InteractionController : MonoBehaviour
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
                 // maintain a dict of stars by ID for easier lookups. 
-                manager.DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar();
+                manager.DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar(false, UserRecord.GetColorForUsername(updatedPlayer.username));
                 break;
             case "locationpin":
                 // add / move player pin

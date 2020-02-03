@@ -27,6 +27,14 @@ public class Constellation : MonoBehaviour
         constellationConnections.Add(conn);
     }
 
+    public void Highlight(bool highlight, Color userHighlightColor)
+    {
+        // foreach (GameObject starObject in stars)
+        foreach (GameObject connectionObject in constellationLines)
+        {
+            Utils.SetObjectColor(connectionObject, highlight ? userHighlightColor : neutralColor);
+        }
+    }
     public void Highlight(bool highlight)
     {
         foreach (GameObject starObject in stars)

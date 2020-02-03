@@ -287,6 +287,11 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
+        if (!snapshotsController)
+        {
+            snapshotsController = FindObjectOfType<SnapshotsController>();
+            if (snapshotsController != null) snapshotsController.Init();
+        }
     }
 
     // Update is called once per frame
@@ -637,6 +642,11 @@ public class MainUIController : MonoBehaviour
 
     public void RestoreSnapshot(Snapshot snapshot)
     {
+        if (!snapshotsController)
+        {
+            snapshotsController = FindObjectOfType<SnapshotsController>();
+            snapshotsController.Init();
+        }
         int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
         // user restores snapshot from UI
         Snapshot snap = snapshotsController.snapshots[snapshotIndex];

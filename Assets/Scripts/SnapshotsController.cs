@@ -6,7 +6,7 @@ using System;
 public class SnapshotsController : MonoBehaviour
 {
     public List<Snapshot> snapshots = new List<Snapshot>();
-
+    
     string locationKey
     {
         get { return SimulationConstants.SNAPSHOT_LOCATION_PREF_KEY; }
