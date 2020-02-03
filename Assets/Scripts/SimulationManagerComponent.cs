@@ -103,16 +103,16 @@ public class SimulationManagerComponent : MonoBehaviour
             sceneLoader = Instantiate(sceneLoaderPrefab);
         }
         
-        if (manager.NetworkControllerObject == null)
+        if (manager.NetworkControllerComponent == null)
         {
             if (FindObjectOfType<NetworkController>() != null)
             {
-                manager.NetworkControllerObject = FindObjectOfType<NetworkController>().gameObject;
+                manager.NetworkControllerComponent = FindObjectOfType<NetworkController>();
             }
             else
             {
                 Debug.Log("Creating new network object");
-                manager.NetworkControllerObject = Instantiate(networkControllerPrefab);
+                manager.NetworkControllerComponent = Instantiate(networkControllerPrefab).GetComponent<NetworkController>();
             }
         }
         if (manager.InteractionControllerObject == null)
@@ -177,7 +177,7 @@ public class SimulationManagerComponent : MonoBehaviour
         if (!mainUIController) 
         {
             mainUIController = Instantiate(mainUIPrefab).GetComponent<MainUIController>();
-            manager.NetworkControllerObject.GetComponent<NetworkController>().Setup();
+            manager.NetworkControllerComponent.Setup();
         } 
         sceneLoader.SetupCameras();
         

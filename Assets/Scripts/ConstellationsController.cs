@@ -52,6 +52,14 @@ public class ConstellationsController : MonoBehaviour
             constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName, lineWidth);
         }
     }
+    public void HighlightSingleConstellation(string cFullName, Color playerColor)
+    {
+        foreach (Constellation constellation in constellations)
+        {
+            constellation.Highlight(constellation.constellationNameFull == cFullName, playerColor);
+            constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName, lineWidth);
+        }
+    }
 
     public void HighlightAllConstellations(bool highlight)
     {

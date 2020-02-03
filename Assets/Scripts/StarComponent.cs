@@ -34,6 +34,18 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
     {
+        SimulationManager manager = SimulationManager.GetInstance();
+        if (manager.NetworkControllerComponent.IsConnected)
+        {
+            HandleSelectStar(broadcastToNetwork, manager.LocalPlayerColor);
+        }
+        else
+        {
+            HandleSelectStar(broadcastToNetwork, Color.white);
+        }
+    }
+    public void HandleSelectStar(bool broadcastToNetwork, Color playerColor)
+    {
         if (!mainUIController) mainUIController = FindObjectOfType<MainUIController>();
         if (!mainUIController.IsDrawing)
         {
@@ -43,7 +55,10 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             if (mainUIController && mainUIController.starInfoPanel)
             {
                 if (constellationsController)
-                    constellationsController.HighlightSingleConstellation(starData.ConstellationFullName);
+                {
+                    constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
+                }
+
                 // make sure it's visible
                 SimulationManager.GetInstance().CurrentlySelectedStar = this;
                 mainUIController.ShowPanel("StarInfoPanel");

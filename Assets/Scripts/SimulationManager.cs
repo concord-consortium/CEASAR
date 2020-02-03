@@ -35,7 +35,8 @@ public class SimulationManager
 #endif
         }
     }
-    public GameObject NetworkControllerObject;
+
+    public NetworkController NetworkControllerComponent;
     public GameObject InteractionControllerObject;
     public ServerRecord server = null;
     private GameObject celestialSphereObject;
