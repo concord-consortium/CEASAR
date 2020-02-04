@@ -277,13 +277,7 @@ public class InteractionController : MonoBehaviour
             manager.LocalUserPin = p;
             manager.CurrentLatLng = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
-
-            // // TODO: Change this to use a SimulationManager static instead of looking up movement
-            // PlayerMovement playerMovement = FindObjectOfType<PlayerMovement>();
-            // if (playerMovement != null)
-            // {
-            //     playerMovement.GetCameraRotationAndUpdatePin();
-            // }
+            
             events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime, manager.LocalPlayerLookDirection);
             if (broadcast)
             {
