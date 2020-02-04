@@ -25,6 +25,7 @@ public class Pushpin
     }
 }
 
+[Serializable]
 public struct LatLng
 {
     public float Latitude;
