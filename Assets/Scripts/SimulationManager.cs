@@ -77,6 +77,9 @@ public class SimulationManager
             Debug.Log($"User has been Changed: {LocalPlayer.Username}");
         }
     }
+
+    public Vector3 LocalPlayerLookDirection;
+    
     public Color HorizonGroundColor = Color.green;
 
     // initial setup scale
@@ -115,6 +118,7 @@ public class SimulationManager
         {
             useCustomSimTime = value;
             if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
+            localUserPin.SelectedDateTime = CurrentSimulationTime;
         }
     }
 
@@ -126,6 +130,7 @@ public class SimulationManager
         set
         {
             currentLocation = value;
+            localUserPin.Location = currentLocation;
         }
     }
 
@@ -145,7 +150,7 @@ public class SimulationManager
     }
     
     public bool UserHasSetLocation { get; private set; }
-    private Pushpin localUserPin;
+    private Pushpin localUserPin = new Pushpin();
 
     public Pushpin LocalUserPin
     {

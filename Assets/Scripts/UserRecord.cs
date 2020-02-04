@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -84,7 +85,22 @@ public class UserRecord
 
     /**************************** Static Methods *****************************/
 
-    public static List<string> GroupNames { get; } = new List<string>(NetworkController.roomNames);
+    public static List<string> groupNames = new List<string>(NetworkController.roomNames);
+
+    public static List<string> GroupNames
+    {
+        get
+        {
+            if (!ResourcesLoaded)
+            {
+                LoadTextResources();
+            }
+
+            return groupNames;
+        }
+    }
+    public static Dictionary<string, Pushpin> Groups = new Dictionary<string, Pushpin>();
+    
     private static List<string> Numbers = new List<string>("1,2,3,4,5,6,7,8,9".Split(','));
     private static List<string> colorNames;
     public static List<string> ColorNames
@@ -142,6 +158,23 @@ public class UserRecord
             colorValues.Add(color);
         }
         animalNames = new List<string>(animalList.text.Split(lineDelim, System.StringSplitOptions.RemoveEmptyEntries));
+
+        TextAsset groupList = Resources.Load("groups") as TextAsset;
+        JSONObject groups = JSONObject.Create(groupList.text);
+        
+        groupNames = groups.keys;
+        foreach (var g in groups.keys)
+        {
+            Pushpin p = new Pushpin();
+            p.Location = new LatLng
+            {
+                Latitude = groups[g].GetField("latitude").n, 
+                Longitude = groups[g].GetField("longitude").n
+            };
+            p.SelectedDateTime = DateTime.Parse(groups[g].GetField("crashdatetime").str);
+            Groups.Add(g, p);
+        }
+
         ResourcesLoaded = true;
     }
 

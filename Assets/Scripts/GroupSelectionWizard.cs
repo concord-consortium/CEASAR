@@ -85,7 +85,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void ShowGroups()
     {
         SetTitleText("Pick a Group");
-        foreach (string name in NetworkController.roomNames)
+        foreach (string name in UserRecord.GroupNames)
         {
             Button b = addButton();
             TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
@@ -184,6 +184,11 @@ public class GroupSelectionWizard : MonoBehaviour
     private void HandleGroupClick(string name)
     {
         userRecord.group = name;
+        Pushpin selectedGroupPin = UserRecord.Groups[name];
+        SimulationManager.GetInstance().Currentlocation = selectedGroupPin.Location;
+        SimulationManager.GetInstance().CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
+        SimulationManager.GetInstance().LocalUserPin = selectedGroupPin;
+        Debug.Log("User selected group " + name + " " + selectedGroupPin);
         if (GroupLabel)
         {
             TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
