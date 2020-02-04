@@ -52,7 +52,7 @@
     public static readonly string[] PANELS_HORIZON =
         {PANEL_CURRENTTIME, PANEL_DATETIME, PANEL_LOCATION, PANEL_SNAPSHOT, PANEL_NETWORK};
 
-    public static readonly string[] PANELS_EARTH = {PANEL_LOCATION, PANEL_NETWORK};
+    public static readonly string[] PANELS_EARTH = {PANEL_CURRENTTIME, PANEL_LOCATION, PANEL_NETWORK};
 
     // UI Toggle Buttons to Disable:
     public static readonly string[] BUTTONS_STARS =
