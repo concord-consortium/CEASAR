@@ -263,6 +263,7 @@ public class CCLogger
         bool devMode = SimulationManager.GetInstance().server == ServerList.Local;
         string json = JsonUtility.ToJson(this, true);
 
+        // TBD: This is really helpful right now, but might get noisy.
         Debug.Log(json);
 
         // Only log if we're on the network to reduce clutter
@@ -270,14 +271,6 @@ public class CCLogger
         {
             await postLog(json);
         }
-        // Otherwise dump it to console for inspection.
-        else
-        {
-            Debug.Log("<FAKE CC_LOGER>--------------------");
-            Debug.Log(json);
-            Debug.Log("-------------------</FAKE CC_LOGER>");
-        }
-        
     }
 
     public static void Log(string eventType, string msg)
