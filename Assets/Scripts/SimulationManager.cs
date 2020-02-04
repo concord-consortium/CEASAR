@@ -156,14 +156,25 @@ public class SimulationManager
         }
     }
 
-    private Dictionary<string, Pushpin> remotePlayerPins = new Dictionary<string, Pushpin>();
-
-    public Dictionary<string, Pushpin> RemotePlayerPins
-    {
-        get { return remotePlayerPins; }
-        set { remotePlayerPins = value; }
-    }
+    private Dictionary<string, Player> remotePlayers = new Dictionary<string, Player>();
     
+    public void AddRemotePlayer(string playerName)
+    {
+        if (!remotePlayers.ContainsKey(playerName))
+        {
+            Player p = new Player(playerName);
+            remotePlayers.Add(playerName, p);
+        }
+    }
+    public Player GetRemotePlayer(string playerName)
+    {
+        if (!remotePlayers.ContainsKey(playerName))
+        {
+            remotePlayers.Add(playerName, new Player(playerName));
+        }
+        return remotePlayers[playerName];
+    }
+
     public float GetRelativeMagnitude(float starMagnitude)
     {
         //float min = DataControllerComponent.minMag;

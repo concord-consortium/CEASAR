@@ -16,15 +16,9 @@ public class NetworkController : MonoBehaviour
     private GameObject localPlayerAvatar;
     public GameObject interactionIndicator;
 
-    public static string[] roomNames = {
-        "alpha", "beta", "gamma",
-        "delta", "epsilon", "zeta",
-        "eta", "theta", "iota"
-    };
-
     protected ColyseusClient colyseusClient;
 
-    protected IndexedDictionary<string, GameObject> remotePlayers = new IndexedDictionary<string, GameObject>();
+    protected IndexedDictionary<string, GameObject> remotePlayerAvatars = new IndexedDictionary<string, GameObject>();
 
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
@@ -80,7 +74,7 @@ public class NetworkController : MonoBehaviour
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
             OnPlayerAdd(_localNetworkPlayer);
-            foreach (string p in remotePlayers.Keys)
+            foreach (string p in remotePlayerAvatars.Keys)
             {
                 NetworkPlayer remoteNetworkPlayer = colyseusClient.GetPlayerById(p);
                 OnPlayerAdd(remoteNetworkPlayer);
@@ -201,11 +195,11 @@ public class NetworkController : MonoBehaviour
         colyseusClient.Disconnect();
         
         // Destroy player game objects
-        foreach (KeyValuePair<string, GameObject> entry in remotePlayers)
+        foreach (KeyValuePair<string, GameObject> entry in remotePlayerAvatars)
         {
             Destroy(entry.Value);
         }
-        remotePlayers.Clear();
+        remotePlayerAvatars.Clear();
         CCLogger.Log(CCLogger.EVENT_DISCONNECT, "disconnected");
         refreshUI();
     }
@@ -227,7 +221,7 @@ public class NetworkController : MonoBehaviour
     void updatePlayerList()
     {
         string listOfPlayersForDebug = "";
-        foreach (var p in remotePlayers.Keys)
+        foreach (var p in remotePlayerAvatars.Keys)
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
@@ -262,22 +256,25 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
+            // Set up the remote player with the main manager
+            manager.AddRemotePlayer(networkPlayer.username);
+            
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
             Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             remotePlayerAvatar.name = "remotePlayer_" + networkPlayer.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
-            SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
-            // add "player" to map of players
-            if (!remotePlayers.ContainsKey(networkPlayer.username))
+            
+            // add "player" to map of player avatars
+            if (!remotePlayerAvatars.ContainsKey(networkPlayer.username))
             {
-                remotePlayers.Add(networkPlayer.username, remotePlayerAvatar);
+                remotePlayerAvatars.Add(networkPlayer.username, remotePlayerAvatar);
             }
             else
             {
-                remotePlayers[networkPlayer.username] = remotePlayerAvatar;
+                remotePlayerAvatars[networkPlayer.username] = remotePlayerAvatar;
             }
-            
+
             // sync their annotations
             for (int i = 0; i < networkPlayer.annotations.Count; i++)
             {
@@ -299,6 +296,7 @@ public class NetworkController : MonoBehaviour
                 interactionController.AddOrUpdatePin(latLng, playerColor, networkPlayer.username, dt,
                     false, false);
             }
+            SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
         }
         updatePlayerList();
     }
@@ -309,9 +307,9 @@ public class NetworkController : MonoBehaviour
         SimulationEvents.GetInstance().AnnotationClear.Invoke(networkPlayer.username);
         // TODO: clear pushpins for player
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
+        remotePlayerAvatars.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
-        remotePlayers.Remove(networkPlayer.username);
+        remotePlayerAvatars.Remove(networkPlayer.username);
         updatePlayerList();
     }
                     
@@ -324,7 +322,7 @@ public class NetworkController : MonoBehaviour
         Debug.Log("player id " + updatedNetworkPlayer.id + " is local: " + isLocal);
 
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(updatedNetworkPlayer.username, out remotePlayerAvatar);
+        remotePlayerAvatars.TryGetValue(updatedNetworkPlayer.username, out remotePlayerAvatar);
         
         if (!isLocal)
         {

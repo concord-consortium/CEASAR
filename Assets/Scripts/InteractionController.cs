@@ -110,7 +110,6 @@ public class InteractionController : MonoBehaviour
                 Debug.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
                             updatedNetworkPlayer.interactionTarget.position.y + "," +
                             updatedNetworkPlayer.interactionTarget.position.z);
-               
                 ShowEarthMarkerInteraction(
                     Utils.NetworkV3ToVector3(updatedNetworkPlayer.interactionTarget.position), 
                     Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.interactionTarget.rotation),
@@ -122,12 +121,18 @@ public class InteractionController : MonoBehaviour
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
                 // maintain a dict of stars by ID for easier lookups. 
-                manager.DataControllerComponent.GetStarById(updatedNetworkPlayer.celestialObjectTarget.uniqueId).HandleSelectStar(false, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
+                StarComponent sc = manager.DataControllerComponent.GetStarById(updatedNetworkPlayer.celestialObjectTarget.uniqueId);
+                sc.HandleSelectStar(false, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
+                manager.GetRemotePlayer(updatedNetworkPlayer.username).SelectedCelestialSphereItem = sc.starData;
                 break;
             case "locationpin":
                 // add / move player pin
                 Debug.Log("remote player pinned a location");
                 LatLng latLng = new LatLng{ Latitude = updatedNetworkPlayer.locationPin.latitude, Longitude = updatedNetworkPlayer.locationPin.longitude};
+                Quaternion remotePlayerCameraRotationRaw =
+                    Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.locationPin.cameraTransform.rotation);
+                Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
+                manager.GetRemotePlayer(updatedNetworkPlayer.username).UpdatePlayerLookDirection(rot);
                 AddOrUpdatePin(
                     latLng,
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username),
@@ -300,7 +305,7 @@ public class InteractionController : MonoBehaviour
                 remotePins.Add(remotePin);
             }
             Pushpin p = updatePinObject(remotePin, latLng, pinDateTime, pinName, c);
-            manager.RemotePlayerPins[pinOwner] = p;
+            manager.GetRemotePlayer(pinOwner).UpdatePlayerPin(p);
         }
         
     }

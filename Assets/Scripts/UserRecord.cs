@@ -80,7 +80,7 @@ public class UserRecord
         int colorIndex = rng.Next(ColorNames.Count - 1);
         int animalIndex = rng.Next(AnimalNames.Count - 1);
 
-        group = NetworkController.roomNames[groupIndex];
+        group = GroupNames[groupIndex];
         number = rng.Next(9).ToString();
         animal = AnimalNames[animalIndex];
         colorName = ColorNames[colorIndex];
@@ -95,7 +95,7 @@ public class UserRecord
 
     /**************************** Static Methods *****************************/
 
-    public static List<string> groupNames = new List<string>(NetworkController.roomNames);
+    private static List<string> groupNames = new List<string>();
 
     public static List<string> GroupNames
     {

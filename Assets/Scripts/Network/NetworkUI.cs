@@ -227,10 +227,10 @@ public class NetworkUI : MonoBehaviour
 
     private void PlayerLabelClicked(string username)
     {
-        string pinName = $"{SimulationConstants.PIN_PREFIX}{username}";
-        Debug.Log($"Push Pin clicked for {username} / {pinName}");
-        
-        Pushpin pin = manager.RemotePlayerPins[username];
+        Debug.Log($"Push Pin clicked for {username}");
+        Player remotePlayer = manager.GetRemotePlayer(username);
+        Debug.Log(remotePlayer.Name + " " + remotePlayer.Pin);
+        Pushpin pin = remotePlayer.Pin;
         Debug.Log(pin.ToString());
 
         // Set simulation time and location;
@@ -247,27 +247,21 @@ public class NetworkUI : MonoBehaviour
         }
         else
         {
-            NetworkController networkController = manager.NetworkControllerComponent;
-            NetworkPlayer updatedNetworkPlayer = networkController.GetNetworkPlayerByName(username);
-            if (updatedNetworkPlayer != null && updatedNetworkPlayer.locationPin.cameraTransform != null)
-            {
-                Quaternion remotePlayerCameraRotationRaw =
-                    Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.locationPin.cameraTransform.rotation);
-                Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
-                // for desktop / non-VR:
-                // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
+            Vector3 rot = remotePlayer.CameraDirection;
+            // for desktop / non-VR:
+            // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
 
 #if !UNITY_ANDROID
-                Transform mainCameraTransform = Camera.main.transform;
-                mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
-                mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
+            Transform mainCameraTransform = Camera.main.transform;
+            mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
+            mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
 #else
-                GameObject vrCameraRig = GameObject.Find("VRCameraRig");
-                if (vrCameraRig != null){
-                  vrCameraRig.transform.rotation = Quaternion.Euler(0, rot.y, 0);
-                }
-#endif
+            GameObject vrCameraRig = GameObject.Find("VRCameraRig");
+            if (vrCameraRig != null){
+              vrCameraRig.transform.rotation = Quaternion.Euler(0, rot.y, 0);
             }
+#endif
+            
         }
         
     } 
