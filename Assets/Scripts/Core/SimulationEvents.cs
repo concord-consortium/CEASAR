@@ -11,7 +11,7 @@ public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3, str
 [System.Serializable]
 public class AnnotationDeletedEvent : UnityEvent<string> { }
 [System.Serializable]
-public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, Player> { }
+public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, NetworkPlayer> { }
 [System.Serializable]
 public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]

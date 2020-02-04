@@ -23,8 +23,8 @@ public class ColyseusClient : MonoBehaviour
     protected Room<State> room;
     private NetworkController networkController;
 
-    protected IndexedDictionary<string, Player> players = new IndexedDictionary<string, Player>();
-    private Player localPlayer;
+    protected IndexedDictionary<string, NetworkPlayer> players = new IndexedDictionary<string, NetworkPlayer>();
+    private NetworkPlayer _localNetworkPlayer;
     private string localPlayerName = "";
 
     private float lastUpdate;
@@ -44,7 +44,7 @@ public class ColyseusClient : MonoBehaviour
 
     private void Update()
     {
-        if (client != null && localPlayer != null)
+        if (client != null && _localNetworkPlayer != null)
         {
             lastUpdate += Time.deltaTime;
             if (lastUpdate > heartbeatInterval)
@@ -164,7 +164,7 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public Player GetPlayerById(string username)
+    public NetworkPlayer GetPlayerById(string username)
     {
         if (players != null && players.ContainsKey(username))
         {
@@ -191,14 +191,14 @@ public class ColyseusClient : MonoBehaviour
             // update messages have a message type and player Id we can use to update from remote interactions
             var m = (UpdateMessage) msg;
             Debug.Log(m.updateType + " " + m.playerId);
-            Player player = players.Values.First(p => p.id == m.playerId);
+            NetworkPlayer networkPlayer = players.Values.First(p => p.id == m.playerId);
             if (m.updateType == "deleteannotation")
             {
-                networkController.HandleAnnotationDelete(player, m.metadata);
+                networkController.HandleAnnotationDelete(networkPlayer, m.metadata);
             }
             else
             {
-                networkController.HandleNetworkInteraction(player, m.updateType);
+                networkController.HandleNetworkInteraction(networkPlayer, m.updateType);
             }
         }
         else
@@ -215,29 +215,29 @@ public class ColyseusClient : MonoBehaviour
         // Debug.Log(state);
     }
 
-    void OnPlayerAdd(Player player, string key)
+    void OnPlayerAdd(NetworkPlayer networkPlayer, string key)
     {
-        Debug.Log("ColyseusClient - Player Add: " + player.username + " " + player.id + " key: " + key);
+        Debug.Log("ColyseusClient - Player Add: " + networkPlayer.username + " " + networkPlayer.id + " key: " + key);
         bool isLocal = key == room.SessionId;
-        players[player.username] = player;
+        players[networkPlayer.username] = networkPlayer;
         if (isLocal)
         {
-            localPlayer = player;
-            networkController.ServerStatusMessage = "Connected as " + player.username;
+            _localNetworkPlayer = networkPlayer;
+            networkController.ServerStatusMessage = "Connected as " + networkPlayer.username;
         }
-        networkController.OnPlayerAdd(player);
+        networkController.OnPlayerAdd(networkPlayer);
     }
 
-    void OnPlayerRemove(Player player, string key)
+    void OnPlayerRemove(NetworkPlayer networkPlayer, string key)
     {
-        if (players[player.username] != null ) players.Remove(player.username);
-        networkController.OnPlayerRemove(player);
+        if (players[networkPlayer.username] != null ) players.Remove(networkPlayer.username);
+        networkController.OnPlayerRemove(networkPlayer);
     }
 
-    void OnPlayerChange(Player player, string key)
+    void OnPlayerChange(NetworkPlayer networkPlayer, string key)
     {
-        Debug.Log(player + " " + key);
-        networkController.OnPlayerChange(player);
+        Debug.Log(networkPlayer + " " + key);
+        networkController.OnPlayerChange(networkPlayer);
     }
     
     public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string transformName, string messageType)

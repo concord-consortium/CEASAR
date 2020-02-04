@@ -249,11 +249,11 @@ public class NetworkUI : MonoBehaviour
         else
         {
             NetworkController networkController = manager.NetworkControllerComponent;
-            Player updatedPlayer = networkController.GetNetworkPlayerByName(username);
-            if (updatedPlayer != null && updatedPlayer.locationPin.cameraTransform != null)
+            NetworkPlayer updatedNetworkPlayer = networkController.GetNetworkPlayerByName(username);
+            if (updatedNetworkPlayer != null && updatedNetworkPlayer.locationPin.cameraTransform != null)
             {
                 Quaternion remotePlayerCameraRotationRaw =
-                    Utils.NetworkV3ToQuaternion(updatedPlayer.locationPin.cameraTransform.rotation);
+                    Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.locationPin.cameraTransform.rotation);
                 Vector3 rot = remotePlayerCameraRotationRaw.eulerAngles;
                 // for desktop / non-VR:
                 // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 

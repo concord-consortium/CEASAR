@@ -101,20 +101,20 @@ public class InteractionController : MonoBehaviour
         }
     }
 
-    public void HandleRemoteInteraction(Player updatedPlayer, string interactionType)
+    public void HandleRemoteInteraction(NetworkPlayer updatedNetworkPlayer, string interactionType)
     {
         switch (interactionType)
         {
             case "interaction":
                 // show indicator
-                Debug.Log("Interaction update: " + updatedPlayer.interactionTarget.position.x + "," +
-                            updatedPlayer.interactionTarget.position.y + "," +
-                            updatedPlayer.interactionTarget.position.z);
+                Debug.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
+                            updatedNetworkPlayer.interactionTarget.position.y + "," +
+                            updatedNetworkPlayer.interactionTarget.position.z);
                
                 ShowEarthMarkerInteraction(
-                    Utils.NetworkV3ToVector3(updatedPlayer.interactionTarget.position), 
-                    Utils.NetworkV3ToQuaternion(updatedPlayer.interactionTarget.rotation),
-                    UserRecord.GetColorForUsername(updatedPlayer.username), false);
+                    Utils.NetworkV3ToVector3(updatedNetworkPlayer.interactionTarget.position), 
+                    Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.interactionTarget.rotation),
+                    UserRecord.GetColorForUsername(updatedNetworkPlayer.username), false);
                 break;
             case "celestialinteraction":
                 Debug.Log("remote player selected star");
@@ -122,27 +122,27 @@ public class InteractionController : MonoBehaviour
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
                 // maintain a dict of stars by ID for easier lookups. 
-                manager.DataControllerComponent.GetStarById(updatedPlayer.celestialObjectTarget.uniqueId).HandleSelectStar(false, UserRecord.GetColorForUsername(updatedPlayer.username));
+                manager.DataControllerComponent.GetStarById(updatedNetworkPlayer.celestialObjectTarget.uniqueId).HandleSelectStar(false, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
                 break;
             case "locationpin":
                 // add / move player pin
                 Debug.Log("remote player pinned a location");
-                LatLng latLng = new LatLng{ Latitude = updatedPlayer.locationPin.latitude, Longitude = updatedPlayer.locationPin.longitude};
+                LatLng latLng = new LatLng{ Latitude = updatedNetworkPlayer.locationPin.latitude, Longitude = updatedNetworkPlayer.locationPin.longitude};
                 AddOrUpdatePin(
                     latLng,
-                    UserRecord.GetColorForUsername(updatedPlayer.username),
-                    updatedPlayer.username, 
-                    TimeConverter.EpochTimeToDate(updatedPlayer.locationPin.datetime), 
+                    UserRecord.GetColorForUsername(updatedNetworkPlayer.username),
+                    updatedNetworkPlayer.username, 
+                    TimeConverter.EpochTimeToDate(updatedNetworkPlayer.locationPin.datetime), 
                     false); 
                 break;
             case "annotation":
                 // add annotation
-                ArraySchema<NetworkTransform> annotations = updatedPlayer.annotations;
+                ArraySchema<NetworkTransform> annotations = updatedNetworkPlayer.annotations;
                 NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
                 
                 events.AnnotationReceived.Invoke(
                     lastAnnotation,
-                    updatedPlayer);
+                    updatedNetworkPlayer);
                 break;
             default:
                 break;
@@ -273,13 +273,13 @@ public class InteractionController : MonoBehaviour
             manager.Currentlocation = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
 
-            // TODO: Change this to use a SimulationManager static instead of looking up movement
-            PlayerMovement playerMovement = FindObjectOfType<PlayerMovement>();
-            if (playerMovement != null)
-            {
-                playerMovement.GetCameraRotationAndUpdatePin();
-            }
-            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime, Vector3.zero);
+            // // TODO: Change this to use a SimulationManager static instead of looking up movement
+            // PlayerMovement playerMovement = FindObjectOfType<PlayerMovement>();
+            // if (playerMovement != null)
+            // {
+            //     playerMovement.GetCameraRotationAndUpdatePin();
+            // }
+            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime, manager.LocalPlayerLookDirection);
             if (broadcast)
             {
                 // this can cause a feedback loop if we're merely moving the pin in response to a location change

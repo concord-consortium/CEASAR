@@ -90,7 +90,7 @@ public class AnnotationTool : MonoBehaviour
     }
     
 
-    public void AddAnnotation(NetworkTransform lastAnnotation, Player p)
+    public void AddAnnotation(NetworkTransform lastAnnotation, NetworkPlayer p)
     {
         Vector3 pos = Utils.NetworkV3ToVector3(lastAnnotation.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(lastAnnotation.rotation);
