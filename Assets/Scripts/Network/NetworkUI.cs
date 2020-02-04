@@ -45,15 +45,15 @@ public class NetworkUI : MonoBehaviour
 
     public void RandomizeUsername()
     {
-        manager.LocalPlayer.Randomize();
-        UserRecord user = manager.LocalPlayer;
+        manager.LocalPlayerRecord.Randomize();
+        UserRecord user = manager.LocalPlayerRecord;
         usernameText.text = user.Username;
         usernamePin.color = user.color;
     }
 
     public void Start()
     {
-        UserRecord user = manager.LocalPlayer;
+        UserRecord user = manager.LocalPlayerRecord;
         usernameText.text = user.Username;
         usernamePin.color = user.color;
         groupNameText.text = user.group;

@@ -8,8 +8,8 @@ public class SimulationManager
 {
     // can't use constructor, guaranteed singleton
     protected SimulationManager() {
-        LocalPlayer = new UserRecord();
-        Debug.Log($"User has been created {LocalPlayer.Username}");
+        LocalPlayer = new Player(new UserRecord(), new Pushpin() );
+        Debug.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}");
     }
     private static SimulationManager instance;
 
@@ -35,6 +35,10 @@ public class SimulationManager
 #endif
         }
     }
+    
+    public string[] AnimalNames;
+    public List<string> ColorNames = new List<string>();
+    public List<Color> ColorValues = new List<Color>();
 
     public NetworkController NetworkControllerComponent;
     public GameObject InteractionControllerObject;
@@ -59,26 +63,33 @@ public class SimulationManager
 
     public bool IsReady = false;
 
-    public string[] AnimalNames;
-    public List<string> ColorNames = new List<string>();
-    public List<Color> ColorValues = new List<Color>();
-
-    public UserRecord LocalPlayer { get; set; }
+    public UserRecord LocalPlayerRecord
+    {
+        get { return localPlayer.PlayerUserRecord; }
+    }
 
     public Color LocalPlayerColor {
-        get { return LocalPlayer.color; }
+        get { return LocalPlayerRecord.color; }
     }
 
     public string LocalUsername
     {
-        get { return LocalPlayer.Username; }
-        set {
-            LocalPlayer = new UserRecord(value);
-            Debug.Log($"User has been Changed: {LocalPlayer.Username}");
-        }
+        get { return LocalPlayerRecord.Username; }
     }
 
-    public Vector3 LocalPlayerLookDirection;
+    private Player localPlayer;
+
+    public Player LocalPlayer
+    {
+        get { return localPlayer; }
+        set { localPlayer = value; }
+    }
+
+    public Vector3 LocalPlayerLookDirection
+    {
+        get { return LocalPlayer.CameraDirection; }
+        set { LocalPlayer.CameraDirection = value; }
+    }
     
     public Color HorizonGroundColor = Color.green;
 
@@ -94,11 +105,6 @@ public class SimulationManager
     // Movement synchronization throttled for Heroku/Mongo
     public float MovementSendInterval = 1.0f;
     
-    // Server Address!
-    public string LocalNetworkServer = "ws://localhost:2567";
-    public string DevNetworkServer = "ws://ceasar-serve-170349161-ceutdkz.herokuapp.com/";
-    public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
-
     public StarComponent CurrentlySelectedStar;
     private DateTime _currentSimulationTime = DateTime.UtcNow;
 
@@ -118,7 +124,7 @@ public class SimulationManager
         {
             useCustomSimTime = value;
             if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
-            localUserPin.SelectedDateTime = CurrentSimulationTime;
+            LocalUserPin.SelectedDateTime = CurrentSimulationTime;
         }
     }
 
@@ -130,7 +136,7 @@ public class SimulationManager
         set
         {
             currentLocation = value;
-            localUserPin.Location = currentLocation;
+            LocalUserPin.Location = currentLocation;
         }
     }
 
@@ -150,14 +156,13 @@ public class SimulationManager
     }
     
     public bool UserHasSetLocation { get; private set; }
-    private Pushpin localUserPin = new Pushpin();
 
     public Pushpin LocalUserPin
     {
-        get { return localUserPin; }
+        get { return LocalPlayer.Pin; }
         set
         {
-            localUserPin = value;
+            LocalPlayer.Pin = value;
             currentLocation = value.Location;
             UserHasSetLocation = true;
         }

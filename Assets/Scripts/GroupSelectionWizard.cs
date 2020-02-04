@@ -23,6 +23,8 @@ public class GroupSelectionWizard : MonoBehaviour
  
     // The user record:
     private UserRecord userRecord;
+    
+    private SimulationManager manager { get { return SimulationManager.GetInstance(); }}
 
     // Start is called before the first frame update
     private void Start()
@@ -184,11 +186,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void HandleGroupClick(string name)
     {
         userRecord.group = name;
-        Pushpin selectedGroupPin = UserRecord.Groups[name];
-        SimulationManager.GetInstance().Currentlocation = selectedGroupPin.Location;
-        SimulationManager.GetInstance().CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
-        SimulationManager.GetInstance().LocalUserPin = selectedGroupPin;
-        Debug.Log("User selected group " + name + " " + selectedGroupPin);
+        
         if (GroupLabel)
         {
             TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
@@ -251,14 +249,26 @@ public class GroupSelectionWizard : MonoBehaviour
         steps[currentStep]();
     }
 
+    private Pushpin setLocationForGroup(string groupName)
+    {
+        Pushpin selectedGroupPin = UserRecord.GroupPins[groupName];
+        manager.Currentlocation = selectedGroupPin.Location;
+        manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
+        // manager.LocalUserPin = selectedGroupPin;
+        Debug.Log("User selected group " + name + " " + selectedGroupPin);
+        return selectedGroupPin;
+    }
     private void LaunchScene()
     {
         DisableNext();
         DisableRestart();
         DisableFastLogin();
         DirectionsText.color = userRecord.color;
-        SimulationManager.GetInstance().LocalPlayer = userRecord;
+        Pushpin pin = setLocationForGroup(userRecord.group);
+        manager.LocalPlayer = new Player(userRecord, pin);
+        
         userRecord.SaveToPrefs();
+        
         if(NextScreen)
         {
             SetTitleText($"{userRecord.Username} in {userRecord.group}");

@@ -5,6 +5,8 @@ public class Pushpin
 {
     public LatLng Location;
     public DateTime SelectedDateTime;
+    public string LocationName;
+    
     public override string ToString()
     {
         return Location.ToString() + " " + SelectedDateTime.ToString();

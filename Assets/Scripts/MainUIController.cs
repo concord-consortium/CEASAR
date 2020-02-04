@@ -109,6 +109,8 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    private float lastSendTime = 0;
+    
     private bool hasCompletedSetup = false;
     
     private void Awake()
@@ -418,6 +420,12 @@ public class MainUIController : MonoBehaviour
         if (manager.LocalUserPin != null)
         {
             manager.LocalUserPin.SelectedDateTime = calculatedStartDateTime;
+            if (Time.time - manager.MovementSendInterval > lastSendTime)
+            {
+                lastSendTime = Time.time;
+                events.PushPinUpdated.Invoke(manager.Currentlocation, manager.CurrentSimulationTime,
+                    manager.LocalPlayerLookDirection);
+            }
         }
         else
         {

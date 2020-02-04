@@ -308,7 +308,7 @@ public class InteractionController : MonoBehaviour
     {
         // get 3d pos from latlng and update local player - this is in response to external location change
         // via dropdown
-        AddOrUpdatePin(latlng, manager.LocalPlayer.color, manager.LocalPlayer.Username, manager.CurrentSimulationTime,
+        AddOrUpdatePin(latlng, manager.LocalPlayerRecord.color, manager.LocalPlayerRecord.Username, manager.CurrentSimulationTime,
             true, false);
     }
 

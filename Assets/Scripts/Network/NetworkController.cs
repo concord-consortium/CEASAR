@@ -143,7 +143,7 @@ public class NetworkController : MonoBehaviour
     {
         if (!IsConnected)
         {
-            UserRecord user = SimulationManager.GetInstance().LocalPlayer; 
+            UserRecord user = SimulationManager.GetInstance().LocalPlayerRecord; 
             FindDependencies();
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = ServerList.Custom;
