@@ -48,7 +48,6 @@ public class MainUIController : MonoBehaviour
     private int userMin = DateTime.UtcNow.Minute;
     private int userDay = DateTime.UtcNow.DayOfYear;
     public TextMeshProUGUI currentDateTimeText;
-    public Toggle setTimeToggle;
     public Slider daySlider;
     public Slider timeSlider;
 
@@ -169,7 +168,6 @@ public class MainUIController : MonoBehaviour
             yearSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Year);
             daySlider.SetValueWithoutNotify(manager.CurrentSimulationTime.DayOfYear);
             timeSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute);
-            setTimeToggle.SetIsOnWithoutNotify(manager.UseCustomSimulationTime);
             userYear = manager.CurrentSimulationTime.Year;
             userDay = manager.CurrentSimulationTime.DayOfYear;
             userHour = manager.CurrentSimulationTime.Hour;
@@ -306,10 +304,6 @@ public class MainUIController : MonoBehaviour
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
-        if (setTimeToggle)
-        {
-            manager.UseCustomSimulationTime = setTimeToggle.isOn;
-        }
 
         // Move our position a step closer to the target.
         if (movingControlPanel)
@@ -383,9 +377,8 @@ public class MainUIController : MonoBehaviour
         // This is now used to change the view in Horizon mode to your current pin
         // Or to take you to the horizon for your current pin from Earth view
         Pushpin pin = manager.LocalUserPin;
-        manager.UseCustomSimulationTime = true;
         manager.CurrentSimulationTime = pin.SelectedDateTime;
-        manager.Currentlocation = pin.Location;
+        manager.CurrentLatLng = pin.Location;
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -423,7 +416,7 @@ public class MainUIController : MonoBehaviour
             if (Time.time - manager.MovementSendInterval > lastSendTime)
             {
                 lastSendTime = Time.time;
-                events.PushPinUpdated.Invoke(manager.Currentlocation, manager.CurrentSimulationTime,
+                events.PushPinUpdated.Invoke(manager.CurrentLatLng, manager.CurrentSimulationTime,
                     manager.LocalPlayerLookDirection);
             }
         }
@@ -431,7 +424,7 @@ public class MainUIController : MonoBehaviour
         {
             Pushpin p = new Pushpin();
             p.SelectedDateTime = calculatedStartDateTime;
-            p.Location = manager.Currentlocation;
+            p.Location = manager.CurrentLatLng;
             manager.LocalUserPin = p;
             Debug.Log(p);
         }
@@ -609,12 +602,9 @@ public class MainUIController : MonoBehaviour
         
     }
 
-    public void ToggleUserTime()
+    public void SetSimulationTimeToNow()
     {
-        if (dataController)
-        {
-            dataController.ToggleUserTime();
-        }
+        RestoreSnapshotOrPin(DateTime.UtcNow, manager.CurrentLocationName, manager.CurrentLatLng);
     }
 
     public void ToggleRunSimulation()
@@ -631,7 +621,7 @@ public class MainUIController : MonoBehaviour
         // get values from simulation manager
         DateTime snapshotDateTime = manager.CurrentSimulationTime;
         String location = manager.CurrentLocationName;
-        LatLng locationCoordinates = manager.Currentlocation;
+        LatLng locationCoordinates = manager.CurrentLatLng;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
         // add snapshot to dropdown list
@@ -662,7 +652,6 @@ public class MainUIController : MonoBehaviour
         userMin = dt.Minute;
         // Update the current date/time in simulation manager
         CalculateUserDateTime();
-        setTimeToggle.isOn = true;
         yearSlider.value = userYear;
         daySlider.value = userDay;
         timeSlider.value = userHour * 60 + userMin;

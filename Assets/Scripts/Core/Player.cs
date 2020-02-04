@@ -23,6 +23,11 @@ public class Player
         return !p1.PlayerUserRecord.Equals(p2.PlayerUserRecord);
     }
 
+    public Player(UserRecord userRecord)
+    {
+        PlayerUserRecord = userRecord;
+        Pin = new Pushpin();
+    }
     public Player(UserRecord userRecord, Pushpin pin)
     {
         PlayerUserRecord = userRecord;

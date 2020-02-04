@@ -21,7 +21,7 @@ public class SunPositionController : MonoBehaviour
 
         // move sun game object
         sun.transform.position =
-            getSolarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
+            getSolarPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
 
         renderSunArc();
     }
@@ -67,7 +67,7 @@ public class SunPositionController : MonoBehaviour
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
             DateTime t = midnight.AddSeconds(i);
-            points.Add(getSolarPosition(t, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude));
+            points.Add(getSolarPosition(t, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude));
         }
         return points;
     }
@@ -78,7 +78,7 @@ public class SunPositionController : MonoBehaviour
 
         if (sun != null)
         {
-            sun.transform.position = getSolarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
+            sun.transform.position = getSolarPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
             sun.transform.LookAt(new Vector3(0,0,0));
         }
         

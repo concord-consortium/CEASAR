@@ -234,9 +234,8 @@ public class NetworkUI : MonoBehaviour
         Debug.Log(pin.ToString());
 
         // Set simulation time and location;
-        manager.UseCustomSimulationTime = true;
         manager.CurrentSimulationTime = pin.SelectedDateTime;
-        manager.Currentlocation = pin.Location;
+        manager.CurrentLatLng = pin.Location;
         
         // NP I thought that maybe just triggering this would do the trick, but no:
         // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);

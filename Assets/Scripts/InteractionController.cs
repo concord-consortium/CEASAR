@@ -270,7 +270,7 @@ public class InteractionController : MonoBehaviour
 
             // Update Simulation Manager with our pin
             manager.LocalUserPin = p;
-            manager.Currentlocation = p.Location;
+            manager.CurrentLatLng = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
 
             // // TODO: Change this to use a SimulationManager static instead of looking up movement

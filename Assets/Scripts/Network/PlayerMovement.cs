@@ -92,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Sending updated pin");
                     manager.LocalPlayerLookDirection = cameraRotation;
                     
-                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.Currentlocation,
+                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.CurrentLatLng,
                         manager.CurrentSimulationTime, cameraRotation);
                     lastSend = Time.time;
                 }

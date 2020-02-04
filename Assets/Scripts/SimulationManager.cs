@@ -8,7 +8,7 @@ public class SimulationManager
 {
     // can't use constructor, guaranteed singleton
     protected SimulationManager() {
-        LocalPlayer = new Player(new UserRecord(), new Pushpin() );
+        LocalPlayer = new Player(new UserRecord() );
         Debug.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}");
     }
     private static SimulationManager instance;
@@ -106,37 +106,25 @@ public class SimulationManager
     public float MovementSendInterval = 1.0f;
     
     public StarComponent CurrentlySelectedStar;
-    private DateTime _currentSimulationTime = DateTime.UtcNow;
 
     public DateTime CurrentSimulationTime
     {
-        get { return _currentSimulationTime; }
+        get { return LocalPlayer.Pin.SelectedDateTime; }
         set
         {
-            _currentSimulationTime = value;
-        }
-    }
-    private bool useCustomSimTime = false;
-    public bool UseCustomSimulationTime
-    {
-        get { return useCustomSimTime; }
-        set
-        {
-            useCustomSimTime = value;
-            if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
-            LocalUserPin.SelectedDateTime = CurrentSimulationTime;
+            LocalPlayer.Pin.SelectedDateTime = value;
         }
     }
 
-    private LatLng currentLocation = new LatLng {Latitude = 0, Longitude = 0};
+    private LatLng _currentLatLng = new LatLng {Latitude = 0, Longitude = 0};
 
-    public LatLng Currentlocation
+    public LatLng CurrentLatLng
     {
-        get { return currentLocation; }
+        get { return _currentLatLng; }
         set
         {
-            currentLocation = value;
-            LocalUserPin.Location = currentLocation;
+            _currentLatLng = value;
+            LocalUserPin.Location = _currentLatLng;
         }
     }
 
@@ -163,7 +151,7 @@ public class SimulationManager
         set
         {
             LocalPlayer.Pin = value;
-            currentLocation = value.Location;
+            _currentLatLng = value.Location;
             UserHasSetLocation = true;
         }
     }

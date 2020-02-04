@@ -15,7 +15,7 @@ public class LocationPanel : MonoBehaviour
     {
         if (SimulationManager.GetInstance().UserHasSetLocation)
         {
-            UpdateLocationPanel(SimulationManager.GetInstance().Currentlocation, SimulationConstants.CUSTOM_LOCATION);
+            UpdateLocationPanel(SimulationManager.GetInstance().CurrentLatLng, SimulationConstants.CUSTOM_LOCATION);
         }
 
         latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
