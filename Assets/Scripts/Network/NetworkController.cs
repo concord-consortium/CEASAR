@@ -293,7 +293,7 @@ public class NetworkController : MonoBehaviour
                 }
 
                 Debug.LogWarning(dt + " " + networkPlayer.locationPin.datetime);
-                interactionController.AddOrUpdatePin(latLng, playerColor, networkPlayer.username, dt,
+                interactionController.AddOrUpdatePin(latLng, playerColor, networkPlayer.username, dt, networkPlayer.locationPin.locationName,
                     false, false);
             }
             SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
@@ -379,9 +379,9 @@ public class NetworkController : MonoBehaviour
     {
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
-    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime, Vector3 cameraRotationEuler)
+    public void BroadcastPinUpdated(Pushpin pin, Vector3 lookDirection)
     {
-        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime, cameraRotationEuler);
+        colyseusClient.SendPinUpdate(pin.Location.Latitude, pin.Location.Longitude, pin.SelectedDateTime, lookDirection, pin.LocationName);
     }
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
     {

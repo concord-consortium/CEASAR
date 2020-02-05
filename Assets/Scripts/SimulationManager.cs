@@ -140,7 +140,11 @@ public class SimulationManager
 
             return currentLocationName;
         }
-        set { currentLocationName = value; }
+        set
+        {
+            currentLocationName = value;
+            LocalUserPin.LocationName = currentLocationName;
+        }
     }
     
     public bool UserHasSetLocation { get; private set; }

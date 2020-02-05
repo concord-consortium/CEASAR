@@ -29,17 +29,18 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
         }
     }
 
-    public void UpdatePin(LatLng latLng, DateTime dt)
+    public void UpdatePin(LatLng latLng, DateTime dt, string pinLocationName)
     {
         if (pin == null) pin = new Pushpin();
         pin.Location = latLng;
         pin.SelectedDateTime = dt;
+        pin.LocationName = pinLocationName;
     }
 
     public void HandleSelectPin()
     {
         LatLng latlng = pin.Location;
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(latlng, pin.SelectedDateTime);
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
         SimulationEvents.GetInstance().LocationChanged.Invoke(latlng, SimulationConstants.CUSTOM_LOCATION);
     }
 

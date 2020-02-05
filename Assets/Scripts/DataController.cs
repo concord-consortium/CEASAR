@@ -380,10 +380,12 @@ public class DataController : MonoBehaviour
         } 
     }
 
-    void handlePinSelected(LatLng latLng, DateTime dt)
+    void handlePinSelected(Pushpin pin)
     {
-        manager.CurrentSimulationTime = dt;
-        nextLocation = latLng;
+        manager.CurrentSimulationTime = pin.SelectedDateTime;
+        nextLocation = pin.Location;
+        manager.CurrentLatLng = pin.Location;
+        manager.CurrentLocationName = pin.LocationName;
     }
     public void SetMagnitudeThreshold(float newVal)
     {

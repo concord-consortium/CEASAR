@@ -157,7 +157,7 @@ public class MainUIController : MonoBehaviour
         if (snapshotsController)
         {
             snapshotsController.Init();
-            foreach (Snapshot snapshot in snapshotsController.snapshots)
+            foreach (Pushpin snapshot in snapshotsController.snapshots)
             {
                 AddSnapshotToGrid(snapshot);
             }
@@ -416,8 +416,7 @@ public class MainUIController : MonoBehaviour
             if (Time.time - manager.MovementSendInterval > lastSendTime)
             {
                 lastSendTime = Time.time;
-                events.PushPinUpdated.Invoke(manager.CurrentLatLng, manager.CurrentSimulationTime,
-                    manager.LocalPlayerLookDirection);
+                events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
             }
         }
         else
@@ -604,7 +603,8 @@ public class MainUIController : MonoBehaviour
 
     public void SetSimulationTimeToNow()
     {
-        RestoreSnapshotOrPin(DateTime.UtcNow, manager.CurrentLocationName, manager.CurrentLatLng);
+        Pushpin currentTimeForLocation = new Pushpin(DateTime.UtcNow, manager.CurrentLatLng, manager.CurrentLocationName);
+        RestoreSnapshotOrPin(currentTimeForLocation);
     }
 
     public void ToggleRunSimulation()
@@ -628,28 +628,28 @@ public class MainUIController : MonoBehaviour
         AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
-    public void AddSnapshotToGrid(Snapshot snapshot)
+    public void AddSnapshotToGrid(Pushpin snapshot)
     {
         // user chooses to add a new snapshot, update the scroll view grid
         snapshotGrid.AddSnapItem(snapshot);
     }
 
-    public void RestoreSnapshot(Snapshot snapshot)
+    public void RestoreSnapshot(Pushpin snapshot)
     {
-        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
+        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
         // user restores snapshot from UI
-        Snapshot snap = snapshotsController.snapshots[snapshotIndex];
-        Debug.Log(snap.dateTime + " " + snap.location + " " + snap.locationCoordinates);
+        Pushpin snap = snapshotsController.snapshots[snapshotIndex];
+        Debug.Log(snap.SelectedDateTime + " " + snap.LocationName + " " + snap.Location);
         
-        RestoreSnapshotOrPin(snap.dateTime, snap.location, snap.locationCoordinates);
+        RestoreSnapshotOrPin(snap);
     }
 
-    public void RestoreSnapshotOrPin(DateTime dt, string locationName, LatLng latLng)
+    public void RestoreSnapshotOrPin(Pushpin pin)
     {
-        userYear = dt.Year;
-        userDay = dt.DayOfYear;
-        userHour = dt.Hour;
-        userMin = dt.Minute;
+        userYear = pin.SelectedDateTime.Year;
+        userDay = pin.SelectedDateTime.DayOfYear;
+        userHour = pin.SelectedDateTime.Hour;
+        userMin = pin.SelectedDateTime.Minute;
         // Update the current date/time in simulation manager
         CalculateUserDateTime();
         yearSlider.value = userYear;
@@ -657,11 +657,11 @@ public class MainUIController : MonoBehaviour
         timeSlider.value = userHour * 60 + userMin;
 
         // events.LocationSelected.Invoke(locationName);
-        events.LocationChanged.Invoke(latLng,locationName);
-        events.PushPinSelected.Invoke(latLng, dt);
+        events.LocationChanged.Invoke(pin.Location,pin.LocationName);
+        events.PushPinSelected.Invoke(pin);
     }
 
-    public void DeleteSnapshot(Snapshot deleteSnap)
+    public void DeleteSnapshot(Pushpin deleteSnap)
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
     }

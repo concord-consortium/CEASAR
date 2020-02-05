@@ -285,7 +285,7 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async void SendPinUpdate(float latitude, float longitude, DateTime dateTime, Vector3 cameraRotationEuler)
+    public async void SendPinUpdate(float latitude, float longitude, DateTime dateTime, Vector3 cameraRotationEuler, string locationName)
     {
         if (IsConnected)
         {
@@ -293,6 +293,7 @@ public class ColyseusClient : MonoBehaviour
             pin.datetime = (float)dateTime.ToEpochTime();
             pin.latitude = latitude;
             pin.longitude = longitude;
+            pin.locationName = locationName;
             NetworkTransform t = new NetworkTransform();
             t.position = new NetworkVector3 { x = 0, y = 0, z = 0 };
             t.rotation = new NetworkVector3 { x = cameraRotationEuler.x, y = cameraRotationEuler.y, z = cameraRotationEuler.z };

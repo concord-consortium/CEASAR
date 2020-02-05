@@ -138,6 +138,7 @@ public class InteractionController : MonoBehaviour
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username),
                     updatedNetworkPlayer.username, 
                     TimeConverter.EpochTimeToDate(updatedNetworkPlayer.locationPin.datetime), 
+                    updatedNetworkPlayer.locationPin.locationName,
                     false); 
                 break;
             case "annotation":
@@ -203,7 +204,7 @@ public class InteractionController : MonoBehaviour
     public void SetEarthLocationPin(Vector3 pos, Quaternion rot)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-        AddOrUpdatePin(latLng, manager.LocalPlayerColor, manager.LocalUsername, manager.CurrentSimulationTime, true, true);
+        AddOrUpdatePin(latLng, manager.LocalPlayerColor, manager.LocalUsername, manager.CurrentSimulationTime, SimulationConstants.CUSTOM_LOCATION, true, true);
     }
 
     string getPinName(string pinOwner)
@@ -264,7 +265,7 @@ public class InteractionController : MonoBehaviour
     }
     
     // This is used for local pins and remote pins
-    public void AddOrUpdatePin(LatLng latLng, Color c, string pinOwner, DateTime pinDateTime, bool isLocal,
+    public void AddOrUpdatePin(LatLng latLng, Color c, string pinOwner, DateTime pinDateTime, string pinLocationName, bool isLocal,
         bool broadcast = false)
     {
         string pinName = getPinName(pinOwner);
@@ -278,7 +279,7 @@ public class InteractionController : MonoBehaviour
             manager.CurrentLatLng = p.Location;
             manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
             
-            events.PushPinUpdated.Invoke(latLng, manager.CurrentSimulationTime, manager.LocalPlayerLookDirection);
+            events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
             if (broadcast)
             {
                 // this can cause a feedback loop if we're merely moving the pin in response to a location change
@@ -298,7 +299,7 @@ public class InteractionController : MonoBehaviour
                 remotePin = getPinObject(pinName);
                 remotePins.Add(remotePin);
             }
-            Pushpin p = updatePinObject(remotePin, latLng, pinDateTime, pinName, c);
+            Pushpin p = updatePinObject(remotePin, latLng, pinDateTime, pinLocationName, c);
             manager.GetRemotePlayer(pinOwner).UpdatePlayerPin(p);
         }
         
@@ -307,7 +308,7 @@ public class InteractionController : MonoBehaviour
     {
         // get 3d pos from latlng and update local player - this is in response to external location change
         // via dropdown
-        AddOrUpdatePin(latlng, manager.LocalPlayerRecord.color, manager.LocalPlayerRecord.Username, manager.CurrentSimulationTime,
+        AddOrUpdatePin(latlng, manager.LocalPlayerRecord.color, manager.LocalPlayerRecord.Username, manager.CurrentSimulationTime, manager.CurrentLocationName,
             true, false);
     }
 
@@ -323,14 +324,14 @@ public class InteractionController : MonoBehaviour
 
         return pinObject;
     }
-    Pushpin updatePinObject(GameObject pinObject, LatLng latLng, DateTime pinDateTime, string pinName, Color c)
+    Pushpin updatePinObject(GameObject pinObject, LatLng latLng, DateTime pinDateTime, string pinLocationName, Color c)
     {
         Vector3 pos = getEarthRelativePos(latLng);
         pinObject.transform.localRotation = Quaternion.LookRotation(pos);;
         pinObject.transform.position = pos;
         pinObject.GetComponent<Renderer>().material.color = c;
         PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
-        pinComponent.UpdatePin(latLng, pinDateTime);
+        pinComponent.UpdatePin(latLng, pinDateTime, pinLocationName);
         return pinComponent.pin;
     }
     

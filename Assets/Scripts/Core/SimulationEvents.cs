@@ -15,9 +15,9 @@ public class AnnotationReceivedEvent : UnityEvent<NetworkTransform, NetworkPlaye
 [System.Serializable]
 public class AnnotationClearEvent : UnityEvent<string> { }
 [System.Serializable]
-public class PushPinSelectedEvent : UnityEvent<LatLng, DateTime> { }
+public class PushPinSelectedEvent : UnityEvent<Pushpin> { }
 [System.Serializable]
-public class PushPinUpdatedEvent : UnityEvent<LatLng, DateTime, Vector3> { }
+public class PushPinUpdatedEvent : UnityEvent<Pushpin, Vector3> { }
 [System.Serializable]
 public class DrawModeEvent: UnityEvent<bool> { }
 [System.Serializable]
