@@ -116,34 +116,35 @@ public class SimulationManager
         }
     }
 
-    private LatLng _currentLatLng = new LatLng {Latitude = 0, Longitude = 0};
+    // private LatLng _currentLatLng = new LatLng {Latitude = 0, Longitude = 0};
 
     public LatLng CurrentLatLng
     {
-        get { return _currentLatLng; }
+        get
+        {
+            return LocalUserPin.Location;
+        }
         set
         {
-            _currentLatLng = value;
-            LocalUserPin.Location = _currentLatLng;
+            LocalUserPin.Location = value;
         }
     }
 
-    private string currentLocationName;
+    // private string currentLocationName;
     public string CurrentLocationName
     {
         get
         {
-            if (string.IsNullOrEmpty(currentLocationName))
+            if (string.IsNullOrEmpty(LocalUserPin.LocationName))
             {
-                currentLocationName = SimulationConstants.CUSTOM_LOCATION;
+                LocalUserPin.LocationName = SimulationConstants.CUSTOM_LOCATION;
             }
 
-            return currentLocationName;
+            return LocalUserPin.LocationName;
         }
         set
         {
-            currentLocationName = value;
-            LocalUserPin.LocationName = currentLocationName;
+            LocalUserPin.LocationName = value;
         }
     }
     
@@ -155,7 +156,6 @@ public class SimulationManager
         set
         {
             LocalPlayer.Pin = value;
-            _currentLatLng = value.Location;
             UserHasSetLocation = true;
         }
     }

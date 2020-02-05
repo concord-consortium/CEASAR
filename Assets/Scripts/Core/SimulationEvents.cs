@@ -4,9 +4,9 @@ using UnityEngine.Events;
 
 [System.Serializable]
 public class LocationSelectedEvent : UnityEvent<string> { }
-[System.Serializable]
-public class LocationChangeEvent : UnityEvent<LatLng, string> { }
-[System.Serializable]
+// [System.Serializable]
+// public class LocationChangeEvent : UnityEvent<LatLng, string> { }
+// [System.Serializable]
 public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3, string> { }
 [System.Serializable]
 public class AnnotationDeletedEvent : UnityEvent<string> { }
@@ -32,7 +32,7 @@ public class SimulationEvents
     protected SimulationEvents() 
     {
         if (LocationSelected == null) LocationSelected = new LocationSelectedEvent();
-        if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
+        //if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
         if (AnnotationDeleted == null) AnnotationDeleted = new AnnotationDeletedEvent();
         if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
@@ -61,7 +61,7 @@ public class SimulationEvents
     /// <summary>
     /// Use this to listen for changes to location
     /// </summary>
-    public LocationChangeEvent LocationChanged;
+    //public LocationChangeEvent LocationChanged;
 
     /// <summary>
     /// This is where we handle specific annotations drawn in Horizon view

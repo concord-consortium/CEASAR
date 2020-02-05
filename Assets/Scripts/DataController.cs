@@ -358,21 +358,11 @@ public class DataController : MonoBehaviour
                     // Raise the change event with the matching lat/lng to update UI
                     currentCity = matchedCity;
                     // check if this is a custom location
-                    if (matchedCity.Name == SimulationConstants.CUSTOM_LOCATION)
+                    if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
                     {
-                        // Grab the custom location from the simulation manager
-                        nextLocation = manager.LocalUserPin.Location;
-                        manager.CurrentLatLng = nextLocation;
-                        manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(manager.CurrentLatLng, SimulationConstants.CUSTOM_LOCATION);
-                    }
-                    else
-                    {
-                        // Set up the city lat lng
-                        nextLocation = new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng};
-                        manager.CurrentLatLng = nextLocation;
-                        manager.CurrentLocationName = matchedCity.Name;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(nextLocation, matchedCity.Name);
+                        // PushPinSelected event will update manager and update next location
+                        Pushpin pin = new Pushpin(manager.CurrentSimulationTime, new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
+                        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
                     }
                     
                 }
@@ -382,10 +372,9 @@ public class DataController : MonoBehaviour
 
     void handlePinSelected(Pushpin pin)
     {
-        manager.CurrentSimulationTime = pin.SelectedDateTime;
+        manager.LocalUserPin = pin;
+        // force a redraw next frame
         nextLocation = pin.Location;
-        manager.CurrentLatLng = pin.Location;
-        manager.CurrentLocationName = pin.LocationName;
     }
     public void SetMagnitudeThreshold(float newVal)
     {

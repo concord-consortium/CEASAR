@@ -231,14 +231,9 @@ public class NetworkUI : MonoBehaviour
         Player remotePlayer = manager.GetRemotePlayer(username);
         Debug.Log(remotePlayer.Name + " " + remotePlayer.Pin);
         Pushpin pin = remotePlayer.Pin;
-        Debug.Log(pin.ToString());
 
-        // Set simulation time and location;
-        manager.CurrentSimulationTime = pin.SelectedDateTime;
-        manager.CurrentLatLng = pin.Location;
-        
-        // NP I thought that maybe just triggering this would do the trick, but no:
-        // SimulationEvents.GetInstance().PushPinSelected.Invoke(pin.Location, pin.SelectedDateTime);
+        // Invoking this event will update the simulation time and location;
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
 
         // Switch to Horizon view
         if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)

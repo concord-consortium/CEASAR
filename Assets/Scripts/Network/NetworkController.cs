@@ -283,17 +283,17 @@ public class NetworkController : MonoBehaviour
             }
             if (interactionController && networkPlayer.locationPin != null)
             {
-                LatLng latLng = new LatLng
-                    {Latitude = networkPlayer.locationPin.latitude, Longitude = networkPlayer.locationPin.longitude};
-                DateTime dt = DateTime.UtcNow;
+                Pushpin pin = interactionController.NetworkPlayerPinToPushpin(networkPlayer);
+                // LatLng latLng = new LatLng
+                //     {Latitude = networkPlayer.locationPin.latitude, Longitude = networkPlayer.locationPin.longitude};
+                // DateTime dt = DateTime.UtcNow;
                 if (networkPlayer.locationPin != null )
                 {
                     Debug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
-                    dt = TimeConverter.EpochTimeToDate(networkPlayer.locationPin.datetime);
+                    //dt = TimeConverter.EpochTimeToDate(networkPlayer.locationPin.datetime);
                 }
 
-                Debug.LogWarning(dt + " " + networkPlayer.locationPin.datetime);
-                interactionController.AddOrUpdatePin(latLng, playerColor, networkPlayer.username, dt, networkPlayer.locationPin.locationName,
+                interactionController.AddOrUpdatePin(pin, playerColor, networkPlayer.username, 
                     false, false);
             }
             SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
