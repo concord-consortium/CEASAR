@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
 {
+
     public Pushpin pin;
     
     private Material defaultMaterial;

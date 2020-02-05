@@ -11,8 +11,9 @@ public class InteractionController : MonoBehaviour
     public GameObject interactionIndicator;
     public GameObject locationPinPrefab;
 
-    private GameObject currentLocationPin;
-    private List<GameObject> remotePins;
+    private GameObject localPlayerPinObject;
+    //private List<GameObject> remotePins;
+    private Dictionary<string, GameObject> remotePins;
     
     // Cached reference to earth object for lat/lng
     private GameObject _earth;
@@ -49,7 +50,7 @@ public class InteractionController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        remotePins = new List<GameObject>();
+        remotePins = new Dictionary<string, GameObject>();
     }
 
     void OnDisable()
@@ -84,15 +85,15 @@ public class InteractionController : MonoBehaviour
     {
         if (remotePins != null)
         {
-            foreach (GameObject pin in remotePins)
+            foreach (GameObject pin in remotePins.Values)
             {
                 pin.SetActive(show);
             }
         }
 
-        if (currentLocationPin)
+        if (localPlayerPinObject)
         {
-            currentLocationPin.SetActive(show);
+            localPlayerPinObject.SetActive(show);
         } 
         
         if (show && manager.UserHasSetLocation)
@@ -266,25 +267,29 @@ public class InteractionController : MonoBehaviour
         if (manager.UserHasSetLocation && manager.LocalUserPin != null)
         {
             string pinName = getPinName(manager.LocalUsername);
-            if (currentLocationPin == null)
+            if (localPlayerPinObject == null)
             {
-                currentLocationPin = getPinObject(pinName);
+                localPlayerPinObject = getPinObject(pinName);
             }
 
             Pushpin p = manager.LocalUserPin;
-            updatePinObject(currentLocationPin, manager.LocalUserPin, manager.LocalPlayerColor);
+            updatePinObject(localPlayerPinObject, manager.LocalUserPin, manager.LocalPlayerColor);
         }
     }
     
     // This is used for local pins and remote pins
     public void AddOrUpdatePin(Pushpin pin, Color c, string pinOwner, bool isLocal, bool broadcast = false)
     {
-        string pinName = getPinName(pinOwner);
         if (isLocal)
         {
-            currentLocationPin = getPinObject(pinName);
-            //Pushpin p = 
-            updatePinObject(currentLocationPin, pin, manager.LocalPlayerColor);
+            if (localPlayerPinObject == null)
+            {
+                localPlayerPinObject = Instantiate(locationPinPrefab);
+                localPlayerPinObject.name = getPinName(pinOwner);
+                localPlayerPinObject.transform.parent = this.transform;
+                
+            }
+            updatePinObject(localPlayerPinObject, pin, manager.LocalPlayerColor);
 
             // Update Simulation Manager with our pin
             // manager.LocalUserPin = p;
@@ -305,15 +310,15 @@ public class InteractionController : MonoBehaviour
         }
         else
         {
-            GameObject remotePin = GameObject.Find(pinName);
-            if (remotePin == null)
+            if (remotePins[pinOwner] == null)
             {
-                remotePin = getPinObject(pinName);
-                remotePins.Add(remotePin);
+                GameObject pinObject = Instantiate(locationPinPrefab);
+                pinObject.name = getPinName(pinOwner);
+                pinObject.transform.parent = this.transform;
+                remotePins[pinOwner] = pinObject;
             }
-            //Pushpin p = 
-            updatePinObject(remotePin, pin, c);
-            // manager.GetRemotePlayer(pinOwner).UpdatePlayerPin(p);
+            // update the 3d object in scene with correct location
+            updatePinObject(remotePins[pinOwner], pin, c);
         }
         
     }
@@ -335,7 +340,7 @@ public class InteractionController : MonoBehaviour
 
         return pinObject;
     }
-    Pushpin updatePinObject(GameObject pinObject, Pushpin pin, Color c)
+    void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
         Vector3 pos = getEarthRelativePos(pin.Location);
         pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos);
@@ -343,7 +348,6 @@ public class InteractionController : MonoBehaviour
         pinObject.GetComponent<Renderer>().material.color = c;
         PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
         pinComponent.UpdatePin(pin);
-        return pinComponent.pin;
     }
     
     IEnumerator selfDestruct(GameObject indicatorObj)

@@ -245,7 +245,6 @@ public class ColyseusClient : MonoBehaviour
         if (IsConnected)
         {
             NetworkTransform t = new NetworkTransform();
-            Debug.Log(pos + " " + rot);
             t.position = new NetworkVector3 { x = pos.x, y = pos.y, z = pos.z };
             Vector3 r = rot.eulerAngles;
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
@@ -305,7 +304,6 @@ public class ColyseusClient : MonoBehaviour
                 perspectivePin = pin,
                 message = "locationpin"
             });
-            Debug.LogWarning(pin.datetime);
         }
     }
     
