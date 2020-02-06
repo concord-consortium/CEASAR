@@ -141,7 +141,7 @@ public class MainUIController : MonoBehaviour
         foreach (Transform t in controlPanel.transform) {
             allPanels.Add(t.name, t.gameObject);
         }
-        
+        if (manager.CrashSiteForGroup == null) manager.CrashSiteForGroup = UserRecord.GroupPins[manager.GroupName];
         snapshotsController = GetComponent<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();

@@ -270,7 +270,6 @@ public class InteractionController : MonoBehaviour
 
     /// <summary>
     /// When the scene changes, refresh the pin location if it was changed in Horizon view
-    /// This is also called when we first connect to the network, though I'm not sure why...
     /// </summary>
     public void UpdateLocalUserPinObject()
     {
@@ -338,6 +337,16 @@ public class InteractionController : MonoBehaviour
         pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos);
         pinObject.transform.position = pos;
         pinObject.GetComponent<Renderer>().material.color = c;
+        
+        // HIDE IF WE ARE AT THE CRASH SITE
+        if (pin.Location == manager.CrashSiteForGroup.Location)
+        {
+            pinObject.SetActive(false);
+        }
+        else
+        {
+            pinObject.SetActive(true);
+        }
     }
     
     IEnumerator selfDestruct(GameObject indicatorObj)
