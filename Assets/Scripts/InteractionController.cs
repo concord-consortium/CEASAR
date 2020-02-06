@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Colyseus.Schema;
 using Oculus.Platform.Samples.VrHoops;
 using UnityEngine.SceneManagement;
+using static SimulationConstants;
 
 public class InteractionController : MonoBehaviour
 {
@@ -189,7 +190,7 @@ public class InteractionController : MonoBehaviour
             }
             string interactionInfo = "local celestial interaction CO:" +
                                      coName + ", " + coGroup + ", " + uniqueId;
-            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+            CCLogger.Log(LOG_EVENT_INTERACTION_ADDED, interactionInfo);
         }
     }
 
@@ -214,7 +215,7 @@ public class InteractionController : MonoBehaviour
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
             Debug.Log(interactionInfo);
             // SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
-            CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+            CCLogger.Log(LOG_EVENT_INTERACTION_ADDED, interactionInfo);
         }
     }
     /// <summary>

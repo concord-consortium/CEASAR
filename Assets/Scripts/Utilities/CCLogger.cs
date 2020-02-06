@@ -1,62 +1,14 @@
 ﻿using System;
 using UnityEngine.Networking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using static SimulationConstants;
 
 [Serializable]
-public class LogContext
-{
-    public const string APP_NAME = "CEASAR";
-    public string application = APP_NAME;
-    public string activity = "activity";
-    public string scene = "scene";
-    public double time = 0; // epoc millies
-    public string event_value = "test value";
-    public string platformName = "unknown";
-    public string username = "unknown";
-    public string groupName = "unknown";
-    public string message = "";
-    public LatLng lastLocation = new LatLng();
-    public DateTime lastSimulationTime = new DateTime();
-    public Vector3 lastHeading = new Vector3();
-
-    // event is a reserved word, but we need to send it as JSON.
-    // see: https://stackoverflow.com/questions/2787716/use-the-long-reserved-word-as-a-variable-name-in-c-sharp
-    public string @event = "nothing";
-    public LogContext()
-    {
-        time = getTimeMillies();
-        application = APP_NAME;
-        scene = getSceneName();
-        platformName = Application.platform.ToString();
-        username = PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
-        groupName = PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
-    }
-
-    private static double getTimeMillies()
-    {
-        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-        return t.TotalMilliseconds;
-    }
-
-    private static string getSceneName()
-    {
-        UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        return scene.name;
-    }
-}
-
 public class CCLogger
 {
-    public static readonly string LOGINGURL = "http://cc-log-manager.herokuapp.com/api/logs";
-    public static readonly string EVENT_DISCONNECT = "Disconnect";
-    public static readonly string EVENT_CONNECT = "Connect";
-    public static readonly string EVENT_USERNAME = "Set username";
-    public static readonly string EVENT_SCENE = "Scene loaded";
-    public static readonly string EVENT_PLAYER_MOVE = "Player Move";
-    public static readonly string EVENT_ADD_INTERACTION = "Interaction marker Added";
-    public static readonly string APP_NAME = "CEASAR";
-
 
     public string application;
     public string activity;
@@ -72,32 +24,51 @@ public class CCLogger
     public string @event = "nothing";
     public string event_value;
 
-    public LatLng lastLocation;
-    public DateTime lastSimulationTime;
-    public Vector3 lastHeading;
+    public string lastLocation;
+    public string lastSimulationTime;
+    public string lastHeading;
     public string lastLocationName;
     public string selectedObject;
     public string selectedStar;
-
+    public string crashSite;
     private static CCLogger instance;
 
+    // Singleton Access
     public static CCLogger GetInstance()
     {
         return instance ?? (instance = new CCLogger());
     }
 
+    // Private Constructor
     private CCLogger()
     {
         InitializeContext();
         UpdateContext();
-        RegisterEventListeners();
+        AddEventListeners();
+    }
+
+    // Hook to make sure our other listeners are removed
+    static void Quit()
+    {
+        CCLogger logger = CCLogger.GetInstance();
+        logger.RemoveEventListeners();
+        Application.quitting -= Quit;
+        Debug.Log("Logger Events removed.");
+    }
+
+   
+    [RuntimeInitializeOnLoadMethod]
+    static void RunOnStart()
+    {
+        // Register our quit hook, which removes event listeners
+        Application.quitting += Quit;
     }
 
     // Initialize local variables to default values.
     // Will be updated with real data later after events start coming in.
     private void InitializeContext()
     {
-        application = APP_NAME;
+        application = LOG_APP_NAME;
         activity = "activity";
         scene = "scene";
         platformName = "unknown";
@@ -108,21 +79,24 @@ public class CCLogger
         lastLocationName = "";
         selectedObject = "";
         selectedStar = "";
-        lastLocation = new LatLng();
-        lastSimulationTime = new DateTime();
-        lastHeading = new Vector3();
+        lastLocation = "";
+        lastSimulationTime = "";
+        lastHeading = "";
     }
 
+    // Add Simulation state to the Logging event for context.
     private void UpdateContext()
     {
         SimulationManager manager = SimulationManager.GetInstance();
         time = getTimeMillies();
         scene = getSceneName();
         platformName = Application.platform.ToString();
-        username = PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
-        groupName = PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
-        lastLocation = manager.Currentlocation;
-        lastSimulationTime = manager.CurrentSimulationTime;
+        username = PlayerPrefs.GetString(USERNAME_PREF_KEY);
+        groupName = PlayerPrefs.GetString(USER_GROUP_PREF_KEY);
+        lastLocation = manager.Currentlocation.ToDisplayString();
+        lastSimulationTime = manager.CurrentSimulationTime.ToString();
+        activity = CalcActivityName();
+
         if (manager.CurrentLocationName != null && manager.CurrentLocationName.Length > 0)
         {
             lastLocationName = manager.CurrentLocationName;
@@ -146,8 +120,15 @@ public class CCLogger
 
     }
 
+    private string CalcActivityName()
+    {
+        // Return the Group - Scene - Platform as a String.
+        return $"{groupName}, ${scene}, ${platformName}";
+    }
 
-    private void RegisterEventListeners()
+
+    // Listen for game events, dispatch to log events:
+    private void AddEventListeners()
     {
         SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
         eventDispatcher.LocationSelected.AddListener(LocationSelected);
@@ -160,66 +141,92 @@ public class CCLogger
         eventDispatcher.DrawMode.AddListener(DrawMode);
         eventDispatcher.SimulationTimeChanged.AddListener(SimulationTimeChanged);
     }
+
+    // Remove all listeners:
+    private void RemoveEventListeners()
+    {
+        SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
+        eventDispatcher.LocationSelected.RemoveListener(LocationSelected);
+        eventDispatcher.LocationChanged.RemoveListener(LocationChanged);
+        eventDispatcher.AnnotationAdded.RemoveListener(AnnotationAdded);
+        eventDispatcher.AnnotationDeleted.RemoveListener(AnnotationDeleted);
+        eventDispatcher.AnnotationClear.RemoveListener(AnnotationClear);
+        eventDispatcher.PushPinSelected.RemoveListener(PushPinSelected);
+        eventDispatcher.PushPinUpdated.RemoveListener(PushPinUpdated);
+        eventDispatcher.DrawMode.RemoveListener(DrawMode);
+        eventDispatcher.SimulationTimeChanged.RemoveListener(SimulationTimeChanged);
+    }
+
+    /********************* EVENT DISPATCHING SECTION ************************/
+    #region Event Dispatching:
+
     private void LocationSelected(string newLocation)
     {
-        _logAsync("UI Location Selected", newLocation);
+        _logAsync(LOG_EVENT_LOCATION_SELECTED, newLocation);
     }
 
 
     private void LocationChanged(LatLng location, string place)
     {
-        lastLocation = location;
+        lastLocation = location.ToDisplayString();
         string locationString = $"{location.ToDisplayString()} ({place})";
-        _logAsync("UI Location Changed", locationString);
+        _logAsync(LOG_EVENT_LOCATION_CHANGED, locationString);
     }
 
     // localPosition, localRotation, localScale, name 
     private void AnnotationAdded(Vector3 position, Quaternion rotation, Vector3 scale, string name)
     {
         string msg = $"Name:{name}, P:{position.ToString()}, R:{rotation.ToString()}, S:{scale.ToString()}";
-        _logAsync("Annotation Added", msg);
+        _logAsync(LOG_EVENT_ANNOTATION_ADDED, msg);
     }
 
     private void AnnotationDeleted(string name)
     {
-        _logAsync("Annotation Deleted", name);
+        _logAsync(LOG_EVENT_ANNOTATION_DELETED, name);
     }
 
     private void AnnotationClear(string name)
     {
-        _logAsync("Annotation Clear", name);
+        _logAsync(LOG_EVENT_ANNOTATION_CLEARED, name);
     }
 
     private void PushPinSelected(LatLng location, DateTime date)
     {
-        lastLocation = location;
-        lastSimulationTime = date;
+        lastLocation = location.ToDisplayString();
+        lastSimulationTime = date.ToString();
         string msg = $"Location: {location.ToDisplayString()}, date:{date.ToString()}";
-        _logAsync("PushPin Selected", msg);
+        _logAsync(LOG_EVENT_PUSHPIN_SELECTED, msg);
     }
 
     // Currentlocation, CurrentSimulationTime, cameraRotation
     private void PushPinUpdated(LatLng location, DateTime date, Vector3 rotation)
     {
-        lastLocation = location;
-        lastSimulationTime = date;
-        lastHeading = rotation;
+        lastLocation = location.ToDisplayString();
+        lastSimulationTime = date.ToString();
+        lastHeading = rotation.ToString();
         string msg = $"Location:{location.ToDisplayString()}, date:{date.ToString()}, ";
-        _logAsync("PushPin Updated", msg);
+        _logAsync(LOG_EVENT_PUSHPIN_UPDATED, msg);
     }
 
     private void DrawMode(bool isDrawing)
     {
-        string msg = $"isDrawing:{isDrawing.ToString()}";
-        _logAsync("DrawMode Changed", msg);
+        if(isDrawing)
+        {
+          _logAsync(LOG_EVENT_DRAWMODE_STARTED, "DrawMode Started");
+        }
+        else
+        {
+            _logAsync(LOG_EVENT_DRAWMODE_ENDED, "DrawMode Ended");
+        }
     }
 
-    public void SimulationTimeChanged() {
+    private void SimulationTimeChanged() {
         DateTime currentTime = SimulationManager.GetInstance().CurrentSimulationTime;
         string msg = $"SimulationTime:{currentTime.ToString()}";
-        _logAsync("Simulation Time Changed", msg);
+        _logAsync(LOG_EVENT_SIM_TIME_CHANGED, msg);
     }
-
+    #endregion Event Dispatching:
+    /********************* END EVENT DISPATCHING SECTION ********************/
 
 
     private static double getTimeMillies()
@@ -230,7 +237,7 @@ public class CCLogger
 
     private static string getSceneName()
     {
-        UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        Scene scene = SceneManager.GetActiveScene();
         return scene.name;
     }
 
@@ -238,49 +245,57 @@ public class CCLogger
     {
         try
         {
-            var request = new UnityWebRequest(LOGINGURL, "POST");
+            var request = new UnityWebRequest(LOG_URL, "POST");
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonLogMessage);
             request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
             await request.SendWebRequest();
-            Debug.Log("Logger returned http status code: " + request.responseCode);
         } catch (Exception e)
         {
             Debug.LogError("Failed to send log to log server.");
             Debug.LogError(jsonLogMessage);
             Debug.LogError(e);
         }
-        
     }
+
 
     private async Task _logAsync(string eventType, string msg)
     {
         @event = eventType;
-        event_value = eventType;
+        event_value = msg;
         message = msg;
         UpdateContext();
         bool devMode = SimulationManager.GetInstance().server == ServerList.Local;
         string json = JsonUtility.ToJson(this, true);
 
-        // TBD: This is really helpful right now, but might get noisy.
-        Debug.Log(json);
+        #if UNITY_EDITOR
+            Debug.Log(json);
+        #endif
 
-        // Only log if we're on the network to reduce clutter
+        // Only send to log manager if we're on the network to reduce clutter
         if (!devMode)
         {
             await postLog(json);
         }
     }
 
+    /********* Public Interface *********************************************/
+    #region Public Interface:
+
     public static void Log(string eventType, string msg)
     {
-        Debug.Log("Logging: " + eventType + "-- " + msg);
-#pragma warning disable CS4014
+        #if UNITY_EDITOR
+            Debug.Log("Logging: " + eventType + "-- " + msg);
+        #endif
+
+        #pragma warning disable CS4014
         // This call is not awaited, execution continues before the call is completed.
         // So as to not stall or interupt play while transmitting log messages.
         GetInstance()._logAsync(eventType, msg);
-#pragma warning restore CS4014
+        #pragma warning restore CS4014
         
     }
+    #endregion Public Interface
+    /********* End Public interface *****************************************/
 }

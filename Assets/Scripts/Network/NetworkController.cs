@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
-
+using static SimulationConstants;
 
 [RequireComponent(typeof(ColyseusClient))]
 public class NetworkController : MonoBehaviour
@@ -82,7 +82,7 @@ public class NetworkController : MonoBehaviour
         }
        
         refreshUI();
-        CCLogger.Log(CCLogger.EVENT_SCENE, "OnSceneLoaded: " + scene.name);
+        CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
     // TODO: Decouple depedency tree using events
@@ -143,7 +143,7 @@ public class NetworkController : MonoBehaviour
             manager.server = ServerList.Custom;
             manager.server.address = endpoint;
             refreshUI();
-            CCLogger.Log(CCLogger.EVENT_CONNECT, "connected");
+            CCLogger.Log(LOG_EVENT_CONNECT, "connected");
         }
     }
 
@@ -199,8 +199,13 @@ public class NetworkController : MonoBehaviour
         {
             Destroy(entry.Value);
         }
+<<<<<<< HEAD
         remotePlayerAvatars.Clear();
         CCLogger.Log(CCLogger.EVENT_DISCONNECT, "disconnected");
+=======
+        remotePlayers.Clear();
+        CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
+>>>>>>> Clean up string constants. Remove Event listeners. Log 'Activity'.
         refreshUI();
     }
 

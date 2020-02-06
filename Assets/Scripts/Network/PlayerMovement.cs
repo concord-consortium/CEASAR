@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static SimulationConstants;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
                     // Log movement:
                     string movementInfo = "local player moved to P:" +
                         transform.position.ToString() + " R:" + rot.ToString();
-                    CCLogger.Log(CCLogger.EVENT_PLAYER_MOVE, movementInfo);
+                    CCLogger.Log(LOG_EVENT_PLAYER_MOVE, movementInfo);
 
                     // update local comparators
                     lastPos = transform.position;

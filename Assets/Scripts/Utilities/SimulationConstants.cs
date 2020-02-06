@@ -62,4 +62,26 @@
         {BUTTON_TOGGLE_DRAW, BUTTON_TOGGLE_MOVEMENT, BUTTON_TOGGLE_CONSTELLATION};
 
     public static readonly string[] BUTTONS_HORIZON = {BUTTON_TOGGLE_MOVEMENT};
+
+    // ======== Logging configuration: ====================================================
+    public static readonly string LOG_URL = "http://cc-log-manager.herokuapp.com/api/logs";
+    public static readonly string LOG_APP_NAME = "CEASAR";
+
+    public static readonly string LOG_EVENT_DISCONNECT = "Disconnected";
+    public static readonly string LOG_EVENT_CONNECT = "Connected";
+    public static readonly string LOG_EVENT_USERNAME = "Username Set";
+    public static readonly string LOG_EVENT_SCENE = "Scene Loaded";
+    public static readonly string LOG_EVENT_PLAYER_MOVE = "Player Moved";
+    public static readonly string LOG_EVENT_LOCATION_SELECTED = "UI Location Selected";
+    public static readonly string LOG_EVENT_INTERACTION_ADDED = "Earth Interaction Marker Added";
+    public static readonly string LOG_EVENT_LOCATION_CHANGED = "Location Changed";
+    public static readonly string LOG_EVENT_ANNOTATION_ADDED = "Annotation Added";
+    public static readonly string LOG_EVENT_ANNOTATION_DELETED = "Annotation Deleted";
+    public static readonly string LOG_EVENT_ANNOTATION_CLEARED = "Annotation Cleared";
+    public static readonly string LOG_EVENT_PUSHPIN_SELECTED = "PushPin Selected";
+    public static readonly string LOG_EVENT_PUSHPIN_UPDATED = "PushPin Updated";
+    public static readonly string LOG_EVENT_DRAWMODE_STARTED = "DrawMode Started";
+    public static readonly string LOG_EVENT_DRAWMODE_ENDED = "DrawMode Ended";
+    public static readonly string LOG_EVENT_SIM_TIME_CHANGED = "Simulation Time Changed";
+    // ======== end logging configuration: ===================================================
 }
