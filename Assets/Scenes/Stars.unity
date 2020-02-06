@@ -414,7 +414,7 @@ PrefabInstance:
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: showPoleLine
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}

@@ -141,7 +141,7 @@ public class MainUIController : MonoBehaviour
         foreach (Transform t in controlPanel.transform) {
             allPanels.Add(t.name, t.gameObject);
         }
-        
+        if (manager.CrashSiteForGroup == null) manager.CrashSiteForGroup = UserRecord.GroupPins[manager.GroupName];
         snapshotsController = GetComponent<SnapshotsController>();
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
@@ -158,7 +158,7 @@ public class MainUIController : MonoBehaviour
         if (snapshotsController)
         {
             snapshotsController.Init();
-            foreach (Pushpin snapshot in snapshotsController.snapshots)
+            foreach (Pushpin snapshot in manager.LocalUserSnapshots)
             {
                 AddSnapshotToGrid(snapshot);
             }
@@ -288,11 +288,7 @@ public class MainUIController : MonoBehaviour
             buttonToDisable.GetComponent<Button>().enabled = false;
             buttonToDisable.GetComponent<Image>().color = Color.gray;
         }
-        if (!snapshotsController)
-        {
-            snapshotsController = GetComponent<SnapshotsController>();
-            if (snapshotsController != null) snapshotsController.Init();
-        }
+        
     }
 
     // Update is called once per frame
@@ -373,13 +369,14 @@ public class MainUIController : MonoBehaviour
         events.DrawMode.Invoke(IsDrawing);
     }
 
-    public void JumpToMyPin()
+    public void JumpToCrashSite()
     {
-        // This is now used to change the view in Horizon mode to your current pin
-        // Or to take you to the horizon for your current pin from Earth view
-        Pushpin pin = manager.LocalUserPin;
+        // This is now used to change the view in Horizon mode to your crash site pin
+        Pushpin pin = manager.CrashSiteForGroup;
+        if (pin == null) pin = UserRecord.GroupPins[manager.GroupName];
         manager.CurrentSimulationTime = pin.SelectedDateTime;
         manager.CurrentLatLng = pin.Location;
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -613,13 +610,11 @@ public class MainUIController : MonoBehaviour
     public void CreateSnapshot()
     {
         // get values from simulation manager
-        DateTime snapshotDateTime = manager.CurrentSimulationTime;
-        String location = manager.CurrentLocationName;
-        LatLng locationCoordinates = manager.CurrentLatLng;
+        manager.LocalUserSnapshots.Add(manager.LocalUserPin);
         // add a snapshot to the controller
-        snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
+        snapshotsController.SaveSnapshot(manager.LocalUserPin, manager.LocalUserSnapshots.Count - 1);
         // add snapshot to dropdown list
-        AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
+        AddSnapshotToGrid(manager.LocalUserPin);
     }
 
     public void AddSnapshotToGrid(Pushpin snapshot)
@@ -630,22 +625,21 @@ public class MainUIController : MonoBehaviour
 
     public void RestoreSnapshot(Pushpin snapshot)
     {
-        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
-        // user restores snapshot from UI
-        Pushpin snap = snapshotsController.snapshots[snapshotIndex];
-        Debug.Log(snap.SelectedDateTime + " " + snap.LocationName + " " + snap.Location);
+        // int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
+        // // user restores snapshot from UI
+        // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
+        Debug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location);
         
-        RestoreSnapshotOrPin(snap);
+        RestoreSnapshotOrPin(snapshot);
     }
 
     public void RestoreSnapshotOrPin(Pushpin pin)
     {
-        updateTimeSlidersFromPin(pin);
-        // Update the current date/time in simulation manager
-        calculateUserDateTime();
-
         // Update the manager so everything is ready to read the new pin values
         manager.LocalUserPin = pin;
+        
+        updateTimeSlidersFromPin(pin);
+        
         // update local player perspective on select
         events.PushPinSelected.Invoke(pin);
         // broadcast the update to current perspective to the network
@@ -666,6 +660,9 @@ public class MainUIController : MonoBehaviour
     }
     public void DeleteSnapshot(Pushpin deleteSnap)
     {
+        int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == deleteSnap.Location && el.SelectedDateTime == deleteSnap.SelectedDateTime);
+        manager.LocalUserSnapshots.RemoveAt(snapshotIndex);
+
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
 

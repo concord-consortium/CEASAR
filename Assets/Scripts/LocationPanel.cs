@@ -22,16 +22,25 @@ public class LocationPanel : MonoBehaviour
     }
     public void UpdateLocationPanel(LatLng latLng, string description)
     {
-        string newText = "";
-        if (!string.IsNullOrEmpty(description))
+        // HIDE IF WE ARE AT CRASH SITE!
+        if (latLng == manager.CrashSiteForGroup.Location)
         {
-            newText += description + " ";
+            latLongInfo.text = "At the crash site";
         }
-        newText += latLng.ToDisplayString();
-        
-        if (latLongInfo)
+        else
         {
-            latLongInfo.text = newText;
+            string newText = "";
+            if (!string.IsNullOrEmpty(description))
+            {
+                newText += description + " ";
+            }
+
+            newText += latLng.ToDisplayString();
+
+            if (latLongInfo)
+            {
+                latLongInfo.text = newText;
+            }
         }
     }
 

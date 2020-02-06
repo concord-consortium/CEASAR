@@ -17,6 +17,11 @@ public class AnnotationTool : MonoBehaviour
     private GameObject currentAnnotation;
     private List<GameObject> myAnnotations;
 
+    public bool IsMyAnnotation(GameObject annotationLine)
+    {
+        return myAnnotations.Contains(annotationLine);
+    }
+
     private void Start()
     {
         myAnnotations = new List<GameObject>();
