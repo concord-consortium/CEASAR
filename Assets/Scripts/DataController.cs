@@ -273,12 +273,9 @@ public class DataController : MonoBehaviour
         // if we're in Horizon view, set location and date / time
         if (showHorizonView)
         {
-            if (manager.UserHasSetLocation)
-            {
-                nextLocation = manager.LocalUserPin.Location;
-                // Force an update once ready
-                currentLocation = new LatLng();
-            }
+            nextLocation = manager.LocalUserPin.Location;
+            // Force an update once ready
+            currentLocation = new LatLng();
             positionNCP();
         }
 
@@ -362,7 +359,11 @@ public class DataController : MonoBehaviour
                     {
                         // PushPinSelected event will update manager and update next location
                         Pushpin pin = new Pushpin(manager.CurrentSimulationTime, new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
+                        // Update local listeners for UI and game object updates
                         SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+                        
+                        // broadcast the update to remote players
+                        SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
                     }
                     
                 }
@@ -372,7 +373,6 @@ public class DataController : MonoBehaviour
 
     void handlePinSelected(Pushpin pin)
     {
-        manager.LocalUserPin = pin;
         // force a redraw next frame
         nextLocation = pin.Location;
     }

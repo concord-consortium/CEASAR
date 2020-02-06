@@ -147,8 +147,6 @@ public class SimulationManager
             LocalUserPin.LocationName = value;
         }
     }
-    
-    public bool UserHasSetLocation { get; private set; }
 
     public Pushpin LocalUserPin
     {
@@ -156,7 +154,6 @@ public class SimulationManager
         set
         {
             LocalPlayer.Pin = value;
-            UserHasSetLocation = true;
         }
     }
 

@@ -237,7 +237,7 @@ public class NetworkController : MonoBehaviour
         Debug.Log("Player add! playerName: " + networkPlayer.username + " playerId: " + networkPlayer.id + "is local: " + isLocal);
         Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
-        // TODO: Sync pushpins 
+
         InteractionController interactionController = FindObjectOfType<InteractionController>();
         if (isLocal)
         {
@@ -248,10 +248,10 @@ public class NetworkController : MonoBehaviour
                 annotationTool.SyncMyAnnotations();
             }
 
-            if (interactionController && manager.UserHasSetLocation)
-            {
-                interactionController.UpdateLocalUserPin();
-            }
+            // update the server with current perspective pin for local user
+            BroadcastPinUpdated(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+            
+            // Because avatars are the only game objects controlled in this class, this is where we update the avatar.
             updateLocalAvatar();
         }
         else
@@ -284,17 +284,14 @@ public class NetworkController : MonoBehaviour
             if (interactionController && networkPlayer.locationPin != null)
             {
                 Pushpin pin = interactionController.NetworkPlayerPinToPushpin(networkPlayer);
-                // LatLng latLng = new LatLng
-                //     {Latitude = networkPlayer.locationPin.latitude, Longitude = networkPlayer.locationPin.longitude};
-                // DateTime dt = DateTime.UtcNow;
+
                 if (networkPlayer.locationPin != null )
                 {
                     Debug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
-                    //dt = TimeConverter.EpochTimeToDate(networkPlayer.locationPin.datetime);
                 }
 
                 interactionController.AddOrUpdatePin(pin, playerColor, networkPlayer.username, 
-                    false, false);
+                    false);
             }
             SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
         }

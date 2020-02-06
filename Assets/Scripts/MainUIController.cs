@@ -643,8 +643,13 @@ public class MainUIController : MonoBehaviour
         updateTimeSlidersFromPin(pin);
         // Update the current date/time in simulation manager
         calculateUserDateTime();
-        
+
+        // Update the manager so everything is ready to read the new pin values
+        manager.LocalUserPin = pin;
+        // update local player perspective on select
         events.PushPinSelected.Invoke(pin);
+        // broadcast the update to current perspective to the network
+        events.PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
     }
 
     private void updateTimeSlidersFromPin(Pushpin pin)

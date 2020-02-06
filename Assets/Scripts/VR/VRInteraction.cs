@@ -130,7 +130,7 @@ public class VRInteraction : MonoBehaviour
                         {
                             if (mainUIController.IsPinningLocation)
                             {
-                                interactionController.SetEarthLocationPin(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
+                                interactionController.SetEarthLocationPin(hit.point);
                             }
                             else
                             {

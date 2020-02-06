@@ -83,7 +83,7 @@ public class InteractionController : MonoBehaviour
     }
     void showPins(bool show)
     {
-        if (remotePins != null)
+        if (remotePins != null && remotePins.Count > 0)
         {
             foreach (GameObject pin in remotePins.Values)
             {
@@ -96,9 +96,9 @@ public class InteractionController : MonoBehaviour
             localPlayerPinObject.SetActive(show);
         } 
         
-        if (show && manager.UserHasSetLocation)
+        if (show)
         {
-            UpdateLocalUserPin();
+            UpdateLocalUserPinObject();
         }
     }
 
@@ -217,11 +217,18 @@ public class InteractionController : MonoBehaviour
             CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
         }
     }
-    public void SetEarthLocationPin(Vector3 pos, Quaternion rot)
+    /// <summary>
+    /// Set a new location pin from Earth scene by detecting the latlng from 3d position
+    /// </summary>
+    /// <param name="pos">Position on the surface of the Earth that was clicked</param>
+    public void SetEarthLocationPin(Vector3 pos)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
         Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
-        AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true, true);
+        manager.LocalUserPin = p;
+        // broadcast the update
+        events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+        AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
     }
 
     string getPinName(string pinOwner)
@@ -261,24 +268,22 @@ public class InteractionController : MonoBehaviour
 
     /// <summary>
     /// When the scene changes, refresh the pin location if it was changed in Horizon view
+    /// This is also called when we first connect to the network, though I'm not sure why...
     /// </summary>
-    public void UpdateLocalUserPin()
+    public void UpdateLocalUserPinObject()
     {
-        if (manager.UserHasSetLocation && manager.LocalUserPin != null)
+        string pinName = getPinName(manager.LocalUsername);
+        if (localPlayerPinObject == null) 
         {
-            string pinName = getPinName(manager.LocalUsername);
-            if (localPlayerPinObject == null)
-            {
-                localPlayerPinObject = getPinObject(pinName);
-            }
-
-            Pushpin p = manager.LocalUserPin;
-            updatePinObject(localPlayerPinObject, manager.LocalUserPin, manager.LocalPlayerColor);
+            localPlayerPinObject = getPinObject(pinName);
+            localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
         }
+
+        updatePinObject(localPlayerPinObject, manager.LocalUserPin, manager.LocalPlayerColor);
     }
     
     // This is used for local pins and remote pins
-    public void AddOrUpdatePin(Pushpin pin, Color c, string pinOwner, bool isLocal, bool broadcast = false)
+    public void AddOrUpdatePin(Pushpin pin, Color c, string pinOwner, bool isLocal)
     {
         if (isLocal)
         {
@@ -290,27 +295,11 @@ public class InteractionController : MonoBehaviour
                 
             }
             updatePinObject(localPlayerPinObject, pin, manager.LocalPlayerColor);
-
-            // Update Simulation Manager with our pin
-            // manager.LocalUserPin = p;
-            // manager.CurrentLatLng = p.Location;
-            // manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
-            
-            events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
-            if (broadcast)
-            {
-                // this can cause a feedback loop if we're merely moving the pin in response to a location change
-                // so filter broadcasting this one so we only broadcast when we are adding a new pin in Earth scene
-                events.PushPinSelected.Invoke(pin);
-            }
-            //
-            // string interactionInfo = "Pushpin set at: " + p.ToString(); 
-            // Debug.Log(interactionInfo);
-            // CCLogger.Log(CCLogger.EVENT_ADD_INTERACTION, interactionInfo);
+            // events.PushPinSelected.Invoke(pin);
         }
         else
         {
-            if (remotePins[pinOwner] == null)
+            if (!remotePins.ContainsKey(pinOwner))
             {
                 GameObject pinObject = Instantiate(locationPinPrefab);
                 pinObject.name = getPinName(pinOwner);
@@ -325,7 +314,7 @@ public class InteractionController : MonoBehaviour
     void UpdatePinForLocalPlayer(Pushpin pin)
     {
         // this is in response to external location change via dropdown - we update, but do not broadcast
-        AddOrUpdatePin(pin, manager.LocalPlayerRecord.color, manager.LocalPlayerRecord.Username, true, false);
+        AddOrUpdatePin(pin, manager.LocalPlayerRecord.color, manager.LocalPlayerRecord.Username, true);
     }
 
     GameObject getPinObject(string pinName)
@@ -340,14 +329,13 @@ public class InteractionController : MonoBehaviour
 
         return pinObject;
     }
+    // Update the visible pin in-game to show at the correct location with the correct color.
     void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
         Vector3 pos = getEarthRelativePos(pin.Location);
         pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos);
         pinObject.transform.position = pos;
         pinObject.GetComponent<Renderer>().material.color = c;
-        PushpinComponent pinComponent = pinObject.GetComponent<PushpinComponent>();
-        pinComponent.UpdatePin(pin);
     }
     
     IEnumerator selfDestruct(GameObject indicatorObj)
