@@ -73,7 +73,7 @@
     public static readonly string LOG_EVENT_SCENE = "Scene Loaded";
     public static readonly string LOG_EVENT_PLAYER_MOVE = "Player Moved";
     public static readonly string LOG_EVENT_LOCATION_SELECTED = "UI Location Selected";
-    public static readonly string LOG_EVENT_INTERACTION_ADDED = "Earth Interaction Marker Added";
+    public static readonly string LOG_EVENT_INTERACTION_ADDED = "Interaction Marker Added";
     public static readonly string LOG_EVENT_LOCATION_CHANGED = "Location Changed";
     public static readonly string LOG_EVENT_ANNOTATION_ADDED = "Annotation Added";
     public static readonly string LOG_EVENT_ANNOTATION_DELETED = "Annotation Deleted";

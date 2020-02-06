@@ -199,13 +199,8 @@ public class NetworkController : MonoBehaviour
         {
             Destroy(entry.Value);
         }
-<<<<<<< HEAD
         remotePlayerAvatars.Clear();
-        CCLogger.Log(CCLogger.EVENT_DISCONNECT, "disconnected");
-=======
-        remotePlayers.Clear();
         CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
->>>>>>> Clean up string constants. Remove Event listeners. Log 'Activity'.
         refreshUI();
     }
 
