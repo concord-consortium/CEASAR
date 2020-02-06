@@ -68,9 +68,10 @@ public class SceneLoader : MonoBehaviour
             c.planeDistance = 10;
             c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             c.GetComponent<GraphicRaycaster>().enabled = false;
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
             if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
             c.GetComponent<OVRRaycaster>().enabled = true;
-            
+#endif
             
             if (c.gameObject.name == "MainUI")
             {
@@ -98,9 +99,10 @@ public class SceneLoader : MonoBehaviour
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         LaserPointer lp = FindObjectOfType<LaserPointer>();
         lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
-
+#endif
         // some scene-specific pieces to remove
         cameraControlUI = GameObject.Find("CameraControlUI");
         if (cameraControlUI != null)

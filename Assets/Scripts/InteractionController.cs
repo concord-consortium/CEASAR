@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Colyseus.Schema;
-using Oculus.Platform.Samples.VrHoops;
 using UnityEngine.SceneManagement;
 using static SimulationConstants;
 

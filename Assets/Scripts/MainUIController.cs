@@ -684,6 +684,8 @@ public class MainUIController : MonoBehaviour
 
     public void QuitApplication()
     {
+#if !UNITY_WEBGL
         Application.Quit();
+#endif
     }
 }

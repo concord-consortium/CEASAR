@@ -1,10 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RotateFaceCamera : MonoBehaviour
 {
     private Camera mainCam;
+
+    private void Start()
+    {
+        #if UNITY_WEBGL
+        this.gameObject.SetActive(false);
+        #endif
+    }
 
     private void OnDisable()
     {
