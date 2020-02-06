@@ -182,4 +182,6 @@ public class SimulationManager
         float max = DataControllerComponent.maxMag + Mathf.Abs(DataControllerComponent.minMag);
         return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
+    
+    public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
 }
