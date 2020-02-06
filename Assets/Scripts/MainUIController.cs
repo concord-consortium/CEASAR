@@ -369,13 +369,14 @@ public class MainUIController : MonoBehaviour
         events.DrawMode.Invoke(IsDrawing);
     }
 
-    public void JumpToMyPin()
+    public void JumpToCrashSite()
     {
-        // This is now used to change the view in Horizon mode to your current pin
-        // Or to take you to the horizon for your current pin from Earth view
-        Pushpin pin = manager.LocalUserPin;
+        // This is now used to change the view in Horizon mode to your crash site pin
+        Pushpin pin = manager.CrashSiteForGroup;
+        if (pin == null) pin = UserRecord.GroupPins[manager.GroupName];
         manager.CurrentSimulationTime = pin.SelectedDateTime;
         manager.CurrentLatLng = pin.Location;
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");

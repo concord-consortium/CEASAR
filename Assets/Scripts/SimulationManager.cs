@@ -182,6 +182,9 @@ public class SimulationManager
         float max = DataControllerComponent.maxMag + Mathf.Abs(DataControllerComponent.minMag);
         return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
-    
+
+    public string GroupName = UserRecord.UserGroupFromPrefs();
+    public Pushpin CrashSiteForGroup;
+    public Vector3 InitialUserLookDirection;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
 }

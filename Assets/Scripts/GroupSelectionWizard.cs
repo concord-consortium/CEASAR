@@ -252,6 +252,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private Pushpin setLocationForGroup(string groupName)
     {
         Pushpin selectedGroupPin = UserRecord.GroupPins[groupName];
+        manager.CrashSiteForGroup = selectedGroupPin;
         manager.CurrentLatLng = selectedGroupPin.Location;
         manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
         // manager.LocalUserPin = selectedGroupPin;
