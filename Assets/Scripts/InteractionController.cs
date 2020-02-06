@@ -228,6 +228,7 @@ public class InteractionController : MonoBehaviour
         Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
         manager.LocalUserPin = p;
         // broadcast the update
+        events.PushPinSelected.Invoke(manager.LocalUserPin);
         events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
         AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
     }
