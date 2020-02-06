@@ -359,6 +359,7 @@ public class DataController : MonoBehaviour
                     {
                         // PushPinSelected event will update manager and update next location
                         Pushpin pin = new Pushpin(manager.CurrentSimulationTime, new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
+                        manager.LocalUserPin = pin;
                         // Update local listeners for UI and game object updates
                         SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
                         

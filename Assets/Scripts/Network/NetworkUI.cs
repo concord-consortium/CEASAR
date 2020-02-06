@@ -231,6 +231,8 @@ public class NetworkUI : MonoBehaviour
         Player remotePlayer = manager.GetRemotePlayer(username);
         Debug.Log(remotePlayer.Name + " " + remotePlayer.Pin);
         Pushpin pin = remotePlayer.Pin;
+        
+        manager.LocalUserPin = pin;
 
         // Invoking this event will update the simulation time and location;
         SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
