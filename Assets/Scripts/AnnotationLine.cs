@@ -15,7 +15,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     private float holdClickDuration = 0;
     private float holdToDeleteTime = 1f;
     private float startParticleSpeed = 0.12f;
-
+    private AnnotationTool _annotationTool;
     public bool IsSelected {
         get { return isSelected; }
         set { isSelected = value; }
@@ -34,6 +34,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         initialScale = transform.localScale;
         hoverScale = new Vector3(initialScale.x * hoverSize, initialScale.y * hoverSize, initialScale.z);
         selectedParticles = GetComponent<ParticleSystem>();
+        if (_annotationTool == null) _annotationTool = FindObjectOfType<AnnotationTool>();
         SimulationEvents.GetInstance().DrawMode.AddListener(HandleDrawModeToggle);
     }
 
@@ -55,15 +56,18 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     }
     public void Highlight(bool showHighlight)
     {
-        if (showHighlight)
+        if (_annotationTool.IsMyAnnotation(this.gameObject))
         {
-            transform.localScale = hoverScale;
-            isSelected = true;
-        }
-        else
-        {
-            transform.localScale = initialScale;
-            isSelected = false;
+            if (showHighlight)
+            {
+                transform.localScale = hoverScale;
+                isSelected = true;
+            }
+            else
+            {
+                transform.localScale = initialScale;
+                isSelected = false;
+            }
         }
     }
 
