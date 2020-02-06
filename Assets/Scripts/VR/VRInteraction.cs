@@ -25,7 +25,7 @@ public class VRInteraction : MonoBehaviour
     SimulationManager manager;
     InteractionController interactionController;
     bool canInteract = true;
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
     OVRInputModule m_InputModule;
 #endif
     bool shouldShowIndicator;
@@ -70,7 +70,7 @@ public class VRInteraction : MonoBehaviour
         laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
 
         updateLaser(false);
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         m_InputModule = FindObjectOfType<OVRInputModule>();
 #endif
         layerMaskEarth = LayerMask.GetMask("Earth");
@@ -100,7 +100,7 @@ public class VRInteraction : MonoBehaviour
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         if (showIndicator)
         {
 
@@ -254,7 +254,7 @@ public class VRInteraction : MonoBehaviour
     }
     void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float distance)
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         Transform origin = this.transform;
 
         if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
@@ -280,7 +280,7 @@ public class VRInteraction : MonoBehaviour
 
     void moveAroundEarth()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         if (SceneManager.GetActiveScene().name == "EarthInteraction")
         {
             if (!earthModel) earthModel = GameObject.Find("EarthContainer");
@@ -341,7 +341,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool interactionTrigger(bool oneShot = true)
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         if (oneShot)
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger) ||
@@ -358,7 +358,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool interactionFingerTrigger()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger));
 #else 
@@ -367,7 +367,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool grabTrigger()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         return (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) ||
                         OVRInput.Get(OVRInput.Button.SecondaryHandTrigger));
 #else 
@@ -376,7 +376,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool leftMenuTrigger()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         return (OVRInput.Get(OVRInput.Button.Two));
 #else 
         return false;
@@ -384,7 +384,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool rightMenuTrigger()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         return (OVRInput.Get(OVRInput.Button.Four));
 #else 
         return false;
@@ -402,14 +402,14 @@ public class VRInteraction : MonoBehaviour
 
     void hapticFeedback()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         OVRInput.SetControllerVibration(0.1f, 0.2f, OVRInput.GetActiveController());
         StartCoroutine(stopHaptic());
 #endif
     }
     IEnumerator stopHaptic()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+#if !UNITY_WEBGL
         yield return new WaitForSeconds(0.1f);
         OVRInput.SetControllerVibration(0f, 0f, OVRInput.GetActiveController());
 #else
