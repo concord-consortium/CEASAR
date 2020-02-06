@@ -258,7 +258,6 @@ public class NetworkController : MonoBehaviour
         {
             // Set up the remote player with the main manager
             manager.AddRemotePlayer(networkPlayer.username);
-            
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
             Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
@@ -290,6 +289,8 @@ public class NetworkController : MonoBehaviour
                     Debug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
                 }
 
+                manager.GetRemotePlayer(networkPlayer.username).Pin = pin;
+                
                 interactionController.AddOrUpdatePin(pin, playerColor, networkPlayer.username, 
                     false);
             }
