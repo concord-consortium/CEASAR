@@ -27,6 +27,7 @@ public class CCLogger
     public string lastLocation;
     public string lastSimulationTime;
     public string lastHeading;
+    public string lastCompassHeading;
     public string lastLocationName;
     public string selectedObject;
     public string selectedStar;
@@ -82,6 +83,7 @@ public class CCLogger
         lastLocation = "";
         lastSimulationTime = "";
         lastHeading = "";
+        lastCompassHeading = "";
     }
 
     // Add Simulation state to the Logging event for context.
@@ -93,46 +95,64 @@ public class CCLogger
         platformName = Application.platform.ToString();
         username = PlayerPrefs.GetString(USERNAME_PREF_KEY);
         groupName = PlayerPrefs.GetString(USER_GROUP_PREF_KEY);
-        lastLocation = manager.Currentlocation.ToDisplayString();
+        crashSite = UserRecord.GroupPins[groupName] != null
+            ? UserRecord.GroupPins[groupName].ToString()
+            : "";
+        lastLocation = manager.LocalUserPin.Location.ToString();
+        lastHeading = manager.LocalPlayerLookDirection.ToString();
+        lastCompassHeading = CalcCompassOrdinal(manager.LocalPlayerLookDirection);
         lastSimulationTime = manager.CurrentSimulationTime.ToString();
         activity = CalcActivityName();
+
 
         if (manager.CurrentLocationName != null && manager.CurrentLocationName.Length > 0)
         {
             lastLocationName = manager.CurrentLocationName;
         }
-        if (manager.CelestialSphereObject != null)
-        {
-            selectedObject = manager.CelestialSphereObject.name;
-        }
-        else
-        {
-            selectedObject = "";
-        }
         if (manager.CurrentlySelectedStar != null)
         {
-            selectedStar = manager.CurrentlySelectedStar.name;
+            selectedStar = manager.CurrentlySelectedStar.starData.ProperName;
+            selectedObject = manager.CurrentlySelectedStar.starData.ConstellationFullName;
         }
         else
         {
             selectedObject = "";
+            selectedStar = "";
         }
-
     }
 
     private string CalcActivityName()
     {
-        // Return the Group - Scene - Platform as a String.
-        return $"{groupName}, ${scene}, ${platformName}";
+        return $"{groupName}, {scene}, {platformName}";
     }
 
-
+    private string CalcCompassOrdinal(Vector3 look)
+    {
+        float viewAngle = look.y;
+        // Return the Group - Scene - Platform as a String.
+        // 45 degree quadrants offset by ½ 45 or 22.5d
+        float angle = 22.5f;
+        float step = 45;
+        int index = 0;
+        string[] ordinals = {
+            "North", "North East", "East", "Sout East",
+            "South", "South West", "West", "North West"
+        };
+        while(angle <= 337.5)
+        {
+            if (viewAngle < angle) return ordinals[index];
+            index++;
+            angle += step;
+        }
+        // if the viewAngle is < 337.5 its north:
+        return ordinals[0];
+    }
     // Listen for game events, dispatch to log events:
     private void AddEventListeners()
     {
         SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
         eventDispatcher.LocationSelected.AddListener(LocationSelected);
-        eventDispatcher.LocationChanged.AddListener(LocationChanged);
+        // eventDispatcher.LocationChanged.AddListener(LocationChanged); 
         eventDispatcher.AnnotationAdded.AddListener(AnnotationAdded);
         eventDispatcher.AnnotationDeleted.AddListener(AnnotationDeleted);
         eventDispatcher.AnnotationClear.AddListener(AnnotationClear);
@@ -147,7 +167,7 @@ public class CCLogger
     {
         SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
         eventDispatcher.LocationSelected.RemoveListener(LocationSelected);
-        eventDispatcher.LocationChanged.RemoveListener(LocationChanged);
+        // eventDispatcher.LocationChanged.RemoveListener(LocationChanged);
         eventDispatcher.AnnotationAdded.RemoveListener(AnnotationAdded);
         eventDispatcher.AnnotationDeleted.RemoveListener(AnnotationDeleted);
         eventDispatcher.AnnotationClear.RemoveListener(AnnotationClear);
@@ -190,21 +210,21 @@ public class CCLogger
         _logAsync(LOG_EVENT_ANNOTATION_CLEARED, name);
     }
 
-    private void PushPinSelected(LatLng location, DateTime date)
+    private void PushPinSelected(Pushpin pin)
     {
-        lastLocation = location.ToDisplayString();
-        lastSimulationTime = date.ToString();
-        string msg = $"Location: {location.ToDisplayString()}, date:{date.ToString()}";
+        lastLocation = pin.Location.ToString();
+        lastSimulationTime = pin.SelectedDateTime.ToString();
+        string msg = $"Pushpin Selected: {pin.ToString()}";
         _logAsync(LOG_EVENT_PUSHPIN_SELECTED, msg);
     }
 
     // Currentlocation, CurrentSimulationTime, cameraRotation
-    private void PushPinUpdated(LatLng location, DateTime date, Vector3 rotation)
+    private void PushPinUpdated(Pushpin pin, Vector3 rotation)
     {
-        lastLocation = location.ToDisplayString();
-        lastSimulationTime = date.ToString();
+        lastLocation = pin.Location.ToDisplayString();
+        lastSimulationTime = pin.SelectedDateTime.ToString();
         lastHeading = rotation.ToString();
-        string msg = $"Location:{location.ToDisplayString()}, date:{date.ToString()}, ";
+        string msg = $"Pushpin Updated: {pin.ToString()}, {rotation.ToString()}";
         _logAsync(LOG_EVENT_PUSHPIN_UPDATED, msg);
     }
 
