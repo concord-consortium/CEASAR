@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 
-// Record class representing Solyseus server endpoint
+// Record class representing Colyseus server endpoint
 public class ServerRecord {
     public string name;
     public string address;

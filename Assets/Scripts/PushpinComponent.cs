@@ -6,41 +6,32 @@ using UnityEngine.EventSystems;
 
 public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
 {
-    public Pushpin pin;
+
+    public string owner;
     
     private Material defaultMaterial;
     public Material highlightPinMaterial;
 
+    private SimulationManager manager { get {return SimulationManager.GetInstance();}}
     private void Start()
     {
-        if (pin == null) pin = new Pushpin();
+        owner = "";
         defaultMaterial = GetComponent<Renderer>().material;
-        if (SimulationManager.GetInstance().UserHasSetLocation)
+    }
+
+    public void HandleSelectPinObject()
+    {
+        bool isLocalPlayer = owner == manager.LocalUsername;
+        if (isLocalPlayer)
         {
-            pin = SimulationManager.GetInstance().LocalUserPin;
+            SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.LocalUserPin);
         }
         else
         {
-            pin = new Pushpin
-            {
-                Location = new LatLng {Latitude = 0, Longitude = 0},
-                SelectedDateTime = SimulationManager.GetInstance().CurrentSimulationTime
-            };
+            Pushpin pin = manager.GetRemotePlayer(owner).Pin;
+            SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
         }
-    }
 
-    public void UpdatePin(LatLng latLng, DateTime dt)
-    {
-        if (pin == null) pin = new Pushpin();
-        pin.Location = latLng;
-        pin.SelectedDateTime = dt;
-    }
-
-    public void HandleSelectPin()
-    {
-        LatLng latlng = pin.Location;
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(latlng, pin.SelectedDateTime);
-        SimulationEvents.GetInstance().LocationChanged.Invoke(latlng, SimulationConstants.CUSTOM_LOCATION);
     }
 
     public void HighlightPin(bool highlight)
@@ -57,7 +48,7 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        HandleSelectPin();
+        HandleSelectPinObject();
     }
     public void OnPointerEnter(PointerEventData eventData)
     {

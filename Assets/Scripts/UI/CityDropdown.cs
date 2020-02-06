@@ -6,13 +6,11 @@ using TMPro;
 
 public class CityDropdown : MonoBehaviour
 {
-    private DataController dataController;
     private List<string> allCityNames;
     TMP_Dropdown dropdown;
 
     void Start()
     {
-        dataController = SimulationManager.GetInstance().DataControllerComponent;
         dropdown = GetComponent<TMP_Dropdown>();
         // Add listener for when the value of the Dropdown changes
         dropdown.onValueChanged.AddListener(delegate
@@ -23,10 +21,7 @@ public class CityDropdown : MonoBehaviour
 
     void DropdownValueChanged(TMP_Dropdown change)
     {
-        if (dataController)
-        {
-            SimulationEvents.GetInstance().LocationSelected.Invoke(change.captionText.text);
-        }
+        SimulationEvents.GetInstance().LocationSelected.Invoke(change.captionText.text);
     }
 
     // When the location is set elsewhere (from a pushpin interaction etc) sync the drop down to match if possible

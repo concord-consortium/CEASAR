@@ -78,7 +78,7 @@ public class DataController : MonoBehaviour
     private float simulationTimeScale = 10f;
     private float radius = 50;
 
-    private SimulationManager manager;
+    private SimulationManager manager { get { return SimulationManager.GetInstance();}} 
 
     [SerializeField]
     private double lst;
@@ -105,9 +105,7 @@ public class DataController : MonoBehaviour
     void Awake()
     {
         SceneManager.sceneUnloaded += OnSceneUnloaded;
-        manager = SimulationManager.GetInstance();
         // Need this so the network UI persists across scenes
-
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -254,7 +252,6 @@ public class DataController : MonoBehaviour
     }
     public void UpdateOnSceneLoad()
     {
-        if (manager == null) manager = SimulationManager.GetInstance();
         // Reset sphere
         isReady = false;
         this.transform.position = new Vector3(0, 0, 0f);
@@ -276,12 +273,9 @@ public class DataController : MonoBehaviour
         // if we're in Horizon view, set location and date / time
         if (showHorizonView)
         {
-            if (manager.UserHasSetLocation)
-            {
-                nextLocation = manager.LocalUserPin.Location;
-                // Force an update once ready
-                currentLocation = new LatLng();
-            }
+            nextLocation = manager.LocalUserPin.Location;
+            // Force an update once ready
+            currentLocation = new LatLng();
             positionNCP();
         }
 
@@ -314,13 +308,10 @@ public class DataController : MonoBehaviour
            
             // allow change of time in all scenes - should work in Earth scene to switch seasons
             //double lst;
-            if (manager == null) manager = SimulationManager.GetInstance();
-            if (manager.UseCustomSimulationTime)
+            
+            if (simulationTimeScale > 0 && runSimulation)
             {
-                if (simulationTimeScale > 0 && runSimulation)
-                {
-                    manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
-                }
+                manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
             }
             
             julianDate = manager.CurrentSimulationTime.ToJulianDate();
@@ -351,7 +342,6 @@ public class DataController : MonoBehaviour
     void handleSelectNewLocation(string newCity)
     {
         Debug.Log("Got new location! " + newCity);
-        SimulationManager manager = SimulationManager.GetInstance();
         
         if (!string.IsNullOrEmpty(newCity))
         {
@@ -365,21 +355,16 @@ public class DataController : MonoBehaviour
                     // Raise the change event with the matching lat/lng to update UI
                     currentCity = matchedCity;
                     // check if this is a custom location
-                    if (matchedCity.Name == SimulationConstants.CUSTOM_LOCATION)
+                    if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
                     {
-                        // Grab the custom location from the simulation manager
-                        nextLocation = manager.LocalUserPin.Location;
-                        manager.Currentlocation = nextLocation;
-                        manager.CurrentLocationName = SimulationConstants.CUSTOM_LOCATION;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(manager.Currentlocation, SimulationConstants.CUSTOM_LOCATION);
-                    }
-                    else
-                    {
-                        // Set up the city lat lng
-                        nextLocation = new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng};
-                        manager.Currentlocation = nextLocation;
-                        manager.CurrentLocationName = matchedCity.Name;
-                        SimulationEvents.GetInstance().LocationChanged.Invoke(nextLocation, matchedCity.Name);
+                        // PushPinSelected event will update manager and update next location
+                        Pushpin pin = new Pushpin(manager.CurrentSimulationTime, new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
+                        manager.LocalUserPin = pin;
+                        // Update local listeners for UI and game object updates
+                        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+                        
+                        // broadcast the update to remote players
+                        SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
                     }
                     
                 }
@@ -387,10 +372,10 @@ public class DataController : MonoBehaviour
         } 
     }
 
-    void handlePinSelected(LatLng latLng, DateTime dt)
+    void handlePinSelected(Pushpin pin)
     {
-        manager.CurrentSimulationTime = dt;
-        nextLocation = latLng;
+        // force a redraw next frame
+        nextLocation = pin.Location;
     }
     public void SetMagnitudeThreshold(float newVal)
     {
@@ -401,11 +386,6 @@ public class DataController : MonoBehaviour
         }
     }
 
-    public void ToggleUserTime()
-    {
-        SimulationManager.GetInstance().UseCustomSimulationTime =
-            !SimulationManager.GetInstance().UseCustomSimulationTime;
-    }
     public void ToggleRunSimulation()
     {
         runSimulation = !runSimulation;

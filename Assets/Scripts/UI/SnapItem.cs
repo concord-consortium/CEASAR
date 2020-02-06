@@ -6,7 +6,7 @@ using TMPro;
 public class SnapItem : MonoBehaviour
 {
     public TextMeshProUGUI snapItemText;
-    public Snapshot snapshot;
+    public Pushpin snapshot;
 
     private MainUIController mainUIController;
 

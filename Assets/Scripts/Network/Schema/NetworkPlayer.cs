@@ -7,7 +7,7 @@
 
 using Colyseus.Schema;
 
-public class Player : Schema {
+public class NetworkPlayer : Schema {
 	[Type(0, "string")]
 	public string id = "";
 

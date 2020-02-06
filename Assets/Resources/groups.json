@@ -1,0 +1,47 @@
+{
+  "alpha":  {
+    "latitude": 32.04145,
+    "longitude": -64.10922,
+    "crashdatetime": "2021-02-15 23:25"
+  },
+  "beta":   {
+    "latitude": 22.69089,
+    "longitude":141.55483,
+    "crashdatetime": "2021-04-23 10:15"
+  },
+  "gamma":   {
+    "latitude":73.0533,
+    "longitude":-140.74984,
+    "crashdatetime": "2021-12-25 02:21"
+  },
+  "delta":  {
+    "latitude": 25.26042,
+    "longitude": -90.82797,
+    "crashdatetime": "2021-02-16 01:13"
+  },
+  "epsilon":   {
+    "latitude": 51.21296,
+    "longitude": -139.57031,
+    "crashdatetime": "2021-04-24 06:43"
+  },
+  "zeta":  {
+    "latitude": 70.03891,
+    "longitude": 42.53906,
+    "crashdatetime": "2021-12-24 14:22"
+  },
+  "eta":   {
+    "latitude": -36.83668,
+    "longitude": -49.57031,
+    "crashdatetime": "2021-02-15 23:48"
+  },
+  "theta":   {
+    "latitude": -59.16915,
+    "longitude": -151.62655,
+    "crashdatetime": "2021-04-24 06:00"
+  },
+  "iota":  {
+    "latitude": -7.30924,
+    "longitude": 91.75781,
+    "crashdatetime": "2021-12-24 13:25"
+  }
+}

@@ -1,9 +1,20 @@
 ﻿
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
 public class UserRecord
 {
+    public static bool operator ==(UserRecord p1, UserRecord p2) 
+    {
+        return p1.Username.Equals(p2.Username);
+    }
+
+    public static bool operator !=(UserRecord p1, UserRecord p2) 
+    {
+        return !p1.Username.Equals(p2.Username);
+    }
+    
     readonly private static int COLOR_INDEX = 0;
     readonly private static int ANIMAL_INDEX = 1;
     readonly private static int NUMBER_INDEX = 2;
@@ -69,7 +80,7 @@ public class UserRecord
         int colorIndex = rng.Next(ColorNames.Count - 1);
         int animalIndex = rng.Next(AnimalNames.Count - 1);
 
-        group = NetworkController.roomNames[groupIndex];
+        group = GroupNames[groupIndex];
         number = rng.Next(9).ToString();
         animal = AnimalNames[animalIndex];
         colorName = ColorNames[colorIndex];
@@ -84,7 +95,34 @@ public class UserRecord
 
     /**************************** Static Methods *****************************/
 
-    public static List<string> GroupNames { get; } = new List<string>(NetworkController.roomNames);
+    private static List<string> groupNames = new List<string>();
+
+    public static List<string> GroupNames
+    {
+        get
+        {
+            if (!ResourcesLoaded)
+            {
+                LoadTextResources();
+            }
+            return groupNames;
+        }
+    }
+
+    private static Dictionary<string, Pushpin> groupPins = new Dictionary<string, Pushpin>();
+
+    public static Dictionary<string, Pushpin> GroupPins
+    {
+        get
+        {
+            if (!ResourcesLoaded)
+            {
+                LoadTextResources();
+            }
+            return groupPins;
+        }
+    }
+    
     private static List<string> Numbers = new List<string>("1,2,3,4,5,6,7,8,9".Split(','));
     private static List<string> colorNames;
     public static List<string> ColorNames
@@ -142,8 +180,26 @@ public class UserRecord
             colorValues.Add(color);
         }
         animalNames = new List<string>(animalList.text.Split(lineDelim, System.StringSplitOptions.RemoveEmptyEntries));
+
+        TextAsset groupList = Resources.Load("groups") as TextAsset;
+        JSONObject groupsObject = JSONObject.Create(groupList.text);
+        
+        groupNames = groupsObject.keys;
+        foreach (var g in groupsObject.keys)
+        {
+            Pushpin p = new Pushpin();
+            p.Location = new LatLng
+            {
+                Latitude = groupsObject[g].GetField("latitude").n, 
+                Longitude = groupsObject[g].GetField("longitude").n
+            };
+            p.SelectedDateTime = DateTime.Parse(groupsObject[g].GetField("crashdatetime").str);
+            groupPins.Add(g, p);
+        }
+
         ResourcesLoaded = true;
     }
+    
 
     public static string GetColorNameForUsername(string username)
     {

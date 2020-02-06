@@ -8,8 +8,8 @@ public class SimulationManager
 {
     // can't use constructor, guaranteed singleton
     protected SimulationManager() {
-        LocalPlayer = new UserRecord();
-        Debug.Log($"User has been created {LocalPlayer.Username}");
+        LocalPlayer = new Player(new UserRecord() );
+        Debug.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}");
     }
     private static SimulationManager instance;
 
@@ -35,6 +35,10 @@ public class SimulationManager
 #endif
         }
     }
+    
+    public string[] AnimalNames;
+    public List<string> ColorNames = new List<string>();
+    public List<Color> ColorValues = new List<Color>();
 
     public NetworkController NetworkControllerComponent;
     public GameObject InteractionControllerObject;
@@ -59,24 +63,34 @@ public class SimulationManager
 
     public bool IsReady = false;
 
-    public string[] AnimalNames;
-    public List<string> ColorNames = new List<string>();
-    public List<Color> ColorValues = new List<Color>();
-
-    public UserRecord LocalPlayer { get; set; }
+    public UserRecord LocalPlayerRecord
+    {
+        get { return localPlayer.PlayerUserRecord; }
+    }
 
     public Color LocalPlayerColor {
-        get { return LocalPlayer.color; }
+        get { return LocalPlayerRecord.color; }
     }
 
     public string LocalUsername
     {
-        get { return LocalPlayer.Username; }
-        set {
-            LocalPlayer = new UserRecord(value);
-            Debug.Log($"User has been Changed: {LocalPlayer.Username}");
-        }
+        get { return LocalPlayerRecord.Username; }
     }
+
+    private Player localPlayer;
+
+    public Player LocalPlayer
+    {
+        get { return localPlayer; }
+        set { localPlayer = value; }
+    }
+
+    public Vector3 LocalPlayerLookDirection
+    {
+        get { return LocalPlayer.CameraDirection; }
+        set { LocalPlayer.CameraDirection = value; }
+    }
+    
     public Color HorizonGroundColor = Color.green;
 
     // initial setup scale
@@ -91,73 +105,77 @@ public class SimulationManager
     // Movement synchronization throttled for Heroku/Mongo
     public float MovementSendInterval = 1.0f;
     
-    // Server Address!
-    public string LocalNetworkServer = "ws://localhost:2567";
-    public string DevNetworkServer = "ws://ceasar-serve-170349161-ceutdkz.herokuapp.com/";
-    public string ProductionNetworkServer = "ws://ceasar-server-staging.herokuapp.com/";
-
     public StarComponent CurrentlySelectedStar;
-    private DateTime _currentSimulationTime = DateTime.UtcNow;
 
     public DateTime CurrentSimulationTime
     {
-        get { return _currentSimulationTime; }
+        get { return LocalPlayer.Pin.SelectedDateTime; }
         set
         {
-            _currentSimulationTime = value;
+            LocalPlayer.Pin.SelectedDateTime = value;
         }
     }
-    private bool useCustomSimTime = false;
-    public bool UseCustomSimulationTime
+
+    // private LatLng _currentLatLng = new LatLng {Latitude = 0, Longitude = 0};
+
+    public LatLng CurrentLatLng
     {
-        get { return useCustomSimTime; }
+        get
+        {
+            return LocalUserPin.Location;
+        }
         set
         {
-            useCustomSimTime = value;
-            if (!useCustomSimTime) CurrentSimulationTime = DateTime.UtcNow;
+            LocalUserPin.Location = value;
         }
     }
 
-    private LatLng currentLocation = new LatLng {Latitude = 0, Longitude = 0};
-
-    public LatLng Currentlocation
-    {
-        get { return currentLocation; }
-        set
-        {
-            currentLocation = value;
-        }
-    }
-
-    private string currentLocationName;
+    // private string currentLocationName;
     public string CurrentLocationName
     {
         get
         {
-            if (string.IsNullOrEmpty(currentLocationName))
+            if (string.IsNullOrEmpty(LocalUserPin.LocationName))
             {
-                currentLocationName = SimulationConstants.CUSTOM_LOCATION;
+                LocalUserPin.LocationName = SimulationConstants.CUSTOM_LOCATION;
             }
 
-            return currentLocationName;
+            return LocalUserPin.LocationName;
         }
-        set { currentLocationName = value; }
+        set
+        {
+            LocalUserPin.LocationName = value;
+        }
     }
-    
-    public bool UserHasSetLocation { get; private set; }
-    private Pushpin localUserPin;
 
     public Pushpin LocalUserPin
     {
-        get { return localUserPin; }
+        get { return LocalPlayer.Pin; }
         set
         {
-            localUserPin = value;
-            currentLocation = value.Location;
-            UserHasSetLocation = true;
+            LocalPlayer.Pin = value;
         }
     }
+
+    private Dictionary<string, Player> remotePlayers = new Dictionary<string, Player>();
     
+    public void AddRemotePlayer(string playerName)
+    {
+        if (!remotePlayers.ContainsKey(playerName))
+        {
+            Player p = new Player(playerName);
+            remotePlayers.Add(playerName, p);
+        }
+    }
+    public Player GetRemotePlayer(string playerName)
+    {
+        if (!remotePlayers.ContainsKey(playerName))
+        {
+            remotePlayers.Add(playerName, new Player(playerName));
+        }
+        return remotePlayers[playerName];
+    }
+
     public float GetRelativeMagnitude(float starMagnitude)
     {
         //float min = DataControllerComponent.minMag;

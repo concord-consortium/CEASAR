@@ -5,9 +5,23 @@ public class Pushpin
 {
     public LatLng Location;
     public DateTime SelectedDateTime;
+    public string LocationName;
+    
     public override string ToString()
     {
         return Location.ToString() + " " + SelectedDateTime.ToString();
+    }
+
+    public Pushpin()
+    {
+        SelectedDateTime = DateTime.UtcNow;
+    }
+
+    public Pushpin(DateTime dt, LatLng latLng, string locationName)
+    {
+        SelectedDateTime = dt;
+        Location = latLng;
+        LocationName = String.IsNullOrEmpty(locationName) ? SimulationConstants.CUSTOM_LOCATION : locationName;
     }
 }
 

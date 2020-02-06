@@ -12,19 +12,13 @@ using UnityEngine.SceneManagement;
 public class NetworkController : MonoBehaviour
 {
     public GameObject avatar;
-    private Player localPlayer;
+    private NetworkPlayer _localNetworkPlayer;
     private GameObject localPlayerAvatar;
     public GameObject interactionIndicator;
 
-    public static string[] roomNames = {
-        "alpha", "beta", "gamma",
-        "delta", "epsilon", "zeta",
-        "eta", "theta", "iota"
-    };
-
     protected ColyseusClient colyseusClient;
 
-    protected IndexedDictionary<string, GameObject> remotePlayers = new IndexedDictionary<string, GameObject>();
+    protected IndexedDictionary<string, GameObject> remotePlayerAvatars = new IndexedDictionary<string, GameObject>();
 
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
@@ -40,6 +34,10 @@ public class NetworkController : MonoBehaviour
     public bool IsConnected
     {
         get { return colyseusClient != null && colyseusClient.IsConnected; }
+    }
+    public bool IsConnecting
+    {
+        get { return colyseusClient != null && colyseusClient.IsConnecting; }
     }
 
     public string ServerStatusMessage {
@@ -75,11 +73,11 @@ public class NetworkController : MonoBehaviour
         FindDependencies();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
-            OnPlayerAdd(localPlayer);
-            foreach (string p in remotePlayers.Keys)
+            OnPlayerAdd(_localNetworkPlayer);
+            foreach (string p in remotePlayerAvatars.Keys)
             {
-                Player remotePlayer = colyseusClient.GetPlayerById(p);
-                OnPlayerAdd(remotePlayer);
+                NetworkPlayer remoteNetworkPlayer = colyseusClient.GetPlayerById(p);
+                OnPlayerAdd(remoteNetworkPlayer);
             }
         }
        
@@ -122,21 +120,7 @@ public class NetworkController : MonoBehaviour
         networkUI = FindObjectOfType<NetworkUI>();
         if(networkUI)
         {
-            if (IsConnected)
-            {
-                networkUI.disconnectButton.SetActive(true);
-                networkUI.localButton.SetActive(false);
-                networkUI.webButton.SetActive(false);
-                networkUI.devButton.SetActive(false);
-            }
-            else
-            {
-                networkUI.disconnectButton.SetActive(false);
-                networkUI.localButton.SetActive(true);
-                networkUI.webButton.SetActive(true);
-                networkUI.devButton.SetActive(true);
-            }
-            
+            networkUI.ConnectedStatusUpdate(IsConnected);
             updatePlayerList();
         }
         
@@ -153,7 +137,7 @@ public class NetworkController : MonoBehaviour
     {
         if (!IsConnected)
         {
-            UserRecord user = SimulationManager.GetInstance().LocalPlayer; 
+            UserRecord user = SimulationManager.GetInstance().LocalPlayerRecord; 
             FindDependencies();
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = ServerList.Custom;
@@ -211,11 +195,11 @@ public class NetworkController : MonoBehaviour
         colyseusClient.Disconnect();
         
         // Destroy player game objects
-        foreach (KeyValuePair<string, GameObject> entry in remotePlayers)
+        foreach (KeyValuePair<string, GameObject> entry in remotePlayerAvatars)
         {
             Destroy(entry.Value);
         }
-        remotePlayers.Clear();
+        remotePlayerAvatars.Clear();
         CCLogger.Log(CCLogger.EVENT_DISCONNECT, "disconnected");
         refreshUI();
     }
@@ -237,7 +221,7 @@ public class NetworkController : MonoBehaviour
     void updatePlayerList()
     {
         string listOfPlayersForDebug = "";
-        foreach (var p in remotePlayers.Keys)
+        foreach (var p in remotePlayerAvatars.Keys)
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
@@ -247,94 +231,96 @@ public class NetworkController : MonoBehaviour
         networkUI.Username = manager.LocalUsername;
     }
 
-    public void OnPlayerAdd(Player player)
+    public void OnPlayerAdd(NetworkPlayer networkPlayer)
     {
-        bool isLocal = manager.LocalUsername == player.username;
-        Debug.Log("Player add! playerName: " + player.username + " playerId: " + player.id + "is local: " + isLocal);
-        Vector3 pos = Utils.NetworkV3ToVector3(player.playerPosition.position);
-        Quaternion rot = Utils.NetworkV3ToQuaternion(player.playerPosition.rotation);
-        // TODO: Sync pushpins 
+        bool isLocal = manager.LocalUsername == networkPlayer.username;
+        Debug.Log("Player add! playerName: " + networkPlayer.username + " playerId: " + networkPlayer.id + "is local: " + isLocal);
+        Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
+        Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
+
         InteractionController interactionController = FindObjectOfType<InteractionController>();
         if (isLocal)
         {
-            localPlayer = player;
+            _localNetworkPlayer = networkPlayer;
             AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
             if (annotationTool)
             {
                 annotationTool.SyncMyAnnotations();
             }
 
-            if (interactionController && manager.UserHasSetLocation)
-            {
-                interactionController.UpdateLocalUserPin();
-            }
+            // update the server with current perspective pin for local user
+            BroadcastPinUpdated(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+            
+            // Because avatars are the only game objects controlled in this class, this is where we update the avatar.
             updateLocalAvatar();
         }
         else
         {
+            // Set up the remote player with the main manager
+            manager.AddRemotePlayer(networkPlayer.username);
             GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
-            Color playerColor = UserRecord.GetColorForUsername(player.username);
+            Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
             remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            remotePlayerAvatar.name = "remotePlayer_" + player.username;
+            remotePlayerAvatar.name = "remotePlayer_" + networkPlayer.username;
             remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
-            SimulationEvents.GetInstance().PlayerJoined.Invoke(player.username);
-            // add "player" to map of players
-            if (!remotePlayers.ContainsKey(player.username))
+            
+            // add "player" to map of player avatars
+            if (!remotePlayerAvatars.ContainsKey(networkPlayer.username))
             {
-                remotePlayers.Add(player.username, remotePlayerAvatar);
+                remotePlayerAvatars.Add(networkPlayer.username, remotePlayerAvatar);
             }
             else
             {
-                remotePlayers[player.username] = remotePlayerAvatar;
+                remotePlayerAvatars[networkPlayer.username] = remotePlayerAvatar;
             }
-            
+
             // sync their annotations
-            for (int i = 0; i < player.annotations.Count; i++)
+            for (int i = 0; i < networkPlayer.annotations.Count; i++)
             {
-                NetworkTransform annotation = player.annotations[i];
-                SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, player);
+                NetworkTransform annotation = networkPlayer.annotations[i];
+                SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, networkPlayer);
             }
-            if (interactionController && player.locationPin != null)
+            if (interactionController && networkPlayer.locationPin != null)
             {
-                LatLng latLng = new LatLng
-                    {Latitude = player.locationPin.latitude, Longitude = player.locationPin.longitude};
-                DateTime dt = DateTime.UtcNow;
-                if (player.locationPin != null )
+                Pushpin pin = interactionController.NetworkPlayerPinToPushpin(networkPlayer);
+
+                if (networkPlayer.locationPin != null )
                 {
-                    Debug.Log("Player joined with locationPin time: " + player.locationPin.datetime);
-                    dt = TimeConverter.EpochTimeToDate(player.locationPin.datetime);
+                    Debug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
                 }
 
-                Debug.LogWarning(dt + " " + player.locationPin.datetime);
-                interactionController.AddOrUpdatePin(latLng, playerColor, player.username, dt,
-                    false, false);
+                manager.GetRemotePlayer(networkPlayer.username).Pin = pin;
+                
+                interactionController.AddOrUpdatePin(pin, playerColor, networkPlayer.username, 
+                    false);
             }
+            SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
         }
         updatePlayerList();
     }
 
-    public void OnPlayerRemove(Player player)
+    public void OnPlayerRemove(NetworkPlayer networkPlayer)
     {
-        SimulationEvents.GetInstance().PlayerLeft.Invoke(player.username);
-        SimulationEvents.GetInstance().AnnotationClear.Invoke(player.username);
+        SimulationEvents.GetInstance().PlayerLeft.Invoke(networkPlayer.username);
+        SimulationEvents.GetInstance().AnnotationClear.Invoke(networkPlayer.username);
         // TODO: clear pushpins for player
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(player.username, out remotePlayerAvatar);
+        remotePlayerAvatars.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
-        remotePlayers.Remove(player.username);
+        remotePlayerAvatars.Remove(networkPlayer.username);
         updatePlayerList();
     }
                     
-    public void OnPlayerChange(Player updatedPlayer)
+    public void OnPlayerChange(NetworkPlayer updatedNetworkPlayer)
     {
         // All player updates pass through here, including movement and interactions
         // though we need to handle those interactions differently. Keep this purely for movement!
-        bool isLocal = updatedPlayer.username == localPlayer.username;
+        bool isLocal = updatedNetworkPlayer.username == _localNetworkPlayer.username;
         
-        Debug.Log("player id " + updatedPlayer.id + " is local: " + isLocal);
+        Debug.Log("player id " + updatedNetworkPlayer.id + " is local: " + isLocal);
 
         GameObject remotePlayerAvatar;
-        remotePlayers.TryGetValue(updatedPlayer.username, out remotePlayerAvatar);
+        remotePlayerAvatars.TryGetValue(updatedNetworkPlayer.username, out remotePlayerAvatar);
         
         if (!isLocal)
         {
@@ -342,30 +328,30 @@ public class NetworkController : MonoBehaviour
             {
                 // only move players with an avatar
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextPosition = new Vector3(
-                    updatedPlayer.playerPosition.position.x, updatedPlayer.playerPosition.position.y,
-                    updatedPlayer.playerPosition.position.z);
+                    updatedNetworkPlayer.playerPosition.position.x, updatedNetworkPlayer.playerPosition.position.y,
+                    updatedNetworkPlayer.playerPosition.position.z);
                 remotePlayerAvatar.GetComponent<RemotePlayerMovement>().NextRotation = Quaternion.Euler(new Vector3(
-                    updatedPlayer.playerPosition.rotation.x, updatedPlayer.playerPosition.rotation.y,
-                    updatedPlayer.playerPosition.rotation.z));
+                    updatedNetworkPlayer.playerPosition.rotation.x, updatedNetworkPlayer.playerPosition.rotation.y,
+                    updatedNetworkPlayer.playerPosition.rotation.z));
             }
         }
     }
-    private bool isLocalPlayer(Player player)
+    private bool isLocalPlayer(NetworkPlayer networkPlayer)
     {
-        return player.username == localPlayer.username; 
+        return networkPlayer.username == _localNetworkPlayer.username; 
     }
 
-    private bool isRemotePlayer(Player player)
+    private bool isRemotePlayer(NetworkPlayer networkPlayer)
     {
-        return !isLocalPlayer(player);
+        return !isLocalPlayer(networkPlayer);
     }
 
-    public void HandleNetworkInteraction(Player player, string interactionType)
+    public void HandleNetworkInteraction(NetworkPlayer networkPlayer, string interactionType)
     { 
-        if (isRemotePlayer(player))
+        if (isRemotePlayer(networkPlayer))
         {
             InteractionController interactionController = FindObjectOfType<InteractionController>();
-            interactionController.HandleRemoteInteraction(player, interactionType);
+            interactionController.HandleRemoteInteraction(networkPlayer, interactionType);
         }
         else
         {
@@ -373,7 +359,7 @@ public class NetworkController : MonoBehaviour
         }
     }
 
-    public void HandleAnnotationDelete(Player player, string annotationName)
+    public void HandleAnnotationDelete(NetworkPlayer networkPlayer, string annotationName)
     {
         GameObject deletedAnnotation = GameObject.Find(annotationName);
         if (deletedAnnotation != null)
@@ -383,7 +369,7 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Could not delete " + annotationName + " for player " + player.username);
+            Debug.Log("Could not delete " + annotationName + " for player " + networkPlayer.username);
         }
         
     }
@@ -391,9 +377,9 @@ public class NetworkController : MonoBehaviour
     {
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
     }
-    public void BroadcastPinUpdated(LatLng latLng, DateTime dateTime, Vector3 cameraRotationEuler)
+    public void BroadcastPinUpdated(Pushpin pin, Vector3 lookDirection)
     {
-        colyseusClient.SendPinUpdate(latLng.Latitude, latLng.Longitude, dateTime, cameraRotationEuler);
+        colyseusClient.SendPinUpdate(pin.Location.Latitude, pin.Location.Longitude, pin.SelectedDateTime, lookDirection, pin.LocationName);
     }
     public void BroadcastCelestialInteraction(NetworkCelestialObject celestialObj)
     {
@@ -434,7 +420,7 @@ public class NetworkController : MonoBehaviour
         SimulationEvents.GetInstance().PushPinUpdated.RemoveListener(BroadcastPinUpdated);
     }
     
-    public Player GetNetworkPlayerByName(string name)
+    public NetworkPlayer GetNetworkPlayerByName(string name)
     {
         return colyseusClient.GetPlayerById(name);
     }

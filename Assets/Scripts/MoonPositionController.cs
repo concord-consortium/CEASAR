@@ -20,7 +20,7 @@ public class MoonPositionController : MonoBehaviour
         manager = SimulationManager.GetInstance();
         // move sun game object
         moon.transform.position =
-            getLunarPosition(manager.CurrentSimulationTime,manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
+            getLunarPosition(manager.CurrentSimulationTime,manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
 
         renderMoonArc();
     }
@@ -64,7 +64,7 @@ public class MoonPositionController : MonoBehaviour
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {
             DateTime t = midnight.AddSeconds(i);
-            points.Add(getLunarPosition(t, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude));
+            points.Add(getLunarPosition(t, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude));
         }
         return points;
     }
@@ -73,7 +73,7 @@ public class MoonPositionController : MonoBehaviour
     {
         renderMoonArc();
 
-        if (moon != null) moon.transform.position = getLunarPosition(manager.CurrentSimulationTime, manager.Currentlocation.Latitude, manager.Currentlocation.Longitude);
+        if (moon != null) moon.transform.position = getLunarPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
     }
 
     Vector3 getLunarPosition(DateTime t, double lat, double lng)

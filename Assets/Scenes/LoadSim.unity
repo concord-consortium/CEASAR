@@ -854,7 +854,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &246011451
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3868,6 +3868,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5449054363899760975, guid: a7e37d7916f88254aa1bcc2822bfaf62,
+        type: 3}
+      propertyPath: m_Name
+      value: SceneLoader
+      objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
       propertyPath: LoadingPanel
@@ -3894,11 +3899,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4680472575867573177, guid: 9bdb169253f0e40419138e652e987d4e,
         type: 3}
-    - target: {fileID: 5449054363899760975, guid: a7e37d7916f88254aa1bcc2822bfaf62,
-        type: 3}
-      propertyPath: m_Name
-      value: SceneLoader
-      objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760969, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
       propertyPath: m_LocalPosition.x

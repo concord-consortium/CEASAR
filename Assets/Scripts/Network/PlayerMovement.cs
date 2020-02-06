@@ -14,6 +14,12 @@ public class PlayerMovement : MonoBehaviour
     string sceneName = "";
     private Transform cameraTransform;
     private Transform cameraParentTransform;
+    private Vector3 lastCameraRotation;
+    
+    private SimulationManager manager
+    {
+        get { return SimulationManager.GetInstance(); }
+    }
     private void Awake()
     {
         lastPos = transform.position;
@@ -27,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
             if (lastPos != transform.position || lastRot != transform.rotation)
             {
                 // send update - no more frequently than once per second
-                if (Time.time - SimulationManager.GetInstance().MovementSendInterval > lastSend)
+                if (Time.time - manager.MovementSendInterval > lastSend)
                 {
                     // Broadcast movement to network:
                     if (!network) network = FindObjectOfType<NetworkController>();
@@ -51,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
                     lastSend = Time.time;
                 }
             }
+            GetCameraRotationAndUpdatePin();
         }
     }
 
@@ -77,8 +84,18 @@ public class PlayerMovement : MonoBehaviour
                             cameraParentTransform = cameraTransform;
                         }
 #endif
-            Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraParentTransform.rotation.eulerAngles.y, 0);
-            SimulationEvents.GetInstance().PushPinUpdated.Invoke(SimulationManager.GetInstance().Currentlocation, SimulationManager.GetInstance().CurrentSimulationTime, cameraRotation);
+            Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraTransform.rotation.eulerAngles.y, 0);
+            if (manager.LocalPlayerLookDirection != cameraRotation)
+            {
+                if (Time.time - manager.MovementSendInterval > lastSend)
+                {
+                    Debug.Log("Sending updated pin");
+                    manager.LocalPlayerLookDirection = cameraRotation;
+                    
+                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+                    lastSend = Time.time;
+                }
+            }
         }
     }
 }

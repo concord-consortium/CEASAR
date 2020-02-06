@@ -47,8 +47,8 @@ public class MainUIController : MonoBehaviour
     private int userHour = DateTime.UtcNow.Hour;
     private int userMin = DateTime.UtcNow.Minute;
     private int userDay = DateTime.UtcNow.DayOfYear;
+    
     public TextMeshProUGUI currentDateTimeText;
-    public Toggle setTimeToggle;
     public Slider daySlider;
     public Slider timeSlider;
 
@@ -109,6 +109,8 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    private float lastSendTime = 0;
+    
     private bool hasCompletedSetup = false;
     
     private void Awake()
@@ -128,7 +130,7 @@ public class MainUIController : MonoBehaviour
 
     void OnDisable()
     {
-        events.LocationChanged.RemoveListener(updateLocationPanel);
+        events.PushPinSelected.RemoveListener(updateOnPinSelected);
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     private void Init()
@@ -156,7 +158,7 @@ public class MainUIController : MonoBehaviour
         if (snapshotsController)
         {
             snapshotsController.Init();
-            foreach (Snapshot snapshot in snapshotsController.snapshots)
+            foreach (Pushpin snapshot in snapshotsController.snapshots)
             {
                 AddSnapshotToGrid(snapshot);
             }
@@ -167,7 +169,6 @@ public class MainUIController : MonoBehaviour
             yearSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Year);
             daySlider.SetValueWithoutNotify(manager.CurrentSimulationTime.DayOfYear);
             timeSlider.SetValueWithoutNotify(manager.CurrentSimulationTime.Hour * 60 + manager.CurrentSimulationTime.Minute);
-            setTimeToggle.SetIsOnWithoutNotify(manager.UseCustomSimulationTime);
             userYear = manager.CurrentSimulationTime.Year;
             userDay = manager.CurrentSimulationTime.DayOfYear;
             userHour = manager.CurrentSimulationTime.Hour;
@@ -176,7 +177,7 @@ public class MainUIController : MonoBehaviour
         
         if (starInfoPanel) starInfoPanel.GetComponent<StarInfoPanel>().Setup(this);
         // Listen to any relevant events
-        events.LocationChanged.AddListener(updateLocationPanel);
+        events.PushPinSelected.AddListener(updateOnPinSelected);
         
         
         // Setup panels for each scene
@@ -304,10 +305,6 @@ public class MainUIController : MonoBehaviour
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
-        if (setTimeToggle)
-        {
-            manager.UseCustomSimulationTime = setTimeToggle.isOn;
-        }
 
         // Move our position a step closer to the target.
         if (movingControlPanel)
@@ -381,10 +378,8 @@ public class MainUIController : MonoBehaviour
         // This is now used to change the view in Horizon mode to your current pin
         // Or to take you to the horizon for your current pin from Earth view
         Pushpin pin = manager.LocalUserPin;
-        Debug.Log(pin);
-        manager.UseCustomSimulationTime = true;
         manager.CurrentSimulationTime = pin.SelectedDateTime;
-        manager.Currentlocation = pin.Location;
+        manager.CurrentLatLng = pin.Location;
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -393,40 +388,38 @@ public class MainUIController : MonoBehaviour
     public void ChangeYear(float newYear)
     {
         userYear = (int)newYear;
-        CalculateUserDateTime();
+        calculateUserDateTime();
     }
 
     public void ChangeDay(float newDay)
     {
         userDay = (int)newDay;
-        CalculateUserDateTime();
+        calculateUserDateTime();
     }
 
     public void ChangeTime(float newTime)
     {
         userHour = (int)newTime / 60;
         userMin = (int)(newTime % 60);
-        CalculateUserDateTime();
+        calculateUserDateTime();
     }
 
-    private void CalculateUserDateTime()
+    private void calculateUserDateTime(bool broadcastUpdate = true)
     {
         DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
+        // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = calculatedStartDateTime;
-        if (manager.LocalUserPin != null)
+        
+        if (broadcastUpdate)
         {
-            manager.LocalUserPin.SelectedDateTime = calculatedStartDateTime;
-        }
-        else
-        {
-            Pushpin p = new Pushpin();
-            p.SelectedDateTime = calculatedStartDateTime;
-            p.Location = manager.Currentlocation;
-            manager.LocalUserPin = p;
-            Debug.Log(p);
+            if (Time.time - manager.MovementSendInterval > lastSendTime)
+            {
+                lastSendTime = Time.time;
+                events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+            }
         }
     }
 
@@ -602,12 +595,10 @@ public class MainUIController : MonoBehaviour
         
     }
 
-    public void ToggleUserTime()
+    public void SetSimulationTimeToNow()
     {
-        if (dataController)
-        {
-            dataController.ToggleUserTime();
-        }
+        Pushpin currentTimeForLocation = new Pushpin(DateTime.UtcNow, manager.CurrentLatLng, manager.CurrentLocationName);
+        RestoreSnapshotOrPin(currentTimeForLocation);
     }
 
     public void ToggleRunSimulation()
@@ -624,64 +615,74 @@ public class MainUIController : MonoBehaviour
         // get values from simulation manager
         DateTime snapshotDateTime = manager.CurrentSimulationTime;
         String location = manager.CurrentLocationName;
-        LatLng locationCoordinates = manager.Currentlocation;
+        LatLng locationCoordinates = manager.CurrentLatLng;
         // add a snapshot to the controller
         snapshotsController.CreateSnapshot(snapshotDateTime, location, locationCoordinates);
         // add snapshot to dropdown list
         AddSnapshotToGrid(snapshotsController.snapshots[snapshotsController.snapshots.Count - 1]);
     }
 
-    public void AddSnapshotToGrid(Snapshot snapshot)
+    public void AddSnapshotToGrid(Pushpin snapshot)
     {
         // user chooses to add a new snapshot, update the scroll view grid
         snapshotGrid.AddSnapItem(snapshot);
     }
 
-    public void RestoreSnapshot(Snapshot snapshot)
+    public void RestoreSnapshot(Pushpin snapshot)
     {
-        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.location == snapshot.location && el.dateTime == snapshot.dateTime);
+        int snapshotIndex = snapshotsController.snapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
         // user restores snapshot from UI
-        Snapshot snap = snapshotsController.snapshots[snapshotIndex];
-        Debug.Log(snap.dateTime + " " + snap.location + " " + snap.locationCoordinates);
+        Pushpin snap = snapshotsController.snapshots[snapshotIndex];
+        Debug.Log(snap.SelectedDateTime + " " + snap.LocationName + " " + snap.Location);
         
-        RestoreSnapshotOrPin(snap.dateTime, snap.location, snap.locationCoordinates);
+        RestoreSnapshotOrPin(snap);
     }
 
-    public void RestoreSnapshotOrPin(DateTime dt, string locationName, LatLng latLng)
+    public void RestoreSnapshotOrPin(Pushpin pin)
     {
-        userYear = dt.Year;
-        userDay = dt.DayOfYear;
-        userHour = dt.Hour;
-        userMin = dt.Minute;
+        updateTimeSlidersFromPin(pin);
         // Update the current date/time in simulation manager
-        CalculateUserDateTime();
-        setTimeToggle.isOn = true;
+        calculateUserDateTime();
+
+        // Update the manager so everything is ready to read the new pin values
+        manager.LocalUserPin = pin;
+        // update local player perspective on select
+        events.PushPinSelected.Invoke(pin);
+        // broadcast the update to current perspective to the network
+        events.PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
+    }
+
+    private void updateTimeSlidersFromPin(Pushpin pin)
+    {
+        Debug.Log(pin.SelectedDateTime);
+        userYear = pin.SelectedDateTime.Year;
+        userDay = pin.SelectedDateTime.DayOfYear;
+        userHour = pin.SelectedDateTime.Hour;
+        userMin = pin.SelectedDateTime.Minute;
+
         yearSlider.value = userYear;
         daySlider.value = userDay;
         timeSlider.value = userHour * 60 + userMin;
-
-        // events.LocationSelected.Invoke(locationName);
-        events.LocationChanged.Invoke(latLng,locationName);
-        events.PushPinSelected.Invoke(latLng, dt);
     }
-
-    public void DeleteSnapshot(Snapshot deleteSnap)
+    public void DeleteSnapshot(Pushpin deleteSnap)
     {
         snapshotsController.DeleteSnapshot(deleteSnap);
     }
 
-    private void updateLocationPanel(LatLng latLng, string description)
+    private void updateOnPinSelected(Pushpin pin)
     {
         if (FindObjectOfType<LocationPanel>())
         {
-            Debug.Log("Updating drop down" + latLng.ToString() + " " + description);
-            FindObjectOfType<LocationPanel>().UpdateLocationPanel(latLng, description);
+            Debug.Log("Updating drop down" + pin.Location + " " + pin.LocationName);
+            FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin.Location, pin.LocationName);
         }
 
         if (cityDropdown)
         {
-            cityDropdown.SetCity(description);
+            cityDropdown.SetCity(pin.LocationName);
         }
+
+        updateTimeSlidersFromPin(pin);
     }
 
     public void QuitApplication()

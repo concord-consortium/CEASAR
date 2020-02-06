@@ -23,6 +23,8 @@ public class GroupSelectionWizard : MonoBehaviour
  
     // The user record:
     private UserRecord userRecord;
+    
+    private SimulationManager manager { get { return SimulationManager.GetInstance(); }}
 
     // Start is called before the first frame update
     private void Start()
@@ -62,6 +64,13 @@ public class GroupSelectionWizard : MonoBehaviour
             Button b = FastLoginButton.GetComponent<Button>();
             TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             tgui.text = $"{userRecord.Username} {userRecord.group}";
+            
+            if (!string.IsNullOrEmpty(userRecord.group))
+            {
+                TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
+                textMesh.text = userRecord.group;
+            }
+            
             b.onClick.AddListener(LaunchScene);
         }
         else
@@ -78,7 +87,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void ShowGroups()
     {
         SetTitleText("Pick a Group");
-        foreach (string name in NetworkController.roomNames)
+        foreach (string name in UserRecord.GroupNames)
         {
             Button b = addButton();
             TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
@@ -177,6 +186,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void HandleGroupClick(string name)
     {
         userRecord.group = name;
+        
         if (GroupLabel)
         {
             TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
@@ -239,14 +249,26 @@ public class GroupSelectionWizard : MonoBehaviour
         steps[currentStep]();
     }
 
+    private Pushpin setLocationForGroup(string groupName)
+    {
+        Pushpin selectedGroupPin = UserRecord.GroupPins[groupName];
+        manager.CurrentLatLng = selectedGroupPin.Location;
+        manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
+        // manager.LocalUserPin = selectedGroupPin;
+        Debug.Log("User selected group " + groupName + " " + selectedGroupPin);
+        return selectedGroupPin;
+    }
     private void LaunchScene()
     {
         DisableNext();
         DisableRestart();
         DisableFastLogin();
         DirectionsText.color = userRecord.color;
-        SimulationManager.GetInstance().LocalPlayer = userRecord;
+        Pushpin pin = setLocationForGroup(userRecord.group);
+        manager.LocalPlayer = new Player(userRecord, pin);
+        
         userRecord.SaveToPrefs();
+        
         if(NextScreen)
         {
             SetTitleText($"{userRecord.Username} in {userRecord.group}");
