@@ -148,6 +148,29 @@ public static class Utils
         Debug.Log(pixelColor);
         return pixelColor;
     }
+
+    // Given a compass angle in degrees rotation, return Ordinal Name.
+    public static string CalcCompassOrdinal(float CompassDeg)
+    {
+        // Return the Group - Scene - Platform as a String.
+        // 45 degree quadrants offset by ½ 45 or 22.5d
+        float angle = 22.5f;
+        float step = 45;
+        int index = 0;
+        string[] ordinals = {
+            "North", "North East", "East", "South East",
+            "South", "South West", "West", "North West"
+        };
+        while (angle <= 337.5)
+        {
+            if (CompassDeg < angle) return ordinals[index];
+            index++;
+            angle += step;
+        }
+        // if the viewAngle is > 337.5 its north:
+        return ordinals[0];
+    }
+
 }
 
 
@@ -166,3 +189,4 @@ public static class StringExtensions
         }
     }
 }
+

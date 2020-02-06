@@ -100,7 +100,7 @@ public class CCLogger
             : "";
         lastLocation = manager.LocalUserPin.Location.ToString();
         lastHeading = manager.LocalPlayerLookDirection.ToString();
-        lastCompassHeading = CalcCompassOrdinal(manager.LocalPlayerLookDirection);
+        lastCompassHeading = Utils.CalcCompassOrdinal(manager.LocalPlayerLookDirection.y);
         lastSimulationTime = manager.CurrentSimulationTime.ToString();
         activity = CalcActivityName();
 
@@ -126,27 +126,7 @@ public class CCLogger
         return $"{groupName}, {scene}, {platformName}";
     }
 
-    private string CalcCompassOrdinal(Vector3 look)
-    {
-        float viewAngle = look.y;
-        // Return the Group - Scene - Platform as a String.
-        // 45 degree quadrants offset by ½ 45 or 22.5d
-        float angle = 22.5f;
-        float step = 45;
-        int index = 0;
-        string[] ordinals = {
-            "North", "North East", "East", "Sout East",
-            "South", "South West", "West", "North West"
-        };
-        while(angle <= 337.5)
-        {
-            if (viewAngle < angle) return ordinals[index];
-            index++;
-            angle += step;
-        }
-        // if the viewAngle is < 337.5 its north:
-        return ordinals[0];
-    }
+
     // Listen for game events, dispatch to log events:
     private void AddEventListeners()
     {
