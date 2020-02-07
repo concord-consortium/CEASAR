@@ -94,11 +94,6 @@ public class AnnotationTool : MonoBehaviour
         }
     }
 
-    public void ShowAnnotations(bool show)
-    {
-        this.gameObject.SetActive(show);
-    }
-
     public void AddAnnotation(NetworkTransform lastAnnotation, NetworkPlayer p)
     {
         Vector3 pos = Utils.NetworkV3ToVector3(lastAnnotation.position);

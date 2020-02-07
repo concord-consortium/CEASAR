@@ -269,10 +269,6 @@ public class CCLogger
         bool devMode = SimulationManager.GetInstance().server == ServerList.Local;
         string json = JsonUtility.ToJson(this, true);
 
-        #if UNITY_EDITOR
-            // Debug.Log(json);
-        #endif
-
         // Only send to log manager if we're on the network to reduce clutter
         if (!devMode)
         {
