@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,9 +20,8 @@ public class SnapGrid : MonoBehaviour
     public void AddSnapItem(Pushpin newSnap)
     {
         if (snaps == null) snaps = new List<GameObject>();
-        string snapText = newSnap.LocationName + ":\n" + newSnap.SelectedDateTime.ToShortDateString() + " " + newSnap.SelectedDateTime.ToString("HH:mm:ss");
         GameObject snapItem = Instantiate(snapItemPrefab, transform);
-        snapItem.GetComponent<SnapItem>().snapItemText.text = snapText;
+        snapItem.GetComponent<SnapItem>().snapItemText.text = newSnap.SnapshotText;
         snapItem.GetComponent<SnapItem>().SetSnapPin(newSnap);
         snaps.Add(snapItem);
     }

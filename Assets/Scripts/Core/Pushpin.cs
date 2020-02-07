@@ -8,11 +8,6 @@ public class Pushpin
     public DateTime SelectedDateTime;
     public string LocationName;
     [SerializeField] private string ReadableDate;
-    
-    public override string ToString()
-    {
-        return Location.ToString() + " " + SelectedDateTime.ToString();
-    }
 
     public Pushpin()
     {
@@ -28,7 +23,41 @@ public class Pushpin
         this.LocationName = String.IsNullOrEmpty(locationName) ? SimulationConstants.CUSTOM_LOCATION : locationName;
         this.ReadableDate = SelectedDateTime.ToString();
     }
+
+    private bool checkIsCrashSite()
+    {
+        // check if we have crash sites in snapshots
+        foreach (Pushpin crashsite in UserRecord.GroupPins.Values)
+        {
+            if (crashsite.Location.ToDisplayString() == this.Location.ToDisplayString())
+            {
+                this.LocationName = $"Crash site {crashsite.LocationName.FirstCharToUpper()}";
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public string LocationNameDetail
+    {
+        get{
+            return this.checkIsCrashSite() ? this.LocationName : this.LocationName + " " + this.Location.ToDisplayString();
+        }
+    }
+    public string SnapshotText
+    {
+        get
+        {
+            return this.LocationNameDetail + "\n" + this.SelectedDateTime.ToShortDateString() + " " +
+                   this.SelectedDateTime.ToString("HH:mm:ss");
+        }
+    }
     
+    public override string ToString()
+    {
+        return Location.ToString() + " " + SelectedDateTime.ToString();
+    }
+
     public override bool Equals(System.Object obj)
     {
         //Check for null and compare run-time types.

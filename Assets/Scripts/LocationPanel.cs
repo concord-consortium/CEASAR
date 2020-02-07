@@ -16,31 +16,21 @@ public class LocationPanel : MonoBehaviour
     void Start()
     {
         
-        UpdateLocationPanel(manager.CurrentLatLng, manager.CurrentLocationName);
+        UpdateLocationPanel(manager.LocalUserPin);
 
         latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
     }
-    public void UpdateLocationPanel(LatLng latLng, string description)
+    public void UpdateLocationPanel(Pushpin pin)
     {
-        // HIDE IF WE ARE AT CRASH SITE!
-        if (latLng == manager.CrashSiteForGroup.Location)
+        // HIDE IF WE ARE AT CRASH SITE! The Pushpin itself hides coordinates for all crash sites that are a match,
+        // but for our current crash site (by group) we display custom text.
+        if (pin.Location == manager.CrashSiteForGroup.Location)
         {
             latLongInfo.text = "At the crash site";
         }
         else
         {
-            string newText = "";
-            if (!string.IsNullOrEmpty(description))
-            {
-                newText += description + " ";
-            }
-
-            newText += latLng.ToDisplayString();
-
-            if (latLongInfo)
-            {
-                latLongInfo.text = newText;
-            }
+            latLongInfo.text = pin.LocationNameDetail;
         }
     }
 

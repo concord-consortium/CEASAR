@@ -674,7 +674,7 @@ public class MainUIController : MonoBehaviour
         if (FindObjectOfType<LocationPanel>())
         {
             Debug.Log("Updating drop down" + pin.Location + " " + pin.LocationName);
-            FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin.Location, pin.LocationName);
+            FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin);
         }
 
         if (cityDropdown)

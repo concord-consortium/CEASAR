@@ -194,6 +194,7 @@ public class UserRecord
                 Longitude = groupsObject[g].GetField("longitude").n
             };
             p.SelectedDateTime = DateTime.Parse(groupsObject[g].GetField("crashdatetime").str);
+            p.LocationName = g;
             groupPins.Add(g, p);
         }
 
