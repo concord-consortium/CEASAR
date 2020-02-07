@@ -338,7 +338,7 @@ public class InteractionController : MonoBehaviour
         pinObject.GetComponent<Renderer>().material.color = c;
         
         // HIDE IF WE ARE AT THE CRASH SITE
-        if (pin.Location == manager.CrashSiteForGroup.Location)
+        if (pin.IsCrashSite())
         {
             pinObject.SetActive(false);
         }

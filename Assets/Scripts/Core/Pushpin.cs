@@ -24,7 +24,7 @@ public class Pushpin
         this.ReadableDate = SelectedDateTime.ToString();
     }
 
-    private bool checkIsCrashSite()
+    public bool IsCrashSite()
     {
         // check if we have crash sites in snapshots
         foreach (Pushpin crashsite in UserRecord.GroupPins.Values)
@@ -41,7 +41,7 @@ public class Pushpin
     public string LocationNameDetail
     {
         get{
-            return this.checkIsCrashSite() ? this.LocationName : this.LocationName + " " + this.Location.ToDisplayString();
+            return this.IsCrashSite() ? this.LocationName : this.LocationName + " " + this.Location.ToDisplayString();
         }
     }
     public string SnapshotText
