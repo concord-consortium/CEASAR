@@ -1,15 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
-public struct AltAz
-{
-    public float Altitude;
-    public float Azimuth;
-    public override string ToString()
-    {
-        return "" + Altitude + "," + Azimuth;
-    }
-}
 public static class Utils
 {
     public static void SetObjectColor(GameObject go, Color newColor)
@@ -66,10 +56,9 @@ public static class Utils
         return new Vector3(xPos, yPos, zPos);
     }
 
-    public static AltAz CalculateAltitudeAzimuthForStar(float RA, float Dec,
-        double currentSiderialTime, float observerLatitude)
+    [Obsolete]
+    public static Vector3 CalculateHorizonPosition(float RA, float radianDec, float radius, double currentSiderialTime, float observerLatitude)
     {
-        float radianDec = Dec * Mathf.Deg2Rad;
         float Alt = 0;
         float Azm = 0;
         // convert all things to Radians for Unity
@@ -98,13 +87,7 @@ public static class Utils
 
         if (float.IsNaN(Alt)) Alt = 0;
         if (float.IsNaN(Azm)) Azm = 0;
-        return new AltAz {Altitude = Mathf.Rad2Deg * Alt, Azimuth = Mathf.Rad2Deg * Azm};
-    }
-    [Obsolete]
-    public static Vector3 CalculateHorizonPosition(float RA, float Dec, float radius, double currentSiderialTime, float observerLatitude)
-    {
-        AltAz altaz = CalculateAltitudeAzimuthForStar( RA, Dec, currentSiderialTime,  observerLatitude);
-        return CalculatePositionByAzAlt(altaz.Azimuth * Mathf.Deg2Rad, altaz.Altitude * Mathf.Deg2Rad, radius);
+        return CalculatePositionByAzAlt(Azm, Alt, radius);
     }
 
     public static Vector3 CalculatePositionByAzAlt(float azimuth, float altitude, float radius)

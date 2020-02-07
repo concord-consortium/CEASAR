@@ -174,7 +174,8 @@ public class MainUIController : MonoBehaviour
             userHour = manager.CurrentSimulationTime.Hour;
             userMin = manager.CurrentSimulationTime.Minute;
         }
-        if (starInfoPanel) starInfoPanel.GetComponent<StarInfoPanel>().Setup();
+        
+        if (starInfoPanel) starInfoPanel.GetComponent<StarInfoPanel>().Setup(this);
         // Listen to any relevant events
         events.PushPinSelected.AddListener(updateOnPinSelected);
         
@@ -224,7 +225,6 @@ public class MainUIController : MonoBehaviour
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        ClearStarSelection();
         positionActivePanels();
     }
     
@@ -435,7 +435,7 @@ public class MainUIController : MonoBehaviour
     public void ClearStarSelection()
     {
         manager.CurrentlySelectedStar = null;
-        manager.ConstellationsControllerComponent.HighlightAllConstellations(manager.ConstellationsControllerComponent.SceneShouldShowConstellations);
+        manager.ConstellationsControllerComponent.HighlightAllConstellations(true);
         HidePanel("StarInfoPanel");
     }
 

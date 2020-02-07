@@ -9,12 +9,8 @@ public class ConstellationsController : MonoBehaviour
     List<Constellation> constellations = new List<Constellation>();
     float lineWidth = .035f;
     bool sceneShouldShowConstellations = false;
-
-    public bool SceneShouldShowConstellations
-    {
-        get => sceneShouldShowConstellations;
-    }
-
+    
+    
     private StarComponent hoveredStar;
 
     public StarComponent HoveredStar
