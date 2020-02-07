@@ -55,9 +55,9 @@ public class SnapshotsController : MonoBehaviour
 
     public void SaveSnapshot(Pushpin pin, int pinIndex)
     {
-        PlayerPrefs.SetString(locationKey + pinIndex.ToString(), pin.LocationName);
-        PlayerPrefs.SetString(datetimeKey + pinIndex.ToString().ToString(), pin.SelectedDateTime.ToString());
-        PlayerPrefs.SetString(coordsKey + pinIndex.ToString().ToString(), pin.Location.ToString());
+        PlayerPrefs.SetString(locationKey + pinIndex, pin.LocationName);
+        PlayerPrefs.SetString(datetimeKey + pinIndex, pin.SelectedDateTime.ToString());
+        PlayerPrefs.SetString(coordsKey + pinIndex, pin.Location.ToString());
     }
 
     public void DeleteSnapshot(Pushpin snapshot)

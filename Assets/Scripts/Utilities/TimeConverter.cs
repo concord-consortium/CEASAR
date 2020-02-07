@@ -164,16 +164,16 @@ public static class TimeConverter
         return t0;
     }
 
-    private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0);
+    public static readonly DateTime EpochDate = new DateTime(1970, 1, 1, 0, 0, 0);
     public static double ToEpochTime(this DateTime date)
     {
-        TimeSpan timeSpan = date - epoch;
+        TimeSpan timeSpan = date - EpochDate;
 
         return timeSpan.TotalSeconds;
     }
-
+    
     public static DateTime EpochTimeToDate(double unixDate)
     {
-        return epoch.AddSeconds(unixDate);
+        return EpochDate.AddSeconds(unixDate);
     }
 }

@@ -296,7 +296,7 @@ public class MainUIController : MonoBehaviour
     {
         if (currentDateTimeText && dataController)
         {
-            currentDateTimeText.text = manager.CurrentSimulationTime.ToString() + " (UTC)";
+            currentDateTimeText.text = manager.CurrentSimulationTime.ToString("MMMM dd yyyy HH:mm:ss") + " (UTC)";
         }
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
@@ -609,12 +609,15 @@ public class MainUIController : MonoBehaviour
 
     public void CreateSnapshot()
     {
+        // Update local player pin to remote players - unsure if this is needed
+        calculateUserDateTime(true);
         // get values from simulation manager
-        manager.LocalUserSnapshots.Add(manager.LocalUserPin);
+        Pushpin newPin = new Pushpin(manager.CurrentSimulationTime, manager.CurrentLatLng, manager.CurrentLocationName);
+        manager.LocalUserSnapshots.Add(newPin);
         // add a snapshot to the controller
-        snapshotsController.SaveSnapshot(manager.LocalUserPin, manager.LocalUserSnapshots.Count - 1);
+        snapshotsController.SaveSnapshot(newPin, manager.LocalUserSnapshots.Count - 1);
         // add snapshot to dropdown list
-        AddSnapshotToGrid(manager.LocalUserPin);
+        AddSnapshotToGrid(newPin);
     }
 
     public void AddSnapshotToGrid(Pushpin snapshot)
@@ -660,10 +663,10 @@ public class MainUIController : MonoBehaviour
     }
     public void DeleteSnapshot(Pushpin deleteSnap)
     {
-        int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == deleteSnap.Location && el.SelectedDateTime == deleteSnap.SelectedDateTime);
-        manager.LocalUserSnapshots.RemoveAt(snapshotIndex);
-
-        snapshotsController.DeleteSnapshot(deleteSnap);
+        Pushpin match = manager.LocalUserSnapshots.Find(p => p.Equals(deleteSnap));
+        Debug.Log($"Deleting snapshot: {match}");
+        manager.LocalUserSnapshots.Remove(match);
+        snapshotsController.DeleteSnapshot(match);
     }
 
     private void updateOnPinSelected(Pushpin pin)

@@ -270,7 +270,7 @@ public class CCLogger
         string json = JsonUtility.ToJson(this, true);
 
         #if UNITY_EDITOR
-            Debug.Log(json);
+            // Debug.Log(json);
         #endif
 
         // Only send to log manager if we're on the network to reduce clutter

@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public class Pushpin
 {
     public LatLng Location;
     public DateTime SelectedDateTime;
     public string LocationName;
+    [SerializeField] private string ReadableDate;
     
     public override string ToString()
     {
@@ -14,14 +16,37 @@ public class Pushpin
 
     public Pushpin()
     {
-        SelectedDateTime = DateTime.UtcNow;
+        this.SelectedDateTime = DateTime.UtcNow;
+        this.Location = new LatLng();
+        this.LocationName = SimulationConstants.CUSTOM_LOCATION;
     }
 
     public Pushpin(DateTime dt, LatLng latLng, string locationName)
     {
-        SelectedDateTime = dt;
-        Location = latLng;
-        LocationName = String.IsNullOrEmpty(locationName) ? SimulationConstants.CUSTOM_LOCATION : locationName;
+        this.SelectedDateTime = dt;
+        this.Location = latLng;
+        this.LocationName = String.IsNullOrEmpty(locationName) ? SimulationConstants.CUSTOM_LOCATION : locationName;
+        this.ReadableDate = SelectedDateTime.ToString();
+    }
+    
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || ! this.GetType().Equals(obj.GetType())) 
+        {
+            return false;
+        }
+        else { 
+            Pushpin p = (Pushpin) obj; 
+            return (Location == p.Location) && (SelectedDateTime == p.SelectedDateTime);
+        }   
+    }
+
+    public override int GetHashCode()
+    { 
+        int t = this.SelectedDateTime.Hour + this.SelectedDateTime.Minute + this.SelectedDateTime.Second;
+        int ll = (int)this.Location.Latitude + (int)this.Location.Longitude;
+        return (t + ll);
     }
 }
 
