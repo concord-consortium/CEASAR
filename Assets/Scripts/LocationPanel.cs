@@ -8,17 +8,14 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class LocationPanel : MonoBehaviour
 {
-    public bool showLocationCoordinates = false;
-    public bool showCompass = false;
+    // public bool showLocationCoordinates = true;
     public TextMeshProUGUI latLongInfo;
     
     private SimulationManager manager { get { return SimulationManager.GetInstance();}}
     void Start()
     {
-        
         UpdateLocationPanel(manager.LocalUserPin);
-
-        latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
+        // latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
     }
     public void UpdateLocationPanel(Pushpin pin)
     {
@@ -34,13 +31,13 @@ public class LocationPanel : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            showLocationCoordinates = !showLocationCoordinates;
-            latLongInfo.enabled = showLocationCoordinates;
-        }
-
-    }
+    // void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.L))
+    //     {
+    //         showLocationCoordinates = !showLocationCoordinates;
+    //         latLongInfo.enabled = showLocationCoordinates;
+    //     }
+    //
+    // }
 }
