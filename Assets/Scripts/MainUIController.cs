@@ -86,6 +86,10 @@ public class MainUIController : MonoBehaviour
 
     public GameObject drawModeIndicator;
     private bool isDrawing = false;
+    private GameObject annotationsObject;
+
+    private bool hasSetNorthPin = false;
+    
     public bool IsDrawing {
         get { return isDrawing; }
         set { 
@@ -101,6 +105,9 @@ public class MainUIController : MonoBehaviour
             }
         }
     }
+
+    private bool hideAnnotations = false;
+
     private bool isPinningLocation = true;
     public bool IsPinningLocation {
         get { return isPinningLocation; }
@@ -146,6 +153,7 @@ public class MainUIController : MonoBehaviour
         constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         cityDropdown = FindObjectOfType<CityDropdown>();
         snapshotGrid = FindObjectOfType<SnapGrid>();
+        annotationsObject = FindObjectOfType<AnnotationTool>().gameObject;
 
         if (cityDropdown)
         {
@@ -225,6 +233,8 @@ public class MainUIController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ClearStarSelection();
+        HideNorthPin();
+        HideAnnotations(scene.name != SimulationConstants.SCENE_HORIZON);
         positionActivePanels();
     }
     
@@ -299,6 +309,13 @@ public class MainUIController : MonoBehaviour
             currentDateTimeText.text = manager.CurrentSimulationTime.ToString("MMMM dd yyyy HH:mm:ss") + " (UTC)";
         }
 
+        if (Time.time - manager.MovementSendInterval > lastSendTime && _timeIsDirty)
+        {
+            // we only send updates once a second, so dragging a time slider won't flood the network, however we need
+            // to ensure that the last time update is transmitted when dragging ends
+            calculateUserDateTime(true);
+        }
+
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
 
@@ -368,7 +385,17 @@ public class MainUIController : MonoBehaviour
         IsDrawing = !IsDrawing;
         events.DrawMode.Invoke(IsDrawing);
     }
-
+    public void HideAnnotations(bool hide)
+    {
+        hideAnnotations = hide;
+        Debug.Log(hideAnnotations);
+        if (annotationsObject != null)
+        {
+            int newPos = hideAnnotations ? -100000 : 0;
+            annotationsObject.transform.localPosition = new Vector3(0, 0, newPos);
+        }
+        
+    }
     public void JumpToCrashSite()
     {
         // This is now used to change the view in Horizon mode to your crash site pin
@@ -401,8 +428,10 @@ public class MainUIController : MonoBehaviour
         calculateUserDateTime();
     }
 
+    private bool _timeIsDirty = false;
     private void calculateUserDateTime(bool broadcastUpdate = true)
     {
+        _timeIsDirty = true;
         DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
@@ -416,6 +445,7 @@ public class MainUIController : MonoBehaviour
             {
                 lastSendTime = Time.time;
                 events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+                _timeIsDirty = false;
             }
         }
     }
@@ -674,7 +704,7 @@ public class MainUIController : MonoBehaviour
         if (FindObjectOfType<LocationPanel>())
         {
             Debug.Log("Updating drop down" + pin.Location + " " + pin.LocationName);
-            FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin.Location, pin.LocationName);
+            FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin);
         }
 
         if (cityDropdown)
@@ -683,6 +713,40 @@ public class MainUIController : MonoBehaviour
         }
 
         updateTimeSlidersFromPin(pin);
+    }
+
+    public void HideNorthPin()
+    {
+        if (hasSetNorthPin)
+        {
+            GameObject northPin = GameObject.Find("NorthPin");
+            if (northPin != null)
+            {
+                if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
+                {
+                    northPin.transform.position = new Vector3(0, 0.1f, -100000);
+                }
+                else
+                {
+                    northPin.transform.position = new Vector3(0, 0.1f, 0);
+                }
+                
+            }
+        }
+    }
+    public void DropNorthPin()
+    {
+        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
+        {
+            GameObject northPin = GameObject.Find("NorthPin");
+            if (northPin != null)
+            {
+                northPin.transform.position = new Vector3(0, 0.1f, 0);
+                northPin.transform.localRotation = Quaternion.Euler(0, manager.LocalPlayerLookDirection.y, 0);
+                hasSetNorthPin = true;
+                DontDestroyOnLoad(northPin);
+            }
+        }
     }
 
     public void QuitApplication()

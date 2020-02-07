@@ -93,7 +93,6 @@ public class AnnotationTool : MonoBehaviour
             }
         }
     }
-    
 
     public void AddAnnotation(NetworkTransform lastAnnotation, NetworkPlayer p)
     {

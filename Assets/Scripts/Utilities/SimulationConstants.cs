@@ -25,6 +25,7 @@
     public static readonly string PANEL_CONSTELLATION = "ConstellationSelectionPanel";
     public static readonly string PANEL_CURRENTTIME = "CurrentTimePanel";
     public static readonly string PANEL_DATETIME = "DateTimePanel";
+    public static readonly string PANEL_DRAWING = "DrawingPanel";
     public static readonly string PANEL_LOCATION = "LocationPanel";
     
     public static readonly string PANEL_NETWORK = "NetworkPanel";
@@ -50,7 +51,7 @@
     public static readonly string[] PANELS_ALWAYS = {PANEL_TITLE, PANEL_TOGGLE, PANEL_SCENESELECTION};
     public static readonly string[] PANELS_STARS = {PANEL_CONSTELLATION, PANEL_VISIBILITY, PANEL_SPHEREMOVEMENT};
     public static readonly string[] PANELS_HORIZON =
-        {PANEL_CURRENTTIME, PANEL_DATETIME, PANEL_LOCATION, PANEL_SNAPSHOT, PANEL_NETWORK};
+        {PANEL_CURRENTTIME, PANEL_DATETIME, PANEL_DRAWING, PANEL_LOCATION, PANEL_SNAPSHOT, PANEL_NETWORK};
 
     public static readonly string[] PANELS_EARTH = {PANEL_CURRENTTIME, PANEL_LOCATION, PANEL_NETWORK};
 

@@ -56,7 +56,7 @@ public class NetworkUI : MonoBehaviour
         UserRecord user = manager.LocalPlayerRecord;
         usernameText.text = user.Username;
         usernamePin.color = user.color;
-        groupNameText.text = user.group;
+        groupNameText.text = user.group.FirstCharToUpper();
         groupNameText.color = Color.white;
         playerList = new Dictionary<string, GameObject>();
         connectButtons();

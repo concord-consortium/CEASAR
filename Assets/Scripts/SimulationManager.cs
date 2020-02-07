@@ -133,19 +133,7 @@ public class SimulationManager
     // private string currentLocationName;
     public string CurrentLocationName
     {
-        get
-        {
-            if (string.IsNullOrEmpty(LocalUserPin.LocationName))
-            {
-                LocalUserPin.LocationName = SimulationConstants.CUSTOM_LOCATION;
-            }
-
-            return LocalUserPin.LocationName;
-        }
-        set
-        {
-            LocalUserPin.LocationName = value;
-        }
+        get { return LocalUserPin.LocationName; }
     }
 
     public Pushpin LocalUserPin
@@ -183,7 +171,7 @@ public class SimulationManager
         return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
 
-    public string GroupName = UserRecord.UserGroupFromPrefs();
+    public string GroupName = UserRecord.UserGroupFromPrefs().FirstCharToUpper();
     public Pushpin CrashSiteForGroup;
     public Vector3 InitialUserLookDirection;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();

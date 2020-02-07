@@ -109,18 +109,19 @@ public class SceneLoader : MonoBehaviour
         {
             cameraControlUI.SetActive(false);
         }
-        if (currentScene == "EarthInteraction" || currentScene == "Stars")
+        if (currentScene == SimulationConstants.SCENE_EARTH || currentScene == SimulationConstants.SCENE_STARS)
         {
             Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             vrCam.GetComponent<Camera>().backgroundColor = Color.black;
 
         }
-        if (currentScene == "Horizon")
+        if (currentScene == SimulationConstants.SCENE_HORIZON)
         {
             vrCamera.transform.position = new Vector3(0, 2, 0);
+            vrCamera.transform.rotation = Quaternion.Euler(0, SimulationManager.GetInstance().LocalPlayerLookDirection.y, 0);
         }
-        if (currentScene == "Stars")
+        if (currentScene == SimulationConstants.SCENE_STARS)
         {
             vrCamera.transform.position = new Vector3(0, 0, 0);
         }
@@ -134,13 +135,13 @@ public class SceneLoader : MonoBehaviour
 
     private void setupStandardCameras()
     {
-        GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        if (existingCamera == null && regularCameraRig != null)
+        GameObject cam = GameObject.FindGameObjectWithTag("MainCamera");
+        if (cam == null && regularCameraRig != null)
         {
-            GameObject mainCam = new GameObject("MainCamera", typeof(Camera));
-            mainCam.tag = "MainCamera";
-            mainCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-            mainCam.GetComponent<Camera>().backgroundColor = Color.black;
+            cam = new GameObject("MainCamera", typeof(Camera));
+            cam.tag = "MainCamera";
+            cam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            cam.GetComponent<Camera>().backgroundColor = Color.black;
         }
         if (cameraControlUI == null) cameraControlUI = GameObject.Find("CameraControlUI");
         if (cameraControlUI != null)
@@ -150,8 +151,14 @@ public class SceneLoader : MonoBehaviour
             cameraControlUI.GetComponent<UIControlCamera>().enableControls = show;
             if (show)
             {
-                cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = Camera.main.transform;
+                cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = cam.transform;
             }
+        }
+
+        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
+        {
+            Debug.Log($"Setting rotation to {SimulationManager.GetInstance().LocalPlayerLookDirection}");
+            cam.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
         }
     }
 }

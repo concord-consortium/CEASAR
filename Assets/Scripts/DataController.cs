@@ -366,7 +366,13 @@ public class DataController : MonoBehaviour
                         // broadcast the update to remote players
                         SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
                     }
-                    
+                    else
+                    {
+                        manager.LocalUserPin = manager.CrashSiteForGroup;
+                        
+                        SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.CrashSiteForGroup);
+                        SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.CrashSiteForGroup, manager.LocalPlayerLookDirection);
+                    }
                 }
             }
         } 

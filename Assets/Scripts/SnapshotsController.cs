@@ -43,7 +43,8 @@ public class SnapshotsController : MonoBehaviour
                     string dts = PlayerPrefs.GetString(datetimeKey + count, "");
                     DateTime dt = DateTime.Parse(dts);
                     LatLng locationCoords = new LatLng(PlayerPrefs.GetString(coordsKey + count, ""));
-                    manager.LocalUserSnapshots.Add(new Pushpin(dt, locationCoords, location));
+                    Pushpin snapPin = new Pushpin(dt, locationCoords, location);
+                    manager.LocalUserSnapshots.Add(snapPin);
                 }
 
                 count++;
