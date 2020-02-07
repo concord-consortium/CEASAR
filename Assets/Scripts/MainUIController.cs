@@ -296,7 +296,7 @@ public class MainUIController : MonoBehaviour
     {
         if (currentDateTimeText && dataController)
         {
-            currentDateTimeText.text = manager.CurrentSimulationTime.ToString() + " (UTC)";
+            currentDateTimeText.text = manager.CurrentSimulationTime.ToString("MMMM dd yyyy HH:mm:ss") + " (UTC)";
         }
 
         // allow change of time in all scenes - should work in Earth scene to switch seasons
