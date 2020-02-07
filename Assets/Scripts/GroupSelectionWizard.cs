@@ -269,8 +269,8 @@ public class GroupSelectionWizard : MonoBehaviour
         Pushpin pin = setLocationForGroup(userRecord.group);
         manager.LocalPlayer = new Player(userRecord, pin);
         // generate starting look direction
-        // use group + day of month as a seed so each 2nd of the month will be the same, etc
-        System.Random rnd = new System.Random(DateTime.Today.Day + UserRecord.GroupNames.IndexOf(userRecord.group));
+        // use group + day of year as a seed
+        System.Random rnd = new System.Random(DateTime.UtcNow.DayOfYear + UserRecord.GroupNames.IndexOf(userRecord.group));
         float lookDirection = rnd.Next(0, 360);
         manager.LocalPlayerLookDirection = new Vector3(0, lookDirection, 0);
         userRecord.SaveToPrefs();
