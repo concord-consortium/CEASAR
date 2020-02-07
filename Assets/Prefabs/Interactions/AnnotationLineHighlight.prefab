@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7778931955663833681}
   - component: {fileID: 8007568931072091754}
   - component: {fileID: 1925203137039644296}
-  m_Layer: 16
+  m_Layer: 19
   m_Name: AnnotationLineHighlight
-  m_TagString: Untagged
+  m_TagString: Annotation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

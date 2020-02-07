@@ -383,19 +383,36 @@ public class MainUIController : MonoBehaviour
 
     public void ToggleDrawMode()
     {
-        IsDrawing = !IsDrawing;
-        events.DrawMode.Invoke(IsDrawing);
+        if (!hideAnnotations)
+        {
+            IsDrawing = !IsDrawing;
+            events.DrawMode.Invoke(IsDrawing);
+        }
     }
+
     public void HideAnnotations(bool hide)
     {
+        if (hide && isDrawing)
+        {
+            // turn off drawing
+            ToggleDrawMode();
+        }
+        // If we hide annotations, we can't draw til we turn them back on
         hideAnnotations = hide;
         Debug.Log(hideAnnotations);
-        if (annotationsObject != null)
-        {
-            int newPos = hideAnnotations ? -100000 : 0;
-            annotationsObject.transform.localPosition = new Vector3(0, 0, newPos);
-        }
+        SceneLoader loader = FindObjectOfType<SceneLoader>();
         
+        int layerMaskAnnotations = 19;
+        if (hideAnnotations)
+        {
+            LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
+            Camera.main.cullingMask = newLayerMask;
+        }
+        else
+        {
+            LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
+            Camera.main.cullingMask = newLayerMask;
+        }
     }
     public void JumpToCrashSite()
     {

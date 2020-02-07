@@ -19,6 +19,7 @@ public class SceneLoader : MonoBehaviour
     
     private GameObject cameraControlUI;
 
+    public LayerMask DefaultSceneCameraLayers;
     private void Start()
     {
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_LOAD)
@@ -95,6 +96,7 @@ public class SceneLoader : MonoBehaviour
             }
             
         }
+        Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
         
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
@@ -111,7 +113,6 @@ public class SceneLoader : MonoBehaviour
         }
         if (currentScene == SimulationConstants.SCENE_EARTH || currentScene == SimulationConstants.SCENE_STARS)
         {
-            Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             vrCam.GetComponent<Camera>().backgroundColor = Color.black;
 
@@ -130,6 +131,8 @@ public class SceneLoader : MonoBehaviour
         {
             avatar.SetActive(false);
         }
+
+        DefaultSceneCameraLayers = vrCam.GetComponent<Camera>().cullingMask;
     }
 
 
@@ -160,5 +163,7 @@ public class SceneLoader : MonoBehaviour
             Debug.Log($"Setting rotation to {SimulationManager.GetInstance().LocalPlayerLookDirection}");
             cam.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
         }
+        
+        DefaultSceneCameraLayers = cam.GetComponent<Camera>().cullingMask;
     }
 }
