@@ -6,7 +6,7 @@ public class Pushpin
 {
     public LatLng Location;
     public DateTime SelectedDateTime;
-    public string LocationName;
+    public string LocationName { get; private set; }
     [SerializeField] private string ReadableDate;
 
     public Pushpin()
@@ -31,7 +31,7 @@ public class Pushpin
         {
             if (crashsite.Location.ToDisplayString() == this.Location.ToDisplayString())
             {
-                this.LocationName = $"Crash site {crashsite.LocationName.FirstCharToUpper()}";
+                this.LocationName = crashsite.LocationName;
                 return true;
             }
         }

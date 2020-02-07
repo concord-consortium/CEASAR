@@ -187,14 +187,14 @@ public class UserRecord
         groupNames = groupsObject.keys;
         foreach (var g in groupsObject.keys)
         {
-            Pushpin p = new Pushpin();
-            p.Location = new LatLng
+            LatLng loc = new LatLng
             {
                 Latitude = groupsObject[g].GetField("latitude").n, 
                 Longitude = groupsObject[g].GetField("longitude").n
             };
-            p.SelectedDateTime = DateTime.Parse(groupsObject[g].GetField("crashdatetime").str);
-            p.LocationName = g;
+            DateTime crashDt = DateTime.Parse(groupsObject[g].GetField("crashdatetime").str);
+            string locationName = $"Crash site {g.FirstCharToUpper()}";
+            Pushpin p = new Pushpin(crashDt, loc, locationName);
             groupPins.Add(g, p);
         }
 

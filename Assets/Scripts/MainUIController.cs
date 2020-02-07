@@ -309,6 +309,13 @@ public class MainUIController : MonoBehaviour
             currentDateTimeText.text = manager.CurrentSimulationTime.ToString("MMMM dd yyyy HH:mm:ss") + " (UTC)";
         }
 
+        if (Time.time - manager.MovementSendInterval > lastSendTime && _timeIsDirty)
+        {
+            // we only send updates once a second, so dragging a time slider won't flood the network, however we need
+            // to ensure that the last time update is transmitted when dragging ends
+            calculateUserDateTime(true);
+        }
+
         // allow change of time in all scenes - should work in Earth scene to switch seasons
         double lst;
 
@@ -421,8 +428,10 @@ public class MainUIController : MonoBehaviour
         calculateUserDateTime();
     }
 
+    private bool _timeIsDirty = false;
     private void calculateUserDateTime(bool broadcastUpdate = true)
     {
+        _timeIsDirty = true;
         DateTime calculatedStartDateTime = new DateTime(userYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         calculatedStartDateTime = calculatedStartDateTime.AddDays(userDay - 1);
         calculatedStartDateTime = calculatedStartDateTime.AddHours(userHour);
@@ -436,6 +445,7 @@ public class MainUIController : MonoBehaviour
             {
                 lastSendTime = Time.time;
                 events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+                _timeIsDirty = false;
             }
         }
     }
