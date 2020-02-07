@@ -16,6 +16,8 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     private float holdToDeleteTime = 1f;
     private float startParticleSpeed = 0.12f;
     private AnnotationTool _annotationTool;
+    private Renderer myRenderer;
+    private Renderer myHighlightRenderer;
     public bool IsSelected {
         get { return isSelected; }
         set { isSelected = value; }
@@ -29,6 +31,20 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
            
         }
     }
+
+    public void ToggleVisibility(bool visible)
+    {
+        // get highlight object
+        if (myHighlightRenderer != null)
+        {
+            myHighlightRenderer.enabled = visible;
+        }
+
+        if (myRenderer != null)
+        {
+            myRenderer.enabled = visible;
+        }
+    }
     public void FinishDrawing()
     {
         initialScale = transform.localScale;
@@ -36,6 +52,8 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         selectedParticles = GetComponent<ParticleSystem>();
         if (_annotationTool == null) _annotationTool = FindObjectOfType<AnnotationTool>();
         SimulationEvents.GetInstance().DrawMode.AddListener(HandleDrawModeToggle);
+        myRenderer = this.GetComponent<Renderer>();
+        myHighlightRenderer = this.GetComponentInChildren<Renderer>();
     }
 
     private void OnDisable()
