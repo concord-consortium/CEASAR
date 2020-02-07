@@ -236,6 +236,7 @@ public class MainUIController : MonoBehaviour
         HideNorthPin();
         HideAnnotations(scene.name != SimulationConstants.SCENE_HORIZON);
         positionActivePanels();
+        rotating = false;
     }
     
     public void AddPanel(GameObject panel)
@@ -574,7 +575,7 @@ public class MainUIController : MonoBehaviour
 
     private void handleAutoRotation()
     {
-        if (rotating)
+        if (rotating && SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS)
         {
             sphere.transform.Rotate(Vector3.down, autoRotateSpeed * Time.deltaTime);
         }
