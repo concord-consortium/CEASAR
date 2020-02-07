@@ -20,9 +20,9 @@ public class SnapGrid : MonoBehaviour
     {
         if (snaps == null) snaps = new List<GameObject>();
         string snapText = newSnap.LocationName + ":\n" + newSnap.SelectedDateTime.ToShortDateString() + " " + newSnap.SelectedDateTime.ToShortTimeString();
-        GameObject snapItem = (GameObject)Instantiate(snapItemPrefab, transform);
+        GameObject snapItem = Instantiate(snapItemPrefab, transform);
         snapItem.GetComponent<SnapItem>().snapItemText.text = snapText;
-        snapItem.GetComponent<SnapItem>().snapshot = newSnap;
+        snapItem.GetComponent<SnapItem>().SetSnapPin(newSnap);
         snaps.Add(snapItem);
     }
 }
