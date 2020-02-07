@@ -257,6 +257,7 @@ public class GroupSelectionWizard : MonoBehaviour
         manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
         // manager.LocalUserPin = selectedGroupPin;
         Debug.Log("User selected group " + groupName + " " + selectedGroupPin);
+
         return selectedGroupPin;
     }
     private void LaunchScene()
@@ -267,7 +268,11 @@ public class GroupSelectionWizard : MonoBehaviour
         DirectionsText.color = userRecord.color;
         Pushpin pin = setLocationForGroup(userRecord.group);
         manager.LocalPlayer = new Player(userRecord, pin);
-        
+        // generate starting look direction
+        // use group + day of month as a seed so each 2nd of the month will be the same, etc
+        System.Random rnd = new System.Random(DateTime.Today.Day + UserRecord.GroupNames.IndexOf(userRecord.group));
+        float lookDirection = rnd.Next(0, 360);
+        manager.LocalPlayerLookDirection = new Vector3(0, lookDirection, 0);
         userRecord.SaveToPrefs();
         
         if(NextScreen)
