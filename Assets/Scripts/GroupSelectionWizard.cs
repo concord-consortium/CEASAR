@@ -63,7 +63,7 @@ public class GroupSelectionWizard : MonoBehaviour
             FastLoginButton.SetActive(true);
             Button b = FastLoginButton.GetComponent<Button>();
             TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            tgui.text = $"{userRecord.Username} {userRecord.group.FirstCharToUpper()}";
+            tgui.text = $"{userRecord.Username} {userRecord.group}";
             
             if (!string.IsNullOrEmpty(userRecord.group))
             {

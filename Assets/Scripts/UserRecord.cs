@@ -66,7 +66,7 @@ public class UserRecord
         {
             colorName = UsernameListItem(username, ColorNames);
             color = ColorForColorName(colorName);
-            group = PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
+            group = getPref(SimulationConstants.USER_GROUP_PREF_KEY);
             animal = UsernameListItem(username, AnimalNames);
             number = UsernameListItem(username, Numbers);
         }
@@ -233,14 +233,27 @@ public class UserRecord
         }
     }
 
+    private static string getPref(string prefKey)
+    {
+        string pref = PlayerPrefs.GetString(prefKey);
+        if (!string.IsNullOrEmpty(pref))
+        {
+            return pref;
+        }
+        else
+        {
+            return "";
+        }
+    }
+
     public static string UsernameFromPrefs()
     {
-        return PlayerPrefs.GetString(SimulationConstants.USERNAME_PREF_KEY);
+        return getPref(SimulationConstants.USERNAME_PREF_KEY);
     }
 
     public static string UserGroupFromPrefs()
     {
-        return PlayerPrefs.GetString(SimulationConstants.USER_GROUP_PREF_KEY);
+        return getPref(SimulationConstants.USER_GROUP_PREF_KEY);
     }
 
     private static string UsernameListItem(string username, List<string> list)
@@ -287,8 +300,8 @@ public class UserRecord
     {
         string username = UsernameFromPrefs();
         string group = UserGroupFromPrefs();
-        return (username != null) &&
-            (group != null) &&
+        return (!string.IsNullOrEmpty(username)) &&
+            (!string.IsNullOrEmpty(group)) &&
             UsernameIsValid(username);
     }
 

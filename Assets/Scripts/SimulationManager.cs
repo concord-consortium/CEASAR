@@ -171,7 +171,26 @@ public class SimulationManager
         return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
 
-    public string GroupName = UserRecord.UserGroupFromPrefs().FirstCharToUpper();
+    private string groupName;
+
+    public string GroupName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(groupName)) return groupName;
+            else{
+                if (!string.IsNullOrEmpty(UserRecord.UserGroupFromPrefs()))
+                {
+                    groupName = UserRecord.UserGroupFromPrefs();
+                    return groupName;
+                }
+                else
+                {
+                    return "unknown";
+                }
+            }
+        }
+    } 
     public Pushpin CrashSiteForGroup;
     public Vector3 InitialUserLookDirection;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
