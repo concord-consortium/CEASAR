@@ -27,7 +27,6 @@ public abstract class CelestialSphereItem
         this.radianDec = this.Dec * Mathf.Deg2Rad;
     }
 
-    // TODO: remove these completely eventually
     // functions to transform equitorial coordinates(RA, Dec) to Cartesian(x, y, z) for the celestial sphere for plotting in the 3D space.
     public Vector3 CalculateEquitorialPosition(float radius)
     {
