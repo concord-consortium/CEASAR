@@ -359,8 +359,16 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handle the deletion of an annotation.
+    /// This message has a slightly different format than normal interactions, since it contains metadata
+    /// which is the name of the deleted annotation. From this name, we can determine the user who deleted the annotation.
+    /// </summary>
+    /// <param name="networkPlayer">The network player who deleted an annotation</param>
+    /// <param name="annotationName">The name of the annotation game object</param>
     public void HandleAnnotationDelete(NetworkPlayer networkPlayer, string annotationName)
     {
+        CCDebug.Log($"Delete annotation event received for player {networkPlayer} {annotationName}", LogLevel.Info, LogMessageCategory.Interaction);
         GameObject deletedAnnotation = GameObject.Find(annotationName);
         if (deletedAnnotation != null)
         {
