@@ -41,7 +41,7 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     void LateUpdate()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        if (target && (Input.GetKey(KeyCode.LeftShift)))
+        if (target && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
             x += Input.GetAxis("Mouse X") * xSpeed * distance * 0.02f;
             y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
