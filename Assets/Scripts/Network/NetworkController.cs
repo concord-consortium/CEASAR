@@ -69,7 +69,7 @@ public class NetworkController : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        CCConsoleLog.Log("OnSceneLoaded: " + scene.name);
+        CCDebug.Log("OnSceneLoaded: " + scene.name);
         FindDependencies();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
@@ -186,7 +186,7 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
-            CCConsoleLog.Log("Already disconnected");
+            CCDebug.Log("Already disconnected");
         }
     }
 
@@ -225,7 +225,7 @@ public class NetworkController : MonoBehaviour
         {
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
-        if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCConsoleLog.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
+        if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCDebug.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
 
         networkUI.DebugMessage = listOfPlayersForDebug;
         networkUI.Username = manager.LocalUsername;
@@ -234,7 +234,7 @@ public class NetworkController : MonoBehaviour
     public void OnPlayerAdd(NetworkPlayer networkPlayer)
     {
         bool isLocal = manager.LocalUsername == networkPlayer.username;
-        CCConsoleLog.Log("Player add! playerName: " + networkPlayer.username + " playerId: " + networkPlayer.id + "is local: " + isLocal, LogLevel.Info, LogMessageCategory.Networking);
+        CCDebug.Log("Player add! playerName: " + networkPlayer.username + " playerId: " + networkPlayer.id + "is local: " + isLocal, LogLevel.Info, LogMessageCategory.Networking);
         Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
         Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
 
@@ -249,7 +249,7 @@ public class NetworkController : MonoBehaviour
             }
 
             // update the server with current perspective pin for local user
-            BroadcastPinUpdated(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+            BroadcastPinUpdated(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
             
             // Because avatars are the only game objects controlled in this class, this is where we update the avatar.
             updateLocalAvatar();
@@ -286,7 +286,7 @@ public class NetworkController : MonoBehaviour
 
                 if (networkPlayer.locationPin != null )
                 {
-                    CCConsoleLog.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
+                    CCDebug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
                 }
 
                 manager.GetRemotePlayer(networkPlayer.username).Pin = pin;
@@ -317,7 +317,7 @@ public class NetworkController : MonoBehaviour
         // though we need to handle those interactions differently. Keep this purely for movement!
         bool isLocal = updatedNetworkPlayer.username == _localNetworkPlayer.username;
         
-        CCConsoleLog.Log("player id " + updatedNetworkPlayer.id + " is local: " + isLocal, LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log("player id " + updatedNetworkPlayer.id + " is local: " + isLocal, LogLevel.Verbose, LogMessageCategory.Networking);
 
         GameObject remotePlayerAvatar;
         remotePlayerAvatars.TryGetValue(updatedNetworkPlayer.username, out remotePlayerAvatar);
@@ -355,7 +355,7 @@ public class NetworkController : MonoBehaviour
         }
         else
         {
-            CCConsoleLog.Log("Ignoring local interaction from network ... ");
+            CCDebug.Log("Ignoring local interaction from network ... ");
         }
     }
 
@@ -364,12 +364,12 @@ public class NetworkController : MonoBehaviour
         GameObject deletedAnnotation = GameObject.Find(annotationName);
         if (deletedAnnotation != null)
         {
-            CCConsoleLog.Log("received AnnotationDelete for " + annotationName, LogLevel.Verbose, LogMessageCategory.Interaction);
+            CCDebug.Log("received AnnotationDelete for " + annotationName, LogLevel.Verbose, LogMessageCategory.Interaction);
             Destroy(deletedAnnotation);
         }
         else
         {
-            CCConsoleLog.Log("Could not delete " + annotationName + " for player " + networkPlayer.username, LogLevel.Info, LogMessageCategory.Interaction);
+            CCDebug.Log("Could not delete " + annotationName + " for player " + networkPlayer.username, LogLevel.Info, LogMessageCategory.Interaction);
         }
         
     }
@@ -393,12 +393,12 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
     {
-        CCConsoleLog.Log("Broadcasting new Annotation event " + pos, LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log("Broadcasting new Annotation event " + pos, LogLevel.Verbose, LogMessageCategory.Networking);
         colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, "annotation");
     }
     public void BroadcastDeleteAnnotation(string annotationName)
     {
-        CCConsoleLog.Log("Broadcasting new Delete Annotation event " + annotationName, LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log("Broadcasting new Delete Annotation event " + annotationName, LogLevel.Verbose, LogMessageCategory.Networking);
         colyseusClient.SendAnnotationDelete(annotationName);
     }
 

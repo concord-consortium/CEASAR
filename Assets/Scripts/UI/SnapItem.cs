@@ -36,7 +36,7 @@ public class SnapItem : MonoBehaviour
 
     public void RestoreSnapItem()
     {
-        CCConsoleLog.Log($"Restoring my snapshot {this.snapshot}", LogLevel.Info, LogMessageCategory.Event);
+        CCDebug.Log($"Restoring my snapshot {this.snapshot}", LogLevel.Info, LogMessageCategory.Event);
         Pushpin p = new Pushpin(this.snapshot.SelectedDateTime, this.snapshot.Location, this.snapshot.LocationName);
         mainUIController.RestoreSnapshot(p);
     }

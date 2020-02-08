@@ -63,25 +63,25 @@ public class ColyseusClient : MonoBehaviour
     public async Task ConnectToServer(string serverEndpoint, string username, string roomName)
     {
         networkController = GetComponent<NetworkController>();
-        CCConsoleLog.Log($"Connection: {!connecting}", LogLevel.Verbose, LogMessageCategory.Networking);
-        CCConsoleLog.Log($"Connection: {!IsConnected}", LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log($"Connection: {!connecting}", LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log($"Connection: {!IsConnected}", LogLevel.Verbose, LogMessageCategory.Networking);
 
         if (!connecting && !IsConnected)
         {
             connecting = true;
             networkController.ServerStatusMessage = "Connecting...";
-            CCConsoleLog.Log("Connecting to " + serverEndpoint);
+            CCDebug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
             // Connect to Colyeus Server
             endpoint = serverEndpoint;
-            CCConsoleLog.Log("log in client");
+            CCDebug.Log("log in client");
             client = ColyseusManager.Instance.CreateClient(endpoint);
             await client.Auth.Login();
 
             // Update username
             client.Auth.Username = username;
-            CCConsoleLog.Log("joining room");
+            CCDebug.Log("joining room");
             networkController.ServerStatusMessage = "Joining Room...";
             await JoinRoom(roomName);
             connecting = false;
@@ -113,7 +113,7 @@ public class ColyseusClient : MonoBehaviour
             { "username", localPlayerName }
         });
 
-        CCConsoleLog.Log("Joined room successfully.");
+        CCDebug.Log("Joined room successfully.");
 
         room.State.players.OnAdd += OnPlayerAdd;
         room.State.players.OnRemove += OnPlayerRemove;
@@ -129,7 +129,7 @@ public class ColyseusClient : MonoBehaviour
 
     async Task LeaveRoom()
     {
-        CCConsoleLog.Log("closing connection");
+        CCDebug.Log("closing connection");
         await room.Leave(true);
         room = null;
     }
@@ -138,12 +138,12 @@ public class ColyseusClient : MonoBehaviour
     {
         var roomsAvailable = await client.GetAvailableRooms(roomName);
 
-        CCConsoleLog.Log("Available rooms (" + roomsAvailable.Length + ")", LogLevel.Info, LogMessageCategory.Networking);
+        CCDebug.Log("Available rooms (" + roomsAvailable.Length + ")", LogLevel.Info, LogMessageCategory.Networking);
         for (var i = 0; i < roomsAvailable.Length; i++)
         {
-            CCConsoleLog.Log("roomId: " + roomsAvailable[i].roomId, LogLevel.Info, LogMessageCategory.Networking);
-            CCConsoleLog.Log("maxClients: " + roomsAvailable[i].maxClients, LogLevel.Info, LogMessageCategory.Networking);
-            CCConsoleLog.Log("clients: " + roomsAvailable[i].clients, LogLevel.Info, LogMessageCategory.Networking);
+            CCDebug.Log("roomId: " + roomsAvailable[i].roomId, LogLevel.Info, LogMessageCategory.Networking);
+            CCDebug.Log("maxClients: " + roomsAvailable[i].maxClients, LogLevel.Info, LogMessageCategory.Networking);
+            CCDebug.Log("clients: " + roomsAvailable[i].clients, LogLevel.Info, LogMessageCategory.Networking);
         }
     }
     public string GetClientList()
@@ -180,7 +180,7 @@ public class ColyseusClient : MonoBehaviour
         }
         else
         {
-            CCConsoleLog.Log("Room is not connected!", LogLevel.Warning, LogMessageCategory.Networking);
+            CCDebug.Log("Room is not connected!", LogLevel.Warning, LogMessageCategory.Networking);
         }
     }
 
@@ -190,7 +190,7 @@ public class ColyseusClient : MonoBehaviour
         {
             // update messages have a message type and player Id we can use to update from remote interactions
             var m = (UpdateMessage) msg;
-            CCConsoleLog.Log(m.updateType + " " + m.playerId);
+            CCDebug.Log(m.updateType + " " + m.playerId);
             NetworkPlayer networkPlayer = players.Values.First(p => p.id == m.playerId);
             if (m.updateType == "deleteannotation")
             {
@@ -204,7 +204,7 @@ public class ColyseusClient : MonoBehaviour
         else
         {
             // unknown message type
-            CCConsoleLog.Log(msg, LogLevel.Info, LogMessageCategory.Networking);
+            CCDebug.Log(msg, LogLevel.Info, LogMessageCategory.Networking);
         }
     }
 
@@ -217,7 +217,7 @@ public class ColyseusClient : MonoBehaviour
 
     void OnPlayerAdd(NetworkPlayer networkPlayer, string key)
     {
-        CCConsoleLog.Log("ColyseusClient - Player Add: " + networkPlayer.username + " " + networkPlayer.id + " key: " + key, LogLevel.Info, LogMessageCategory.Networking);
+        CCDebug.Log("ColyseusClient - Player Add: " + networkPlayer.username + " " + networkPlayer.id + " key: " + key, LogLevel.Info, LogMessageCategory.Networking);
         bool isLocal = key == room.SessionId;
         players[networkPlayer.username] = networkPlayer;
         if (isLocal)
@@ -274,7 +274,7 @@ public class ColyseusClient : MonoBehaviour
         if (IsConnected)
         {
             NetworkCelestialObject c = celestialObj;
-            CCConsoleLog.Log("celestial object" +  c, LogLevel.Verbose, LogMessageCategory.Networking);
+            CCDebug.Log("celestial object" +  c, LogLevel.Verbose, LogMessageCategory.Networking);
             await room.Send(new
             {
                 celestialObject = c,

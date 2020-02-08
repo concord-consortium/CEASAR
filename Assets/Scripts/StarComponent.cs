@@ -49,7 +49,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         if (!mainUIController) mainUIController = FindObjectOfType<MainUIController>();
         if (!mainUIController.IsDrawing)
         {
-            CCConsoleLog.Log("Selected star: " + starData.uniqueId, LogLevel.Info, LogMessageCategory.Interaction);
+            CCDebug.Log("Selected star: " + starData.uniqueId, LogLevel.Info, LogMessageCategory.Interaction);
             MainUIController mainUIController = FindObjectOfType<MainUIController>();
             if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
             if (mainUIController && mainUIController.starInfoPanel)

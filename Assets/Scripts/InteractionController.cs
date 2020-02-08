@@ -108,7 +108,7 @@ public class InteractionController : MonoBehaviour
         {
             case "interaction":
                 // show indicator
-                CCConsoleLog.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
+                CCDebug.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
                             updatedNetworkPlayer.interactionTarget.position.y + "," +
                             updatedNetworkPlayer.interactionTarget.position.z, LogLevel.Info, LogMessageCategory.Networking);
                 ShowEarthMarkerInteraction(
@@ -117,7 +117,7 @@ public class InteractionController : MonoBehaviour
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username), false);
                 break;
             case "celestialinteraction":
-                CCConsoleLog.Log("remote player selected star", LogLevel.Info, LogMessageCategory.Networking);
+                CCDebug.Log("remote player selected star", LogLevel.Info, LogMessageCategory.Networking);
                 // highlight star/ constellation
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
@@ -128,7 +128,7 @@ public class InteractionController : MonoBehaviour
                 break;
             case "locationpin":
                 // add / move player pin
-                CCConsoleLog.Log("remote player pinned a location", LogLevel.Info, LogMessageCategory.Networking);
+                CCDebug.Log("remote player pinned a location", LogLevel.Info, LogMessageCategory.Networking);
                 Pushpin remotePlayerPin = NetworkPlayerPinToPushpin(updatedNetworkPlayer);
                 Vector3 remotePlayerCameraRotation = NetworkPlayerCameraRotation(updatedNetworkPlayer);
                
@@ -224,10 +224,10 @@ public class InteractionController : MonoBehaviour
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
         Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
-        manager.LocalUserPin = p;
+        manager.JumpToPin(p);
         // broadcast the update
-        events.PushPinSelected.Invoke(manager.LocalUserPin);
-        events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
         AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
     }
 
@@ -273,7 +273,7 @@ public class InteractionController : MonoBehaviour
             localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
         }
 
-        updatePinObject(localPlayerPinObject, manager.LocalUserPin, manager.LocalPlayerColor);
+        updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
     }
     
     // This is used for local pins and remote pins

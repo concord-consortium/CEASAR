@@ -139,7 +139,7 @@ public class NetworkUI : MonoBehaviour
     public void HandleConnectClick(ServerRecord server)
     {
         NetworkController networkController = manager.NetworkControllerComponent;
-        CCConsoleLog.Log($"Connecting to #{server.name}", LogLevel.Info, LogMessageCategory.Networking);
+        CCDebug.Log($"Connecting to #{server.name}", LogLevel.Info, LogMessageCategory.Networking);
 
         if (!networkController.IsConnected)
         {
@@ -201,7 +201,7 @@ public class NetworkUI : MonoBehaviour
 
     public void AddPlayer(string name)
     {
-        CCConsoleLog.Log($"Player ADDED to panel #{name}", LogLevel.Verbose, LogMessageCategory.UI);
+        CCDebug.Log($"Player ADDED to panel #{name}", LogLevel.Verbose, LogMessageCategory.UI);
         if (playerList.ContainsKey(name))
         {
             if(playerList[name] == null)
@@ -217,7 +217,7 @@ public class NetworkUI : MonoBehaviour
 
     public void RemovePlayer(string name)
     {
-        CCConsoleLog.Log($"Player REMOVED from panel #{name}", LogLevel.Verbose, LogMessageCategory.UI);
+        CCDebug.Log($"Player REMOVED from panel #{name}", LogLevel.Verbose, LogMessageCategory.UI);
         if(playerList.ContainsKey(name))
         {
             Destroy(playerList[name]);
@@ -225,17 +225,17 @@ public class NetworkUI : MonoBehaviour
         }
         else
         {
-            CCConsoleLog.Log($"No Label for {name} found in roster", LogLevel.Error, LogMessageCategory.UI);
+            CCDebug.Log($"No Label for {name} found in roster", LogLevel.Error, LogMessageCategory.UI);
         }
     }
 
     private void PlayerLabelClicked(string username)
     {
         Player remotePlayer = manager.GetRemotePlayer(username);
-        CCConsoleLog.Log($"Push Pin clicked for {remotePlayer.Name} {remotePlayer.Pin}", LogLevel.Info, LogMessageCategory.UI);
+        CCDebug.Log($"Push Pin clicked for {remotePlayer.Name} {remotePlayer.Pin}", LogLevel.Info, LogMessageCategory.UI);
         Pushpin pin = remotePlayer.Pin;
         
-        manager.LocalUserPin = pin;
+        manager.JumpToPin(pin);
 
         // Invoking this event will update the simulation time and location;
         SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);

@@ -7,7 +7,7 @@ using UnityEngine;
 public enum LogLevel {Error, Warning, Info, Verbose }
 public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction, Event}
 
-public static class CCConsoleLog
+public static class CCDebug
 {
     public static LogLevel[] CurrentLevels = new []
     {

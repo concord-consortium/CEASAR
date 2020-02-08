@@ -116,7 +116,7 @@ public static class Utils
 
         if (float.IsNaN(xPos))
         {
-            CCConsoleLog.Log($"{azimuth} {altitude}");
+            CCDebug.Log($"{azimuth} {altitude}");
         }
         return new Vector3(xPos, yPos, zPos);
     }
@@ -152,7 +152,7 @@ public static class Utils
     {
         if (rend == null)
         {
-            CCConsoleLog.Log("no renderer");
+            CCDebug.Log("no renderer");
             return Color.black;
         }
         Texture2D tex = rend.material.GetTexture("_MainTex") as Texture2D;
@@ -162,7 +162,7 @@ public static class Utils
         pixelUV.x += (rend.material.GetTextureOffset("_MainTex").x * tex.width);
 
         Color pixelColor = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
-        CCConsoleLog.Log(pixelColor);
+        CCDebug.Log(pixelColor);
         return pixelColor;
     }
 

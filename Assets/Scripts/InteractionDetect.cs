@@ -67,7 +67,7 @@ public class InteractionDetect : MonoBehaviour
                         }
                         else
                         {
-                            CCConsoleLog.Log("💀 cant find interaction manager", LogLevel.Error, LogMessageCategory.Interaction);
+                            CCDebug.Log("💀 cant find interaction manager", LogLevel.Error, LogMessageCategory.Interaction);
                         }
                     }
                     else if (c is MeshCollider)

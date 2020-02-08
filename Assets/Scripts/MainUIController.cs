@@ -25,7 +25,7 @@ public class MainUIController : MonoBehaviour
             DataController dController = manager.DataControllerComponent;
             if (dController == null)
             {
-                CCConsoleLog.Log("Missing Data Controller", LogLevel.Warning, LogMessageCategory.All);
+                CCDebug.Log("Missing Data Controller", LogLevel.Warning, LogMessageCategory.All);
             }
             return dController;
         }
@@ -416,11 +416,10 @@ public class MainUIController : MonoBehaviour
     public void JumpToCrashSite()
     {
         // This is now used to change the view in Horizon mode to your crash site pin
-        Pushpin pin = manager.CrashSiteForGroup;
-        if (pin == null) pin = UserRecord.GroupPins[manager.GroupName];
-        manager.CurrentSimulationTime = pin.SelectedDateTime;
-        manager.CurrentLatLng = pin.Location;
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+        Pushpin crashPin = manager.CrashSiteForGroup;
+        if (crashPin == null) crashPin = UserRecord.GroupPins[manager.GroupName];
+        manager.JumpToPin(crashPin);
+        SimulationEvents.GetInstance().PushPinSelected.Invoke(crashPin);
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -461,7 +460,7 @@ public class MainUIController : MonoBehaviour
             if (Time.time - manager.MovementSendInterval > lastSendTime)
             {
                 lastSendTime = Time.time;
-                events.PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+                events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
                 _timeIsDirty = false;
             }
         }
@@ -678,7 +677,7 @@ public class MainUIController : MonoBehaviour
         // int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
         // // user restores snapshot from UI
         // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
-        CCConsoleLog.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
+        CCDebug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
         
         RestoreSnapshotOrPin(snapshot);
     }
@@ -686,7 +685,7 @@ public class MainUIController : MonoBehaviour
     public void RestoreSnapshotOrPin(Pushpin pin)
     {
         // Update the manager so everything is ready to read the new pin values
-        manager.LocalUserPin = pin;
+        manager.JumpToPin(pin);
         
         updateTimeSlidersFromPin(pin);
         
@@ -710,7 +709,7 @@ public class MainUIController : MonoBehaviour
     public void DeleteSnapshot(Pushpin deleteSnap)
     {
         Pushpin match = manager.LocalUserSnapshots.Find(p => p.Equals(deleteSnap));
-        CCConsoleLog.Log($"Deleting snapshot: {match}");
+        CCDebug.Log($"Deleting snapshot: {match}");
         manager.LocalUserSnapshots.Remove(match);
         snapshotsController.DeleteSnapshot(match);
     }
@@ -719,7 +718,7 @@ public class MainUIController : MonoBehaviour
     {
         if (FindObjectOfType<LocationPanel>())
         {
-            CCConsoleLog.Log("Updating drop down" + pin.Location + " " + pin.LocationName, LogLevel.Info, LogMessageCategory.Event);
+            CCDebug.Log("Updating drop down" + pin.Location + " " + pin.LocationName, LogLevel.Info, LogMessageCategory.Event);
             FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin);
         }
 

@@ -24,7 +24,7 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
         bool isLocalPlayer = owner == manager.LocalUsername;
         if (isLocalPlayer)
         {
-            SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.LocalUserPin);
+            SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.LocalPlayerPin);
         }
         else
         {

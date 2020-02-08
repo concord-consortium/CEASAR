@@ -9,7 +9,7 @@ public class SimulationManager
     // can't use constructor, guaranteed singleton
     protected SimulationManager() {
         LocalPlayer = new Player(new UserRecord() );
-        CCConsoleLog.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}", LogLevel.Info, LogMessageCategory.All);
+        CCDebug.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}", LogLevel.Info, LogMessageCategory.All);
     }
     private static SimulationManager instance;
 
@@ -82,7 +82,10 @@ public class SimulationManager
     public Player LocalPlayer
     {
         get { return localPlayer; }
-        set { localPlayer = value; }
+        set
+        {
+            localPlayer = value;
+        }
     }
 
     public Vector3 LocalPlayerLookDirection
@@ -107,44 +110,52 @@ public class SimulationManager
     
     public StarComponent CurrentlySelectedStar;
 
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin.SelectedDateTime
+    /// </summary>
     public DateTime CurrentSimulationTime
     {
         get { return LocalPlayer.Pin.SelectedDateTime; }
         set
         {
-            LocalPlayer.Pin.SelectedDateTime = value;
+            Pushpin p  = new Pushpin(value, localPlayer.Pin.Location, localPlayer.Pin.LocationName);
+            LocalPlayer.Pin = p;
         }
     }
 
-    // private LatLng _currentLatLng = new LatLng {Latitude = 0, Longitude = 0};
-
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin.Location
+    /// </summary>
     public LatLng CurrentLatLng
     {
-        get
-        {
-            return LocalUserPin.Location;
-        }
-        set
-        {
-            LocalUserPin.Location = value;
-        }
+        get { return LocalPlayer.Pin.Location; }
     }
 
-    // private string currentLocationName;
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin.LocationName
+    /// </summary>
     public string CurrentLocationName
     {
-        get { return LocalUserPin.LocationName; }
+        get { return LocalPlayer.Pin.LocationName; }
     }
 
-    public Pushpin LocalUserPin
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin
+    /// </summary>
+    public Pushpin LocalPlayerPin
     {
         get { return LocalPlayer.Pin; }
-        set
-        {
-            LocalPlayer.Pin = value;
-        }
     }
 
+    /// <summary>
+    /// This should be the only way to update the current time, the location latlng and the location name.
+    /// </summary>
+    /// <param name="pNext">Next pushpin</param>
+    public void JumpToPin(Pushpin pNext)
+    {
+        Pushpin newPin = new Pushpin(pNext.SelectedDateTime, pNext.Location, pNext.LocationName);
+        localPlayer.Pin = newPin;
+    }
     private Dictionary<string, Player> remotePlayers = new Dictionary<string, Player>();
     
     public void AddRemotePlayer(string playerName)
@@ -192,6 +203,5 @@ public class SimulationManager
         }
     } 
     public Pushpin CrashSiteForGroup;
-    public Vector3 InitialUserLookDirection;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
 }
