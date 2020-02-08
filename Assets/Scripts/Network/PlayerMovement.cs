@@ -86,12 +86,7 @@ public class PlayerMovement : MonoBehaviour
                         }
 #endif
             Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraTransform.rotation.eulerAngles.y, 0);
-            if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
-            {
-                // clamp X rotation so users don't look at the floor
-                cameraRotation.x = Mathf.Clamp(cameraTransform.rotation.eulerAngles.x, 0f, -90f);
 
-            }
             if (manager.LocalPlayerLookDirection != cameraRotation)
             {
                 if (Time.time - manager.MovementSendInterval > lastSend)
