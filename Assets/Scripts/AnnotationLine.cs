@@ -67,6 +67,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             {
                 transform.localScale = initialScale;
                 isSelected = false;
+                selectedParticles.Stop();
             }
         }
     }

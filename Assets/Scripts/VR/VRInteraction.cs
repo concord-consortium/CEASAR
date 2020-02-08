@@ -46,6 +46,8 @@ public class VRInteraction : MonoBehaviour
 
     public AnnotationTool annotationTool;
 
+    private float menuDistance = 8f;
+
     #region Camera Move for Earth view
     private float distance = 20.0f;
     private float xSpeed = 0.2f;
@@ -80,6 +82,9 @@ public class VRInteraction : MonoBehaviour
         interactionController = FindObjectOfType<InteractionController>();
 
         laserLongDistance = (manager.SceneRadius + 2);
+
+        // test moving 
+        positionCanvasTransformRelativeToOrigin(2);
     }
     void Update()
     {
@@ -252,29 +257,30 @@ public class VRInteraction : MonoBehaviour
         }
 #endif
     }
-    void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float distance)
+    void positionCanvasTransformRelativeToOrigin(float verticalOffset = 0)
     {
 #if !UNITY_WEBGL
         Transform origin = this.transform;
-
+        if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
+        
         if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
 
-        canvasObject.transform.position = origin.position + (origin.forward * 6);
-        Vector3 newRotation = Camera.main.transform.localRotation.eulerAngles;
+        
+        Vector3 newRotation = origin.transform.rotation.eulerAngles;
         newRotation.x = 0;
         newRotation.z = 0;
-        canvasObject.transform.localRotation = Quaternion.Euler(newRotation);
+        newRotation.y += 30;
+        mainUI.transform.rotation = Quaternion.Euler(newRotation);
+        Vector3 pos = origin.position + (origin.forward * menuDistance);
+        pos.y += verticalOffset;
+        mainUI.transform.position = pos;
 #endif
     }
     void toggleMenu()
     {
         if (menuButton())
         {
-            if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
-            if (mainUI)
-            {
-                positionCanvasTransformRelativeToOrigin(mainUI, 6f);
-            }
+            positionCanvasTransformRelativeToOrigin();
         }
     }
 

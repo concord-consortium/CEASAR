@@ -63,38 +63,47 @@ public class SceneLoader : MonoBehaviour
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
         {
-            c.renderMode = RenderMode.WorldSpace;
+            if (c.gameObject.transform.tag != "WorldUI")
+            {
 
-            c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
-            c.planeDistance = 10;
-            c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
-            c.GetComponent<GraphicRaycaster>().enabled = false;
+                c.renderMode = RenderMode.WorldSpace;
+
+                c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
+                c.planeDistance = 10;
+                c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+                c.GetComponent<GraphicRaycaster>().enabled = false;
 #if !UNITY_WEBGL
-            if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
-            c.GetComponent<OVRRaycaster>().enabled = true;
+                if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
+                c.GetComponent<OVRRaycaster>().enabled = true;
 #endif
-            
-            if (c.gameObject.name == "MainUI")
-            {
-                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
-                c.transform.position = new Vector3(3, 3, 5);
-                if (currentScene == "EarthInteraction")
-                {
-                    c.transform.position = new Vector3(5, 1, 1);
-                    c.transform.rotation = Quaternion.Euler(0, 30, 0);
-                }
 
+                if (c.gameObject.name == "MainUI")
+                {
+                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
+                    c.transform.position = new Vector3(3, 4, 5);
+                    
+                    if (currentScene == SimulationConstants.SCENE_EARTH)
+                    {
+                        c.transform.position = new Vector3(6, 2, 1);
+                        c.transform.rotation = Quaternion.Euler(0, 30, 0);
+                    }
+
+                    if (currentScene == SimulationConstants.SCENE_HORIZON)
+                    {
+                        c.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
+                    }
+
+                }
+                else if (c.gameObject.name == "NetworkUI")
+                {
+                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+                    c.transform.position = new Vector3(-3, 3, 5);
+                }
+                else
+                {
+                    c.transform.position = new Vector3(0, 1, 4);
+                }
             }
-            else if (c.gameObject.name == "NetworkUI")
-            {
-                c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
-                c.transform.position = new Vector3(-3, 3, 5);
-            }
-            else
-            {
-                c.transform.position = new Vector3(0, 1, 4);
-            }
-            
         }
         Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
         

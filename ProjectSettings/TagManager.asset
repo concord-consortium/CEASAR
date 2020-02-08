@@ -13,6 +13,7 @@ TagManager:
   - pushpin
   - ToggleButton
   - MainUI
+  - WorldUI
   layers:
   - Default
   - TransparentFX
