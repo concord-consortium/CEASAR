@@ -25,7 +25,7 @@ public class MainUIController : MonoBehaviour
             DataController dController = manager.DataControllerComponent;
             if (dController == null)
             {
-                Debug.Log("Missing Data Controller");
+                CCConsoleLog.Log("Missing Data Controller", LogLevel.Warning, LogMessageCategory.All);
             }
             return dController;
         }
@@ -399,7 +399,6 @@ public class MainUIController : MonoBehaviour
         }
         // If we hide annotations, we can't draw til we turn them back on
         hideAnnotations = hide;
-        Debug.Log(hideAnnotations);
         SceneLoader loader = FindObjectOfType<SceneLoader>();
         
         int layerMaskAnnotations = 19;
@@ -679,7 +678,7 @@ public class MainUIController : MonoBehaviour
         // int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
         // // user restores snapshot from UI
         // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
-        Debug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location);
+        CCConsoleLog.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
         
         RestoreSnapshotOrPin(snapshot);
     }
@@ -699,7 +698,6 @@ public class MainUIController : MonoBehaviour
 
     private void updateTimeSlidersFromPin(Pushpin pin)
     {
-        Debug.Log(pin.SelectedDateTime);
         userYear = pin.SelectedDateTime.Year;
         userDay = pin.SelectedDateTime.DayOfYear;
         userHour = pin.SelectedDateTime.Hour;
@@ -712,7 +710,7 @@ public class MainUIController : MonoBehaviour
     public void DeleteSnapshot(Pushpin deleteSnap)
     {
         Pushpin match = manager.LocalUserSnapshots.Find(p => p.Equals(deleteSnap));
-        Debug.Log($"Deleting snapshot: {match}");
+        CCConsoleLog.Log($"Deleting snapshot: {match}");
         manager.LocalUserSnapshots.Remove(match);
         snapshotsController.DeleteSnapshot(match);
     }
@@ -721,7 +719,7 @@ public class MainUIController : MonoBehaviour
     {
         if (FindObjectOfType<LocationPanel>())
         {
-            Debug.Log("Updating drop down" + pin.Location + " " + pin.LocationName);
+            CCConsoleLog.Log("Updating drop down" + pin.Location + " " + pin.LocationName, LogLevel.Info, LogMessageCategory.Event);
             FindObjectOfType<LocationPanel>().UpdateLocationPanel(pin);
         }
 

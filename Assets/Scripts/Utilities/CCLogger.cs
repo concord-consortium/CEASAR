@@ -54,7 +54,7 @@ public class CCLogger
         CCLogger logger = CCLogger.GetInstance();
         logger.RemoveEventListeners();
         Application.quitting -= Quit;
-        Debug.Log("Logger Events removed.");
+        CCConsoleLog.Log("Logger Events removed.");
     }
 
    
@@ -253,9 +253,9 @@ public class CCLogger
             await request.SendWebRequest();
         } catch (Exception e)
         {
-            Debug.LogError("Failed to send log to log server.");
-            Debug.LogError(jsonLogMessage);
-            Debug.LogError(e);
+            CCConsoleLog.LogError("Failed to send log to log server.");
+            CCConsoleLog.LogError(jsonLogMessage);
+            CCConsoleLog.LogError(e);
         }
     }
 
@@ -282,7 +282,7 @@ public class CCLogger
     public static void Log(string eventType, string msg)
     {
         #if UNITY_EDITOR
-            Debug.Log("Logging: " + eventType + "-- " + msg);
+            CCConsoleLog.Log("Logging: " + eventType + "-- " + msg, LogLevel.Verbose, LogMessageCategory.All);
         #endif
 
         #pragma warning disable CS4014

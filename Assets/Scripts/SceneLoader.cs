@@ -20,8 +20,20 @@ public class SceneLoader : MonoBehaviour
     private GameObject cameraControlUI;
 
     public LayerMask DefaultSceneCameraLayers;
+
+    public LogLevel[] LogLevels;
+    public LogMessageCategory[] LogCategories;
     private void Start()
     {
+        if (LogLevels != null && LogLevels.Length > 0)
+        {
+            CCConsoleLog.CurrentLevels = LogLevels;
+        }
+
+        if (LogCategories != null && LogCategories.Length > 0)
+        {
+            CCConsoleLog.Categories = LogCategories;
+        }
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_LOAD)
         {
             SetupCameras();
@@ -35,7 +47,7 @@ public class SceneLoader : MonoBehaviour
         {
             // we have an XR device attached! Oculus Quest is detected as Rift S if it is connected with USB3 Oculus Link
             // TODO: If we detect an HTC Vive, Valve Index, or other headset, we need to do more work to use different controllers
-            Debug.Log("Detected XR device: " + model);
+            CCConsoleLog.Log("Detected XR device: " + model, LogLevel.Info, LogMessageCategory.All);
             setupXRCameras();
         } 
         else
@@ -169,7 +181,7 @@ public class SceneLoader : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
         {
-            Debug.Log($"Setting rotation to {SimulationManager.GetInstance().LocalPlayerLookDirection}");
+            CCConsoleLog.Log($"Setting rotation to {SimulationManager.GetInstance().LocalPlayerLookDirection}");
             cam.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
         }
         

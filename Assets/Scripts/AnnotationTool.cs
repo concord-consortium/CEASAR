@@ -106,7 +106,6 @@ public class AnnotationTool : MonoBehaviour
     }
     private void addAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName, Color playerColor)
     {
-        Debug.Log("Received annotation " + pos + " " + rot + " " + scale);
         GameObject currentAnnotation = Instantiate(annotationLinePrefab, this.transform);
         currentAnnotation.transform.localPosition = pos;
         currentAnnotation.transform.localRotation = rot;

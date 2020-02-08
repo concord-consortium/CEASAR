@@ -82,13 +82,13 @@ public class SimulationManagerComponent : MonoBehaviour
             manager.ColorValues = colorValues;
             manager.AnimalNames = animalList.text.Split(lineDelim, StringSplitOptions.RemoveEmptyEntries);
             manager.IsReady = true;
-            Debug.Log("Manager ready");
+            CCConsoleLog.Log("Manager ready");
         }
         else
         {
-            Debug.Log("Manager configuration already set");
+            CCConsoleLog.Log("Manager configuration already set");
         }
-        Debug.Log("Applying scene settings");
+        CCConsoleLog.Log("Applying scene settings");
         Setup();
     }
 
@@ -111,7 +111,7 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             else
             {
-                Debug.Log("Creating new network object");
+                CCConsoleLog.Log("Creating new network object");
                 manager.NetworkControllerComponent = Instantiate(networkControllerPrefab).GetComponent<NetworkController>();
             }
         }
@@ -123,13 +123,13 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             else
             {
-                Debug.Log("Creating new Interaction controller object");
+                CCConsoleLog.Log("Creating new Interaction controller object");
                 manager.InteractionControllerObject = Instantiate(interactionControllerPrefab);
             }
         }
         if (manager.CelestialSphereObject == null)
         {
-            Debug.Log("Creating new Celestial Sphere");
+            CCConsoleLog.Log("Creating new Celestial Sphere");
             manager.CelestialSphereObject = Instantiate(celestialSpherePrefab);
             if (this.starPrefab != null)
             {

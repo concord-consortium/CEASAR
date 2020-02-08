@@ -155,13 +155,13 @@ public class DataController : MonoBehaviour
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text, maxStars);
-            Debug.Log(allStars.Count + " stars imported");
+            CCConsoleLog.Log(allStars.Count + " stars imported");
             allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
         {
             allCities = DataImport.ImportCityData(cityData.text);
-            Debug.Log(allCities.Count + " cities imported");
+            CCConsoleLog.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
             if (string.IsNullOrEmpty(startCity))
             {
@@ -177,7 +177,7 @@ public class DataController : MonoBehaviour
         if (constellationConnectionData != null)
         {
             allConstellationConnections = DataImport.ImportConstellationConnectionData(constellationConnectionData.text);
-            Debug.Log(allConstellationConnections.Count + " connections imported");
+            CCConsoleLog.Log(allConstellationConnections.Count + " connections imported");
         }
 
         int starCount = 0;
@@ -190,7 +190,7 @@ public class DataController : MonoBehaviour
             constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
 
             var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
-            Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
+            CCConsoleLog.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
 
@@ -279,7 +279,7 @@ public class DataController : MonoBehaviour
             positionNCP();
         }
 
-        Debug.Log("updated");
+        CCConsoleLog.Log("Data controller updated", LogLevel.Verbose, LogMessageCategory.Event);
         isReady = true;
     }
 
@@ -341,7 +341,7 @@ public class DataController : MonoBehaviour
     
     void handleSelectNewLocation(string newCity)
     {
-        Debug.Log("Got new location! " + newCity);
+        CCConsoleLog.Log("Got new location! " + newCity, LogLevel.Info, LogMessageCategory.Event);
         
         if (!string.IsNullOrEmpty(newCity))
         {

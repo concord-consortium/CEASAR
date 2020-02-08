@@ -108,16 +108,16 @@ public class InteractionController : MonoBehaviour
         {
             case "interaction":
                 // show indicator
-                Debug.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
+                CCConsoleLog.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
                             updatedNetworkPlayer.interactionTarget.position.y + "," +
-                            updatedNetworkPlayer.interactionTarget.position.z);
+                            updatedNetworkPlayer.interactionTarget.position.z, LogLevel.Info, LogMessageCategory.Networking);
                 ShowEarthMarkerInteraction(
                     Utils.NetworkV3ToVector3(updatedNetworkPlayer.interactionTarget.position), 
                     Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.interactionTarget.rotation),
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username), false);
                 break;
             case "celestialinteraction":
-                Debug.Log("remote player selected star");
+                CCConsoleLog.Log("remote player selected star", LogLevel.Info, LogMessageCategory.Networking);
                 // highlight star/ constellation
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
@@ -128,7 +128,7 @@ public class InteractionController : MonoBehaviour
                 break;
             case "locationpin":
                 // add / move player pin
-                Debug.Log("remote player pinned a location");
+                CCConsoleLog.Log("remote player pinned a location", LogLevel.Info, LogMessageCategory.Networking);
                 Pushpin remotePlayerPin = NetworkPlayerPinToPushpin(updatedNetworkPlayer);
                 Vector3 remotePlayerCameraRotation = NetworkPlayerCameraRotation(updatedNetworkPlayer);
                
@@ -212,7 +212,6 @@ public class InteractionController : MonoBehaviour
                 networkController.BroadcastEarthInteraction(pos, rot);
             }
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
-            Debug.Log(interactionInfo);
             // SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             CCLogger.Log(LOG_EVENT_INTERACTION_ADDED, interactionInfo);
         }
@@ -259,11 +258,6 @@ public class InteractionController : MonoBehaviour
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
             earthRelativePos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
-        else
-        {
-            Debug.Log("No Earth found in interaction");
-        }
-
         return earthRelativePos;
     }
 

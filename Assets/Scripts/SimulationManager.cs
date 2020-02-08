@@ -9,7 +9,7 @@ public class SimulationManager
     // can't use constructor, guaranteed singleton
     protected SimulationManager() {
         LocalPlayer = new Player(new UserRecord() );
-        Debug.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}");
+        CCConsoleLog.Log($"User has been created {LocalPlayer.PlayerUserRecord.Username}", LogLevel.Info, LogMessageCategory.All);
     }
     private static SimulationManager instance;
 

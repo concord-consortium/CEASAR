@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (Time.time - manager.MovementSendInterval > lastSend)
                 {
-                    Debug.Log("Sending updated pin");
+                    CCConsoleLog.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
                     manager.LocalPlayerLookDirection = cameraRotation;
                     
                     SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);

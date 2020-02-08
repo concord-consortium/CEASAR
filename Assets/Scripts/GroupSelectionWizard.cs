@@ -256,7 +256,7 @@ public class GroupSelectionWizard : MonoBehaviour
         manager.CurrentLatLng = selectedGroupPin.Location;
         manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
         // manager.LocalUserPin = selectedGroupPin;
-        Debug.Log("User selected group " + groupName + " " + selectedGroupPin);
+        CCConsoleLog.Log("User selected group " + groupName + " " + selectedGroupPin);
 
         return selectedGroupPin;
     }
