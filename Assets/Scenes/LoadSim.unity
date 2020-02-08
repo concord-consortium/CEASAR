@@ -3875,6 +3875,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
+      propertyPath: LogCategories.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
+        type: 3}
       propertyPath: LoadingPanel
       value: 
       objectReference: {fileID: 403649059}
@@ -3899,6 +3904,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4680472575867573177, guid: 9bdb169253f0e40419138e652e987d4e,
         type: 3}
+    - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
+        type: 3}
+      propertyPath: LogCategories.Array.data[3]
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760969, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
       propertyPath: m_LocalPosition.x

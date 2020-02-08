@@ -22,10 +22,9 @@ public class AnnotationTool : MonoBehaviour
         return myAnnotations.Contains(annotationLine);
     }
 
-    private void Start()
+    public void Init()
     {
         myAnnotations = new List<GameObject>();
-        this.transform.parent = SimulationManager.GetInstance().CelestialSphereObject.transform;
         SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
         SimulationEvents.GetInstance().AnnotationDeleted.AddListener(DeleteAnnotation);
         SimulationEvents.GetInstance().AnnotationClear.AddListener(ClearAnnotations);
@@ -111,7 +110,6 @@ public class AnnotationTool : MonoBehaviour
         currentAnnotation.transform.localRotation = rot;
         currentAnnotation.transform.localScale = scale;
         currentAnnotation.name = annotationName;
-        // annotations.Add(currentAnnotation);
 
         if (annotationLineHighlightPrefab)
         {

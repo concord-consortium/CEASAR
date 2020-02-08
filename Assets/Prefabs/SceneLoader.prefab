@@ -54,4 +54,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   LogLevels: 000000000100000002000000
-  LogCategories: 000000000600000002000000
+  LogCategories: 00000000060000000200000005000000

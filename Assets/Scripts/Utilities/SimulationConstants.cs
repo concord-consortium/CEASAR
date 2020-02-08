@@ -2,6 +2,8 @@
 {
     public static readonly string CUSTOM_LOCATION = "(Custom Location)";
     public static readonly string PIN_PREFIX = "pin_";
+    public static readonly string NETWORK_LOCAL_PLAYER_PREFIX = "localPlayer_";
+    public static readonly string NETWORK_REMOTE_PLAYER_PREFIX = "remotePlayer_";
     
     // Player prefs keys
     public static readonly string SNAPSHOT_LOCATION_PREF_KEY = "SnapshotLocation";
@@ -9,6 +11,7 @@
     public static readonly string SNAPSHOT_LOCATION_COORDS_PREF_KEY = "SnapshotLocationCoords";
     public static readonly string USERNAME_PREF_KEY = "CEASAR_USERNAME";
     public static readonly string USER_GROUP_PREF_KEY = "CEASAR_GROUP";
+    
     // Scene Names:
     public static readonly string SCENE_LOAD = "LoadSim";
     public static readonly string SCENE_STARS = "Stars";

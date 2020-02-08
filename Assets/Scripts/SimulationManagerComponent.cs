@@ -151,6 +151,8 @@ public class SimulationManagerComponent : MonoBehaviour
             // Show/hide Marker items toggles visibility of existing objects
             manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
 
+            AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+            annotationTool.Init();
 
             manager.DataControllerComponent.UpdateOnSceneLoad();
         }

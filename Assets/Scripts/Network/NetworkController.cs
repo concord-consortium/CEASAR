@@ -73,11 +73,13 @@ public class NetworkController : MonoBehaviour
         FindDependencies();
         if (IsConnected && scenesWithAvatars.Contains(scene.name))
         {
-            OnPlayerAdd(_localNetworkPlayer);
+            // show the avatar
+            updateLocalAvatar();
+            
             foreach (string p in remotePlayerAvatars.Keys)
             {
                 NetworkPlayer remoteNetworkPlayer = colyseusClient.GetPlayerById(p);
-                OnPlayerAdd(remoteNetworkPlayer);
+                updateAvatarForPlayer(remoteNetworkPlayer);
             }
         }
        
@@ -214,7 +216,7 @@ public class NetworkController : MonoBehaviour
         if (localPlayerAvatar)
         {
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            localPlayerAvatar.name = "localPlayer_" + manager.LocalUsername;
+            localPlayerAvatar.name = NETWORK_LOCAL_PLAYER_PREFIX + manager.LocalUsername;
         }
     }
 
@@ -257,22 +259,10 @@ public class NetworkController : MonoBehaviour
         else
         {
             // Set up the remote player with the main manager
-            manager.AddRemotePlayer(networkPlayer.username);
-            GameObject remotePlayerAvatar = Instantiate(avatar, pos, rot);
-            Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
-            remotePlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            remotePlayerAvatar.name = "remotePlayer_" + networkPlayer.username;
-            remotePlayerAvatar.AddComponent<RemotePlayerMovement>();
+            manager.AddOrUpdateRemotePlayer(networkPlayer.username);
             
-            // add "player" to map of player avatars
-            if (!remotePlayerAvatars.ContainsKey(networkPlayer.username))
-            {
-                remotePlayerAvatars.Add(networkPlayer.username, remotePlayerAvatar);
-            }
-            else
-            {
-                remotePlayerAvatars[networkPlayer.username] = remotePlayerAvatar;
-            }
+            // update their avatar
+            updateAvatarForPlayer(networkPlayer);
 
             // sync their annotations
             for (int i = 0; i < networkPlayer.annotations.Count; i++)
@@ -291,7 +281,7 @@ public class NetworkController : MonoBehaviour
 
                 manager.GetRemotePlayer(networkPlayer.username).Pin = pin;
                 
-                interactionController.AddOrUpdatePin(pin, playerColor, networkPlayer.username, 
+                interactionController.AddOrUpdatePin(pin, UserRecord.GetColorForUsername(networkPlayer.username), networkPlayer.username, 
                     false);
             }
             SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
@@ -299,6 +289,38 @@ public class NetworkController : MonoBehaviour
         updatePlayerList();
     }
 
+    void updateAvatarForPlayer(NetworkPlayer networkPlayer)
+    {
+        Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
+        Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
+        string avatarName =  SimulationConstants.NETWORK_REMOTE_PLAYER_PREFIX + networkPlayer.username;
+        GameObject playerAvatar = GameObject.Find(avatarName);
+        if (playerAvatar == null)
+        {
+            playerAvatar = Instantiate(avatar, pos, rot);
+            Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
+            playerAvatar.GetComponent<Renderer>().material.color = playerColor;
+            playerAvatar.name = avatarName;
+            playerAvatar.AddComponent<RemotePlayerMovement>();
+
+            // add player avatar to map of player avatars
+            remotePlayerAvatars.Add(networkPlayer.username, playerAvatar);
+        }
+        else
+        {
+            if (remotePlayerAvatars.ContainsKey(networkPlayer.username))
+            {
+                // move existing avatar
+                playerAvatar = remotePlayerAvatars[networkPlayer.username];
+                playerAvatar.transform.position = pos;
+                playerAvatar.transform.rotation = rot;
+            }
+            else
+            {
+                remotePlayerAvatars[networkPlayer.username] = playerAvatar;
+            }
+        }
+    }
     public void OnPlayerRemove(NetworkPlayer networkPlayer)
     {
         SimulationEvents.GetInstance().PlayerLeft.Invoke(networkPlayer.username);

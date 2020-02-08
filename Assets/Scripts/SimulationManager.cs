@@ -158,7 +158,7 @@ public class SimulationManager
     }
     private Dictionary<string, Player> remotePlayers = new Dictionary<string, Player>();
     
-    public void AddRemotePlayer(string playerName)
+    public void AddOrUpdateRemotePlayer(string playerName)
     {
         if (!remotePlayers.ContainsKey(playerName))
         {
