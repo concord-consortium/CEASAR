@@ -4,18 +4,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public enum LogLevel {Error, Warning, Info, Verbose }
+public enum LogLevel { Verbose, Info, Warning, Error }
 public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction, Event}
 
 public static class CCDebug
 {
-    public static LogLevel[] CurrentLevels = new []
-    {
-        LogLevel.Error,
-        LogLevel.Warning,
-        LogLevel.Info,
-        LogLevel.Verbose
-    };
+    public static LogLevel CurrentLevel = LogLevel.Info;
 
     public static LogMessageCategory[] Categories = new[]
     {
@@ -30,7 +24,7 @@ public static class CCDebug
     
     public static void Log(object logMessage, LogLevel level, LogMessageCategory category)
     {
-        if (CurrentLevels.Contains(level) && Categories.Contains(category))
+        if (CurrentLevel <= level && Categories.Contains(category))
         {
             switch (level)
             {
