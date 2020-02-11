@@ -54,7 +54,7 @@ public class CCLogger
         CCLogger logger = CCLogger.GetInstance();
         logger.RemoveEventListeners();
         Application.quitting -= Quit;
-        Debug.Log("Logger Events removed.");
+        CCDebug.Log("Logger Events removed.");
     }
 
    
@@ -98,7 +98,7 @@ public class CCLogger
         crashSite = UserRecord.GroupPins[groupName] != null
             ? UserRecord.GroupPins[groupName].ToString()
             : "";
-        lastLocation = manager.LocalUserPin.Location.ToString();
+        lastLocation = manager.LocalPlayerPin.Location.ToString();
         lastHeading = manager.LocalPlayerLookDirection.ToString();
         lastCompassHeading = Utils.CalcCompassOrdinal(manager.LocalPlayerLookDirection.y);
         lastSimulationTime = manager.CurrentSimulationTime.ToString();
@@ -253,9 +253,9 @@ public class CCLogger
             await request.SendWebRequest();
         } catch (Exception e)
         {
-            Debug.LogError("Failed to send log to log server.");
-            Debug.LogError(jsonLogMessage);
-            Debug.LogError(e);
+            CCDebug.LogError("Failed to send log to log server.");
+            CCDebug.LogError(jsonLogMessage);
+            CCDebug.LogError(e);
         }
     }
 
@@ -282,7 +282,7 @@ public class CCLogger
     public static void Log(string eventType, string msg)
     {
         #if UNITY_EDITOR
-            Debug.Log("Logging: " + eventType + "-- " + msg);
+            CCDebug.Log("Logging: " + eventType + "-- " + msg, LogLevel.Verbose, LogMessageCategory.All);
         #endif
 
         #pragma warning disable CS4014

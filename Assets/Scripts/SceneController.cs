@@ -8,7 +8,7 @@ public class SceneController : MonoBehaviour
 {    
     void OnEnable()
     {
-        UpdateButtons();
+        UpdateButtons(SceneManager.GetActiveScene().name);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -19,7 +19,7 @@ public class SceneController : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        UpdateButtons();
+        UpdateButtons(scene.name);
     }
 
     public void LoadNamedScene(string name)
@@ -27,13 +27,12 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene(name);
     }
 
-    public void UpdateButtons() {
+    public void UpdateButtons(string currentSceneName) {
         int buttonCounter = 0;
-        string thisScene = SceneManager.GetActiveScene().name;
         string[] playableScenes = SimulationConstants.SCENES_PLAYABLE;
         foreach(string sceneName in playableScenes)
         {
-            if(thisScene != sceneName)
+            if(currentSceneName != sceneName)
             {
                 UpdateButton(buttonCounter, sceneName);
                 buttonCounter++;
@@ -41,26 +40,26 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    public void UpdateButton(int buttonIndex, string name)
+    public void UpdateButton(int buttonIndex, string sceneName)
     {
         Button[] buttons = this.GetComponentsInChildren<Button>();
         Button button = buttons[buttonIndex];
 
         // Add the event handler:
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => LoadNamedScene(name));
+        button.onClick.AddListener(() => LoadNamedScene(sceneName));
 
         // Change the text label:
         TMPro.TextMeshProUGUI label = button.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-        label.text = SceneNameForDispaly(name);
+        label.text = sceneNameForDisplay(sceneName);
     }
 
-    private string SceneNameForDispaly(string name)
+    private string sceneNameForDisplay(string sceneName)
     {
         // EarthInteraction was too long:
-        if (name == SimulationConstants.SCENE_EARTH) return "Earth";
+        if (sceneName == SimulationConstants.SCENE_EARTH) return "Earth";
 
         // Other scene names are fine for now.
-        return name;
+        return sceneName;
     }
 }

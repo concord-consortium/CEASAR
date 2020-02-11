@@ -86,14 +86,15 @@ public class PlayerMovement : MonoBehaviour
                         }
 #endif
             Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraTransform.rotation.eulerAngles.y, 0);
+
             if (manager.LocalPlayerLookDirection != cameraRotation)
             {
                 if (Time.time - manager.MovementSendInterval > lastSend)
                 {
-                    Debug.Log("Sending updated pin");
+                    CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
                     manager.LocalPlayerLookDirection = cameraRotation;
                     
-                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.LocalUserPin, manager.LocalPlayerLookDirection);
+                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
                     lastSend = Time.time;
                 }
             }

@@ -46,7 +46,7 @@ public class UIControlCamera : MonoBehaviour
             {
                 controlContainer.SetActive(true);   
             }
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 // Read the user input
                 var x = Input.GetAxisRaw("Mouse X");

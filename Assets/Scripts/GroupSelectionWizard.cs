@@ -253,10 +253,9 @@ public class GroupSelectionWizard : MonoBehaviour
     {
         Pushpin selectedGroupPin = UserRecord.GroupPins[groupName];
         manager.CrashSiteForGroup = selectedGroupPin;
-        manager.CurrentLatLng = selectedGroupPin.Location;
-        manager.CurrentSimulationTime = selectedGroupPin.SelectedDateTime;
-        // manager.LocalUserPin = selectedGroupPin;
-        Debug.Log("User selected group " + groupName + " " + selectedGroupPin);
+        Pushpin startPin = new Pushpin(selectedGroupPin.SelectedDateTime, selectedGroupPin.Location, selectedGroupPin.LocationName);
+        manager.LocalPlayer.Pin = startPin;
+        CCDebug.Log("User selected group " + groupName + " " + selectedGroupPin);
 
         return selectedGroupPin;
     }

@@ -170,6 +170,12 @@ public class VRInteraction : MonoBehaviour
                     {
                         // remove highlighting from previous star
                         if (currentStar != null) currentStar.CursorHighlightStar(false);
+                        // remove highlighting from previously-hovered annotation
+                        if (currentLine != null)
+                        {
+                            currentLine.Highlight(false);
+                            currentLine = null;
+                        }
                         // vibrate only on new star highlight
                         hapticFeedback();
                     }
@@ -215,6 +221,7 @@ public class VRInteraction : MonoBehaviour
                             {
                                 // delete the line
                                 currentLine.HandleDeleteAnnotation();
+                                currentLine = null;
                                 hapticFeedback();
                             } 
                            

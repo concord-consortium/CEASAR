@@ -50,4 +50,8 @@ MonoBehaviour:
   vrEventSystem: {fileID: 2249599586391153847, guid: 0c9ab61d8cd85cb499c6724491c0de5b,
     type: 3}
   defaultEventSystem: {fileID: 0}
-  vrUI: {fileID: 1510866083770023709, guid: 333f0b9122fcbab43b168ba1d459d562, type: 3}
+  DefaultSceneCameraLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  LogLevel: 1
+  LogCategories: 00000000060000000200000005000000

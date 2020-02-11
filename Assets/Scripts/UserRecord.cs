@@ -228,7 +228,7 @@ public class UserRecord
         }
         else
         {
-            Debug.Log("Color not found for " + colorName + " as part of " + username);
+            CCDebug.Log("Color not found for " + colorName + " as part of " + username, LogLevel.Warning, LogMessageCategory.All);
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.9f, 1f);
         }
     }

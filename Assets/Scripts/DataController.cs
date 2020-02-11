@@ -52,12 +52,8 @@ public class DataController : MonoBehaviour
     private bool runSimulation = false;
 
     public List<string> cities;
-    private string startCity = SimulationConstants.CUSTOM_LOCATION;
-    public City currentCity;
-    // private City nextCity;
-
+    
     private LatLng currentLocation;
-    private LatLng nextLocation;
 
     private Quaternion initialRotation;
     // For storing a copy of the last known time to limit updates
@@ -155,29 +151,23 @@ public class DataController : MonoBehaviour
         if (starData != null)
         {
             allStars = DataImport.ImportStarData(starData.text, maxStars);
-            Debug.Log(allStars.Count + " stars imported");
+            CCDebug.Log(allStars.Count + " stars imported");
             allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
         {
             allCities = DataImport.ImportCityData(cityData.text);
-            Debug.Log(allCities.Count + " cities imported");
+            CCDebug.Log(allCities.Count + " cities imported");
             cities = allCities.Select(c => c.Name).ToList();
-            if (string.IsNullOrEmpty(startCity))
-            {
-                startCity = "Boston";
-            }
-            currentCity = allCities.Where(c => c.Name == startCity).FirstOrDefault();
-            startCity = currentCity.Name;
+            
             // changes to nextLocation trigger a change to Celestial Sphere orientation in Horizon view
             // and are captured on the SimulationEvents.LocationSelected event handler
-            currentLocation = new LatLng {Latitude = currentCity.Lat, Longitude = currentCity.Lng};
-            nextLocation = currentLocation;
+            currentLocation = manager.CurrentLatLng;
         }
         if (constellationConnectionData != null)
         {
             allConstellationConnections = DataImport.ImportConstellationConnectionData(constellationConnectionData.text);
-            Debug.Log(allConstellationConnections.Count + " connections imported");
+            CCDebug.Log(allConstellationConnections.Count + " connections imported");
         }
 
         int starCount = 0;
@@ -190,7 +180,7 @@ public class DataController : MonoBehaviour
             constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
 
             var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
-            Debug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
+            CCDebug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
 
@@ -273,13 +263,12 @@ public class DataController : MonoBehaviour
         // if we're in Horizon view, set location and date / time
         if (showHorizonView)
         {
-            nextLocation = manager.LocalUserPin.Location;
             // Force an update once ready
             currentLocation = new LatLng();
             positionNCP();
         }
 
-        Debug.Log("updated");
+        CCDebug.Log("Data controller updated", LogLevel.Verbose, LogMessageCategory.Event);
         isReady = true;
     }
 
@@ -299,9 +288,9 @@ public class DataController : MonoBehaviour
         {
             shouldUpdate = false;
 
-            if (currentLocation != nextLocation)
+            if (currentLocation != manager.CurrentLatLng)
             {
-                currentLocation = nextLocation;
+                currentLocation = manager.CurrentLatLng;
                 positionNCP();
                 shouldUpdate = true;
             }
@@ -341,47 +330,43 @@ public class DataController : MonoBehaviour
     
     void handleSelectNewLocation(string newCity)
     {
-        Debug.Log("Got new location! " + newCity);
-        
+        CCDebug.Log("Got new location! " + newCity, LogLevel.Info, LogMessageCategory.Event);
+
         if (!string.IsNullOrEmpty(newCity))
         {
-            // If we have selected a new city by using the dropdown
-            if (newCity != currentCity?.Name)
+            // verify a valid city was entered
+            var matchedCity = allCities.Where(c => c.Name == newCity).First();
+            if (matchedCity != null)
             {
-                // verify a valid city was entered
-                var matchedCity = allCities.Where(c => c.Name == newCity).First();
-                if (matchedCity != null)
+                // check if this is a custom location
+                if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
                 {
-                    // Raise the change event with the matching lat/lng to update UI
-                    currentCity = matchedCity;
-                    // check if this is a custom location
-                    if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
-                    {
-                        // PushPinSelected event will update manager and update next location
-                        Pushpin pin = new Pushpin(manager.CurrentSimulationTime, new LatLng{Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
-                        manager.LocalUserPin = pin;
-                        // Update local listeners for UI and game object updates
-                        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
-                        
-                        // broadcast the update to remote players
-                        SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
-                    }
-                    else
-                    {
-                        manager.LocalUserPin = manager.CrashSiteForGroup;
-                        
-                        SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.CrashSiteForGroup);
-                        SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.CrashSiteForGroup, manager.LocalPlayerLookDirection);
-                    }
+                    // PushPinSelected event will update manager and update next location
+                    Pushpin pin = new Pushpin(manager.CurrentSimulationTime,
+                        new LatLng {Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
+                    manager.JumpToPin(pin);
+                    // Update local listeners for UI and game object updates
+                    SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+
+                    // broadcast the update to remote players
+                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
+                }
+                else
+                {
+                    manager.JumpToPin(manager.CrashSiteForGroup);
+
+                    SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.CrashSiteForGroup);
+                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.CrashSiteForGroup,
+                        manager.LocalPlayerLookDirection);
                 }
             }
-        } 
+        }
     }
 
     void handlePinSelected(Pushpin pin)
     {
         // force a redraw next frame
-        nextLocation = pin.Location;
+        currentLocation = new LatLng();
     }
     public void SetMagnitudeThreshold(float newVal)
     {

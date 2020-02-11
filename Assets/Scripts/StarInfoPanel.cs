@@ -19,7 +19,7 @@ public class StarInfoPanel : MonoBehaviour
         else if (string.IsNullOrEmpty(starInfoText.text))
         {
             UpdateStarInfoPanel();
-            Debug.Log("Highlighting constellation " + manager.CurrentlySelectedStar.starData.ConstellationFullName);
+            CCDebug.Log("Highlighting constellation " + manager.CurrentlySelectedStar.starData.ConstellationFullName);
             ConstellationsController constellationsController = FindObjectOfType<ConstellationsController>();
             if (constellationsController)
             {

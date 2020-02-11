@@ -82,13 +82,13 @@ public class SimulationManagerComponent : MonoBehaviour
             manager.ColorValues = colorValues;
             manager.AnimalNames = animalList.text.Split(lineDelim, StringSplitOptions.RemoveEmptyEntries);
             manager.IsReady = true;
-            Debug.Log("Manager ready");
+            CCDebug.Log("Manager ready");
         }
         else
         {
-            Debug.Log("Manager configuration already set");
+            CCDebug.Log("Manager configuration already set");
         }
-        Debug.Log("Applying scene settings");
+        CCDebug.Log("Applying scene settings");
         Setup();
     }
 
@@ -111,7 +111,7 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             else
             {
-                Debug.Log("Creating new network object");
+                CCDebug.Log("Creating new network object");
                 manager.NetworkControllerComponent = Instantiate(networkControllerPrefab).GetComponent<NetworkController>();
             }
         }
@@ -123,13 +123,13 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             else
             {
-                Debug.Log("Creating new Interaction controller object");
+                CCDebug.Log("Creating new Interaction controller object");
                 manager.InteractionControllerObject = Instantiate(interactionControllerPrefab);
             }
         }
         if (manager.CelestialSphereObject == null)
         {
-            Debug.Log("Creating new Celestial Sphere");
+            CCDebug.Log("Creating new Celestial Sphere");
             manager.CelestialSphereObject = Instantiate(celestialSpherePrefab);
             if (this.starPrefab != null)
             {
@@ -151,6 +151,8 @@ public class SimulationManagerComponent : MonoBehaviour
             // Show/hide Marker items toggles visibility of existing objects
             manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
 
+            AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+            annotationTool.Init();
 
             manager.DataControllerComponent.UpdateOnSceneLoad();
         }
