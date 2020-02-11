@@ -21,14 +21,12 @@ public class SceneLoader : MonoBehaviour
 
     public LayerMask DefaultSceneCameraLayers;
 
-    public LogLevel[] LogLevels;
+    public LogLevel LogLevel = LogLevel.Info;
     public LogMessageCategory[] LogCategories;
     private void Start()
     {
-        if (LogLevels != null && LogLevels.Length > 0)
-        {
-            CCDebug.CurrentLevels = LogLevels;
-        }
+        
+        CCDebug.CurrentLevel = LogLevel;
 
         if (LogCategories != null && LogCategories.Length > 0)
         {
