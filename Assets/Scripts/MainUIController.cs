@@ -308,6 +308,11 @@ public class MainUIController : MonoBehaviour
         if (currentDateTimeText && dataController)
         {
             currentDateTimeText.text = manager.CurrentSimulationTime.ToString("MMMM dd yyyy HH:mm:ss") + " (UTC)";
+            if (dataController.IsRunningSimulation)
+            {
+                updateTimeSlidersFromPin(manager.LocalPlayerPin);
+                updateStarInfoPanel();
+            }
         }
 
         if (Time.time - manager.MovementSendInterval > lastSendTime && _timeIsDirty)
@@ -454,6 +459,7 @@ public class MainUIController : MonoBehaviour
         calculatedStartDateTime = calculatedStartDateTime.AddMinutes(userMin);
         // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = calculatedStartDateTime;
+        updateStarInfoPanel();
         
         if (broadcastUpdate)
         {
@@ -470,11 +476,18 @@ public class MainUIController : MonoBehaviour
     {
         // make sure it's visible
         ShowPanel("StarInfoPanel");
-
-        if (starInfoPanel && selectedStar)
+        if (selectedStar)
         {
             StarComponent starComponent = selectedStar.GetComponent<StarComponent>();
             manager.CurrentlySelectedStar = starComponent;
+        }
+        updateStarInfoPanel();
+    }
+
+    void updateStarInfoPanel()
+    {
+        if (starInfoPanel && manager.CurrentlySelectedStar != null)
+        {
             starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
         }
     }
@@ -688,6 +701,7 @@ public class MainUIController : MonoBehaviour
         manager.JumpToPin(pin);
         
         updateTimeSlidersFromPin(pin);
+        updateStarInfoPanel();
         
         // update local player perspective on select
         events.PushPinSelected.Invoke(pin);
@@ -726,7 +740,8 @@ public class MainUIController : MonoBehaviour
         {
             cityDropdown.SetCity(pin.LocationName);
         }
-
+        
+        updateStarInfoPanel();
         updateTimeSlidersFromPin(pin);
     }
 
