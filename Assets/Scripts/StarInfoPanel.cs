@@ -8,7 +8,7 @@ public class StarInfoPanel : MonoBehaviour
 {
     private SimulationManager manager;
     public TextMeshProUGUI starInfoText;
-
+    
     public void Setup()
     {
         manager = SimulationManager.GetInstance();
@@ -34,13 +34,15 @@ public class StarInfoPanel : MonoBehaviour
         if (manager.CurrentlySelectedStar != null)
         {
             Star starData = manager.CurrentlySelectedStar.starData;
+            var longitudeTimeOffset = manager.CurrentLatLng.Longitude/15d;
+            var lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
             AltAz altAz = Utils.CalculateAltitudeAzimuthForStar(starData.RA, starData.Dec,
-                manager.CurrentSimulationTime.ToSiderealTime(), manager.CurrentLatLng.Latitude);
+                lst, manager.CurrentLatLng.Latitude);
             StringBuilder description = new StringBuilder();
             description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
             description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
-            description.Append("Altitude: ").AppendLine(altAz.Altitude.ToString());
-            description.Append("Azimuth: ").AppendLine(altAz.Azimuth.ToString());
+            description.Append("Alt/Az: ").AppendLine(altAz.Altitude.ToString("F2") + ", " + altAz.Azimuth.ToString("F2"));
+            description.Append("RA/Dec: ").AppendLine(starData.RA.ToString("F2") + ", " + starData.Dec.ToString("F2"));
             // description.Append("Hipparcos #: ").AppendLine(starData.Hipparcos.ToString());
             // description.Append("Bayer Des: ").AppendLine(starData.BayerDesignation.Length > 0 ? starData.BayerDesignation : "N/A");
             // description.Append("Flamsteed Des: ").AppendLine(starData.FlamsteedDesignation.Length > 0 ? starData.FlamsteedDesignation : "N/A");

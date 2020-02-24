@@ -51,6 +51,10 @@ public class DataController : MonoBehaviour
     }
     private bool runSimulation = false;
 
+    public bool IsRunningSimulation
+    {
+        get { return runSimulation; }
+    }
     public List<string> cities;
     
     private LatLng currentLocation;

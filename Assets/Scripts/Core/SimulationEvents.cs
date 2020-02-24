@@ -32,7 +32,6 @@ public class SimulationEvents
     protected SimulationEvents() 
     {
         if (LocationSelected == null) LocationSelected = new LocationSelectedEvent();
-        //if (LocationChanged == null) LocationChanged = new LocationChangeEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
         if (AnnotationDeleted == null) AnnotationDeleted = new AnnotationDeletedEvent();
         if (AnnotationReceived == null) AnnotationReceived = new AnnotationReceivedEvent();
