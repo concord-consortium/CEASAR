@@ -84,7 +84,7 @@ public class NetworkController : MonoBehaviour
             }
         }
        
-        refreshUI();
+        RefreshUI();
         CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
@@ -105,7 +105,7 @@ public class NetworkController : MonoBehaviour
         if (_isConnected != IsConnected)
         {
             _isConnected = IsConnected;
-            refreshUI();
+            RefreshUI();
         }
     }
 
@@ -113,11 +113,11 @@ public class NetworkController : MonoBehaviour
     {
         if (active)
         {
-            refreshUI();
+            RefreshUI();
         }
     }
 
-    void refreshUI()
+    public void RefreshUI()
     {
         // refresh connection status on hide/show and on scene change
         networkUI = FindObjectOfType<NetworkUI>();
@@ -145,7 +145,7 @@ public class NetworkController : MonoBehaviour
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = ServerList.Custom;
             manager.server.address = endpoint;
-            refreshUI();
+            RefreshUI();
             CCLogger.Log(LOG_EVENT_CONNECT, "connected");
         }
     }
@@ -195,7 +195,7 @@ public class NetworkController : MonoBehaviour
         }
         remotePlayerAvatars.Clear();
         CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
-        refreshUI();
+        RefreshUI();
     }
 
     void updateLocalAvatar()

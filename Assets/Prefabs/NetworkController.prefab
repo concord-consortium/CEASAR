@@ -51,7 +51,7 @@ MonoBehaviour:
   scenesWithAvatars:
   - EarthInteraction
   networkUI: {fileID: 0}
-  useDev: 0
+  devMode: 0
 --- !u!114 &2549443975885674654
 MonoBehaviour:
   m_ObjectHideFlags: 0
