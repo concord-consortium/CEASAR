@@ -221,7 +221,11 @@ public class NetworkController : MonoBehaviour
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCDebug.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
 
-        networkUI.DebugMessage = listOfPlayersForDebug;
+        if (devMode)
+        {
+            networkUI.DebugMessage = listOfPlayersForDebug;
+        }
+
         networkUI.Username = manager.LocalUsername;
     }
 

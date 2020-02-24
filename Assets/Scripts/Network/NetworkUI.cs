@@ -39,6 +39,25 @@ public class NetworkUI : MonoBehaviour
     {
         get { return SimulationManager.GetInstance(); }
     }
+
+    private NetworkController _networkController;
+    private NetworkController networkController
+    {
+        get
+        {
+            if (_networkController != null) return _networkController;
+
+            if (manager.NetworkControllerComponent != null)
+            {
+                _networkController = manager.NetworkControllerComponent;
+            }
+            else
+            {
+                _networkController = FindObjectOfType<NetworkController>();
+            }
+            return _networkController;
+        }
+    }
     
     public string ConnectionStatusText {
         set {
@@ -51,7 +70,10 @@ public class NetworkUI : MonoBehaviour
 
     public string DebugMessage {
         set {
-            debugMessages.text = value;
+            if (debugMessages != null && debugMessages.gameObject.activeInHierarchy)
+            {
+                debugMessages.text = value;
+            }
         }
     }
 
@@ -72,6 +94,8 @@ public class NetworkUI : MonoBehaviour
         groupNameText.color = Color.white;
         playerList = new Dictionary<string, GameObject>();
         connectButtons();
+        // If we're autoconnecting, adjust the UI in the same way as clicking a button to click
+        isConnecting = networkController.autoConnect;
     }
 
     private void OnEnable()
@@ -89,7 +113,6 @@ public class NetworkUI : MonoBehaviour
 
     void Update()
     {
-
         if (isConnecting)
         {
             bool networkIsConnecting =

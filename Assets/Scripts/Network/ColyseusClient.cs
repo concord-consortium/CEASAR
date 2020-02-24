@@ -66,7 +66,7 @@ public class ColyseusClient : MonoBehaviour
             CCDebug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
-            // Connect to Colyeus Server
+            // Connect to Colyseus Server
             endpoint = serverEndpoint;
             CCDebug.Log("log in client", LogLevel.Verbose, LogMessageCategory.Networking);
             client = ColyseusManager.Instance.CreateClient(endpoint);
