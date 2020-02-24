@@ -1,19 +1,12 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-
 using System.Collections;
 using System.Collections.Generic;
-
-using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Text;
 using Colyseus;
-using Colyseus.Schema;
-
 using GameDevWare.Serialization;
-using JetBrains.Annotations;
 
 public class ColyseusClient : MonoBehaviour
 {
@@ -39,7 +32,7 @@ public class ColyseusClient : MonoBehaviour
     }
     private string endpoint;
     private float heartbeatInterval = 10;
-
+    
     private IEnumerator clientConnectionCoroutine;
 
     private void Update()
@@ -60,7 +53,7 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async Task ConnectToServer(string serverEndpoint, string username, string roomName)
+    public async void ConnectToServer(string serverEndpoint, string username, string roomName)
     {
         networkController = GetComponent<NetworkController>();
         CCDebug.Log($"Connection: {!connecting}", LogLevel.Verbose, LogMessageCategory.Networking);
@@ -73,18 +66,34 @@ public class ColyseusClient : MonoBehaviour
             CCDebug.Log("Connecting to " + serverEndpoint);
             if (string.IsNullOrEmpty(localPlayerName)) localPlayerName = username;
 
-            // Connect to Colyeus Server
+            // Connect to Colyseus Server
             endpoint = serverEndpoint;
-            CCDebug.Log("log in client");
+            CCDebug.Log("log in client", LogLevel.Verbose, LogMessageCategory.Networking);
             client = ColyseusManager.Instance.CreateClient(endpoint);
-            await client.Auth.Login();
+            CCDebug.Log("Awaiting auth", LogLevel.Verbose, LogMessageCategory.Networking);
+            var loginResult = client.Auth.Login();
+            try
+            {
+                await loginResult;
+                CCDebug.Log("Authenticated", LogLevel.Verbose, LogMessageCategory.Networking);
 
-            // Update username
-            client.Auth.Username = username;
-            CCDebug.Log("joining room");
-            networkController.ServerStatusMessage = "Joining Room...";
-            await JoinRoom(roomName);
-            connecting = false;
+                // Update username
+                client.Auth.Username = username;
+                CCDebug.Log("joining room", LogLevel.Verbose, LogMessageCategory.Networking);
+                networkController.ServerStatusMessage = "Joining Room...";
+                await JoinRoom(roomName);
+                CCDebug.Log("Finished joining", LogLevel.Verbose, LogMessageCategory.Networking);
+                connecting = false;
+            }
+            catch (Exception ex)
+            {
+                CCDebug.Log(ex, LogLevel.Error, LogMessageCategory.Networking);
+                Disconnect();
+                connecting = false;
+                networkController.ServerStatusMessage = ex.Message;
+                networkController.RefreshUI();
+            }
+            
         }
     }   
     

@@ -22,10 +22,41 @@ public class NetworkUI : MonoBehaviour
     public TMPro.TMP_Text debugMessages;
 
     private Dictionary<string, GameObject> playerList;
+    private bool showDevOptions = false;
+
+    public bool SetDevMode
+    {
+        set
+        {
+            showDevOptions = value;
+            localButton.SetActive(showDevOptions);
+            devButton.SetActive(showDevOptions);
+        }
+    }
+    
     private bool isConnecting = false;
     private SimulationManager manager
     {
         get { return SimulationManager.GetInstance(); }
+    }
+
+    private NetworkController _networkController;
+    private NetworkController networkController
+    {
+        get
+        {
+            if (_networkController != null) return _networkController;
+
+            if (manager.NetworkControllerComponent != null)
+            {
+                _networkController = manager.NetworkControllerComponent;
+            }
+            else
+            {
+                _networkController = FindObjectOfType<NetworkController>();
+            }
+            return _networkController;
+        }
     }
     
     public string ConnectionStatusText {
@@ -39,7 +70,10 @@ public class NetworkUI : MonoBehaviour
 
     public string DebugMessage {
         set {
-            debugMessages.text = value;
+            if (debugMessages != null && debugMessages.gameObject.activeInHierarchy)
+            {
+                debugMessages.text = value;
+            }
         }
     }
 
@@ -60,6 +94,8 @@ public class NetworkUI : MonoBehaviour
         groupNameText.color = Color.white;
         playerList = new Dictionary<string, GameObject>();
         connectButtons();
+        // If we're autoconnecting, adjust the UI in the same way as clicking a button to click
+        isConnecting = networkController.autoConnect;
     }
 
     private void OnEnable()
@@ -77,12 +113,11 @@ public class NetworkUI : MonoBehaviour
 
     void Update()
     {
-
         if (isConnecting)
         {
             bool networkIsConnecting =
                 manager.NetworkControllerComponent && manager.NetworkControllerComponent.IsConnecting;
-            if (networkIsConnecting && localButton.activeInHierarchy)
+            if (networkIsConnecting)
             {
                 localButton.SetActive(false);
                 webButton.SetActive(false);
@@ -98,15 +133,18 @@ public class NetworkUI : MonoBehaviour
         {
             disconnectButton.SetActive(true);
             localButton.SetActive(false);
-            webButton.SetActive(false);
             devButton.SetActive(false);
+            webButton.SetActive(false);
         }
         else
         {
             disconnectButton.SetActive(false);
-            localButton.SetActive(true);
+            if (showDevOptions)
+            {
+                localButton.SetActive(true);
+                devButton.SetActive(true);
+            }
             webButton.SetActive(true);
-            devButton.SetActive(true);
         }
     }
     

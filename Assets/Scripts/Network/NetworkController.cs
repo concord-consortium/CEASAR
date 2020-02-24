@@ -44,7 +44,7 @@ public class NetworkController : MonoBehaviour
         set { networkUI.ConnectionStatusText = value; }
     }
 
-    public bool useDev = false;
+    public bool devMode = false;
  
     // Need this so the network UI persists across scenes
     private void Awake()
@@ -57,6 +57,7 @@ public class NetworkController : MonoBehaviour
     {
         FindDependencies();
         networkUI.Username = manager.LocalUsername;
+        networkUI.SetDevMode = devMode;
         if (autoConnect)
         {
             ConnectToServer();
@@ -83,7 +84,7 @@ public class NetworkController : MonoBehaviour
             }
         }
        
-        refreshUI();
+        RefreshUI();
         CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
@@ -104,7 +105,7 @@ public class NetworkController : MonoBehaviour
         if (_isConnected != IsConnected)
         {
             _isConnected = IsConnected;
-            refreshUI();
+            RefreshUI();
         }
     }
 
@@ -112,11 +113,11 @@ public class NetworkController : MonoBehaviour
     {
         if (active)
         {
-            refreshUI();
+            RefreshUI();
         }
     }
 
-    void refreshUI()
+    public void RefreshUI()
     {
         // refresh connection status on hide/show and on scene change
         networkUI = FindObjectOfType<NetworkUI>();
@@ -144,7 +145,7 @@ public class NetworkController : MonoBehaviour
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = ServerList.Custom;
             manager.server.address = endpoint;
-            refreshUI();
+            RefreshUI();
             CCLogger.Log(LOG_EVENT_CONNECT, "connected");
         }
     }
@@ -164,22 +165,13 @@ public class NetworkController : MonoBehaviour
             if (string.IsNullOrEmpty(userDefinedEndpoint))
             {
                 // no user interaction with the network address, work on some defaults
-#if UNITY_EDITOR
-                endpoint = ServerList.Local.address;
-#else
-                
                 endpoint = ServerList.Web.address;
-#endif
             }
             else
             {
                 endpoint = userDefinedEndpoint;
             }
 
-            if (useDev)
-            {
-                endpoint = ServerList.Dev.address;
-            }
             ConnectToEndpoint(endpoint);
         }
         else if (IsConnected)
@@ -203,7 +195,7 @@ public class NetworkController : MonoBehaviour
         }
         remotePlayerAvatars.Clear();
         CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
-        refreshUI();
+        RefreshUI();
     }
 
     void updateLocalAvatar()
@@ -229,7 +221,11 @@ public class NetworkController : MonoBehaviour
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCDebug.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
 
-        networkUI.DebugMessage = listOfPlayersForDebug;
+        if (devMode)
+        {
+            networkUI.DebugMessage = listOfPlayersForDebug;
+        }
+
         networkUI.Username = manager.LocalUsername;
     }
 
