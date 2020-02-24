@@ -44,7 +44,7 @@ public class NetworkController : MonoBehaviour
         set { networkUI.ConnectionStatusText = value; }
     }
 
-    public bool useDev = false;
+    public bool devMode = false;
  
     // Need this so the network UI persists across scenes
     private void Awake()
@@ -57,6 +57,7 @@ public class NetworkController : MonoBehaviour
     {
         FindDependencies();
         networkUI.Username = manager.LocalUsername;
+        networkUI.SetDevMode = devMode;
         if (autoConnect)
         {
             ConnectToServer();
@@ -164,22 +165,13 @@ public class NetworkController : MonoBehaviour
             if (string.IsNullOrEmpty(userDefinedEndpoint))
             {
                 // no user interaction with the network address, work on some defaults
-#if UNITY_EDITOR
-                endpoint = ServerList.Local.address;
-#else
-                
                 endpoint = ServerList.Web.address;
-#endif
             }
             else
             {
                 endpoint = userDefinedEndpoint;
             }
 
-            if (useDev)
-            {
-                endpoint = ServerList.Dev.address;
-            }
             ConnectToEndpoint(endpoint);
         }
         else if (IsConnected)

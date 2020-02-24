@@ -22,6 +22,18 @@ public class NetworkUI : MonoBehaviour
     public TMPro.TMP_Text debugMessages;
 
     private Dictionary<string, GameObject> playerList;
+    private bool showDevOptions = false;
+
+    public bool SetDevMode
+    {
+        set
+        {
+            showDevOptions = value;
+            localButton.SetActive(showDevOptions);
+            devButton.SetActive(showDevOptions);
+        }
+    }
+    
     private bool isConnecting = false;
     private SimulationManager manager
     {
@@ -82,7 +94,7 @@ public class NetworkUI : MonoBehaviour
         {
             bool networkIsConnecting =
                 manager.NetworkControllerComponent && manager.NetworkControllerComponent.IsConnecting;
-            if (networkIsConnecting && localButton.activeInHierarchy)
+            if (networkIsConnecting)
             {
                 localButton.SetActive(false);
                 webButton.SetActive(false);
@@ -98,15 +110,18 @@ public class NetworkUI : MonoBehaviour
         {
             disconnectButton.SetActive(true);
             localButton.SetActive(false);
-            webButton.SetActive(false);
             devButton.SetActive(false);
+            webButton.SetActive(false);
         }
         else
         {
             disconnectButton.SetActive(false);
-            localButton.SetActive(true);
+            if (showDevOptions)
+            {
+                localButton.SetActive(true);
+                devButton.SetActive(true);
+            }
             webButton.SetActive(true);
-            devButton.SetActive(true);
         }
     }
     
