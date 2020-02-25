@@ -13,7 +13,26 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     // Scene-specific value
     private Vector3 sceneInitialScale;
     private float scaleFactor = 2f;
-
+    
+    public GameObject starHighlightOutline;
+    private SimulationManager manager {get {return SimulationManager.GetInstance();}}
+    void Update()
+    {
+        if (starHighlightOutline != null)
+        {
+            if (manager.CurrentlySelectedStar != null && manager.CurrentlySelectedStar == this)
+            {
+                if (starHighlightOutline.activeInHierarchy == false) starHighlightOutline.SetActive(true);
+            }
+            else
+            {
+                if (starHighlightOutline.activeInHierarchy)
+                {
+                    starHighlightOutline.SetActive(false);
+                }
+            }
+        }
+    }
     public void Init(ConstellationsController controller, Star star, float maxMagnitude, float magnitudeScale, float radius)
     {
         constellationsController = controller;
@@ -23,6 +42,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         sceneInitialScale = transform.localScale;
         SetStarScale(maxMagnitude, magnitudeScale);
         transform.LookAt(constellationsController.transform);
+        if (starHighlightOutline != null) starHighlightOutline.SetActive(false);
     }
 
     public void SetStarScale(float maxMagnitude, float magnitudeScale)
@@ -44,6 +64,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             HandleSelectStar(broadcastToNetwork, Color.white);
         }
     }
+
     public void HandleSelectStar(bool broadcastToNetwork, Color playerColor)
     {
         if (!mainUIController) mainUIController = FindObjectOfType<MainUIController>();
@@ -89,6 +110,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         // Track if we're hovering over a star
         constellationsController.HoveredStar = highlight ? this : null;
     }
+
    
     public void SetStarColor(Color constellationColor, Color starColor)
     {

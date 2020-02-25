@@ -36,11 +36,13 @@ public class ConstellationDropdown : MonoBehaviour
             {
                 constellationsController.HighlightAllConstellations(true);
                 manager.CurrentlySelectedStar = null;
+                updateStarPanel(false);
             }
             else if (constellationName.ToLower() == "none")
             {
                 constellationsController.HighlightAllConstellations(false);
                 manager.CurrentlySelectedStar = null;
+                updateStarPanel(false);
             }
             else
             {
@@ -55,9 +57,7 @@ public class ConstellationDropdown : MonoBehaviour
                     manager.CurrentlySelectedStar = sc;
                     
                     // update UI
-                    MainUIController mainUIController = FindObjectOfType<MainUIController>();
-                    mainUIController.ShowPanel("StarInfoPanel");
-                    mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
+                   updateStarPanel(true);
                     
                     // broadcast selection
                     InteractionController interactionController = FindObjectOfType<InteractionController>();
@@ -66,6 +66,21 @@ public class ConstellationDropdown : MonoBehaviour
                 }
                 constellationsController.HighlightSingleConstellation(constellationName, manager.LocalPlayerColor);
             }
+        }
+    }
+
+    void updateStarPanel(bool showPanel)
+    {
+        // update UI
+        MainUIController mainUIController = FindObjectOfType<MainUIController>();
+        if (!showPanel)
+        {
+            mainUIController.HidePanel("StarInfoPanel");
+        }
+        else
+        {
+            mainUIController.ShowPanel("StarInfoPanel");
+            mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
         }
     }
 
