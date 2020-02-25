@@ -117,6 +117,9 @@ public class MainUIController : MonoBehaviour
     }
 
     private Dictionary<string, string> buttonPanelLookups;
+
+    public Color activeToggle;
+    public Color inactiveToggle;
     
     private float lastSendTime = 0;
     
@@ -302,7 +305,7 @@ public class MainUIController : MonoBehaviour
             toggleButton.GetComponent<Button>().enabled = true;
             toggleButton.GetComponent<Image>().color = Color.white;
             toggleButton.transform.Find("Image").GetComponent<Image>().color =
-                buttons.Contains(toggleButton.name) ? Color.white : Color.black;
+                buttons.Contains(toggleButton.name) ? activeToggle : inactiveToggle;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable[_currentSceneName]) 
         {
