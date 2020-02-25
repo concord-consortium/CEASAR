@@ -13,14 +13,6 @@ public class DataController : MonoBehaviour
     public TextAsset constellationConnectionData;
 
     [SerializeField]
-    private List<Star> allStars;
-    public List<Star> AllStars
-    {
-        get { return allStars; }
-        private set { allStars = value; }
-    }
-
-    [SerializeField]
     private List<City> allCities;
     public List<City> AllCities
     {
@@ -154,8 +146,8 @@ public class DataController : MonoBehaviour
 
         if (starData != null)
         {
-            allStars = DataImport.ImportStarData(starData.text, maxStars);
-            CCDebug.Log(allStars.Count + " stars imported");
+            manager.AllStars = DataImport.ImportStarData(starData.text, maxStars);
+            CCDebug.Log(manager.AllStars.Count + " stars imported");
             allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
@@ -175,15 +167,15 @@ public class DataController : MonoBehaviour
         }
 
         int starCount = 0;
-        if (starPrefab != null && allStars != null && allStars.Count > 0)
+        if (starPrefab != null && manager.AllStars != null && manager.AllStars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
-            minMag = allStars.Min(s => s.Mag);
-            maxMag = allStars.Max(s => s.Mag);
+            minMag = manager.AllStars.Min(s => s.Mag);
+            maxMag = manager.AllStars.Max(s => s.Mag);
 
-            constellationFullNames = new List<string>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
+            constellationFullNames = new List<string>(manager.AllStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
 
-            var constellationNames = new List<ConstellationNamePair>(allStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
+            var constellationNames = new List<ConstellationNamePair>(manager.AllStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
             CCDebug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
 
             constellationFullNames.Sort();
@@ -191,7 +183,7 @@ public class DataController : MonoBehaviour
             foreach (ConstellationNamePair constellationName in constellationNames)
             {
 
-                List<Star> starsInConstellation = allStars.Where(s => s.Constellation == constellationName.shortName).ToList();
+                List<Star> starsInConstellation = manager.AllStarsInConstellation(constellationName.shortName);
 
                 Constellation constellation = Instantiate(constellationPrefab, allConstellations.transform);
                 constellation.name = constellationName.shortName.Trim() == "" ? "no-const" : constellationName.shortName;

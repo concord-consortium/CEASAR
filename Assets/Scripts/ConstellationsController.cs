@@ -6,7 +6,7 @@ public class ConstellationsController : MonoBehaviour
 {
 
     private SimulationManager manager;
-    List<Constellation> constellations = new List<Constellation>();
+    public List<Constellation> AllConstellations = new List<Constellation>();
     float lineWidth = .035f;
     bool sceneShouldShowConstellations = false;
 
@@ -32,15 +32,15 @@ public class ConstellationsController : MonoBehaviour
 
     public void AddConstellation(Constellation constellation)
     {
-        constellations.Add(constellation);
+        AllConstellations.Add(constellation);
     }
 
     public Constellation GetConstellation(string cFullName)
     {
-        int index = constellations.FindIndex(el => el.constellationNameAbbr == cFullName);
+        int index = AllConstellations.FindIndex(el => el.constellationNameAbbr == cFullName);
         if (index < 0)
         {
-            return constellations[index];
+            return AllConstellations[index];
         }
         else
         {
@@ -50,7 +50,7 @@ public class ConstellationsController : MonoBehaviour
 
     public void HighlightSingleConstellation(string cFullName)
     {
-        foreach (Constellation constellation in constellations)
+        foreach (Constellation constellation in AllConstellations)
         {
             constellation.Highlight(constellation.constellationNameFull == cFullName);
             constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName, lineWidth);
@@ -58,7 +58,7 @@ public class ConstellationsController : MonoBehaviour
     }
     public void HighlightSingleConstellation(string cFullName, Color playerColor)
     {
-        foreach (Constellation constellation in constellations)
+        foreach (Constellation constellation in AllConstellations)
         {
             constellation.Highlight(constellation.constellationNameFull == cFullName, playerColor);
             constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName, lineWidth);
@@ -67,7 +67,7 @@ public class ConstellationsController : MonoBehaviour
 
     public void HighlightAllConstellations(bool highlight)
     {
-        foreach (Constellation constellation in constellations)
+        foreach (Constellation constellation in AllConstellations)
         {
             constellation.Highlight(highlight);
             constellation.ShowConstellationLines(highlight, lineWidth);
@@ -76,7 +76,7 @@ public class ConstellationsController : MonoBehaviour
 
     public void ShowSingleConstellation(string cFullName)
     {
-        foreach (Constellation constellation in constellations)
+        foreach (Constellation constellation in AllConstellations)
         {
             constellation.ShowConstellationLines(constellation.constellationNameFull == cFullName, lineWidth);
         }
@@ -84,7 +84,7 @@ public class ConstellationsController : MonoBehaviour
 
     public void ShowAllConstellations(bool show)
     {
-        foreach (Constellation constellation in constellations)
+        foreach (Constellation constellation in AllConstellations)
         {
             constellation.ShowConstellationLines(show, lineWidth);
         }

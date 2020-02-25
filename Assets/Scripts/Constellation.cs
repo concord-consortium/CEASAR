@@ -7,7 +7,7 @@ public class Constellation : MonoBehaviour
     public string constellationNameAbbr;
     public string constellationNameFull;
     // the stars in the constellation
-    List<GameObject> stars = new List<GameObject>();
+    public List<GameObject> stars = new List<GameObject>();
     // the actual game objects that contain the line renderers
     List<GameObject> constellationLines = new List<GameObject>();
     //the set of constellation connections that define the constellation lines

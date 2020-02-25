@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -8,6 +9,11 @@ public class ConstellationDropdown : MonoBehaviour
 {
     ConstellationsController constellationsController;
     TMP_Dropdown dropdown;
+
+    SimulationManager manager
+    {
+        get { return SimulationManager.GetInstance(); }
+    }
 
     void Start()
     {
@@ -21,18 +27,43 @@ public class ConstellationDropdown : MonoBehaviour
 
     void DropdownValueChanged(TMP_Dropdown change)
     {
+        string constellationName = change.captionText.text;
+        CCDebug.Log("Selected constellation " + constellationName, LogLevel.Info, LogMessageCategory.Interaction);
+        
         if (constellationsController)
         {
-            if (change.captionText.text == "all")
+            if (constellationName == "all")
             {
                 constellationsController.HighlightAllConstellations(true);
+                manager.CurrentlySelectedStar = null;
             }
-            else if (change.captionText.text == "None")
+            else if (constellationName == "None")
             {
                 constellationsController.HighlightAllConstellations(false);
+                manager.CurrentlySelectedStar = null;
             }
             else
             {
+                List<Star> allStarsInConstellation = manager.AllStarsInConstellationByFullName(constellationName);
+                CCDebug.Log("Count of stars: " + allStarsInConstellation.Count, LogLevel.Info, LogMessageCategory.Interaction);
+                if (allStarsInConstellation != null && allStarsInConstellation.Count > 0)
+                {
+                    Star brightestStar = allStarsInConstellation.OrderByDescending(s => s.Mag).FirstOrDefault();
+                    CCDebug.Log(brightestStar, LogLevel.Info, LogMessageCategory.Interaction);
+                    DataController dc = manager.DataControllerComponent;
+                    StarComponent sc = dc.GetStarById(brightestStar.uniqueId);
+                    manager.CurrentlySelectedStar = sc;
+                    
+                    // update UI
+                    MainUIController mainUIController = FindObjectOfType<MainUIController>();
+                    mainUIController.ShowPanel("StarInfoPanel");
+                    mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
+                    
+                    // broadcast selection
+                    InteractionController interactionController = FindObjectOfType<InteractionController>();
+                    interactionController.ShowCelestialObjectInteraction(brightestStar.ProperName,
+                        brightestStar.Constellation, brightestStar.uniqueId, true);
+                }
                 constellationsController.HighlightSingleConstellation(change.captionText.text);
             }
         }
