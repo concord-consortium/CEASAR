@@ -107,5 +107,9 @@ public static class SimulationConstants
     public static readonly string LOG_EVENT_DRAWMODE_STARTED = "DrawMode Started";
     public static readonly string LOG_EVENT_DRAWMODE_ENDED = "DrawMode Ended";
     public static readonly string LOG_EVENT_SIM_TIME_CHANGED = "Simulation Time Changed";
+
+    public static readonly string LOG_EVENT_SNAPSHOT_CREATED = "Snapshot Saved";
+    public static readonly string LOG_EVENT_SNAPSHOT_DELETED = "Snapshot Deleted";
+    public static readonly string LOG_EVENT_SNAPSHOT_LOADED = "Snapshot Loaded";
     // ======== end logging configuration: ===================================================
 }

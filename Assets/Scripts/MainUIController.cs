@@ -704,7 +704,7 @@ public class MainUIController : MonoBehaviour
         // // user restores snapshot from UI
         // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
         CCDebug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
-        
+        SimulationEvents.GetInstance().SnapshotLoaded.Invoke(snapshot);
         RestoreSnapshotOrPin(snapshot);
     }
 

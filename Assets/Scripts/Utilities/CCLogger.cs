@@ -140,6 +140,9 @@ public class CCLogger
         eventDispatcher.PushPinUpdated.AddListener(PushPinUpdated);
         eventDispatcher.DrawMode.AddListener(DrawMode);
         eventDispatcher.SimulationTimeChanged.AddListener(SimulationTimeChanged);
+        eventDispatcher.SnapshotCreated.AddListener(SnapshotCreated);
+        eventDispatcher.SnapshotLoaded.AddListener(SnapshotLoaded);
+        eventDispatcher.SnapshotDeleted.AddListener(SnapshotDeleted);
     }
 
     // Remove all listeners:
@@ -155,6 +158,9 @@ public class CCLogger
         eventDispatcher.PushPinUpdated.RemoveListener(PushPinUpdated);
         eventDispatcher.DrawMode.RemoveListener(DrawMode);
         eventDispatcher.SimulationTimeChanged.RemoveListener(SimulationTimeChanged);
+        eventDispatcher.SnapshotCreated.RemoveListener(SnapshotCreated);
+        eventDispatcher.SnapshotLoaded.RemoveListener(SnapshotLoaded);
+        eventDispatcher.SnapshotDeleted.RemoveListener(SnapshotDeleted);
     }
 
     /********************* EVENT DISPATCHING SECTION ************************/
@@ -225,6 +231,29 @@ public class CCLogger
         string msg = $"SimulationTime:{currentTime.ToString()}";
         _logAsync(LOG_EVENT_SIM_TIME_CHANGED, msg);
     }
+
+    private void SnapshotCreated(Pushpin pin)
+    {
+        lastLocation = pin.Location.ToDisplayString();
+        lastSimulationTime = pin.SelectedDateTime.ToString();
+        string msg = $"Snapshot Created: {pin.ToString()}";
+        _logAsync(LOG_EVENT_SNAPSHOT_CREATED, msg);
+    }
+    private void SnapshotLoaded(Pushpin pin)
+    {
+        lastLocation = pin.Location.ToDisplayString();
+        lastSimulationTime = pin.SelectedDateTime.ToString();
+        string msg = $"Snapshot Loaded: {pin.ToString()}";
+        _logAsync(LOG_EVENT_SNAPSHOT_LOADED, msg);
+    }
+    private void SnapshotDeleted(Pushpin pin)
+    {
+        lastLocation = pin.Location.ToDisplayString();
+        lastSimulationTime = pin.SelectedDateTime.ToString();
+        string msg = $"Snapshot Deleted: {pin.ToString()}";
+        _logAsync(LOG_EVENT_SNAPSHOT_DELETED, msg);
+    }
+    
     #endregion Event Dispatching:
     /********************* END EVENT DISPATCHING SECTION ********************/
 
@@ -268,7 +297,7 @@ public class CCLogger
         UpdateContext();
         bool devMode = SimulationManager.GetInstance().server == ServerList.Local;
         string json = JsonUtility.ToJson(this, true);
-
+        CCDebug.Log(msg, LogLevel.Info, LogMessageCategory.EventLog);
         // Only send to log manager if we're on the network to reduce clutter
         if (!devMode)
         {

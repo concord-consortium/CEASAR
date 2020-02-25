@@ -59,6 +59,7 @@ public class SnapshotsController : MonoBehaviour
         PlayerPrefs.SetString(locationKey + pinIndex, pin.LocationName);
         PlayerPrefs.SetString(datetimeKey + pinIndex, pin.SelectedDateTime.ToString());
         PlayerPrefs.SetString(coordsKey + pinIndex, pin.Location.ToString());
+        SimulationEvents.GetInstance().SnapshotCreated.Invoke(pin);
     }
 
     public void DeleteSnapshot(Pushpin snapshot)
@@ -86,5 +87,6 @@ public class SnapshotsController : MonoBehaviour
             PlayerPrefs.SetString(datetimeKey + (i).ToString(), manager.LocalUserSnapshots[i].SelectedDateTime.ToString());
             PlayerPrefs.SetString(coordsKey + (i).ToString(), manager.LocalUserSnapshots[i].Location.ToString());
         }
+        SimulationEvents.GetInstance().SnapshotDeleted.Invoke(snapshot);
     }
 }

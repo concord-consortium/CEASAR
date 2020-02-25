@@ -26,6 +26,9 @@ public class PlayerJoinedEvent : UnityEvent<string> { }
 public class PlayerLeftEvent : UnityEvent<string> { }
 [System.Serializable]
 public class SimulationTimeChangedEvent : UnityEvent { }
+public class SnapshotCreatedEvent: UnityEvent<Pushpin> { }
+public class SnapshotDeletedEvent: UnityEvent<Pushpin> { }
+public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 
 public class SimulationEvents
 {
@@ -42,6 +45,9 @@ public class SimulationEvents
         if (PlayerJoined == null) PlayerJoined = new PlayerJoinedEvent();
         if (PlayerLeft == null) PlayerLeft = new PlayerLeftEvent();
         if (SimulationTimeChanged == null) SimulationTimeChanged = new SimulationTimeChangedEvent();
+        if (SnapshotCreated == null) SnapshotCreated = new SnapshotCreatedEvent();
+        if (SnapshotLoaded == null) SnapshotLoaded = new SnapshotLoadedEvent();
+        if (SnapshotDeleted == null) SnapshotDeleted = new SnapshotDeletedEvent();
     }
     private static SimulationEvents instance;
 
@@ -106,4 +112,17 @@ public class SimulationEvents
     /// When the simulation time changes, the user's pushpin needs to be updated
     /// </summary>
     public SimulationTimeChangedEvent SimulationTimeChanged;
+
+    /// <summary>
+    /// For logging the creation of a snapshot
+    /// </summary>
+    public SnapshotCreatedEvent SnapshotCreated;
+    /// <summary>
+    /// For logging the selection of a snapshot
+    /// </summary>
+    public SnapshotLoadedEvent SnapshotLoaded;
+    /// <summary>
+    /// For logging the deletion of a snapshot
+    /// </summary>
+    public SnapshotDeletedEvent SnapshotDeleted;
 }
