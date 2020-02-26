@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EarthInteraction.unity
     guid: ebf8a616e171f4a028bc6ffcf10efaa6
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Stars.unity
     guid: faff0818eabc04885abbe66a8ff2406b
   - enabled: 0
