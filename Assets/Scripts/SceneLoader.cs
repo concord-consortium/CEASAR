@@ -168,13 +168,10 @@ public class SceneLoader : MonoBehaviour
         if (cameraControlUI == null) cameraControlUI = GameObject.Find("CameraControlUI");
         if (cameraControlUI != null)
         {
-            bool show = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ||
-                        SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
-            cameraControlUI.GetComponent<UIControlCamera>().enableControls = show;
-            if (show)
-            {
-                cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = cam.transform;
-            }
+            bool orbitControlMode = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH;
+            cameraControlUI.GetComponent<UIControlCamera>().enableControls = true;
+            cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = cam.transform;
+            cameraControlUI.GetComponent<UIControlCamera>().OrbitControlMode = orbitControlMode;
         }
 
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)

@@ -12,6 +12,20 @@ public class UIControlCamera : MonoBehaviour
     [SerializeField]
     private GameObject controlContainer;
 
+    private bool orbitControlMode = false;
+    private PlayerOrbitMoveControl orbitControls;
+    public bool OrbitControlMode
+    {
+        get { return orbitControlMode; }
+        set
+        {
+            orbitControlMode = value;
+            if (orbitControlMode)
+            {
+                orbitControls = FindObjectOfType<PlayerOrbitMoveControl>();
+            }
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -65,7 +79,22 @@ public class UIControlCamera : MonoBehaviour
     {
         if (enableControls)
         {
-            mainCam.transform.Rotate(Vector3.left, speed * Time.deltaTime, Space.Self);
+            if (orbitControlMode)
+            {
+                if (!orbitControls)
+                {
+                    orbitControls = FindObjectOfType<PlayerOrbitMoveControl>();
+                }
+
+                if (orbitControls)
+                {
+                    orbitControls.MoveCamera(0, speed * Time.deltaTime * -1, 0);
+                }
+            }
+            else
+            {
+                mainCam.transform.Rotate(Vector3.left, speed * Time.deltaTime, Space.Self);
+            }
         }
     }
     // Rotate parent left/right
@@ -73,9 +102,24 @@ public class UIControlCamera : MonoBehaviour
     {
         if (enableControls)
         {
-            if (cameraContainer == null && mainCam.transform.parent)
-                cameraContainer = mainCam.transform.parent;
-            cameraContainer.transform.Rotate(Vector3.up, speed * Time.deltaTime, Space.World);
+            if (orbitControlMode)
+            {
+                if (!orbitControls)
+                {
+                    orbitControls = FindObjectOfType<PlayerOrbitMoveControl>();
+                }
+
+                if (orbitControls)
+                {
+                    orbitControls.MoveCamera(speed * Time.deltaTime * -1, 0, 0);
+                }
+            }
+            else
+            {
+                if (cameraContainer == null && mainCam.transform.parent)
+                    cameraContainer = mainCam.transform.parent;
+                cameraContainer.transform.Rotate(Vector3.up, speed * Time.deltaTime, Space.World);
+            }
         }
     }
 
