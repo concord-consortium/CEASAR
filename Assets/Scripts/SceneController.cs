@@ -30,14 +30,33 @@ public class SceneController : MonoBehaviour
     public void UpdateButtons(string currentSceneName) {
         int buttonCounter = 0;
         string[] playableScenes = SimulationConstants.SCENES_PLAYABLE;
-        foreach(string sceneName in playableScenes)
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+        string model = UnityEngine.XR.XRDevice.model != null ? UnityEngine.XR.XRDevice.model : "";
+        if (!string.IsNullOrEmpty(model))
         {
-            if(currentSceneName != sceneName)
+            // different scenes for Quest
+            playableScenes = SimulationConstants.SCENES_PLAYABLE_VR;
+        }
+#endif
+        if (playableScenes.Length > 2)
+        {
+            foreach (string sceneName in playableScenes)
             {
-                UpdateButton(buttonCounter, sceneName);
-                buttonCounter++;
+                if (currentSceneName != sceneName)
+                {
+                    UpdateButton(buttonCounter, sceneName);
+                    buttonCounter++;
+                }
             }
         }
+        else
+        {
+            for (var i = 0; i < playableScenes.Length; i++)
+            {
+                UpdateButton(i, playableScenes[i]);
+            }
+        }
+        
     }
 
     public void UpdateButton(int buttonIndex, string sceneName)
@@ -52,6 +71,17 @@ public class SceneController : MonoBehaviour
         // Change the text label:
         TMPro.TextMeshProUGUI label = button.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
         label.text = sceneNameForDisplay(sceneName);
+
+        Image buttonBackgroundImage = button.gameObject.GetComponent<Image>();
+        if (SceneManager.GetActiveScene().name.StartsWith(sceneName))
+        {
+            button.enabled = false;
+            buttonBackgroundImage.color = Color.gray;
+        } else
+        {
+            button.enabled = true;
+            buttonBackgroundImage.color = Color.white;
+        }
     }
 
     private string sceneNameForDisplay(string sceneName)

@@ -21,11 +21,12 @@ public static class SimulationConstants
     public static readonly string SCENE_EARTH = "EarthInteraction";
 
     // Platform Scene Listings:
-    public static readonly string[] SCENES_VR = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
+    public static readonly string[] SCENES_VR = { SCENE_LOAD, SCENE_HORIZON, SCENE_EARTH };
     public static readonly string[] SCENES_AR = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
     public static readonly string[] SCENES_PC = { SCENE_LOAD, SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
     public static readonly string[] SCENES_PLAYABLE = { SCENE_STARS, SCENE_HORIZON, SCENE_EARTH };
-    
+    public static readonly string[] SCENES_PLAYABLE_VR = { SCENE_HORIZON, SCENE_EARTH };
+
     // UI Panel Names:
     public static readonly string PANEL_CONSTELLATION = "ConstellationSelectionPanel";
     public static readonly string PANEL_CURRENTTIME = "CurrentTimePanel";

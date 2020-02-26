@@ -14,6 +14,7 @@ TagManager:
   - ToggleButton
   - MainUI
   - WorldUI
+  - SceneButton
   layers:
   - Default
   - TransparentFX

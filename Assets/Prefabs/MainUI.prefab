@@ -13224,8 +13224,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2724144226661976861}
   m_HandleRect: {fileID: 2724144226661976860}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -25998,6 +25998,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 8300000, guid: 18267dea1de043348b1e785854deafa3, type: 3}
+    - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 0.3764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 0.3764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 85085722, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 0.3764706
+      objectReference: {fileID: 0}
     - target: {fileID: 134128333, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -26026,6 +26038,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 8300000, guid: 18267dea1de043348b1e785854deafa3, type: 3}
+    - target: {fileID: 134128333, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 0.3764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 134128333, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 0.3764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 134128333, guid: bf7f3ea29a2414e4a87c0caf0f119efe, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 0.3764706
+      objectReference: {fileID: 0}
     - target: {fileID: 3952008515243682864, guid: bf7f3ea29a2414e4a87c0caf0f119efe,
         type: 3}
       propertyPath: m_Name
