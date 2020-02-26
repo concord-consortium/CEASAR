@@ -564,6 +564,11 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 584737428}
+    - target: {fileID: 8930218453876922783, guid: f18cfeaefe8de423887c9a6224f1bebd,
+        type: 3}
+      propertyPath: sunlight
+      value: 
+      objectReference: {fileID: 1187295153}
     - target: {fileID: 8930218455511366171, guid: f18cfeaefe8de423887c9a6224f1bebd,
         type: 3}
       propertyPath: near clip plane
