@@ -22,6 +22,9 @@ public class PlayerOrbitMoveControl : MonoBehaviour
     float x = 0.0f;
     float y = 0.0f;
     float d = 0.0f;
+
+    public GameObject sunlight;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -75,6 +78,13 @@ public class PlayerOrbitMoveControl : MonoBehaviour
         if (avatar) avatar.LookAt(target);
         transform.rotation = rotation;
         transform.position = position;
+        
+        if (sunlight)
+        {
+            float xRotation = sunlight.transform.rotation.eulerAngles.x;
+            float yRotation = transform.rotation.eulerAngles.y + 40f;
+            sunlight.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+        }
     }
 
     public void ZoomCamera(float inputZoom)
