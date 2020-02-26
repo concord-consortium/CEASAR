@@ -27,12 +27,9 @@ public class EarthSeasonsController : MonoBehaviour
         int currentMonth = manager.CurrentSimulationTime.Month - 1;
         if (_month != currentMonth)
         {
-            Debug.Log(manager.CurrentSimulationTime);
             // Change Earth texture to the matching texture for the current month
             GetComponent<Renderer>().material.SetTexture("_MainTex", seasons[currentMonth]);
             _month = currentMonth;
-
-            
         }
         if (sunlight && lastTime != manager.CurrentSimulationTime)
         {
