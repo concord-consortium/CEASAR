@@ -116,6 +116,11 @@ public class MainUIController : MonoBehaviour
         }
     }
 
+    private Dictionary<string, string> buttonPanelLookups;
+
+    public Color activeToggle;
+    public Color inactiveToggle;
+    
     private float lastSendTime = 0;
     
     private bool hasCompletedSetup = false;
@@ -289,10 +294,18 @@ public class MainUIController : MonoBehaviour
         targetPosition = initialPosition;
         
         // buttons
+        List<string> panelsCurrentlyActive = enabledPanels[_currentSceneName].Select(p => p.name).ToList();
+        if (buttonPanelLookups == null || buttonPanelLookups.Count == 0)
+            buttonPanelLookups = SimulationConstants.LookupButtonsByPanel();
+        List<string> buttons = panelsCurrentlyActive.Where(p => buttonPanelLookups.ContainsKey(p))
+                                                    .Select(p => buttonPanelLookups[p])
+                                                    .ToList();
         foreach (GameObject toggleButton in GameObject.FindGameObjectsWithTag("ToggleButton"))
         {
             toggleButton.GetComponent<Button>().enabled = true;
             toggleButton.GetComponent<Image>().color = Color.white;
+            toggleButton.transform.Find("Image").GetComponent<Image>().color =
+                buttons.Contains(toggleButton.name) ? activeToggle : inactiveToggle;
         }
         foreach (GameObject buttonToDisable in buttonsToDisable[_currentSceneName]) 
         {
@@ -691,7 +704,7 @@ public class MainUIController : MonoBehaviour
         // // user restores snapshot from UI
         // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
         CCDebug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
-        
+        SimulationEvents.GetInstance().SnapshotLoaded.Invoke(snapshot);
         RestoreSnapshotOrPin(snapshot);
     }
 

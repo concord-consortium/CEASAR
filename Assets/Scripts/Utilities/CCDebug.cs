@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public enum LogLevel { Verbose, Info, Warning, Error }
-public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction, Event}
+public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction, Event, EventLog}
 
 public static class CCDebug
 {
@@ -19,7 +19,8 @@ public static class CCDebug
         LogMessageCategory.Networking,
         LogMessageCategory.Rendering,
         LogMessageCategory.UI,
-        LogMessageCategory.VR
+        LogMessageCategory.VR,
+        LogMessageCategory.EventLog
     };
     
     public static void Log(object logMessage, LogLevel level, LogMessageCategory category)

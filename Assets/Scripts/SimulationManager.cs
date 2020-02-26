@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -110,6 +111,22 @@ public class SimulationManager
     
     public StarComponent CurrentlySelectedStar;
 
+    private List<Star> allStars;
+
+    public List<Star> AllStars
+    {
+        get { return allStars; }
+        set { allStars = value; }
+    }
+
+    public List<Star> AllStarsInConstellation(string constellationName)
+    {
+        return allStars.Where(s => s.Constellation == constellationName).ToList();
+    }
+    public List<Star> AllStarsInConstellationByFullName(string constellationFullName)
+    {
+        return allStars.Where(s => s.ConstellationFullName == constellationFullName).ToList();
+    }
     /// <summary>
     /// A shortcut to LocalPlayer.Pin.SelectedDateTime
     /// </summary>

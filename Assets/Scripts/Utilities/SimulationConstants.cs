@@ -1,4 +1,6 @@
-﻿public static class SimulationConstants
+﻿using System.Collections.Generic;
+
+public static class SimulationConstants
 {
     public static readonly string CUSTOM_LOCATION = "(Custom Location)";
     public static readonly string PIN_PREFIX = "pin_";
@@ -49,6 +51,24 @@
     public static readonly string BUTTON_TOGGLE_SNAPSHOT = "ButtonToggleSnapshot";
     public static readonly string BUTTON_TOGGLE_CONSTELLATION = "ButtonToggleConstellation";
     public static readonly string BUTTON_TOGGLE_NETWORK = "ButtonToggleNetwork";
+
+    // UI Toggle Lookups
+    /// <summary>
+    /// Lookup a corresponding button for a UI panel using the PANEL as key
+    /// </summary>
+    /// <returns>Dictionary of PANEL as key, BUTTON name as value</returns>
+    public static Dictionary<string, string> LookupButtonsByPanel()
+    {
+        Dictionary<string, string> lookups = new Dictionary<string, string>();
+        lookups.Add(PANEL_CONSTELLATION, BUTTON_TOGGLE_CONSTELLATION);
+        lookups.Add(PANEL_DATETIME, BUTTON_TOGGLE_DATE);
+        lookups.Add(PANEL_DRAWING, BUTTON_TOGGLE_DRAW);
+        lookups.Add(PANEL_LOCATION, BUTTON_TOGGLE_LOCATION);
+        lookups.Add(PANEL_NETWORK, BUTTON_TOGGLE_NETWORK);
+        lookups.Add(PANEL_SNAPSHOT, BUTTON_TOGGLE_SNAPSHOT);
+        lookups.Add(PANEL_SPHEREMOVEMENT, BUTTON_TOGGLE_MOVEMENT);
+        return lookups;
+    }
     
     // UI Panel Scene Defaults:
     public static readonly string[] PANELS_ALWAYS = {PANEL_TITLE, PANEL_TOGGLE, PANEL_SCENESELECTION};
@@ -87,5 +107,9 @@
     public static readonly string LOG_EVENT_DRAWMODE_STARTED = "DrawMode Started";
     public static readonly string LOG_EVENT_DRAWMODE_ENDED = "DrawMode Ended";
     public static readonly string LOG_EVENT_SIM_TIME_CHANGED = "Simulation Time Changed";
+
+    public static readonly string LOG_EVENT_SNAPSHOT_CREATED = "Snapshot Saved";
+    public static readonly string LOG_EVENT_SNAPSHOT_DELETED = "Snapshot Deleted";
+    public static readonly string LOG_EVENT_SNAPSHOT_LOADED = "Snapshot Loaded";
     // ======== end logging configuration: ===================================================
 }

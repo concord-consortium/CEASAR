@@ -287,33 +287,36 @@ public class NetworkController : MonoBehaviour
 
     void updateAvatarForPlayer(NetworkPlayer networkPlayer)
     {
-        Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
-        Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
-        string avatarName =  SimulationConstants.NETWORK_REMOTE_PLAYER_PREFIX + networkPlayer.username;
-        GameObject playerAvatar = GameObject.Find(avatarName);
-        if (playerAvatar == null)
-        {
-            playerAvatar = Instantiate(avatar, pos, rot);
-            Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
-            playerAvatar.GetComponent<Renderer>().material.color = playerColor;
-            playerAvatar.name = avatarName;
-            playerAvatar.AddComponent<RemotePlayerMovement>();
-
-            // add player avatar to map of player avatars
-            remotePlayerAvatars.Add(networkPlayer.username, playerAvatar);
-        }
-        else
-        {
-            if (remotePlayerAvatars.ContainsKey(networkPlayer.username))
+        if (scenesWithAvatars.Contains(SceneManager.GetActiveScene().name)) {
+            Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
+            Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
+            string avatarName =  SimulationConstants.NETWORK_REMOTE_PLAYER_PREFIX + networkPlayer.username;
+        
+            GameObject playerAvatar = GameObject.Find(avatarName);
+            if (playerAvatar == null)
             {
-                // move existing avatar
-                playerAvatar = remotePlayerAvatars[networkPlayer.username];
-                playerAvatar.transform.position = pos;
-                playerAvatar.transform.rotation = rot;
+                playerAvatar = Instantiate(avatar, pos, rot);
+                Color playerColor = UserRecord.GetColorForUsername(networkPlayer.username);
+                playerAvatar.GetComponent<Renderer>().material.color = playerColor;
+                playerAvatar.name = avatarName;
+                playerAvatar.AddComponent<RemotePlayerMovement>();
+
+                // add player avatar to map of player avatars
+                remotePlayerAvatars.Add(networkPlayer.username, playerAvatar);
             }
             else
             {
-                remotePlayerAvatars[networkPlayer.username] = playerAvatar;
+                if (remotePlayerAvatars.ContainsKey(networkPlayer.username))
+                {
+                    // move existing avatar
+                    playerAvatar = remotePlayerAvatars[networkPlayer.username];
+                    playerAvatar.transform.position = pos;
+                    playerAvatar.transform.rotation = rot;
+                }
+                else
+                {
+                    remotePlayerAvatars[networkPlayer.username] = playerAvatar;
+                }
             }
         }
     }
