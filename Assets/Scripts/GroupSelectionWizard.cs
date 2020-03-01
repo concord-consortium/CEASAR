@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -279,6 +280,29 @@ public class GroupSelectionWizard : MonoBehaviour
             SetTitleText($"{userRecord.Username} in {userRecord.group}");
             ButtonPanel.SetActive(false);
             NextScreen.SetActive(true);
+            List<string> sceneButtons = new List<string>();
+            foreach(var button in GameObject.FindGameObjectsWithTag("SceneButton"))
+            {
+                string sceneNameStart = button.name.Replace("Button", "");
+                string[] playableScenes = SimulationConstants.SCENES_PLAYABLE;
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+                string model = UnityEngine.XR.XRDevice.model != null ? UnityEngine.XR.XRDevice.model : "";
+                if (!string.IsNullOrEmpty(model))
+                {
+                    // different scenes for Quest
+                    playableScenes = SimulationConstants.SCENES_PLAYABLE_VR;
+                }
+#endif
+                bool found = false;
+                foreach(string scene in playableScenes)
+                {
+                    if (scene.StartsWith(sceneNameStart)) found = true;
+                }
+                if (!found)
+                {
+                    button.SetActive(false);
+                }
+            }
         }
     }
 

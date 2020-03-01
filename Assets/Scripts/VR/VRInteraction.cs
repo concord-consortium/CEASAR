@@ -272,15 +272,18 @@ public class VRInteraction : MonoBehaviour
         
         if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
 
-        
-        Vector3 newRotation = origin.transform.rotation.eulerAngles;
-        newRotation.x = 0;
-        newRotation.z = 0;
-        newRotation.y += 30;
-        mainUI.transform.rotation = Quaternion.Euler(newRotation);
-        Vector3 pos = origin.position + (origin.forward * menuDistance);
-        pos.y += verticalOffset;
-        mainUI.transform.position = pos;
+        // one last null check - this will be the case on LoadSim
+        if (mainUI != null)
+        {
+            Vector3 newRotation = origin.transform.rotation.eulerAngles;
+            newRotation.x = 0;
+            newRotation.z = 0;
+            newRotation.y += 30;
+            mainUI.transform.rotation = Quaternion.Euler(newRotation);
+            Vector3 pos = origin.position + (origin.forward * menuDistance);
+            pos.y += verticalOffset;
+            mainUI.transform.position = pos;
+        }
 #endif
     }
     void toggleMenu()
