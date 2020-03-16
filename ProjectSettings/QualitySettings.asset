@@ -226,4 +226,5 @@ QualitySettings:
     Android: 5
     Standalone: 5
     WebGL: 5
+    Windows Store Apps: 5
     iPhone: 5

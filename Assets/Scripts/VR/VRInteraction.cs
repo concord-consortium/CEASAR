@@ -435,18 +435,20 @@ public class VRInteraction : MonoBehaviour
 
     void updateLaser(bool activeTarget)
     {
-        laserLineRenderer.SetPosition(0, laserStartPos);
-        laserLineRenderer.SetPosition(1, laserEndPos);
-        if (activeTarget)
+        if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_EARTH)
         {
-            laserLineRenderer.startWidth = activeLaserWidth;
-            laserLineRenderer.endWidth = activeLaserWidth;
+            laserLineRenderer.SetPosition(0, laserStartPos);
+            laserLineRenderer.SetPosition(1, laserEndPos);
+            if (activeTarget)
+            {
+                laserLineRenderer.startWidth = activeLaserWidth;
+                laserLineRenderer.endWidth = activeLaserWidth;
+            }
+            else
+            {
+                laserLineRenderer.startWidth = inactiveLaserWidth;
+                laserLineRenderer.endWidth = inactiveLaserWidth;
+            }
         }
-        else
-        {
-            laserLineRenderer.startWidth = inactiveLaserWidth;
-            laserLineRenderer.endWidth = inactiveLaserWidth;
-        }
-
     }
 }
