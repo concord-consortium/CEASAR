@@ -1,4 +1,4 @@
-#if UNITY_EDITOR_WIN
+#if UNITY_EDITOR_WIN && UNITY_ANDROID
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -68,8 +68,16 @@ public class OVRBundleManager
 		DateTime apkBuildStart = DateTime.Now;
 
 #if UNITY_2018_1_OR_NEWER
-		BuildReport report = BuildPipeline.BuildPlayer(buildScenes, apkOutputPath, BuildTarget.Android,
-			BuildOptions.Development | BuildOptions.AutoRunPlayer);
+		var buildPlayerOptions = new BuildPlayerOptions
+		{
+			scenes = buildScenes,
+			locationPathName = apkOutputPath,
+			target = BuildTarget.Android,
+			options = BuildOptions.Development |
+				BuildOptions.AutoRunPlayer
+		};
+
+		BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 
 		if (report.summary.result == BuildResult.Succeeded)
 		{

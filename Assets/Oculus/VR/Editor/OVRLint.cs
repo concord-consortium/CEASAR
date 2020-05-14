@@ -20,6 +20,8 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using Assets.OVR.Scripts;
+using Assets.Oculus.VR;
+using Assets.Oculus.VR.Editor;
 
 /// <summary>
 ///Scans the project and warns about the following conditions:
@@ -640,8 +642,19 @@ public class OVRLint : EditorWindow
 		}
 	}
 
+#if UNITY_ANDROID
 	static void CheckStaticAndroidIssues()
 	{
+		if (OVRDeviceSelector.isTargetDeviceQuest && PlayerSettings.Android.targetArchitectures != AndroidArchitecture.ARM64)
+		{
+				// Quest store is only accepting 64-bit apps as of November 25th 2019
+				AddFix("Set Target Architecture to ARM64", "32-bit Quest apps are no longer being accepted on the Oculus Store.",
+						delegate (UnityEngine.Object obj, bool last, int selected)
+						{
+								PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+						}, null, false, "Fix");
+		}
+
 		// Check that the minSDKVersion meets requirement, 21 for Gear and Go, 23 for Quest
 		AndroidSdkVersions recommendedAndroidMinSdkVersion = AndroidSdkVersions.AndroidApiLevel21;
 		if (OVRDeviceSelector.isTargetDeviceQuest)
@@ -667,6 +680,23 @@ public class OVRLint : EditorWindow
 			{
 				PlayerSettings.Android.targetSdkVersion = requiredAndroidTargetSdkVersion;
 			}, null, false, "Fix");
+		}
+
+		// Check that Android TV Compatibility is disabled
+		if (PlayerSettings.Android.androidTVCompatibility)
+		{
+			AddFix("Disable Android TV Compatibility", "Apps with Android TV Compatibility enabled are not accepted by the Oculus Store.",
+				delegate (UnityEngine.Object obj, bool last, int selected)
+				{
+					PlayerSettings.Android.androidTVCompatibility = false;
+				}, null, false, "Fix");
+		}
+
+		if (OVRPlatformToolSettings.TargetPlatform == OVRPlatformTool.TargetPlatform.OculusGoGearVR &&
+			!OVRPlugin.supportsGearVR)
+		{
+			AddFix("Gear VR Not Supported", "Target Oculus Platform Gear VR is no longer supported after Oculus Utilities v1.41.0. " +
+				"This app will only target Oculus Go.", null, null, false);
 		}
 
 		if (!PlayerSettings.gpuSkinning)
@@ -700,7 +730,7 @@ public class OVRLint : EditorWindow
 				}, materials[i], false, "Fix");
 			}
 
-			if (materials[i].passCount > 1)
+			if (materials[i].passCount > 2)
 			{
 				AddFix("Material Passes", "Please use 2 or fewer passes in materials.", null, materials[i], false);
 			}
@@ -834,6 +864,8 @@ public class OVRLint : EditorWindow
 			AddFix("Draw Calls", "Please use less than 100 draw calls.", null, null, false);
 		}
 	}
+
+#endif // UNITY_ANDROID
 
 
 	enum LightmapType { Realtime = 4, Baked = 2, Mixed = 1 };

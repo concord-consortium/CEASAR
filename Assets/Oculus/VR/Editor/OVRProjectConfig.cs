@@ -42,11 +42,23 @@ public class OVRProjectConfig : ScriptableObject
 		HandsOnly = 2
 	}
 
+	public enum ColorGamut
+	{
+		Default = 0,
+		Rec709 = 1,
+		DciP3 = 2,
+		Adobe = 3,
+		Rec2020 = 4
+	}
+
 	public List<DeviceType> targetDeviceTypes;
 	public HandTrackingSupport handTrackingSupport;
+	public ColorGamut colorGamut;
 
 	public bool disableBackups;
 	public bool enableNSCConfig;
+
+	public bool focusAware;
 
 	//public const string OculusProjectConfigAssetPath = "Assets/Oculus/OculusProjectConfig.asset";
 
@@ -86,6 +98,7 @@ public class OVRProjectConfig : ScriptableObject
 			projectConfig.handTrackingSupport = HandTrackingSupport.ControllersOnly;
 			projectConfig.disableBackups = true;
 			projectConfig.enableNSCConfig = true;
+			projectConfig.focusAware = false;
 			AssetDatabase.CreateAsset(projectConfig, oculusProjectConfigAssetPath);
 		}
 		return projectConfig;
@@ -99,5 +112,17 @@ public class OVRProjectConfig : ScriptableObject
 			Debug.LogWarningFormat("The asset path of ProjectConfig is wrong. Expect {0}, get {1}", oculusProjectConfigAssetPath, AssetDatabase.GetAssetPath(projectConfig));
 		}
 		EditorUtility.SetDirty(projectConfig);
+	}
+
+	public static string ColorGamutToString(ColorGamut colorGamut)
+	{
+		switch(colorGamut)
+		{
+			case ColorGamut.Rec709: return "Rec. 709";
+			case ColorGamut.DciP3: return "DCI-P3";
+			case ColorGamut.Adobe: return "Adobe";
+			case ColorGamut.Rec2020: return "Rec. 2020";
+			default: return "<none>";
+		}
 	}
 }

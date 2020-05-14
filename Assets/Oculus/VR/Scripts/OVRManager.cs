@@ -33,6 +33,8 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+using UnityEngine.Rendering;
+
 #if USING_XR_SDK
 using UnityEngine.XR;
 using UnityEngine.Experimental.XR;
@@ -817,6 +819,30 @@ public class OVRManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Let the system decide the best foveation level adaptively (Off .. fixedFoveatedRenderingLevel)
+	/// This feature is only supported on QCOMM-based Android devices
+	/// </summary>
+	public static bool useDynamicFixedFoveatedRendering
+	{
+		get
+		{
+			if (!OVRPlugin.fixedFoveatedRenderingSupported)
+			{
+				Debug.LogWarning("Fixed Foveated Rendering feature is not supported");
+			}
+			return OVRPlugin.useDynamicFixedFoveatedRendering;
+		}
+		set
+		{
+			if (!OVRPlugin.fixedFoveatedRenderingSupported)
+			{
+				Debug.LogWarning("Fixed Foveated Rendering feature is not supported");
+			}
+			OVRPlugin.useDynamicFixedFoveatedRendering = value;
+		}
+	}
+
 	[Obsolete("Please use fixedFoveatedRenderingSupported instead", false)]
 	public static bool tiledMultiResSupported
 	{
@@ -1167,6 +1193,8 @@ public class OVRManager : MonoBehaviour
 				"Oculus Utilities v" + OVRPlugin.wrapperVersion + ", " +
 				"OVRPlugin v" + OVRPlugin.version + ", " +
 				"SDK v" + OVRPlugin.nativeSDKVersion + ".");
+
+		Debug.Log("SystemHeadset " + OVRPlugin.GetSystemHeadsetType().ToString());
 
 #if !UNITY_EDITOR
 		if (IsUnityAlphaOrBetaVersion())
@@ -1883,8 +1911,13 @@ public class OVRManager : MonoBehaviour
 			Debug.Log(mediaInitialized ? "OVRPlugin.Media initialized" : "OVRPlugin.Media not initialized");
 			if (mediaInitialized)
 			{
-				OVRPlugin.Media.SetMrcAudioSampleRate(AudioSettings.outputSampleRate);
-				Debug.LogFormat("[MRC] SetMrcAudioSampleRate({0})", AudioSettings.outputSampleRate);
+				var audioConfig = AudioSettings.GetConfiguration();
+				if(audioConfig.sampleRate > 0)
+				{
+					OVRPlugin.Media.SetMrcAudioSampleRate(audioConfig.sampleRate);
+					Debug.LogFormat("[MRC] SetMrcAudioSampleRate({0})", audioConfig.sampleRate);
+				}
+
 				OVRPlugin.Media.SetMrcInputVideoBufferType(OVRPlugin.Media.InputVideoBufferType.TextureHandle);
 				Debug.LogFormat("[MRC] Active InputVideoBufferType:{0}", OVRPlugin.Media.GetMrcInputVideoBufferType());
 				if (instance.mrcActivationMode == MrcActivationMode.Automatic)
@@ -1896,6 +1929,11 @@ public class OVRManager : MonoBehaviour
 				{
 					OVRPlugin.Media.SetMrcActivationMode(OVRPlugin.Media.MrcActivationMode.Disabled);
 					Debug.LogFormat("[MRC] ActivateMode: Disabled");
+				}
+				if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan)
+				{
+					OVRPlugin.Media.SetAvailableQueueIndexVulkan(1);
+					OVRPlugin.Media.SetMrcFrameImageFlipped(true);
 				}
 			}
 #endif

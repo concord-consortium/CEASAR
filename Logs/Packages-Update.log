@@ -64,3 +64,15 @@ The following packages were updated:
   com.unity.xr.openvr.standalone from version 1.0.5 to 2.0.5
 The following packages were removed:
   com.unity.package-manager-ui@2.2.0
+
+=== Thu May 14 16:21:06 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.1.4 to 1.2.0
+  com.unity.test-framework from version 1.1.11 to 1.1.13
+  com.unity.xr.arcore from version 2.1.2 to 2.1.8
+  com.unity.xr.arfoundation from version 2.1.4 to 2.1.8
+  com.unity.xr.arkit from version 2.1.2 to 2.1.9
