@@ -24,7 +24,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Planets.unity
     guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
   m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 315ed5add61d444adbf4da548c6087f6,
+      type: 2}
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 1019c8589c43e441b8998b7b637a2044,
       type: 2}
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: b5c33470341ec4007a69c95148400d6a,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 45e70e30a7c2e4bf083877aa16213ce5,
       type: 2}
