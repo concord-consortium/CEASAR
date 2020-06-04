@@ -39,8 +39,6 @@ public class OVRMesh : MonoBehaviour
 	private MeshType _meshType = MeshType.None;
 	private Mesh _mesh;
 
-	public bool IsInitialized { get; private set; }
-
 	public Mesh Mesh
 	{
 		get { return _mesh; }
@@ -48,6 +46,12 @@ public class OVRMesh : MonoBehaviour
 
 	private void Awake()
 	{
+		if (_mesh != null)
+		{
+			// simply act as a mesh reference if a custom mesh is specified
+			return;
+		}
+
 		if (_dataProvider == null)
 		{
 			_dataProvider = GetComponent<IOVRMeshDataProvider>();
@@ -74,7 +78,7 @@ public class OVRMesh : MonoBehaviour
 			var vertices = new Vector3[ovrpMesh.NumVertices];
 			for (int i = 0; i < ovrpMesh.NumVertices; ++i)
 			{
-				vertices[i] = ovrpMesh.VertexPositions[i].FromFlippedXVector3f();
+				vertices[i] = ovrpMesh.VertexPositions[i].FromFlippedZVector3f();
 			}
 			_mesh.vertices = vertices;
 
@@ -95,7 +99,7 @@ public class OVRMesh : MonoBehaviour
 			var normals = new Vector3[ovrpMesh.NumVertices];
 			for (int i = 0; i < ovrpMesh.NumVertices; ++i)
 			{
-				normals[i] = ovrpMesh.VertexNormals[i].FromFlippedXVector3f();
+				normals[i] = ovrpMesh.VertexNormals[i].FromFlippedZVector3f();
 			}
 			_mesh.normals = normals;
 
@@ -115,21 +119,6 @@ public class OVRMesh : MonoBehaviour
 				boneWeights[i].weight3 = currentBlendWeight.w;
 			}
 			_mesh.boneWeights = boneWeights;
-
-			IsInitialized = true;
 		}
 	}
-
-#if UNITY_EDITOR
-	private void Update()
-	{
-		if (OVRInput.IsControllerConnected(OVRInput.Controller.Hands) && !IsInitialized)
-		{
-			if (_meshType != MeshType.None)
-			{
-				Initialize(_meshType);
-			}
-		}
-	}
-#endif
 }

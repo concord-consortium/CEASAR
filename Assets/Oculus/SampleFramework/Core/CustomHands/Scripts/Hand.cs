@@ -83,12 +83,6 @@ namespace OVRTouchSample
 #endif
         }
 
-        private void OnDestroy()
-        {
-            OVRManager.InputFocusAcquired -= OnInputFocusAcquired;
-            OVRManager.InputFocusLost -= OnInputFocusLost;
-        }
-
         private void Update()
         {
             UpdateCapTouchStates();

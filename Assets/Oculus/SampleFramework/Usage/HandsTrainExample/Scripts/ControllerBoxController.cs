@@ -76,7 +76,7 @@ namespace OculusSampleFramework
 		{
 			if (obj.NewInteractableState == InteractableState.ActionState)
 			{
-				HandsManager.Instance.SwitchVisualization();
+				Hands.Instance.SwitchVisualization();
 			}
 		}
 

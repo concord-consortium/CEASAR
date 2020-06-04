@@ -38,8 +38,8 @@ namespace OculusSampleFramework
 
 		private IEnumerator AttachToolsToHands(Transform[] toolObjects, bool isRightHand)
 		{
-			HandsManager handsManagerObj = null;
-			while ((handsManagerObj = HandsManager.Instance) == null || !handsManagerObj.IsInitialized())
+			Hands handsObj = null;
+			while ((handsObj = Hands.Instance) == null || !handsObj.IsInitialized())
 			{
 				yield return null;
 			}
@@ -53,9 +53,9 @@ namespace OculusSampleFramework
 
 			foreach (Transform toolObject in toolObjectSet)
 			{
-				OVRSkeleton handSkeletonToAttachTo =
-				  isRightHand ? handsManagerObj.RightHandSkeleton : handsManagerObj.LeftHandSkeleton;
-				while (handSkeletonToAttachTo == null || handSkeletonToAttachTo.Bones == null)
+				Hand handToAttachTo =
+				  isRightHand ? handsObj.RightHand : handsObj.LeftHand;
+				while (handToAttachTo.Skeleton == null || handToAttachTo.Skeleton.Bones == null)
 				{
 					yield return null;
 				}

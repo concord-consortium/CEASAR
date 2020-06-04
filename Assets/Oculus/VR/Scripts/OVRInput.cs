@@ -316,9 +316,6 @@ public static class OVRInput
 			new OVRControllerTouch(),
 			new OVRControllerLTouch(),
 			new OVRControllerRTouch(),
-			new OVRControllerHands(),
-			new OVRControllerLHand(),
-			new OVRControllerRHand(),
 			new OVRControllerRemote(),
 #endif
 		};
@@ -398,17 +395,9 @@ public static class OVRInput
 
 		if ( OVRManager.loadedXRDevice == OVRManager.XRDevice.Oculus && pluginSupportsActiveController)
 		{
-			Controller localActiveController = activeControllerType;
-
 			// override locally derived active and connected controllers if plugin provides more accurate data
 			connectedControllerTypes = (OVRInput.Controller)OVRPlugin.GetConnectedControllers();
 			activeControllerType = (OVRInput.Controller)OVRPlugin.GetActiveController();
-
-			// unless the plugin reports none and we locally detected hands as the active controller
-			if (activeControllerType == Controller.None && ((localActiveController & Controller.Hands) != 0))
-			{
-				activeControllerType = localActiveController;
-			}
 		}
 		else if (OVRManager.loadedXRDevice == OVRManager.XRDevice.OpenVR)
 		{
