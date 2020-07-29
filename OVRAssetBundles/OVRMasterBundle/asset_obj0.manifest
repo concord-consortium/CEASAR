@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1123754514
+CRC: 1053244738
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d18852012b1f5145ee958d67b7ad9b31
+    Hash: 24d18eb38c6fcdb0be79bb933e25e51e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f36c9c8b64978d0f0375ccd6cab767d7
+    Hash: 6a3eba316372b2f69b09604b127ff833
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -17,6 +17,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 23
   Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
 - Class: 33
   Script: {instanceID: 0}
 - Class: 43
@@ -24,5 +26,7 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 Assets:
-- Assets/Models/star3d.obj
-Dependencies: []
+- Assets/Models/pushpin2.obj
+- Assets/Models/Avatar_PB.obj
+Dependencies:
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_png0

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4093249237
+CRC: 1166233345
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: daf37df5526f5cef55e9995823dfa314
+    Hash: d58e78543c5de4423fe4d4882dd128f4
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 2164263bd948184a9373784f776f453a
+    Hash: 21c99c86a43ad817b2cb7f65458ae090
 HashAppended: 0
 ClassTypes:
 - Class: 21
@@ -16,14 +16,31 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 Assets:
+- Assets/Materials/StarRound.mat
+- Assets/Materials/AnnotationLine.mat
+- Assets/Materials/AnnotationLineHighlight.mat
 - Assets/Materials/Marker_Mat.mat
-- Assets/Materials/VRPointer.mat
+- Assets/Oculus/SampleFramework/Core/HandsInteraction/Materials/RayMaterial.mat
+- Assets/Materials/LineDrawing.mat
+- Assets/Materials/pushpin_highlight.mat
+- Assets/Textures/Skybox/StarSkybox.mat
 - Assets/Materials/Avatar.mat
-- Assets/Materials/Earth.mat
-- Assets/Standard Assets/2D/Materials/SpriteLit.mat
+- Assets/Materials/Ground.mat
+- Assets/Materials/Skybox_HorizonView.mat
+- Assets/Materials/Earth_new.mat
+- Assets/Materials/SunArcLine.mat
+- Assets/Materials/Sun.mat
+- Assets/Materials/Compass.mat
 - Assets/Materials/Star.mat
+- Assets/Materials/Moon.mat
+- Assets/Materials/pushpin.mat
+- Assets/Materials/FeaturePointMaterial.mat
 - Assets/Oculus/VR/Meshes/OculusTouchForQuestAndRiftS/Materials/OculusTouchForQuestAndRiftS_Material.mat
+- Assets/Materials/MoonArcLine.mat
 Dependencies:
-- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_png0
-- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tif0
-- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tga0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_png0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_png1
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tga0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_jpg0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_tif0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_shader0

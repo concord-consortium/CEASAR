@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 3297836178
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c7e9b73db0851b879efb40be6c6426f8
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2ed26e3ad9f6be9c24f85f5f5b54339d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/PlanetaryBodies/Sun/2k_sun.jpg
+- Assets/Textures/PlanetaryBodies/Earth/earth_night_lights.jpg
+- Assets/Textures/PlanetaryBodies/Earth/fair_clouds_8k.jpg
+- Assets/Textures/PlanetaryBodies/Moon/2k_moon.jpg
+Dependencies: []

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1009642916
+CRC: 2298856431
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f1229e0a761ae1ead5c74d7a03eaa301
+    Hash: 0dc754ce1f8a5434b921c1dc87438c48
   TypeTreeHash:
     serializedVersion: 2
-    Hash: aded893bc7efee6b045cb82d8cb9e5d4
+    Hash: 15cb7cbdbf941af908e124c39c1b3a4c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -21,12 +21,15 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 43
   Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
 - Class: 90
   Script: {instanceID: 0}
 - Class: 95
   Script: {instanceID: 0}
 Assets:
+- Assets/Models/higher_poly_sphere.fbx
 - Assets/Oculus/VR/Meshes/OculusTouchForQuestAndRiftS/OculusTouchForQuestAndRiftS_Right.fbx
 - Assets/Oculus/VR/Meshes/OculusTouchForQuestAndRiftS/OculusTouchForQuestAndRiftS_Left.fbx
 Dependencies:
-- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_mat0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_mat0

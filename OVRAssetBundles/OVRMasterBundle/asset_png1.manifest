@@ -1,0 +1,32 @@
+ManifestFileVersion: 0
+CRC: 2689682523
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: cba07c843cdb17ad1d9e331476ebf69e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9e6ad29cbd2df8fbe1a15315db0e51ab
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/PlanetaryBodies/Earth/world.200411.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200404.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200410.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200405.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200407.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200409.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/gebco_08_rev_elev_3600x1800_NM.png
+- Assets/Textures/PlanetaryBodies/Earth/world.topo.bathy.200405.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200406.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200403.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200412.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200402.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200408.3x5400x2700.png
+- Assets/Textures/PlanetaryBodies/Earth/world.200401.3x5400x2700.png
+- Assets/Textures/Icons/visible.png
+Dependencies: []
