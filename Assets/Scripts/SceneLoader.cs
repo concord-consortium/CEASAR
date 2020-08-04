@@ -52,7 +52,7 @@ public class SceneLoader : MonoBehaviour
         foreach (var device in inputDevices)
         {
             CCDebug.Log(string.Format("Device found with name '{0}' and role '{1}'", device.name, device.role.ToString()), LogLevel.Info, LogMessageCategory.All);
-            if (device.name.ToLower().Contains("oculus") && device.role.ToString().ToLower() == "generic")
+            if ((device.name.ToLower().Contains("oculus") || device.name.ToLower().Contains("quest")) && device.role.ToString().ToLower() == "generic")
             {
                 // we have an XR device attached! Oculus Quest is detected as Rift S if it is connected with USB3 Oculus Link
                 // TODO: If we detect an HTC Vive, Valve Index, or other headset, we need to do more work to use different controllers
@@ -61,7 +61,7 @@ public class SceneLoader : MonoBehaviour
             }
         }
 #else
-       setupStandardCameras();
+        setupStandardCameras();
 #endif
 
     }
