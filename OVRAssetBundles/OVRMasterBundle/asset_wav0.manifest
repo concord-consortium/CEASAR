@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 2691962160
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 109199671bb524d83422d326870c6a95
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Gamemaster Audio - Pro Sound Collection/User_Interface_Menu/ui_button_simple_click_01.wav
+- Assets/Gamemaster Audio - Pro Sound Collection/Switches_Buttons_Gears_Levers/switch_button_push_on_off_17.wav
+- Assets/Gamemaster Audio - Pro Sound Collection/Switches_Buttons_Gears_Levers/switch_button_push_small_04.wav
+Dependencies: []

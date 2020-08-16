@@ -16,3 +16,6 @@ MonoBehaviour:
   handTrackingSupport: 0
   disableBackups: 1
   enableNSCConfig: 1
+  securityXmlPath: 
+  skipUnneededShaders: 0
+  focusAware: 1

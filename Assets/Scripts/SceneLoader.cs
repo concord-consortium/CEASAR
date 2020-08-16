@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
@@ -40,21 +41,27 @@ public class SceneLoader : MonoBehaviour
     public void SetupCameras()
     {
 #if UNITY_ANDROID || UNITY_STANDALONE_WIN
-        string model = UnityEngine.XR.XRDevice.model != null ? UnityEngine.XR.XRDevice.model : "";
-        if (!string.IsNullOrEmpty(model))
+        var inputDevices = new List<InputDevice>();
+        InputDevices.GetDevices(inputDevices);
+        if (inputDevices.Count == 0)
         {
-            // we have an XR device attached! Oculus Quest is detected as Rift S if it is connected with USB3 Oculus Link
-            // TODO: If we detect an HTC Vive, Valve Index, or other headset, we need to do more work to use different controllers
-            CCDebug.Log("Detected XR device: " + model, LogLevel.Info, LogMessageCategory.All);
-            setupXRCameras();
-        } 
-        else
-        {
+            CCDebug.Log("No VR / XR devices detected");
             // assume no headset plugged in or available - this may be an Android AR build?
             setupStandardCameras();
         }
+        foreach (var device in inputDevices)
+        {
+            CCDebug.Log(string.Format("Device found with name '{0}' and role '{1}'", device.name, device.role.ToString()), LogLevel.Info, LogMessageCategory.All);
+            if ((device.name.ToLower().Contains("oculus") || device.name.ToLower().Contains("quest")) && device.role.ToString().ToLower() == "generic")
+            {
+                // we have an XR device attached! Oculus Quest is detected as Rift S if it is connected with USB3 Oculus Link
+                // TODO: If we detect an HTC Vive, Valve Index, or other headset, we need to do more work to use different controllers
+                CCDebug.Log("Setting up XR device: " + device.name, LogLevel.Info, LogMessageCategory.All);
+                setupXRCameras();
+            }
+        }
 #else
-       setupStandardCameras();
+        setupStandardCameras();
 #endif
 
     }
@@ -123,6 +130,7 @@ public class SceneLoader : MonoBehaviour
 #if !UNITY_WEBGL
         LaserPointer lp = FindObjectOfType<LaserPointer>();
         lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
+        
 #endif
         // some scene-specific pieces to remove
         cameraControlUI = GameObject.Find("CameraControlUI");

@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 4680472575861007965}
   - component: {fileID: 4711558878506397977}
   - component: {fileID: 6903329138514398943}
+  - component: {fileID: 8094563024502262735}
   m_Layer: 0
   m_Name: VRCameraRig
   m_TagString: Untagged
@@ -236,6 +237,22 @@ MonoBehaviour:
   vrPointerPrefab: {fileID: 8142256564677687833, guid: bae269b11de12a84b854567b8aa3b208,
     type: 3}
   annotationTool: {fileID: 0}
+--- !u!114 &8094563024502262735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4680472575867573177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8e7ff1cdf4c4e74db00c3684108bc9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  sortOrder: 0
 --- !u!1 &4680472575867573179
 GameObject:
   m_ObjectHideFlags: 0

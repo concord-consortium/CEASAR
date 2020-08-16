@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -217,8 +218,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187295153}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -292,7 +294,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1644214716}
-  - component: {fileID: 1644214715}
   m_Layer: 0
   m_Name: EarthContainer
   m_TagString: Untagged
@@ -300,19 +301,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1644214715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1644214714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6691d2df1a4c4403e9f69c1a7f2e7e96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationSpeed: 0
 --- !u!4 &1644214716
 Transform:
   m_ObjectHideFlags: 0
@@ -335,6 +323,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1644214716}
     m_Modifications:
+    - target: {fileID: 584737426, guid: dab45e85c8683430fbb06a5522886e8f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2083978893715968183, guid: dab45e85c8683430fbb06a5522886e8f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -395,11 +387,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Earth
       objectReference: {fileID: 0}
+    - target: {fileID: 3490151956835606722, guid: dab45e85c8683430fbb06a5522886e8f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7502822519055494613, guid: dab45e85c8683430fbb06a5522886e8f,
         type: 3}
       propertyPath: sunlight
       value: 
       objectReference: {fileID: 1187295153}
+    - target: {fileID: 8741470021134951458, guid: dab45e85c8683430fbb06a5522886e8f,
+        type: 3}
+      propertyPath: m_Size
+      value: 1.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dab45e85c8683430fbb06a5522886e8f, type: 3}
 --- !u!1001 &5403287526840695047

@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 2563158605
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 72a659b3c541638128109168bd87e7ee
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fdf6c57a251b9f6ec27bdd2fe01b033c
+HashAppended: 0
+ClassTypes:
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+Assets:
+- Assets/Animation/Main Camera.controller
+Dependencies:
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_anim0

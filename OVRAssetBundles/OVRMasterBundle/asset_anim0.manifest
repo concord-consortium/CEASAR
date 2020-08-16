@@ -1,0 +1,17 @@
+ManifestFileVersion: 0
+CRC: 660213415
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 06e13179682011f0e644dacd41c4eda0
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: af57576da81d5d3ce45807ac11234de6
+HashAppended: 0
+ClassTypes:
+- Class: 74
+  Script: {instanceID: 0}
+Assets:
+- Assets/Animation/StarsReset.anim
+- Assets/Animation/StarsZoom.anim
+Dependencies: []

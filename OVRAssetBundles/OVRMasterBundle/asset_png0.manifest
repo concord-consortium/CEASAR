@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2309014550
+CRC: 3351617583
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3b80ec5a20b0fde48891494851cc5ec2
+    Hash: 1925ba27d37a39c90f5acd40d7056ba8
   TypeTreeHash:
     serializedVersion: 2
-    Hash: cb3f6df5cbc4a2990c44c2787bc9553a
+    Hash: 9e6ad29cbd2df8fbe1a15315db0e51ab
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -14,8 +14,34 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
+- Assets/Textures/Icons/crop-rotate.png
+- Assets/Textures/Icons/location.png
 - Assets/Textures/Star10Point_morepointy.png
+- Assets/Textures/Icons/calendar.png
+- Assets/Textures/Icons/draw.png
 - Assets/Textures/arrow up.png
+- Assets/Oculus/SampleFramework/Core/DebugUI/Textures/button9slice.png
+- Assets/Textures/Skybox/StarSkybox_PositiveX.png
+- Assets/Textures/Logos/Concord-Consortium-Logo.png
+- Assets/Textures/Icons/crash-site.png
+- Assets/Textures/Icons/invisible.png
+- Assets/Textures/Skybox/StarSkybox_NegativeY.png
+- Assets/Textures/arrow right.png
+- Assets/Textures/Icons/edit-location.png
+- Assets/Textures/arrow left.png
+- Assets/Textures/Icons/star-constellation.png
+- Packages/com.unity.probuilder/Content/Resources/Textures/GridBox_Default.png
+- Assets/Textures/Icons/photo-camera.png
+- Assets/Textures/SimpleStar.png
+- Assets/Textures/compass.png
+- Assets/Textures/Icons/wifi.png
 - Assets/Textures/arrow down.png
-- Assets/Textures/PlanetaryBodies/Earth/world.topo.bathy.200405.3x5400x2700.png
+- Assets/Textures/Icons/trash.png
+- Assets/Textures/Skybox/StarSkybox_NegativeX.png
+- Assets/Textures/Skybox/StarSkybox_NegativeZ.png
+- Assets/Textures/Skybox/StarSkybox_PositiveZ.png
+- Assets/Textures/star-highlight.png
+- Assets/Textures/arrow down_new.png
+- Assets/Textures/Skybox/StarSkybox_PositiveY.png
+- Assets/Textures/arrow up_new.png
 Dependencies: []

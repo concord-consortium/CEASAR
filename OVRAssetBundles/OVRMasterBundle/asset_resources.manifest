@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2743499486
+CRC: 2802872995
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 844a3c015804d63ef254cf28eb9b588e
+    Hash: ef3372d8eacedcc5ca4a182adf05938c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c679ada1a3ce3b90620f3825f75ad005
+    Hash: 7968c52293a6151bf5ca57c3bd0b8006
 HashAppended: 0
 ClassTypes:
 - Class: 21
@@ -17,14 +17,14 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 49
   Script: {instanceID: 0}
-- Class: 109
-  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: ad074644ff568a14187a3690cfbd7534, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 70c2f484f132c044097f03d65cac3b24, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b3d881e962d099f4a8eb492ef7e9a8c0, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
@@ -46,23 +46,25 @@ Assets:
 - Assets/Oculus/VR/Resources/OVRMRUnlitTransparent.shader
 - Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset
 - Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_2048.png
-- Assets/Resources/OVRBuildConfig.asset
-- Assets/Oculus/VR/Resources/OVRMRChromaKey.cginc
 - Assets/Oculus/SampleFramework/Core/Video/Resources/Multiview Stereo.shader
 - Assets/TextMesh Pro/Resources/Style Sheets/Default Style Sheet.asset
-- Assets/TextMesh Pro/Resources/Shaders/TMPro_Properties.cginc
 - Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_Loader.shader
+- Assets/Resources/OVRPlatformToolSettings.asset
 - Assets/TextMesh Pro/Resources/Shaders/TMP_Bitmap-Custom-Atlas.shader
 - Assets/Oculus/VR/Resources/Cubemap Blit.shader
-- Assets/Resources/ONSPSettings.asset
 - Assets/Oculus/VR/Resources/OVRMRUnlit.shader
+- Assets/Resources/animals-new.txt
+- Assets/Resources/OVRBuildConfig.asset
 - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat
 - Assets/Resources/animals.txt
 - Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderSelfOccluding.shader
 - Assets/Oculus/VR/Resources/Unlit Transparent Color.shader
+- Assets/Resources/OculusPlatformSettings.asset
+- Assets/Resources/colors-new.txt
 - Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderPBS.shader
 - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
 - Assets/Oculus/VR/Resources/OVRMRCameraFrameLit.shader
+- Assets/Resources/groups.json
 - Assets/TextMesh Pro/Resources/LineBreaking Following Characters.txt
 - Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_CombinedMesh.shader
 - Assets/TextMesh Pro/Resources/Shaders/TMP_SDF-Mobile Masking.shader
@@ -74,7 +76,6 @@ Assets:
 - Assets/TextMesh Pro/Resources/Shaders/TMP_Bitmap-Mobile.shader
 - Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_256.png
 - Assets/TextMesh Pro/Resources/Shaders/TMP_SDF Overlay.shader
-- Assets/TextMesh Pro/Resources/Shaders/TMPro_Surface.cginc
 - Assets/Oculus/Avatar/Resources/Materials/Expressive/Avatar_Mobile_SingleComponentExpressive.shader
 - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
 - Assets/Resources/OvrAvatarSettings.asset
@@ -82,13 +83,12 @@ Assets:
 - Assets/TextMesh Pro/Resources/Shaders/TMP_SDF-Mobile Overlay.shader
 - Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderPBSV2.shader
 - Assets/Oculus/VR/Resources/OVRMRClipPlane.shader
+- Assets/Resources/ONSPSettings.asset
 - Assets/TextMesh Pro/Resources/Shaders/TMP_Bitmap.shader
 - Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_diffuse_roughness_1024.png
-- Assets/TextMesh Pro/Resources/Shaders/TMPro.cginc
 - Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_SingleComponent.shader
 - Assets/Resources/VuforiaConfiguration.asset
 - Assets/TextMesh Pro/Resources/Shaders/TMP_SDF.shader
-- Assets/Oculus/Avatar/Resources/Materials/AvatarMaterialStateShader.cginc
 - Assets/Oculus/Avatar/Resources/Materials/Expressive/AvatarEyeLens.shader
 - Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShader.shader
 - Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_1024.tif
@@ -100,4 +100,4 @@ Assets:
 - Assets/Resources/colors.txt
 - Assets/TextMesh Pro/Resources/TMP Settings.asset
 Dependencies:
-- C:/code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_ttf0
+- E:/Users/Chris/Code/CEASAR/OVRAssetBundles/OVRMasterBundle/asset_ttf0

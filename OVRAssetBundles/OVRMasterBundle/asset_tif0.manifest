@@ -1,16 +1,17 @@
 ManifestFileVersion: 0
-CRC: 3894378643
+CRC: 2081026782
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: eff1cb89b93c194a45fb024e4877b158
+    Hash: b3f4d874ca740b8f2005293e3088a428
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f19fbf085e00d23fbc8d6cf7b345590b
+    Hash: 2ed26e3ad9f6be9c24f85f5f5b54339d
 HashAppended: 0
 ClassTypes:
 - Class: 28
   Script: {instanceID: 0}
 Assets:
+- Assets/Textures/PlanetaryBodies/Earth/2k_earth_specular_map.tif
 - Assets/Textures/PlanetaryBodies/Earth/2k_earth_normal_map.tif
 Dependencies: []
