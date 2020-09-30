@@ -14,3 +14,7 @@ This project relies on a central network server built from [Colyseus](https://gi
 
 ## Builds
 Unity Cloud Build is currently used from Master branch for most builds. WebGL builds currently require manual intervention to remove all the Oculus libraries. Even though we don't use the microphone in the project, unused Oculus VR code that assumes access to the microphone will cause builds to fail, so the simple solution is to locally remove Oculus pieces and generate a WebGL build from the required version of the project.
+
+## Data Attribution
+Star data sourced from the [HYG Database](https://astronexus.com/hyg)
+https://github.com/astronexus/HYG-Database

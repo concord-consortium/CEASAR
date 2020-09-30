@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 
 // This class is the manager Singleton, and contains specific references to application-level objects
+// Star data, constellations, and city data is managed in the DataManager class
 public class SimulationManager
 {
     // can't use constructor, guaranteed singleton
@@ -111,22 +112,7 @@ public class SimulationManager
     
     public StarComponent CurrentlySelectedStar;
 
-    private List<Star> allStars;
 
-    public List<Star> AllStars
-    {
-        get { return allStars; }
-        set { allStars = value; }
-    }
-
-    public List<Star> AllStarsInConstellation(string constellationName)
-    {
-        return allStars.Where(s => s.Constellation == constellationName).ToList();
-    }
-    public List<Star> AllStarsInConstellationByFullName(string constellationFullName)
-    {
-        return allStars.Where(s => s.ConstellationFullName == constellationFullName).ToList();
-    }
     /// <summary>
     /// A shortcut to LocalPlayer.Pin.SelectedDateTime
     /// </summary>
@@ -190,13 +176,6 @@ public class SimulationManager
             remotePlayers.Add(playerName, new Player(playerName));
         }
         return remotePlayers[playerName];
-    }
-
-    public float GetRelativeMagnitude(float starMagnitude)
-    {
-        //float min = DataControllerComponent.minMag;
-        float max = DataControllerComponent.maxMag + Mathf.Abs(DataControllerComponent.minMag);
-        return max - (starMagnitude + Mathf.Abs(DataControllerComponent.minMag));
     }
 
     private string groupName;

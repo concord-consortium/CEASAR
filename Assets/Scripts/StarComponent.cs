@@ -40,14 +40,17 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         transform.position = star.CalculateEquitorialPosition(radius);
         initialScale = transform.localScale;
         sceneInitialScale = transform.localScale;
-        SetStarScale(maxMagnitude, magnitudeScale);
+        SetStarScale(magnitudeScale);
+        starColor = StarColor.GetColorFromColorIndexSimple(star.ColorIndex);
+        Utils.SetObjectColor(this.gameObject, starColor);
+        CCDebug.Log(star.ColorIndex, LogLevel.Verbose, LogMessageCategory.Rendering);
         transform.LookAt(constellationsController.transform);
         if (starHighlightOutline != null) starHighlightOutline.SetActive(false);
     }
 
-    public void SetStarScale(float maxMagnitude, float magnitudeScale)
+    public void SetStarScale(float magnitudeScale)
     {
-        var magScaleValue = SimulationManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        var magScaleValue = DataManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
         sceneInitialScale = initialScale * magScaleValue;
         transform.localScale = sceneInitialScale;
     }

@@ -10,10 +10,9 @@ public class ConstellationDropdown : MonoBehaviour
     ConstellationsController constellationsController;
     TMP_Dropdown dropdown;
 
-    SimulationManager manager
-    {
-        get { return SimulationManager.GetInstance(); }
-    }
+    SimulationManager manager { get => SimulationManager.GetInstance(); }
+
+    private DataManager dataManager { get => DataManager.GetInstance(); }
 
     void Start()
     {
@@ -46,7 +45,7 @@ public class ConstellationDropdown : MonoBehaviour
             }
             else
             {
-                List<Star> allStarsInConstellation = manager.AllStarsInConstellationByFullName(constellationName);
+                List<Star> allStarsInConstellation = dataManager.AllStarsInConstellationByFullName(constellationName);
                 CCDebug.Log("Count of stars: " + allStarsInConstellation.Count, LogLevel.Info, LogMessageCategory.Interaction);
                 if (allStarsInConstellation != null && allStarsInConstellation.Count > 0)
                 {

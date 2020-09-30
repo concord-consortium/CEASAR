@@ -162,11 +162,11 @@ public class MainUIController : MonoBehaviour
 
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(dataController.cities, manager.CurrentLocationName);
+            cityDropdown.InitCityNames(DataManager.GetInstance().CityNames, manager.CurrentLocationName);
         }
         if (constellationDropdown)
         {
-            constellationDropdown.InitConstellationNames(dataController.constellationFullNames, "all");
+            constellationDropdown.InitConstellationNames(DataManager.GetInstance().ConstellationFullNames, "all");
         }
         if (snapshotsController)
         {

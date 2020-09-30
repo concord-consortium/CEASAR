@@ -1,14 +1,25 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public static class DataImport
 {
-    public static List<Star> ImportStarData(string sourceData, int maxStars)
+    public static void ImportAllData(string starData, int maxStars, string cityData, string constellationData)
+    {
+        DataManager dataManager = DataManager.GetInstance();
+        dataManager.Stars = importStarData(starData);
+        dataManager.Cities = importCityData(cityData);
+        dataManager.Connections = importConstellationConnectionData(constellationData);
+        dataManager.MaxStarCount = maxStars;
+    }
+    
+    private static List<Star> importStarData(string sourceData)
     {
         int numStars = 0;
         List<Star> stars = new List<Star>();
+        
         foreach (var line in splitToLines(sourceData))
         {
-            if (numStars == maxStars) break;
             if (!line.StartsWith("Hip"))
             {
                 string[] values = line.Split('\t');
@@ -41,7 +52,7 @@ public static class DataImport
         }
         return stars;
     }
-    public static List<City> ImportCityData(string sourceData)
+    private static List<City> importCityData(string sourceData)
     {
         List<City> cities = new List<City>();
         foreach (var line in splitToLines(sourceData))
@@ -64,7 +75,7 @@ public static class DataImport
         return cities;
     }
 
-    public static List<ConstellationConnection> ImportConstellationConnectionData(string sourceData)
+    private static List<ConstellationConnection> importConstellationConnectionData(string sourceData)
     {
         List<ConstellationConnection> connections = new List<ConstellationConnection>();
         foreach (var line in splitToLines(sourceData))

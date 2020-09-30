@@ -5,35 +5,23 @@ using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.Events;
 
-
+/// <summary>
+/// This class is for handling setting up the initial celestial sky objects and all the constellations.
+/// Data about stars and constellations is stored in the DataManager.
+/// Information about simulation parameters is stored in SimulationManager.
+/// The celestial sky objects will rotate according to simulation settings.
+/// </summary>
 public class DataController : MonoBehaviour
 {
     public TextAsset starData;
     public TextAsset cityData;
     public TextAsset constellationConnectionData;
 
-    [SerializeField]
-    private List<City> allCities;
-    public List<City> AllCities
-    {
-        get { return allCities; }
-        private set { allCities = value; }
-    }
-
-    [SerializeField]
-    private List<ConstellationConnection> allConstellationConnections;
-    public List<ConstellationConnection> AllConstellationConnections
-    {
-        get { return allConstellationConnections; }
-        private set { allConstellationConnections = value; }
-    }
-
     public StarComponent starPrefab;
     public Material starMaterial;
     
     public GameObject allConstellations;
     private ConstellationsController constellationsController;
-    public List<string> constellationFullNames;
     public Constellation constellationPrefab;
     private Dictionary<string, StarComponent> allStarComponents;
 
@@ -47,7 +35,6 @@ public class DataController : MonoBehaviour
     {
         get { return runSimulation; }
     }
-    public List<string> cities;
     
     private LatLng currentLocation;
 
@@ -55,9 +42,6 @@ public class DataController : MonoBehaviour
     // For storing a copy of the last known time to limit updates
     private double lastTime;
 
-    // Calculated from data
-    public float minMag { get; private set; }
-    public float maxMag { get; private set; }
 
     // Scene-specific settings, set via SceneManagerComponent
     private bool colorByConstellation = true;
@@ -70,7 +54,9 @@ public class DataController : MonoBehaviour
     private float simulationTimeScale = 10f;
     private float radius = 50;
 
-    private SimulationManager manager { get { return SimulationManager.GetInstance();}} 
+    SimulationManager manager { get => SimulationManager.GetInstance(); }
+
+    private DataManager dataManager { get => DataManager.GetInstance(); }
 
     [SerializeField]
     private double lst;
@@ -85,13 +71,7 @@ public class DataController : MonoBehaviour
     }
 
     private bool isReady = false;
-
-    private struct ConstellationNamePair
-    {
-        public string shortName;
-        public string fullName;
-    }
-
+    
     bool shouldUpdate = false;
 
     void Awake()
@@ -146,44 +126,31 @@ public class DataController : MonoBehaviour
 
         if (starData != null)
         {
-            manager.AllStars = DataImport.ImportStarData(starData.text, maxStars);
-            CCDebug.Log(manager.AllStars.Count + " stars imported");
+            DataImport.ImportAllData(starData.text, maxStars, cityData.text, constellationConnectionData.text);
+            CCDebug.Log(dataManager.Stars.Count + " stars imported");
             allStarComponents = new Dictionary<string, StarComponent>(); 
         }
         if (cityData != null)
         {
-            allCities = DataImport.ImportCityData(cityData.text);
-            CCDebug.Log(allCities.Count + " cities imported");
-            cities = allCities.Select(c => c.Name).ToList();
-            
+            CCDebug.Log(dataManager.Cities.Count + " cities imported");
             // changes to nextLocation trigger a change to Celestial Sphere orientation in Horizon view
             // and are captured on the SimulationEvents.LocationSelected event handler
             currentLocation = manager.CurrentLatLng;
         }
         if (constellationConnectionData != null)
         {
-            allConstellationConnections = DataImport.ImportConstellationConnectionData(constellationConnectionData.text);
-            CCDebug.Log(allConstellationConnections.Count + " connections imported");
+            CCDebug.Log(dataManager.Connections.Count + " connections imported");
         }
 
         int starCount = 0;
-        if (starPrefab != null && manager.AllStars != null && manager.AllStars.Count > 0)
+        if (starPrefab != null && dataManager.Stars != null && dataManager.Stars.Count > 0)
         {
             // get magnitudes and normalize between 1 and 5 to scale stars
-            minMag = manager.AllStars.Min(s => s.Mag);
-            maxMag = manager.AllStars.Max(s => s.Mag);
+            CCDebug.Log(dataManager.MinMag + " " + dataManager.MaxMag + " constellations:" + dataManager.ConstellationFullNames.Count);
 
-            constellationFullNames = new List<string>(manager.AllStars.GroupBy(s => s.ConstellationFullName).Select(s => s.First().ConstellationFullName));
-
-            var constellationNames = new List<ConstellationNamePair>(manager.AllStars.GroupBy(s => s.ConstellationFullName).Select(s => new ConstellationNamePair { shortName = s.First().Constellation, fullName = s.First().ConstellationFullName }));
-            CCDebug.Log(minMag + " " + maxMag + " constellations:" + constellationNames.Count);
-
-            constellationFullNames.Sort();
-
-            foreach (ConstellationNamePair constellationName in constellationNames)
+            foreach (ConstellationNamePair constellationName in dataManager.ConstellationNames)
             {
-
-                List<Star> starsInConstellation = manager.AllStarsInConstellation(constellationName.shortName);
+                List<Star> starsInConstellation = dataManager.AllStarsInConstellation(constellationName.shortName);
 
                 Constellation constellation = Instantiate(constellationPrefab, allConstellations.transform);
                 constellation.name = constellationName.shortName.Trim() == "" ? "no-const" : constellationName.shortName;
@@ -193,7 +160,7 @@ public class DataController : MonoBehaviour
                 constellation.constellationNameFull = constellationName.fullName;
 
                 // Add connections
-                foreach (ConstellationConnection conn in allConstellationConnections)
+                foreach (ConstellationConnection conn in dataManager.Connections)
                 {
                     if (conn.constellationNameAbbr == constellationName.shortName) constellation.AddConstellationConnection(conn);
                 }
@@ -211,15 +178,15 @@ public class DataController : MonoBehaviour
                         newStar.GetComponent<Renderer>().material = starMaterial;
                     }
                     // Add star data, then position, scale and color
-                    newStar.Init(constellationsController, dataStar, maxMag, magnitudeScale, SimulationManager.GetInstance().InitialRadius);
+                    newStar.Init(constellationsController, dataStar, dataManager.MaxMag, magnitudeScale, manager.InitialRadius);
 
                     // Eventually store constellation color and observed star color separately
-                    newStar.SetStarColor(constellationColor, Color.white);
-                    // color by constellation
-                    if (colorByConstellation == true)
-                    {
-                        Utils.SetObjectColor(newStar.gameObject, constellationColor);
-                    }
+                    // newStar.SetStarColor(constellationColor, Color.white);
+                    // // color by constellation
+                    // if (colorByConstellation == true)
+                    // {
+                    //     Utils.SetObjectColor(newStar.gameObject, constellationColor);
+                    // }
                     constellation.highlightColor = constellationColor;
 
                     allStarComponents[dataStar.uniqueId] = newStar;
@@ -249,7 +216,7 @@ public class DataController : MonoBehaviour
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
             Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
-            starComponent.SetStarScale(maxMag, magnitudeScale);
+            starComponent.SetStarScale(magnitudeScale);
             if (starMaterial)
             {
                 starComponent.GetComponent<Renderer>().material = starMaterial;
@@ -331,7 +298,7 @@ public class DataController : MonoBehaviour
         if (!string.IsNullOrEmpty(newCity))
         {
             // verify a valid city was entered
-            var matchedCity = allCities.Where(c => c.Name == newCity).First();
+            var matchedCity = dataManager.Cities.Where(c => c.Name == newCity).First();
             if (matchedCity != null)
             {
                 // check if this is a custom location
