@@ -22,7 +22,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.3.8",
+      "version": "1.3.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -135,7 +135,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.oculus": {
-      "version": "1.4.0",
+      "version": "1.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
