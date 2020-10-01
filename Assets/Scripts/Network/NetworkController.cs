@@ -63,9 +63,9 @@ public class NetworkController : MonoBehaviour
             ConnectToServer();
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
-        SimulationEvents.GetInstance().AnnotationAdded.AddListener(BroadcastAnnotation);
-        SimulationEvents.GetInstance().AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
-        SimulationEvents.GetInstance().PushPinUpdated.AddListener(BroadcastPinUpdated);
+        SimulationEvents.Instance.AnnotationAdded.AddListener(BroadcastAnnotation);
+        SimulationEvents.Instance.AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
+        SimulationEvents.Instance.PushPinUpdated.AddListener(BroadcastPinUpdated);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -92,7 +92,7 @@ public class NetworkController : MonoBehaviour
     // For now we just need to ensure our peers exist OnSceneLoaded ...
     private void FindDependencies()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         colyseusClient = GetComponent<ColyseusClient>();
         networkUI = FindObjectOfType<NetworkUI>();
         colyseusClient = GetComponent<ColyseusClient>();
@@ -140,7 +140,7 @@ public class NetworkController : MonoBehaviour
     {
         if (!IsConnected)
         {
-            UserRecord user = SimulationManager.GetInstance().LocalPlayerRecord; 
+            UserRecord user = SimulationManager.Instance.LocalPlayerRecord; 
             FindDependencies();
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = ServerList.Custom;
@@ -264,7 +264,7 @@ public class NetworkController : MonoBehaviour
             for (int i = 0; i < networkPlayer.annotations.Count; i++)
             {
                 NetworkTransform annotation = networkPlayer.annotations[i];
-                SimulationEvents.GetInstance().AnnotationReceived.Invoke(annotation, networkPlayer);
+                SimulationEvents.Instance.AnnotationReceived.Invoke(annotation, networkPlayer);
             }
             if (interactionController && networkPlayer.locationPin != null)
             {
@@ -280,7 +280,7 @@ public class NetworkController : MonoBehaviour
                 interactionController.AddOrUpdatePin(pin, UserRecord.GetColorForUsername(networkPlayer.username), networkPlayer.username, 
                     false);
             }
-            SimulationEvents.GetInstance().PlayerJoined.Invoke(networkPlayer.username);
+            SimulationEvents.Instance.PlayerJoined.Invoke(networkPlayer.username);
         }
         updatePlayerList();
     }
@@ -322,8 +322,8 @@ public class NetworkController : MonoBehaviour
     }
     public void OnPlayerRemove(NetworkPlayer networkPlayer)
     {
-        SimulationEvents.GetInstance().PlayerLeft.Invoke(networkPlayer.username);
-        SimulationEvents.GetInstance().AnnotationClear.Invoke(networkPlayer.username);
+        SimulationEvents.Instance.PlayerLeft.Invoke(networkPlayer.username);
+        SimulationEvents.Instance.AnnotationClear.Invoke(networkPlayer.username);
         // TODO: clear pushpins for player
         GameObject remotePlayerAvatar;
         remotePlayerAvatars.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
@@ -443,9 +443,9 @@ public class NetworkController : MonoBehaviour
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        SimulationEvents.GetInstance().AnnotationAdded.RemoveListener(BroadcastAnnotation);
-        SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
-        SimulationEvents.GetInstance().PushPinUpdated.RemoveListener(BroadcastPinUpdated);
+        SimulationEvents.Instance.AnnotationAdded.RemoveListener(BroadcastAnnotation);
+        SimulationEvents.Instance.AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
+        SimulationEvents.Instance.PushPinUpdated.RemoveListener(BroadcastPinUpdated);
     }
     
     public NetworkPlayer GetNetworkPlayerByName(string name)

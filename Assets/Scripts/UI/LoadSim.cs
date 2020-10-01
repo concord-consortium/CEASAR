@@ -14,7 +14,7 @@ public class LoadSim : MonoBehaviour
     void Start()
     {
         // simulation manager uses platform-dependent compilation to filter list of scenes
-        scenes = SimulationManager.GetInstance().Scenes;
+        scenes = SimulationManager.Instance.Scenes;
     }
     public void LoadScene(int sceneIndex)
     {

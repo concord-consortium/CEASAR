@@ -25,16 +25,16 @@ public class AnnotationTool : MonoBehaviour
     public void Init()
     {
         myAnnotations = new List<GameObject>();
-        SimulationEvents.GetInstance().AnnotationReceived.AddListener(AddAnnotation);
-        SimulationEvents.GetInstance().AnnotationDeleted.AddListener(DeleteAnnotation);
-        SimulationEvents.GetInstance().AnnotationClear.AddListener(ClearAnnotations);
+        SimulationEvents.Instance.AnnotationReceived.AddListener(AddAnnotation);
+        SimulationEvents.Instance.AnnotationDeleted.AddListener(DeleteAnnotation);
+        SimulationEvents.Instance.AnnotationClear.AddListener(ClearAnnotations);
     }
 
     private void OnDisable()
     {
-        SimulationEvents.GetInstance().AnnotationReceived.RemoveListener(AddAnnotation);
-        SimulationEvents.GetInstance().AnnotationDeleted.RemoveListener(DeleteAnnotation);
-        SimulationEvents.GetInstance().AnnotationClear.RemoveListener(ClearAnnotations);
+        SimulationEvents.Instance.AnnotationReceived.RemoveListener(AddAnnotation);
+        SimulationEvents.Instance.AnnotationDeleted.RemoveListener(DeleteAnnotation);
+        SimulationEvents.Instance.AnnotationClear.RemoveListener(ClearAnnotations);
     }
 
     public void Annotate(Vector3 nextPoint)
@@ -71,16 +71,16 @@ public class AnnotationTool : MonoBehaviour
                     highlightObject.transform.localScale = highlightScale;
                     
                     highlightObject.GetComponent<Renderer>().material.color =
-                        SimulationManager.GetInstance().LocalPlayerColor;
+                        SimulationManager.Instance.LocalPlayerColor;
                     
                     highlightObject.transform.parent = currentAnnotation.transform;
                 }
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
                 myAnnotations.Add(currentAnnotation);
-                currentAnnotation.name = SimulationManager.GetInstance().LocalUsername + "_annotation" + myAnnotations.Count;
+                currentAnnotation.name = SimulationManager.Instance.LocalUsername + "_annotation" + myAnnotations.Count;
                 
                 // Broadcast adding an annotation
-                SimulationEvents.GetInstance().AnnotationAdded.Invoke(
+                SimulationEvents.Instance.AnnotationAdded.Invoke(
                     currentAnnotation.transform.localPosition, 
                     currentAnnotation.transform.localRotation, 
                     currentAnnotation.transform.localScale, 
@@ -133,7 +133,7 @@ public class AnnotationTool : MonoBehaviour
     {
         for (int i = 0; i < myAnnotations.Count; i++)
         {
-            float delay = SimulationManager.GetInstance().MovementSendInterval * i;
+            float delay = SimulationManager.Instance.MovementSendInterval * i;
             // Need to delay sending each annotation so the network doesn't drop an update
             StartCoroutine(sendAnnotationDelayed(myAnnotations[i], delay));
         }
@@ -142,7 +142,7 @@ public class AnnotationTool : MonoBehaviour
     IEnumerator sendAnnotationDelayed(GameObject annotation, float delay)
     {
         yield return new WaitForSeconds(delay);
-        SimulationEvents.GetInstance().AnnotationAdded.Invoke(annotation.transform.localPosition,
+        SimulationEvents.Instance.AnnotationAdded.Invoke(annotation.transform.localPosition,
             annotation.transform.localRotation, annotation.transform.localScale, annotation.transform.name);
     }
     public void ClearAnnotations(string playerName)

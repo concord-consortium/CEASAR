@@ -107,7 +107,7 @@ public class SceneLoader : MonoBehaviour
 
                     if (currentScene == SimulationConstants.SCENE_HORIZON)
                     {
-                        c.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
+                        c.transform.rotation = Quaternion.Euler(SimulationManager.Instance.LocalPlayerLookDirection);
                     }
 
                 }
@@ -147,7 +147,7 @@ public class SceneLoader : MonoBehaviour
         if (currentScene == SimulationConstants.SCENE_HORIZON)
         {
             vrCamera.transform.position = new Vector3(0, 2, 0);
-            vrCamera.transform.rotation = Quaternion.Euler(0, SimulationManager.GetInstance().LocalPlayerLookDirection.y, 0);
+            vrCamera.transform.rotation = Quaternion.Euler(0, SimulationManager.Instance.LocalPlayerLookDirection.y, 0);
         }
         if (currentScene == SimulationConstants.SCENE_STARS)
         {
@@ -184,8 +184,8 @@ public class SceneLoader : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
         {
-            CCDebug.Log($"Setting rotation to {SimulationManager.GetInstance().LocalPlayerLookDirection}");
-            cam.transform.rotation = Quaternion.Euler(SimulationManager.GetInstance().LocalPlayerLookDirection);
+            CCDebug.Log($"Setting rotation to {SimulationManager.Instance.LocalPlayerLookDirection}");
+            cam.transform.rotation = Quaternion.Euler(SimulationManager.Instance.LocalPlayerLookDirection);
         }
         
         DefaultSceneCameraLayers = cam.GetComponent<Camera>().cullingMask;

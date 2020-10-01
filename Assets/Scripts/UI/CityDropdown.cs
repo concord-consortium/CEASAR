@@ -21,7 +21,7 @@ public class CityDropdown : MonoBehaviour
 
     void DropdownValueChanged(TMP_Dropdown change)
     {
-        SimulationEvents.GetInstance().LocationSelected.Invoke(change.captionText.text);
+        SimulationEvents.Instance.LocationSelected.Invoke(change.captionText.text);
     }
 
     // When the location is set elsewhere (from a pushpin interaction etc) sync the drop down to match if possible

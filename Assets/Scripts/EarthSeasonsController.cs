@@ -16,14 +16,14 @@ public class EarthSeasonsController : MonoBehaviour
     public GameObject sunlight;
     private void Start()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         // Reset the local month each time we load so that changes in the central time force a texture update
         _month = -1;
         if (sunlight == null) sunlight = GameObject.Find("Sun");
     }
     void Update()
     {
-        if (manager == null) manager = SimulationManager.GetInstance();
+        if (manager == null) manager = SimulationManager.Instance;
         int currentMonth = manager.CurrentSimulationTime.Month - 1;
         if (_month != currentMonth)
         {

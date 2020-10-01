@@ -17,7 +17,7 @@ public class SunPositionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
 
         // move sun game object
         sun.transform.position =

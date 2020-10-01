@@ -17,7 +17,7 @@ public class MoonPositionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         // move sun game object
         moon.transform.position =
             getLunarPosition(manager.CurrentSimulationTime,manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
@@ -59,7 +59,7 @@ public class MoonPositionController : MonoBehaviour
     List<Vector3> getArcPoints()
     {
         List<Vector3> points = new List<Vector3>();
-        DateTime d = SimulationManager.GetInstance().CurrentSimulationTime;
+        DateTime d = SimulationManager.Instance.CurrentSimulationTime;
         DateTime midnight = new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
         for (int i = 0; i < secondsInADay; i += (secondsInADay / desiredLineNodeCount))
         {

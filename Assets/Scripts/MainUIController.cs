@@ -9,8 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class MainUIController : MonoBehaviour
 {
-    private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
-    private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
+    private SimulationManager manager { get { return SimulationManager.Instance; } }
+    private SimulationEvents events { get { return SimulationEvents.Instance; } }
 
     private Dictionary<string, List<GameObject>> enabledPanels = new Dictionary<string, List<GameObject>>();
     private Dictionary<string, List<GameObject>> buttonsToDisable = new Dictionary<string, List<GameObject>>();
@@ -162,11 +162,11 @@ public class MainUIController : MonoBehaviour
 
         if (cityDropdown)
         {
-            cityDropdown.InitCityNames(DataManager.GetInstance().CityNames, manager.CurrentLocationName);
+            cityDropdown.InitCityNames(DataManager.Instance.CityNames, manager.CurrentLocationName);
         }
         if (constellationDropdown)
         {
-            constellationDropdown.InitConstellationNames(DataManager.GetInstance().ConstellationFullNames, "all");
+            constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, "all");
         }
         if (snapshotsController)
         {
@@ -437,7 +437,7 @@ public class MainUIController : MonoBehaviour
         Pushpin crashPin = manager.CrashSiteForGroup;
         if (crashPin == null) crashPin = UserRecord.GroupPins[manager.GroupName];
         manager.JumpToPin(crashPin);
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(crashPin);
+        SimulationEvents.Instance.PushPinSelected.Invoke(crashPin);
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
             SceneManager.LoadScene("Horizon");
@@ -704,7 +704,7 @@ public class MainUIController : MonoBehaviour
         // // user restores snapshot from UI
         // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
         CCDebug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
-        SimulationEvents.GetInstance().SnapshotLoaded.Invoke(snapshot);
+        SimulationEvents.Instance.SnapshotLoaded.Invoke(snapshot);
         RestoreSnapshotOrPin(snapshot);
     }
 

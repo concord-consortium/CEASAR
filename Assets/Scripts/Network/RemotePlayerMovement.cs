@@ -33,7 +33,7 @@ public class RemotePlayerMovement : MonoBehaviour
     void Start()
     {
         // increase animation speed for avatars to make them feel a bit more snappy
-        lerpInterval = SimulationManager.GetInstance().MovementSendInterval * 0.8f;
+        lerpInterval = SimulationManager.Instance.MovementSendInterval * 0.8f;
     }
 
     IEnumerator moveAndRotate()

@@ -11,7 +11,7 @@ public class LocationPanel : MonoBehaviour
     // public bool showLocationCoordinates = true;
     public TextMeshProUGUI latLongInfo;
     
-    private SimulationManager manager { get { return SimulationManager.GetInstance();}}
+    private SimulationManager manager { get { return SimulationManager.Instance;}}
     void Start()
     {
         UpdateLocationPanel(manager.LocalPlayerPin);

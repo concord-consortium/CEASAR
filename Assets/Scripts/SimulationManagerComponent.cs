@@ -62,7 +62,7 @@ public class SimulationManagerComponent : MonoBehaviour
 
     private void Awake()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         if (!manager.IsReady)
         {
             TextAsset colorList = Resources.Load("colors") as TextAsset;

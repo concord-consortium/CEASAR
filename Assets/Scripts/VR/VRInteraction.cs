@@ -78,7 +78,7 @@ public class VRInteraction : MonoBehaviour
         layerMaskEarth = LayerMask.GetMask("Earth");
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         layerMaskUI = LayerMask.GetMask("UI");
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         interactionController = FindObjectOfType<InteractionController>();
 
         laserLongDistance = (manager.SceneRadius + 2);
@@ -88,7 +88,7 @@ public class VRInteraction : MonoBehaviour
     }
     void Update()
     {
-        if (manager == null) manager = SimulationManager.GetInstance();
+        if (manager == null) manager = SimulationManager.Instance;
         if (interactionController == null) interactionController = FindObjectOfType<InteractionController>();
 
         showIndicator(gameObject, shouldShowIndicator);
@@ -97,9 +97,9 @@ public class VRInteraction : MonoBehaviour
     }
     private void OnDisable()
     {
-        if (SimulationManager.GetInstance().CelestialSphereObject && !SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+        if (SimulationManager.Instance.CelestialSphereObject && !SimulationManager.Instance.CelestialSphereObject.activeSelf)
         {
-            SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+            SimulationManager.Instance.CelestialSphereObject.SetActive(true);
         }
     }
 
@@ -325,22 +325,22 @@ public class VRInteraction : MonoBehaviour
                 Vector3 position = rotation * negDistance + earthModel.transform.position;
                 if (rotation != transform.rotation || position != transform.position)
                 {
-                    SimulationManager.GetInstance().CelestialSphereObject.SetActive(false);
+                    SimulationManager.Instance.CelestialSphereObject.SetActive(false);
                     transform.rotation = rotation;
                     transform.position = position;
                 } else
                 {
-                    if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+                    if (!SimulationManager.Instance.CelestialSphereObject.activeSelf)
                     {
-                        SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+                        SimulationManager.Instance.CelestialSphereObject.SetActive(true);
                     }
                 }
                 
             } else
             {
-                if (!SimulationManager.GetInstance().CelestialSphereObject.activeSelf)
+                if (!SimulationManager.Instance.CelestialSphereObject.activeSelf)
                 {
-                    SimulationManager.GetInstance().CelestialSphereObject.SetActive(true);
+                    SimulationManager.Instance.CelestialSphereObject.SetActive(true);
                 }
                
             }

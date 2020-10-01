@@ -25,7 +25,7 @@ public class GroupSelectionWizard : MonoBehaviour
     // The user record:
     private UserRecord userRecord;
     
-    private SimulationManager manager { get { return SimulationManager.GetInstance(); }}
+    private SimulationManager manager { get { return SimulationManager.Instance; }}
 
     // Start is called before the first frame update
     private void Start()

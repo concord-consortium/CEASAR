@@ -54,9 +54,9 @@ public class DataController : MonoBehaviour
     private float simulationTimeScale = 10f;
     private float radius = 50;
 
-    SimulationManager manager { get => SimulationManager.GetInstance(); }
+    SimulationManager manager { get => SimulationManager.Instance; }
 
-    private DataManager dataManager { get => DataManager.GetInstance(); }
+    private DataManager dataManager { get => DataManager.Instance; }
 
     [SerializeField]
     private double lst;
@@ -83,13 +83,13 @@ public class DataController : MonoBehaviour
 
     private void Start()
     {
-        SimulationEvents.GetInstance().LocationSelected.AddListener(handleSelectNewLocation);
-        SimulationEvents.GetInstance().PushPinSelected.AddListener(handlePinSelected);
+        SimulationEvents.Instance.LocationSelected.AddListener(handleSelectNewLocation);
+        SimulationEvents.Instance.PushPinSelected.AddListener(handlePinSelected);
     }
     private void OnDisable()
     {
-        SimulationEvents.GetInstance().LocationSelected.RemoveListener(handleSelectNewLocation);
-        SimulationEvents.GetInstance().PushPinSelected.RemoveListener(handlePinSelected);
+        SimulationEvents.Instance.LocationSelected.RemoveListener(handleSelectNewLocation);
+        SimulationEvents.Instance.PushPinSelected.RemoveListener(handlePinSelected);
     }
 
     void OnSceneUnloaded(Scene scene)
@@ -309,17 +309,17 @@ public class DataController : MonoBehaviour
                         new LatLng {Latitude = matchedCity.Lat, Longitude = matchedCity.Lng}, matchedCity.Name);
                     manager.JumpToPin(pin);
                     // Update local listeners for UI and game object updates
-                    SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+                    SimulationEvents.Instance.PushPinSelected.Invoke(pin);
 
                     // broadcast the update to remote players
-                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
+                    SimulationEvents.Instance.PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
                 }
                 else
                 {
                     manager.JumpToPin(manager.CrashSiteForGroup);
 
-                    SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.CrashSiteForGroup);
-                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.CrashSiteForGroup,
+                    SimulationEvents.Instance.PushPinSelected.Invoke(manager.CrashSiteForGroup);
+                    SimulationEvents.Instance.PushPinUpdated.Invoke(manager.CrashSiteForGroup,
                         manager.LocalPlayerLookDirection);
                 }
             }

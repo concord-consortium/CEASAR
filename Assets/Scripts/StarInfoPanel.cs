@@ -11,7 +11,7 @@ public class StarInfoPanel : MonoBehaviour
     
     public void Setup()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         if (manager.CurrentlySelectedStar == null)
         {
             starInfoText.text = "";
@@ -30,7 +30,7 @@ public class StarInfoPanel : MonoBehaviour
 
     public void UpdateStarInfoPanel()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         if (manager.CurrentlySelectedStar != null)
         {
             Star starData = manager.CurrentlySelectedStar.starData;

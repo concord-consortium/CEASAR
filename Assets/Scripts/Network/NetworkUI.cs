@@ -37,7 +37,7 @@ public class NetworkUI : MonoBehaviour
     private bool isConnecting = false;
     private SimulationManager manager
     {
-        get { return SimulationManager.GetInstance(); }
+        get { return SimulationManager.Instance; }
     }
 
     private NetworkController _networkController;
@@ -101,14 +101,14 @@ public class NetworkUI : MonoBehaviour
     private void OnEnable()
     {
         // playerList = new Dictionary<string, GameObject>();
-        SimulationEvents.GetInstance().PlayerJoined.AddListener(AddPlayer);
-        SimulationEvents.GetInstance().PlayerLeft.AddListener(RemovePlayer);
+        SimulationEvents.Instance.PlayerJoined.AddListener(AddPlayer);
+        SimulationEvents.Instance.PlayerLeft.AddListener(RemovePlayer);
     }
 
     private void OnDisable()
     {
-        SimulationEvents.GetInstance().PlayerJoined.RemoveListener(AddPlayer);
-        SimulationEvents.GetInstance().PlayerLeft.RemoveListener(RemovePlayer);
+        SimulationEvents.Instance.PlayerJoined.RemoveListener(AddPlayer);
+        SimulationEvents.Instance.PlayerLeft.RemoveListener(RemovePlayer);
     }
 
     void Update()
@@ -276,7 +276,7 @@ public class NetworkUI : MonoBehaviour
         manager.JumpToPin(pin);
 
         // Invoking this event will update the simulation time and location;
-        SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+        SimulationEvents.Instance.PushPinSelected.Invoke(pin);
 
         // Switch to Horizon view
         if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)

@@ -44,8 +44,8 @@ public class InteractionController : MonoBehaviour
         }
     }
 
-    private SimulationManager manager { get { return SimulationManager.GetInstance(); } }
-    private SimulationEvents events { get { return SimulationEvents.GetInstance(); } }
+    private SimulationManager manager { get { return SimulationManager.Instance; } }
+    private SimulationEvents events { get { return SimulationEvents.Instance; } }
 
     private void Awake()
     {
@@ -212,7 +212,7 @@ public class InteractionController : MonoBehaviour
                 networkController.BroadcastEarthInteraction(pos, rot);
             }
             string interactionInfo = "Earth interaction at: " + latLng.ToString();
-            // SimulationEvents.GetInstance().LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
+            // SimulationEvents.Instance.LocationChanged.Invoke(latLng, SimulationConstants.CUSTOM_LOCATION);
             CCLogger.Log(LOG_EVENT_INTERACTION_ADDED, interactionInfo);
         }
     }

@@ -15,9 +15,9 @@ public class SimulationManager
     }
     private static SimulationManager instance;
 
-    public static SimulationManager GetInstance()
+    public static SimulationManager Instance
     {
-        return instance ?? (instance = new SimulationManager());
+        get { return instance ?? (instance = new SimulationManager()); }
     }
 
     // A decent random generator

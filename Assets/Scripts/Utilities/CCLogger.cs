@@ -35,9 +35,9 @@ public class CCLogger
     private static CCLogger instance;
 
     // Singleton Access
-    public static CCLogger GetInstance()
+    public static CCLogger Instance
     {
-        return instance ?? (instance = new CCLogger());
+        get { return instance ?? (instance = new CCLogger()); }
     }
 
     // Private Constructor
@@ -51,7 +51,7 @@ public class CCLogger
     // Hook to make sure our other listeners are removed
     static void Quit()
     {
-        CCLogger logger = CCLogger.GetInstance();
+        CCLogger logger = CCLogger.Instance;
         logger.RemoveEventListeners();
         Application.quitting -= Quit;
         CCDebug.Log("Logger Events removed.");
@@ -89,7 +89,7 @@ public class CCLogger
     // Add Simulation state to the Logging event for context.
     private void UpdateContext()
     {
-        SimulationManager manager = SimulationManager.GetInstance();
+        SimulationManager manager = SimulationManager.Instance;
         time = getTimeMillies();
         scene = getSceneName();
         platformName = Application.platform.ToString();
@@ -130,7 +130,7 @@ public class CCLogger
     // Listen for game events, dispatch to log events:
     private void AddEventListeners()
     {
-        SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
+        SimulationEvents eventDispatcher = SimulationEvents.Instance;
         eventDispatcher.LocationSelected.AddListener(LocationSelected);
         // eventDispatcher.LocationChanged.AddListener(LocationChanged); 
         eventDispatcher.AnnotationAdded.AddListener(AnnotationAdded);
@@ -148,7 +148,7 @@ public class CCLogger
     // Remove all listeners:
     private void RemoveEventListeners()
     {
-        SimulationEvents eventDispatcher = SimulationEvents.GetInstance();
+        SimulationEvents eventDispatcher = SimulationEvents.Instance;
         eventDispatcher.LocationSelected.RemoveListener(LocationSelected);
         // eventDispatcher.LocationChanged.RemoveListener(LocationChanged);
         eventDispatcher.AnnotationAdded.RemoveListener(AnnotationAdded);
@@ -227,7 +227,7 @@ public class CCLogger
     }
 
     private void SimulationTimeChanged() {
-        DateTime currentTime = SimulationManager.GetInstance().CurrentSimulationTime;
+        DateTime currentTime = SimulationManager.Instance.CurrentSimulationTime;
         string msg = $"SimulationTime:{currentTime.ToString()}";
         _logAsync(LOG_EVENT_SIM_TIME_CHANGED, msg);
     }
@@ -295,7 +295,7 @@ public class CCLogger
         event_value = msg;
         message = msg;
         UpdateContext();
-        bool devMode = SimulationManager.GetInstance().server == ServerList.Local;
+        bool devMode = SimulationManager.Instance.server == ServerList.Local;
         string json = JsonUtility.ToJson(this, true);
         CCDebug.Log(msg, LogLevel.Info, LogMessageCategory.EventLog);
         // Only send to log manager if we're on the network to reduce clutter
@@ -317,7 +317,7 @@ public class CCLogger
         #pragma warning disable CS4014
         // This call is not awaited, execution continues before the call is completed.
         // So as to not stall or interupt play while transmitting log messages.
-        GetInstance()._logAsync(eventType, msg);
+        Instance._logAsync(eventType, msg);
         #pragma warning restore CS4014
         
     }

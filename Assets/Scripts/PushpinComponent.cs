@@ -12,7 +12,7 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
     private Material defaultMaterial;
     public Material highlightPinMaterial;
 
-    private SimulationManager manager { get {return SimulationManager.GetInstance();}}
+    private SimulationManager manager { get {return SimulationManager.Instance;}}
     private void Start()
     {
         owner = "";
@@ -24,12 +24,12 @@ public class PushpinComponent : MonoBehaviour, IPointerDownHandler, IPointerExit
         bool isLocalPlayer = owner == manager.LocalUsername;
         if (isLocalPlayer)
         {
-            SimulationEvents.GetInstance().PushPinSelected.Invoke(manager.LocalPlayerPin);
+            SimulationEvents.Instance.PushPinSelected.Invoke(manager.LocalPlayerPin);
         }
         else
         {
             Pushpin pin = manager.GetRemotePlayer(owner).Pin;
-            SimulationEvents.GetInstance().PushPinSelected.Invoke(pin);
+            SimulationEvents.Instance.PushPinSelected.Invoke(pin);
         }
 
     }

@@ -15,7 +15,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     private float scaleFactor = 2f;
     
     public GameObject starHighlightOutline;
-    private SimulationManager manager {get {return SimulationManager.GetInstance();}}
+    private SimulationManager manager {get {return SimulationManager.Instance;}}
     void Update()
     {
         if (starHighlightOutline != null)
@@ -50,14 +50,14 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void SetStarScale(float magnitudeScale)
     {
-        var magScaleValue = DataManager.GetInstance().GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
+        var magScaleValue = DataManager.Instance.GetRelativeMagnitude(starData.Mag) * magnitudeScale;// ((starData.Mag * -1) + maxMagnitude + 1) * magnitudeScale;
         sceneInitialScale = initialScale * magScaleValue;
         transform.localScale = sceneInitialScale;
     }
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
     {
-        SimulationManager manager = SimulationManager.GetInstance();
+        SimulationManager manager = SimulationManager.Instance;
         if (manager.NetworkControllerComponent.IsConnected)
         {
             HandleSelectStar(broadcastToNetwork, manager.LocalPlayerColor);
@@ -84,7 +84,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
                 }
 
                 // make sure it's visible
-                SimulationManager.GetInstance().CurrentlySelectedStar = this;
+                SimulationManager.Instance.CurrentlySelectedStar = this;
                 mainUIController.ShowPanel("StarInfoPanel");
 
                 mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();

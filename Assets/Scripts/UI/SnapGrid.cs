@@ -10,7 +10,7 @@ public class SnapGrid : MonoBehaviour
     public GameObject snapItemPrefab;
     private List<GameObject> snaps;
 
-    private SimulationManager manager { get {return SimulationManager.GetInstance();}}
+    private SimulationManager manager { get {return SimulationManager.Instance;}}
 
     private void Start()
     {

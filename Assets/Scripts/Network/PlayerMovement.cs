@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     
     private SimulationManager manager
     {
-        get { return SimulationManager.GetInstance(); }
+        get { return SimulationManager.Instance; }
     }
     private void Awake()
     {
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
                     CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
                     manager.LocalPlayerLookDirection = cameraRotation;
                     
-                    SimulationEvents.GetInstance().PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+                    SimulationEvents.Instance.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
                     lastSend = Time.time;
                 }
             }

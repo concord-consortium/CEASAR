@@ -11,15 +11,15 @@ public struct ConstellationNamePair
 // This class is the manager Singleton, and contains specific references to application-level objects
 public class DataManager
 {
-    protected DataManager() {
-       
-    }
+    protected DataManager() { }
+
     private static DataManager instance;
 
-    public static DataManager GetInstance()
+    public static DataManager Instance
     {
-        return instance ?? (instance = new DataManager());
+        get { return instance ?? (instance = new DataManager()); }
     }
+    
     private List<Star> stars;
     private int maxStarCount = 0;
 

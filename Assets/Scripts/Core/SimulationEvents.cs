@@ -51,9 +51,9 @@ public class SimulationEvents
     }
     private static SimulationEvents instance;
 
-    public static SimulationEvents GetInstance()
+    public static SimulationEvents Instance
     {
-        return instance ?? (instance = new SimulationEvents());
+        get { return instance ?? (instance = new SimulationEvents()); }
     }
 
     /// <summary>

@@ -10,9 +10,9 @@ public class ConstellationDropdown : MonoBehaviour
     ConstellationsController constellationsController;
     TMP_Dropdown dropdown;
 
-    SimulationManager manager { get => SimulationManager.GetInstance(); }
+    SimulationManager manager { get => SimulationManager.Instance; }
 
-    private DataManager dataManager { get => DataManager.GetInstance(); }
+    private DataManager dataManager { get => DataManager.Instance; }
 
     void Start()
     {

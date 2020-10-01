@@ -19,7 +19,7 @@ public class MarkersController : MonoBehaviour
 
     public void Init()
     {
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
     }
 
     public void SetSceneParameters(float markerLineWidth, float markerScale, bool markersVisible, bool poleLineVisible, bool equatorLineVisible)
@@ -96,9 +96,9 @@ public class MarkersController : MonoBehaviour
         {
             float rad = Mathf.Deg2Rad * (i * 360f / segments);
             points[i] = new Vector3(Mathf.Sin(rad) *
-                SimulationManager.GetInstance().InitialRadius,
+                SimulationManager.Instance.InitialRadius,
                 0,
-                Mathf.Cos(rad) * SimulationManager.GetInstance().InitialRadius);
+                Mathf.Cos(rad) * SimulationManager.Instance.InitialRadius);
         }
 
         lineRendererCircle.SetPositions(points);

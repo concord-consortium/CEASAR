@@ -24,7 +24,7 @@ public class InteractionDetect : MonoBehaviour
         camera = GetComponent<Camera>();
         layerMaskEarth = LayerMask.GetMask("Earth");
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
-        manager = SimulationManager.GetInstance();
+        manager = SimulationManager.Instance;
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MainUIController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
@@ -32,7 +32,7 @@ public class InteractionDetect : MonoBehaviour
 
     void Update()
     {
-        if (manager == null) manager = SimulationManager.GetInstance();
+        if (manager == null) manager = SimulationManager.Instance;
         if (interactionController == null) interactionController = FindObjectOfType<InteractionController>();
         if (camera)
         {
@@ -94,7 +94,7 @@ public class InteractionDetect : MonoBehaviour
             {
                 if (!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
                 {
-                    float r = SimulationManager.GetInstance().SceneRadius + 2f;
+                    float r = SimulationManager.Instance.SceneRadius + 2f;
                     Vector2 mousePos = Input.mousePosition;
                     Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
 

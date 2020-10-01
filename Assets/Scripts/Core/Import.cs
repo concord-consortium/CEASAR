@@ -6,7 +6,7 @@ public static class DataImport
 {
     public static void ImportAllData(string starData, int maxStars, string cityData, string constellationData)
     {
-        DataManager dataManager = DataManager.GetInstance();
+        DataManager dataManager = DataManager.Instance;
         dataManager.Stars = importStarData(starData);
         dataManager.Cities = importCityData(cityData);
         dataManager.Connections = importConstellationConnectionData(constellationData);

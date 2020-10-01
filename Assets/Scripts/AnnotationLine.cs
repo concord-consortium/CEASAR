@@ -35,12 +35,12 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         hoverScale = new Vector3(initialScale.x * hoverSize, initialScale.y * hoverSize, initialScale.z);
         selectedParticles = GetComponent<ParticleSystem>();
         if (_annotationTool == null) _annotationTool = FindObjectOfType<AnnotationTool>();
-        SimulationEvents.GetInstance().DrawMode.AddListener(HandleDrawModeToggle);
+        SimulationEvents.Instance.DrawMode.AddListener(HandleDrawModeToggle);
     }
 
     private void OnDisable()
     {
-        SimulationEvents.GetInstance().DrawMode.RemoveListener(HandleDrawModeToggle);
+        SimulationEvents.Instance.DrawMode.RemoveListener(HandleDrawModeToggle);
     }
 
     public void HandleDrawModeToggle(bool drawModeActive)
@@ -99,7 +99,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
 
     public void HandleDeleteAnnotation()
     {
-        SimulationEvents.GetInstance().AnnotationDeleted.Invoke(this.name);
+        SimulationEvents.Instance.AnnotationDeleted.Invoke(this.name);
         Destroy(this.gameObject);
     }
     
