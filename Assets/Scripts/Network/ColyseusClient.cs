@@ -8,10 +8,20 @@ using System.Text;
 using Colyseus;
 using GameDevWare.Serialization;
 
+public enum NetworkMessageType
+{
+    Movement,
+    Interaction,
+    LocationPin,
+    CelestialInteraction,
+    Annotation,
+    DeleteAnnotation,
+    Heartbeat
+}
 public class ColyseusClient : MonoBehaviour
 {
     public System.Random rng = new System.Random();
-
+    
     protected Client client;
     protected Room<State> room;
     private NetworkController networkController;
@@ -43,11 +53,8 @@ public class ColyseusClient : MonoBehaviour
             if (lastUpdate > heartbeatInterval)
             {
                 // send update
-                room.Send(new Dictionary<string, object>()
-                    {
-                        {"message", "heartbeat"}
-                    }
-                );
+                room.Send(NetworkMessageType.Heartbeat.ToString());
+
                 lastUpdate = 0;
             }
         }
@@ -70,15 +77,17 @@ public class ColyseusClient : MonoBehaviour
             endpoint = serverEndpoint;
             CCDebug.Log("log in client", LogLevel.Verbose, LogMessageCategory.Networking);
             client = ColyseusManager.Instance.CreateClient(endpoint);
-            CCDebug.Log("Awaiting auth", LogLevel.Verbose, LogMessageCategory.Networking);
-            var loginResult = client.Auth.Login();
+            CCDebug.Log(client);
+            // CCDebug.Log("Awaiting auth", LogLevel.Verbose, LogMessageCategory.Networking);
+            // var loginResult = client.Auth.Login();
             try
             {
-                await loginResult;
-                CCDebug.Log("Authenticated", LogLevel.Verbose, LogMessageCategory.Networking);
+                // await loginResult;
+                
+                // CCDebug.Log("Authenticated", LogLevel.Verbose, LogMessageCategory.Networking);
 
                 // Update username
-                client.Auth.Username = username;
+                // client.Auth.Username = username;
                 CCDebug.Log("joining room", LogLevel.Verbose, LogMessageCategory.Networking);
                 networkController.ServerStatusMessage = "Joining Room...";
                 await JoinRoom(roomName);
@@ -106,7 +115,7 @@ public class ColyseusClient : MonoBehaviour
             {
                 players.Clear();
             }
-            client.Auth.Logout();
+            // client.Auth.Logout();
             localPlayerName = "";
         }
         client = null;
@@ -133,7 +142,55 @@ public class ColyseusClient : MonoBehaviour
         PlayerPrefs.Save();
 
         room.OnStateChange += OnStateChangeHandler;
-        room.OnMessage += OnMessage;
+        
+        var messageTypes = Enum.GetValues(typeof(NetworkMessageType))
+            .Cast<int>()
+            .Select(x => x.ToString())
+            .ToArray();
+        
+        room.OnMessage<UpdateMessage>("update", (message) =>
+        {
+            CCDebug.Log("I hear!");
+            CCDebug.Log(message);
+            if (message is UpdateMessage)
+            {
+                this.OnMessage(message);
+            }
+            else
+            {
+                CCDebug.Log("I don't know");
+            }
+        });
+        
+        // room.OnMessage<UpdateMessage>("LocationPin", (message) =>
+        // {
+        //     CCDebug.Log("Received Schema message of type " + message.updateType + " user: " + message.playerId);
+        //     CCDebug.Log(message);
+        //     // update messages have a message type and player Id we can use to update from remote interactions
+        //     
+        //     NetworkPlayer networkPlayer = players.Values.First(p => p.id == message.playerId);
+        //     if (message.updateType == NetworkMessageType.DeleteAnnotation.ToString())
+        //     {
+        //         networkController.HandleAnnotationDelete(networkPlayer, message.metadata);
+        //     }
+        //     else
+        //     {
+        //         networkController.HandleNetworkInteraction(networkPlayer, message.updateType);
+        //     }
+        //     // this.OnMessage(message);
+        // });
+        
+        // foreach (string messageType in messageTypes)
+        // {
+        //     room.OnMessage<UpdateMessage>(messageType, (message) =>
+        //     {
+        //         CCDebug.Log("Received Schema message of type " + message.updateType + " user: " + message.playerId);
+        //         CCDebug.Log(message);
+        //         // update messages have a message type and player Id we can use to update from remote interactions
+        //         
+        //         this.OnMessage(message);
+        //     });
+        // }
     }
 
     async Task LeaveRoom()
@@ -193,32 +250,23 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    void OnMessage(object msg)
+    void OnMessage(UpdateMessage m)
     {
-        if (msg is UpdateMessage)
+        // update messages have a message type and player Id we can use to update from remote interactions
+        NetworkPlayer networkPlayer = players.Values.First(p => p.id == m.playerId);
+        if (m.updateType == NetworkMessageType.DeleteAnnotation.ToString())
         {
-            // update messages have a message type and player Id we can use to update from remote interactions
-            var m = (UpdateMessage) msg;
-            CCDebug.Log(m.updateType + " " + m.playerId);
-            NetworkPlayer networkPlayer = players.Values.First(p => p.id == m.playerId);
-            if (m.updateType == "deleteannotation")
-            {
-                networkController.HandleAnnotationDelete(networkPlayer, m.metadata);
-            }
-            else
-            {
-                networkController.HandleNetworkInteraction(networkPlayer, m.updateType);
-            }
+            networkController.HandleAnnotationDelete(networkPlayer, m.metadata);
         }
         else
         {
-            // unknown message type
-            CCDebug.Log(msg, LogLevel.Info, LogMessageCategory.Networking);
+            networkController.HandleNetworkInteraction(networkPlayer, m.updateType);
         }
     }
 
     void OnStateChangeHandler (State state, bool isFirstState)
     {
+        CCDebug.Log("Room state");
         // Setup room first state
         // This is where we might capture current state and save/load
         // Debug.Log(state);
@@ -248,7 +296,7 @@ public class ColyseusClient : MonoBehaviour
         networkController.OnPlayerChange(networkPlayer);
     }
     
-    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string transformName, string messageType)
+    public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string transformName, NetworkMessageType messageType)
     {
         if (IsConnected)
         {
@@ -258,11 +306,7 @@ public class ColyseusClient : MonoBehaviour
             t.rotation = new NetworkVector3 { x = r.x, y = r.y, z = r.z };
             t.localScale = new NetworkVector3 {x = scale.x, y = scale.y, z = scale.z};
             t.name = transformName;
-            await room.Send(new
-            {
-                transform = t,
-                message = messageType
-            });
+            await room.Send(messageType.ToString(), t);
         }
     }
 
@@ -270,11 +314,7 @@ public class ColyseusClient : MonoBehaviour
     {
         if (IsConnected)
         {
-            await room.Send(new
-            {
-                annotationName = annotationName,
-                message = "deleteannotation"
-            });
+            await room.Send(NetworkMessageType.DeleteAnnotation.ToString(), annotationName);
         }
     }
     
@@ -284,11 +324,7 @@ public class ColyseusClient : MonoBehaviour
         {
             NetworkCelestialObject c = celestialObj;
             CCDebug.Log("celestial object" +  c, LogLevel.Verbose, LogMessageCategory.Networking);
-            await room.Send(new
-            {
-                celestialObject = c,
-                message = "celestialinteraction"
-            });
+            await room.Send(NetworkMessageType.CelestialInteraction.ToString(), c);
         }
     }
 
@@ -307,11 +343,7 @@ public class ColyseusClient : MonoBehaviour
             t.localScale = new NetworkVector3 {x = 1, y = 1, z = 1};
             t.name = "mainCamera";
             pin.cameraTransform = t;
-            await room.Send(new
-            {
-                perspectivePin = pin,
-                message = "locationpin"
-            });
+            await room.Send(NetworkMessageType.LocationPin.ToString(), pin);
         }
     }
     

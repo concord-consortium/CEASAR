@@ -23,10 +23,10 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
-    public ServerRecord networkConnection = ServerList.Web;
+    public ServerRecord networkConnection = ServerList.Local;
 
     public NetworkUI networkUI;
-    private ServerRecord _selectedNetwork = ServerList.Web;
+    private ServerRecord _selectedNetwork = ServerList.Local;
 
     SimulationManager manager;
 
@@ -165,7 +165,7 @@ public class NetworkController : MonoBehaviour
             if (string.IsNullOrEmpty(userDefinedEndpoint))
             {
                 // no user interaction with the network address, work on some defaults
-                endpoint = ServerList.Web.address;
+                endpoint = ServerList.Custom.address;
             }
             else
             {
@@ -404,7 +404,7 @@ public class NetworkController : MonoBehaviour
     }
     public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Interaction);
     }
     public void BroadcastPinUpdated(Pushpin pin, Vector3 lookDirection)
     {
@@ -417,13 +417,13 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "","movement");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Movement);
     }
 
     public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
     {
         CCDebug.Log("Broadcasting new Annotation event " + pos, LogLevel.Verbose, LogMessageCategory.Networking);
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, "annotation");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, NetworkMessageType.Annotation);
     }
     public void BroadcastDeleteAnnotation(string annotationName)
     {
