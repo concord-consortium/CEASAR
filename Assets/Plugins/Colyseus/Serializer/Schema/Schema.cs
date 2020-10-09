@@ -122,6 +122,7 @@ namespace Colyseus.Schema
     public event KeyValueEventHandler<T, int> OnAdd;
     public event KeyValueEventHandler<T, int> OnChange;
     public event KeyValueEventHandler<T, int> OnRemove;
+    private bool _hasSchemaChild = Schema.CheckSchemaChild(typeof(T));
 
     public ArraySchema()
     {
@@ -156,7 +157,7 @@ namespace Colyseus.Schema
 
     public bool HasSchemaChild
     {
-      get { return typeof(T).BaseType == typeof(Schema); }
+      get { return _hasSchemaChild; }
     }
 
     public int Count
@@ -232,6 +233,7 @@ namespace Colyseus.Schema
     public event KeyValueEventHandler<T, string> OnAdd;
     public event KeyValueEventHandler<T, string> OnChange;
     public event KeyValueEventHandler<T, string> OnRemove;
+    private bool _hasSchemaChild = Schema.CheckSchemaChild(typeof(T));
 
     public MapSchema()
     {
@@ -266,7 +268,7 @@ namespace Colyseus.Schema
 
     public bool HasSchemaChild
     {
-      get { return typeof(T).BaseType == typeof(Schema); }
+      get { return _hasSchemaChild; }
     }
 
     public T this[string key]
@@ -463,14 +465,14 @@ namespace Colyseus.Schema
       var changes = new List<DataChange>();
       var totalBytes = bytes.Length;
 
-      // skip TYPE_ID of existing instances
-      if (bytes[it.Offset] == (byte) SPEC.TYPE_ID)
-      {
-        it.Offset += 2;
-      }
-
       while (it.Offset < totalBytes)
       {
+        // skip TYPE_ID of existing instances
+        if (bytes[it.Offset] == (byte) SPEC.TYPE_ID)
+        {
+          it.Offset += 2;
+        }
+
         var isNil = decode.NilCheck(bytes, it);
         if (isNil) { it.Offset++; }
 
@@ -498,7 +500,6 @@ namespace Colyseus.Schema
 
         object value = null;
 
-        object change = null;
         bool hasChange = false;
 
         if (isNil)
@@ -519,20 +520,19 @@ namespace Colyseus.Schema
         // Array type
         else if (fieldType == "array")
         {
-          change = new List<object>();
-
           ISchemaCollection valueRef = (ISchemaCollection)(this[field] ?? Activator.CreateInstance(childType));
           ISchemaCollection currentValue = valueRef.Clone();
 
           int newLength = Convert.ToInt32(decode.DecodeNumber(bytes, it));
           int numChanges = Math.Min(Convert.ToInt32(decode.DecodeNumber(bytes, it)), newLength);
 
-          hasChange = (numChanges > 0);
+          bool hasRemoval = (currentValue.Count > newLength);
+          hasChange = (numChanges > 0) || hasRemoval;
 
           bool hasIndexChange = false;
 
           // ensure current array has the same length as encoded one
-          if (currentValue.Count > newLength)
+          if (hasRemoval)
           {
             IDictionary items = currentValue.GetItems();
 
@@ -603,8 +603,6 @@ namespace Colyseus.Schema
             {
               currentValue.InvokeOnChange(currentValue[newIndex], newIndex);
             }
-
-            (change as List<object>).Add(currentValue[newIndex]);
           }
 
           value = currentValue;
@@ -714,7 +712,7 @@ namespace Colyseus.Schema
           changes.Add(new DataChange
           {
             Field = field,
-            Value = (change != null) ? change : value,
+            Value = value,
             PreviousValue = this[field]
           });
         }
@@ -763,6 +761,22 @@ namespace Colyseus.Schema
       {
         return Activator.CreateInstance(type);
       }
+    }
+
+    public static bool CheckSchemaChild(System.Type toCheck) {
+      System.Type generic = typeof(Schema);
+
+      while (toCheck != null && toCheck != typeof(object)) {
+        var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+
+        if (generic == cur) {
+          return true;
+        }
+
+        toCheck = toCheck.BaseType;
+      }
+
+      return false;
     }
   }
 
