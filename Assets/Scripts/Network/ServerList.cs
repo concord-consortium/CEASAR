@@ -2,7 +2,8 @@
 
 
 // Record class representing Colyseus server endpoint
-public class ServerRecord {
+public class ServerRecord
+{
     public string name;
     public string address;
 
@@ -20,14 +21,15 @@ public class ServerList
 
     public static ServerRecord Local = new ServerRecord("Local", "ws://localhost:2567");
     public static ServerRecord Custom = new ServerRecord("Custom", "ws://192.168.1.86:2567");
-    public static ServerRecord Dev = new ServerRecord("Dev", "ws://ceasar-serve-170349161-ceutdkz.herokuapp.com/");
+    public static ServerRecord Dev = new ServerRecord("Dev", "ws://ceasar-serve-update-col-4va3ac.herokuapp.com/");
     public static ServerRecord Web = new ServerRecord("Web", "ws://ceasar-server-staging.herokuapp.com/");
 
     // track our single instance:
     private static ServerList instance;
 
     // can't use constructor, guaranteed singleton
-    protected ServerList() {
+    protected ServerList()
+    {
         Servers = new List<ServerRecord>
         {
             Local,
@@ -42,7 +44,7 @@ public class ServerList
         ServerRecord server = new ServerRecord(name, address);
         Servers.Add(server);
     }
-    
+
     // The only way to access this class
     public static ServerList GetInstance()
     {

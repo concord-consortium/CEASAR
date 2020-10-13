@@ -14,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     public bool useLocalRotation = false;
     string sceneName = "";
     private Transform cameraTransform;
-    private Transform cameraParentTransform;
     private Vector3 lastCameraRotation;
     
     private SimulationManager manager
@@ -66,25 +65,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (sceneName == SimulationConstants.SCENE_HORIZON)
         {
-#if !UNITY_ANDROID
+
             if (cameraTransform == null)
             {
                 cameraTransform = Camera.main.transform;
             }
-            if (cameraParentTransform == null)
-            {
-                cameraParentTransform = cameraTransform.parent;
-            }
-#else
-                        if (cameraTransform == null)
-                        {
-                            cameraTransform = Camera.main.transform;
-                        }
-                        if (cameraParentTransform == null)
-                        {
-                            cameraParentTransform = cameraTransform;
-                        }
-#endif
+
             Vector3 cameraRotation = new Vector3(cameraTransform.rotation.eulerAngles.x, cameraTransform.rotation.eulerAngles.y, 0);
 
             if (manager.LocalPlayerLookDirection != cameraRotation)
@@ -99,5 +85,11 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetLookDirection(Vector3 dir)
+    {
+        // adjust camera direction to match remote player
+        cameraTransform.rotation = Quaternion.Euler(dir.x, dir.y, 0);
     }
 }

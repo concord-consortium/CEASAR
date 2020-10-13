@@ -290,9 +290,9 @@ public class NetworkUI : MonoBehaviour
             // the x component of the rotation goes on the Main Camera. The Y component goes on its parent. 
 
 #if !UNITY_ANDROID
-            Transform mainCameraTransform = Camera.main.transform;
-            mainCameraTransform.rotation = Quaternion.Euler(rot.x, 0, 0);
-            mainCameraTransform.parent.rotation = Quaternion.Euler(0, rot.y, 0);
+            // let the script route the rotation for x and y to correct game objects
+            PlayerMovement playerMovementComponent = FindObjectOfType<PlayerMovement>();
+            playerMovementComponent.SetLookDirection(rot);
 #else
             GameObject vrCameraRig = GameObject.Find("VRCameraRig");
             if (vrCameraRig != null){

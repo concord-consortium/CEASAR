@@ -9,7 +9,7 @@ public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction,
 
 public static class CCDebug
 {
-    public static LogLevel CurrentLevel = LogLevel.Info;
+    public static LogLevel CurrentLevel = LogLevel.Verbose;
 
     public static LogMessageCategory[] Categories = new[]
     {
@@ -47,7 +47,7 @@ public static class CCDebug
 
     public static void Log(object logMessage)
     {
-        Log(logMessage, LogLevel.Verbose, LogMessageCategory.All);
+        Log(logMessage, LogLevel.Info, LogMessageCategory.All);
     }
     public static void LogError(object logMessage)
     {

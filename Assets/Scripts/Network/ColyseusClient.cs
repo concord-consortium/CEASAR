@@ -200,15 +200,7 @@ public class ColyseusClient : MonoBehaviour
 
     void OnStateChangeHandler (RoomState state, bool isFirstState)
     {
-        CCDebug.Log("Room state:");
-        if (isFirstState)
-        {
-            CCDebug.Log("First state");
-        }
-        else
-        {
-            CCDebug.Log(state);
-        }
+        // unused
     }
 
     void OnPlayerAdd(NetworkPlayer networkPlayer, string key)
