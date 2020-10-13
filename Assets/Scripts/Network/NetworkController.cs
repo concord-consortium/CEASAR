@@ -58,11 +58,9 @@ public class NetworkController : MonoBehaviour
         FindDependencies();
         networkUI.Username = manager.LocalUsername;
         networkUI.SetDevMode = devMode;
-        if (autoConnect)
-        {
-            ConnectToServer();
-        }
+        
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SimulationEvents.Instance.NetworkConnection.AddListener(OnConnectedToServer);
         SimulationEvents.Instance.AnnotationAdded.AddListener(BroadcastAnnotation);
         SimulationEvents.Instance.AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
         SimulationEvents.Instance.PushPinUpdated.AddListener(BroadcastPinUpdated);
@@ -71,21 +69,28 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CCDebug.Log("OnSceneLoaded: " + scene.name);
-        FindDependencies();
-        if (IsConnected && scenesWithAvatars.Contains(scene.name))
+        if (autoConnect)
         {
-            // show the avatar
+             ConnectToServer();
+        }
+        FindDependencies();
+        RefreshUI();
+        CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
+    }
+
+    private void OnConnectedToServer(bool isConnected)
+    {
+        FindDependencies();
+        if (isConnected)
+        {
             updateLocalAvatar();
-            
             foreach (string p in remotePlayerAvatars.Keys)
             {
                 NetworkPlayer remoteNetworkPlayer = colyseusClient.GetPlayerById(p);
                 updateAvatarForPlayer(remoteNetworkPlayer);
             }
         }
-       
         RefreshUI();
-        CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
     // TODO: Decouple depedency tree using events
@@ -205,10 +210,14 @@ public class NetworkController : MonoBehaviour
             localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
         }
         Color playerColor = manager.LocalPlayerColor;
-        if (localPlayerAvatar)
+        if (localPlayerAvatar && scenesWithAvatars.Contains(SceneManager.GetActiveScene().name))
         {
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = NETWORK_LOCAL_PLAYER_PREFIX + manager.LocalUsername;
+        }
+        else
+        {
+            if (localPlayerAvatar != null) localPlayerAvatar.SetActive(false);
         }
     }
 
@@ -372,7 +381,8 @@ public class NetworkController : MonoBehaviour
         if (isRemotePlayer(networkPlayer))
         {
             InteractionController interactionController = FindObjectOfType<InteractionController>();
-            interactionController.HandleRemoteInteraction(networkPlayer, interactionType);
+            NetworkMessageType messageType = (NetworkMessageType) Enum.Parse(typeof(NetworkMessageType), interactionType, true);
+            interactionController.HandleRemoteInteraction(networkPlayer, messageType);
         }
         else
         {
@@ -446,6 +456,7 @@ public class NetworkController : MonoBehaviour
         SimulationEvents.Instance.AnnotationAdded.RemoveListener(BroadcastAnnotation);
         SimulationEvents.Instance.AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
         SimulationEvents.Instance.PushPinUpdated.RemoveListener(BroadcastPinUpdated);
+        SimulationEvents.Instance.NetworkConnection.RemoveListener(OnConnectedToServer);
     }
     
     public NetworkPlayer GetNetworkPlayerByName(string name)

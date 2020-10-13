@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 using System.Linq;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
 using Colyseus;
+using Colyseus.Schema;
+
 using GameDevWare.Serialization;
 
 public enum NetworkMessageType
@@ -16,17 +19,16 @@ public enum NetworkMessageType
     CelestialInteraction,
     Annotation,
     DeleteAnnotation,
-    Heartbeat
+    Heartbeat,
+    Text
 }
 public class ColyseusClient : MonoBehaviour
 {
-    public System.Random rng = new System.Random();
-    
-    protected Client client;
-    protected Room<State> room;
+    private Client client;
+    private Room<RoomState> room;
     private NetworkController networkController;
 
-    protected IndexedDictionary<string, NetworkPlayer> players = new IndexedDictionary<string, NetworkPlayer>();
+    private IndexedDictionary<string, NetworkPlayer> players = new IndexedDictionary<string, NetworkPlayer>();
     private NetworkPlayer _localNetworkPlayer;
     private string localPlayerName = "";
 
@@ -42,8 +44,6 @@ public class ColyseusClient : MonoBehaviour
     }
     private string endpoint;
     private float heartbeatInterval = 10;
-    
-    private IEnumerator clientConnectionCoroutine;
 
     private void Update()
     {
@@ -60,11 +60,10 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
-    public async void ConnectToServer(string serverEndpoint, string username, string roomName)
+    public void ConnectToServer(string serverEndpoint, string username, string roomName)
     {
         networkController = GetComponent<NetworkController>();
-        CCDebug.Log($"Connection: {!connecting}", LogLevel.Verbose, LogMessageCategory.Networking);
-        CCDebug.Log($"Connection: {!IsConnected}", LogLevel.Verbose, LogMessageCategory.Networking);
+        CCDebug.Log($"Connect to Server called: isConnected: {IsConnected}, currently connecting: {!connecting} ", LogLevel.Verbose, LogMessageCategory.Networking);
 
         if (!connecting && !IsConnected)
         {
@@ -77,22 +76,12 @@ public class ColyseusClient : MonoBehaviour
             endpoint = serverEndpoint;
             CCDebug.Log("log in client", LogLevel.Verbose, LogMessageCategory.Networking);
             client = ColyseusManager.Instance.CreateClient(endpoint);
-            CCDebug.Log(client);
-            // CCDebug.Log("Awaiting auth", LogLevel.Verbose, LogMessageCategory.Networking);
-            // var loginResult = client.Auth.Login();
+
             try
             {
-                // await loginResult;
-                
-                // CCDebug.Log("Authenticated", LogLevel.Verbose, LogMessageCategory.Networking);
-
-                // Update username
-                // client.Auth.Username = username;
                 CCDebug.Log("joining room", LogLevel.Verbose, LogMessageCategory.Networking);
                 networkController.ServerStatusMessage = "Joining Room...";
-                await JoinRoom(roomName);
-                CCDebug.Log("Finished joining", LogLevel.Verbose, LogMessageCategory.Networking);
-                connecting = false;
+                JoinRoom(roomName);
             }
             catch (Exception ex)
             {
@@ -102,15 +91,14 @@ public class ColyseusClient : MonoBehaviour
                 networkController.ServerStatusMessage = ex.Message;
                 networkController.RefreshUI();
             }
-            
         }
     }   
     
-    public async Task Disconnect()
+    public void Disconnect()
     {
         if (IsConnected)
         {
-            await LeaveRoom();
+            LeaveRoom();
             if (players != null)    
             {
                 players.Clear();
@@ -122,112 +110,83 @@ public class ColyseusClient : MonoBehaviour
         networkController.ServerStatusMessage = "";
     }
 
-    async Task JoinRoom(string roomName)
+    async void JoinRoom(string roomName)
     {
         // For now, join / create the same room by name - if this is an existing room then both players will be in the
         // same room. This will likely need more work later.
-        room = await client.JoinOrCreate<State>(roomName, new Dictionary<string, object>()
+        room = await client.JoinOrCreate<RoomState>(roomName, new Dictionary<string, object>()
         {
             { "username", localPlayerName }
         });
 
         CCDebug.Log("Joined room successfully.");
+        connecting = false;
+        registerRoomHandlers();
+        SimulationEvents.Instance.NetworkConnection.Invoke(IsConnected);
+    }
 
+    void registerRoomHandlers()
+    {
         room.State.players.OnAdd += OnPlayerAdd;
         room.State.players.OnRemove += OnPlayerRemove;
         room.State.players.OnChange += OnPlayerChange;
+        // room.State.TriggerAll();
 
         PlayerPrefs.SetString("roomId", room.Id);
         PlayerPrefs.SetString("sessionId", room.SessionId);
         PlayerPrefs.Save();
-
+        
+        room.OnLeave += (code) => CCDebug.Log($"User leaving room: {code}");
+        room.OnError += (code, message) => CCDebug.LogError("Network ERROR, code =>" + code + ", message => " + message);
         room.OnStateChange += OnStateChangeHandler;
         
-        var messageTypes = Enum.GetValues(typeof(NetworkMessageType))
-            .Cast<int>()
-            .Select(x => x.ToString())
-            .ToArray();
-        
-        room.OnMessage<UpdateMessage>("update", (message) =>
+        room.OnMessage((UpdateMessage message) =>
         {
-            CCDebug.Log("I hear!");
-            CCDebug.Log(message);
-            if (message is UpdateMessage)
+            if (players.ContainsKey(message.playerId))
             {
-                this.OnMessage(message);
+                if (message.updateType == NetworkMessageType.DeleteAnnotation.ToString())
+                {
+                    networkController.HandleAnnotationDelete(getPlayer(message.playerId), message.metadata);
+                }
+                else
+                {
+                    networkController.HandleNetworkInteraction(getPlayer(message.playerId), message.updateType);
+                }
+            }
+        });
+    }
+
+    NetworkPlayer getPlayer(string playerId)
+    {
+        if (players.ContainsKey(playerId))
+        {
+            return players.Values.First(p => p.id == playerId);
+        }
+        else return null;
+    }
+
+    void OnMessageReceived(UpdateMessage message)
+    {
+        CCDebug.Log("Received Schema Message!");
+        CCDebug.Log(message);
+        if (players.ContainsKey(message.playerId))
+        {
+            NetworkPlayer networkPlayer = players.Values.First(p => p.id == message.playerId);
+            if (message.updateType == NetworkMessageType.DeleteAnnotation.ToString())
+            {
+                networkController.HandleAnnotationDelete(networkPlayer, message.metadata);
             }
             else
             {
-                CCDebug.Log("I don't know");
+                networkController.HandleNetworkInteraction(networkPlayer, message.updateType);
             }
-        });
-        
-        // room.OnMessage<UpdateMessage>("LocationPin", (message) =>
-        // {
-        //     CCDebug.Log("Received Schema message of type " + message.updateType + " user: " + message.playerId);
-        //     CCDebug.Log(message);
-        //     // update messages have a message type and player Id we can use to update from remote interactions
-        //     
-        //     NetworkPlayer networkPlayer = players.Values.First(p => p.id == message.playerId);
-        //     if (message.updateType == NetworkMessageType.DeleteAnnotation.ToString())
-        //     {
-        //         networkController.HandleAnnotationDelete(networkPlayer, message.metadata);
-        //     }
-        //     else
-        //     {
-        //         networkController.HandleNetworkInteraction(networkPlayer, message.updateType);
-        //     }
-        //     // this.OnMessage(message);
-        // });
-        
-        // foreach (string messageType in messageTypes)
-        // {
-        //     room.OnMessage<UpdateMessage>(messageType, (message) =>
-        //     {
-        //         CCDebug.Log("Received Schema message of type " + message.updateType + " user: " + message.playerId);
-        //         CCDebug.Log(message);
-        //         // update messages have a message type and player Id we can use to update from remote interactions
-        //         
-        //         this.OnMessage(message);
-        //     });
-        // }
+        }
     }
-
-    async Task LeaveRoom()
+    async void LeaveRoom()
     {
         CCDebug.Log("closing connection");
         await room.Leave(true);
         room = null;
-    }
-
-    async Task GetAvailableRooms(string roomName)
-    {
-        var roomsAvailable = await client.GetAvailableRooms(roomName);
-
-        CCDebug.Log("Available rooms (" + roomsAvailable.Length + ")", LogLevel.Info, LogMessageCategory.Networking);
-        for (var i = 0; i < roomsAvailable.Length; i++)
-        {
-            CCDebug.Log("roomId: " + roomsAvailable[i].roomId, LogLevel.Info, LogMessageCategory.Networking);
-            CCDebug.Log("maxClients: " + roomsAvailable[i].maxClients, LogLevel.Info, LogMessageCategory.Networking);
-            CCDebug.Log("clients: " + roomsAvailable[i].clients, LogLevel.Info, LogMessageCategory.Networking);
-        }
-    }
-    public string GetClientList()
-    {
-        if (players != null)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Connected clients:");
-            foreach (string p in players.Keys)
-            {
-                sb.AppendLine(p);
-            }
-            return sb.ToString();
-        }
-        else
-        {
-            return "";
-        }
     }
 
     public NetworkPlayer GetPlayerById(string username)
@@ -238,45 +197,25 @@ public class ColyseusClient : MonoBehaviour
         }
         else return null;
     }
-    public void SendNetworkMessage(string message)
+
+    void OnStateChangeHandler (RoomState state, bool isFirstState)
     {
-        if (room != null)
+        CCDebug.Log("Room state:");
+        if (isFirstState)
         {
-            room.Send(message);
+            CCDebug.Log("First state");
         }
         else
         {
-            CCDebug.Log("Room is not connected!", LogLevel.Warning, LogMessageCategory.Networking);
+            CCDebug.Log(state);
         }
-    }
-
-    void OnMessage(UpdateMessage m)
-    {
-        // update messages have a message type and player Id we can use to update from remote interactions
-        NetworkPlayer networkPlayer = players.Values.First(p => p.id == m.playerId);
-        if (m.updateType == NetworkMessageType.DeleteAnnotation.ToString())
-        {
-            networkController.HandleAnnotationDelete(networkPlayer, m.metadata);
-        }
-        else
-        {
-            networkController.HandleNetworkInteraction(networkPlayer, m.updateType);
-        }
-    }
-
-    void OnStateChangeHandler (State state, bool isFirstState)
-    {
-        CCDebug.Log("Room state");
-        // Setup room first state
-        // This is where we might capture current state and save/load
-        // Debug.Log(state);
     }
 
     void OnPlayerAdd(NetworkPlayer networkPlayer, string key)
     {
         CCDebug.Log("ColyseusClient - Player Add: " + networkPlayer.username + " " + networkPlayer.id + " key: " + key, LogLevel.Info, LogMessageCategory.Networking);
         bool isLocal = key == room.SessionId;
-        players[networkPlayer.username] = networkPlayer;
+        players[networkPlayer.id] = networkPlayer;
         if (isLocal)
         {
             _localNetworkPlayer = networkPlayer;
@@ -287,7 +226,7 @@ public class ColyseusClient : MonoBehaviour
 
     void OnPlayerRemove(NetworkPlayer networkPlayer, string key)
     {
-        if (players[networkPlayer.username] != null ) players.Remove(networkPlayer.username);
+        if (players[networkPlayer.id] != null ) players.Remove(networkPlayer.id);
         networkController.OnPlayerRemove(networkPlayer);
     }
 

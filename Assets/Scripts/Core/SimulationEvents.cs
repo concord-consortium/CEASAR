@@ -29,7 +29,7 @@ public class SimulationTimeChangedEvent : UnityEvent { }
 public class SnapshotCreatedEvent: UnityEvent<Pushpin> { }
 public class SnapshotDeletedEvent: UnityEvent<Pushpin> { }
 public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
-
+public class NetworkConnectionEvent: UnityEvent<bool> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -48,6 +48,7 @@ public class SimulationEvents
         if (SnapshotCreated == null) SnapshotCreated = new SnapshotCreatedEvent();
         if (SnapshotLoaded == null) SnapshotLoaded = new SnapshotLoadedEvent();
         if (SnapshotDeleted == null) SnapshotDeleted = new SnapshotDeletedEvent();
+        if (NetworkConnection == null) NetworkConnection = new NetworkConnectionEvent();
     }
     private static SimulationEvents instance;
 
@@ -125,4 +126,9 @@ public class SimulationEvents
     /// For logging the deletion of a snapshot
     /// </summary>
     public SnapshotDeletedEvent SnapshotDeleted;
+
+    /// <summary>
+    /// For monitoring changes in network connection status
+    /// </summary>
+    public NetworkConnectionEvent NetworkConnection;
 }
