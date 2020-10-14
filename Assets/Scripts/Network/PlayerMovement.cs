@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using static SimulationConstants;
 
@@ -14,7 +11,6 @@ public class PlayerMovement : MonoBehaviour
     public bool useLocalRotation = false;
     string sceneName = "";
     private Transform cameraTransform;
-    private Vector3 lastCameraRotation;
     [SerializeField]
     float threshold = 5f;
 
@@ -31,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (sceneName != SimulationConstants.SCENE_LOAD) {
+        if (sceneName != SCENE_LOAD) {
             if (shouldSendPositionUpdate())
             {
                 // Broadcast movement to network:
@@ -55,26 +51,27 @@ public class PlayerMovement : MonoBehaviour
                 lastRot = rot;
                 lastSend = Time.time;
             }
-            GetCameraRotationAndUpdatePin(false);
         }
     }
     bool shouldSendPositionUpdate()
     {
-        bool shouldSendUpdate = false;
         float timeDeltaSinceLastSend = Time.time - manager.MovementSendInterval;
-        float maxSendDelta = lastSend * 10;
+        float maxTimeDelta = Time.time - (manager.MovementSendInterval * 10);
+        
+        bool shouldSendUpdate = false;
         // send update - no more frequently than once per second
         if (timeDeltaSinceLastSend > lastSend)
         {
-            bool hasMoved = (lastPos != transform.position || lastRot != transform.rotation);            
-            if (hasMoved || (timeDeltaSinceLastSend > maxSendDelta))
+            bool hasMoved = (lastPos != transform.position || lastRot != transform.rotation);
+            // we definitely want to send once every 10s if there has been any movement, even small
+            if (hasMoved && (maxTimeDelta > lastSend))
+            {
+                shouldSendUpdate = true;
+            }
+            else if (hasMoved)
             {
                 float delta = Mathf.Abs(Vector3.Magnitude(lastRot.eulerAngles - transform.rotation.eulerAngles));
                 shouldSendUpdate = delta > threshold;
-                if (shouldSendUpdate)
-                {
-                    Debug.Log(delta);
-                }
             }
         }
         return shouldSendUpdate;
@@ -82,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void GetCameraRotationAndUpdatePin(bool sendUpdate = true)
     {
-        if (sceneName == SimulationConstants.SCENE_HORIZON)
+        if (sceneName == SCENE_HORIZON)
         {
 
             if (cameraTransform == null)
