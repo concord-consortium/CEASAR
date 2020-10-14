@@ -24,7 +24,7 @@ public class NetworkController : MonoBehaviour
     public List<string> scenesWithAvatars;
 
     public NetworkUI networkUI;
-    private ServerRecord _selectedNetwork = ServerList.Dev;
+    private ServerRecord _selectedNetwork = ServerList.Web;
 
     SimulationManager manager;
 
