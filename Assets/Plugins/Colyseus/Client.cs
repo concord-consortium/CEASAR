@@ -38,15 +38,6 @@ namespace Colyseus
 		public string error;
 	}
 
-	public class MatchMakeException : Exception
-	{
-		public int Code;
-		public MatchMakeException(string message, int code) : base(message)
-		{
-			Code = code;
-		}
-	}
-
 
 	/// <summary>
 	/// Colyseus.Client
@@ -72,6 +63,9 @@ namespace Colyseus
 			Auth = new Auth(Endpoint.Uri);
 		}
 
+		/**
+		 * Join
+		 */
 		public async Task<Room<T>> JoinOrCreate<T>(string roomName, Dictionary<string, object> options = null, Dictionary<string, string> headers = null)
 		{
 			return await CreateMatchMakeRequest<T>("joinOrCreate", roomName, options, headers);
@@ -99,15 +93,35 @@ namespace Colyseus
 			return await CreateMatchMakeRequest<T>("joinById", roomId, options, headers);
 		}
 
-		//public async Task<Room<IndexedDictionary<string, object>>> Join(string roomName, Dictionary<string, object> options = null)
-		//{
-		//	return await Join<IndexedDictionary<string, object>>(roomName, options);
-		//}
+		//
+		// Fossil-Delta versions for joining the state
+		//
+		public async Task<Room<IndexedDictionary<string, object>>> JoinOrCreate(string roomName, Dictionary<string, object> options = null, Dictionary<string, string> headers = null)
+		{
+			return await CreateMatchMakeRequest<IndexedDictionary<string, object>>("joinOrCreate", roomName, options, headers);
+		}
 
-		//public async Task<Room<IndexedDictionary<string, object>>> ReJoin (string roomName, string sessionId)
-		//{
-		//	return await ReJoin<IndexedDictionary<string, object>>(roomName, sessionId);
-		//}
+		public async Task<Room<IndexedDictionary<string, object>>> Create(string roomName, Dictionary<string, object> options = null, Dictionary<string, string> headers = null)
+		{
+			return await CreateMatchMakeRequest<IndexedDictionary<string, object>>("create", roomName, options, headers);
+		}
+
+		public async Task<Room<IndexedDictionary<string, object>>> Join(string roomName, Dictionary<string, object> options = null, Dictionary<string, string> headers = null)
+		{
+			return await CreateMatchMakeRequest<IndexedDictionary<string, object>>("join", roomName, options, headers);
+		}
+
+		public async Task<Room<IndexedDictionary<string, object>>> JoinById(string roomId, Dictionary<string, object> options = null, Dictionary<string, string> headers = null)
+		{
+			return await CreateMatchMakeRequest<IndexedDictionary<string, object>>("joinById", roomId, options, headers);
+		}
+
+		public async Task<Room<IndexedDictionary<string, object>>> Reconnect(string roomId, string sessionId, Dictionary<string, string> headers = null)
+		{
+			Dictionary<string, object> options = new Dictionary<string, object>();
+			options.Add("sessionId", sessionId);
+			return await CreateMatchMakeRequest<IndexedDictionary<string, object>>("joinById", roomId, options, headers);
+		}
 
 		public async Task<RoomAvailable[]> GetAvailableRooms(string roomName = "")
 		{
@@ -139,7 +153,7 @@ namespace Colyseus
 			return response.rooms;
 		}
 
-		public async Task<Room<T>> ConsumeSeatReservation<T>(MatchMakeResponse response, Dictionary<string, string> headers)
+		public async Task<Room<T>> ConsumeSeatReservation<T>(MatchMakeResponse response, Dictionary<string, string> headers = null)
 		{
 			var room = new Room<T>(response.room.name)
 			{
@@ -154,10 +168,10 @@ namespace Colyseus
 
 			var tcs = new TaskCompletionSource<Room<T>>();
 
-			void OnError(string message)
+			void OnError(int code, string message)
 			{
 				room.OnError -= OnError;
-				tcs.SetException(new Exception(message));
+				tcs.SetException(new MatchMakeException(code, message));
 			};
 
 			void OnJoin()
@@ -226,7 +240,7 @@ namespace Colyseus
 			var response = JsonUtility.FromJson<MatchMakeResponse>(req.downloadHandler.text);
 			if (!string.IsNullOrEmpty(response.error))
 			{
-				throw new MatchMakeException(response.error, response.code);
+				throw new MatchMakeException(response.code, response.error);
 			}
 
 			return await ConsumeSeatReservation<T>(response, headers);

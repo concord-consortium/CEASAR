@@ -23,8 +23,6 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
-    public ServerRecord networkConnection = ServerList.Web;
-
     public NetworkUI networkUI;
     private ServerRecord _selectedNetwork = ServerList.Web;
 
@@ -40,12 +38,13 @@ public class NetworkController : MonoBehaviour
         get { return colyseusClient != null && colyseusClient.IsConnecting; }
     }
 
-    public string ServerStatusMessage {
+    public string ServerStatusMessage
+    {
         set { networkUI.ConnectionStatusText = value; }
     }
 
     public bool devMode = false;
- 
+
     // Need this so the network UI persists across scenes
     private void Awake()
     {
@@ -58,11 +57,9 @@ public class NetworkController : MonoBehaviour
         FindDependencies();
         networkUI.Username = manager.LocalUsername;
         networkUI.SetDevMode = devMode;
-        if (autoConnect)
-        {
-            ConnectToServer();
-        }
+
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SimulationEvents.Instance.NetworkConnection.AddListener(OnConnectedToServer);
         SimulationEvents.Instance.AnnotationAdded.AddListener(BroadcastAnnotation);
         SimulationEvents.Instance.AnnotationDeleted.AddListener(BroadcastDeleteAnnotation);
         SimulationEvents.Instance.PushPinUpdated.AddListener(BroadcastPinUpdated);
@@ -71,21 +68,28 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CCDebug.Log("OnSceneLoaded: " + scene.name);
-        FindDependencies();
-        if (IsConnected && scenesWithAvatars.Contains(scene.name))
+        if (autoConnect)
         {
-            // show the avatar
+            ConnectToServer();
+        }
+        FindDependencies();
+        RefreshUI();
+        CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
+    }
+
+    private void OnConnectedToServer(bool isConnected)
+    {
+        FindDependencies();
+        if (isConnected)
+        {
             updateLocalAvatar();
-            
             foreach (string p in remotePlayerAvatars.Keys)
             {
                 NetworkPlayer remoteNetworkPlayer = colyseusClient.GetPlayerById(p);
                 updateAvatarForPlayer(remoteNetworkPlayer);
             }
         }
-       
         RefreshUI();
-        CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
     // TODO: Decouple depedency tree using events
@@ -121,12 +125,12 @@ public class NetworkController : MonoBehaviour
     {
         // refresh connection status on hide/show and on scene change
         networkUI = FindObjectOfType<NetworkUI>();
-        if(networkUI)
+        if (networkUI)
         {
             networkUI.ConnectedStatusUpdate(IsConnected);
             updatePlayerList();
         }
-        
+
     }
 
 
@@ -140,10 +144,10 @@ public class NetworkController : MonoBehaviour
     {
         if (!IsConnected)
         {
-            UserRecord user = SimulationManager.Instance.LocalPlayerRecord; 
+            UserRecord user = SimulationManager.Instance.LocalPlayerRecord;
             FindDependencies();
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
-            manager.server = ServerList.Custom;
+            manager.server = _selectedNetwork;
             manager.server.address = endpoint;
             RefreshUI();
             CCLogger.Log(LOG_EVENT_CONNECT, "connected");
@@ -165,7 +169,7 @@ public class NetworkController : MonoBehaviour
             if (string.IsNullOrEmpty(userDefinedEndpoint))
             {
                 // no user interaction with the network address, work on some defaults
-                endpoint = ServerList.Web.address;
+                endpoint = _selectedNetwork.address;
             }
             else
             {
@@ -187,7 +191,7 @@ public class NetworkController : MonoBehaviour
     public void Disconnect()
     {
         colyseusClient.Disconnect();
-        
+
         // Destroy player game objects
         foreach (KeyValuePair<string, GameObject> entry in remotePlayerAvatars)
         {
@@ -205,10 +209,14 @@ public class NetworkController : MonoBehaviour
             localPlayerAvatar = GameObject.FindWithTag("LocalPlayerAvatar");
         }
         Color playerColor = manager.LocalPlayerColor;
-        if (localPlayerAvatar)
+        if (localPlayerAvatar && scenesWithAvatars.Contains(SceneManager.GetActiveScene().name))
         {
             localPlayerAvatar.GetComponent<Renderer>().material.color = playerColor;
             localPlayerAvatar.name = NETWORK_LOCAL_PLAYER_PREFIX + manager.LocalUsername;
+        }
+        else
+        {
+            if (localPlayerAvatar != null) localPlayerAvatar.SetActive(false);
         }
     }
 
@@ -248,7 +256,7 @@ public class NetworkController : MonoBehaviour
 
             // update the server with current perspective pin for local user
             BroadcastPinUpdated(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
-            
+
             // Because avatars are the only game objects controlled in this class, this is where we update the avatar.
             updateLocalAvatar();
         }
@@ -256,7 +264,7 @@ public class NetworkController : MonoBehaviour
         {
             // Set up the remote player with the main manager
             manager.AddOrUpdateRemotePlayer(networkPlayer.username);
-            
+
             // update their avatar
             updateAvatarForPlayer(networkPlayer);
 
@@ -270,14 +278,14 @@ public class NetworkController : MonoBehaviour
             {
                 Pushpin pin = interactionController.NetworkPlayerPinToPushpin(networkPlayer);
 
-                if (networkPlayer.locationPin != null )
+                if (networkPlayer.locationPin != null)
                 {
                     CCDebug.Log("Player joined with locationPin time: " + networkPlayer.locationPin.datetime);
                 }
 
                 manager.GetRemotePlayer(networkPlayer.username).Pin = pin;
-                
-                interactionController.AddOrUpdatePin(pin, UserRecord.GetColorForUsername(networkPlayer.username), networkPlayer.username, 
+
+                interactionController.AddOrUpdatePin(pin, UserRecord.GetColorForUsername(networkPlayer.username), networkPlayer.username,
                     false);
             }
             SimulationEvents.Instance.PlayerJoined.Invoke(networkPlayer.username);
@@ -287,11 +295,12 @@ public class NetworkController : MonoBehaviour
 
     void updateAvatarForPlayer(NetworkPlayer networkPlayer)
     {
-        if (scenesWithAvatars.Contains(SceneManager.GetActiveScene().name)) {
+        if (scenesWithAvatars.Contains(SceneManager.GetActiveScene().name))
+        {
             Vector3 pos = Utils.NetworkV3ToVector3(networkPlayer.playerPosition.position);
             Quaternion rot = Utils.NetworkV3ToQuaternion(networkPlayer.playerPosition.rotation);
-            string avatarName =  SimulationConstants.NETWORK_REMOTE_PLAYER_PREFIX + networkPlayer.username;
-        
+            string avatarName = SimulationConstants.NETWORK_REMOTE_PLAYER_PREFIX + networkPlayer.username;
+
             GameObject playerAvatar = GameObject.Find(avatarName);
             if (playerAvatar == null)
             {
@@ -331,18 +340,18 @@ public class NetworkController : MonoBehaviour
         remotePlayerAvatars.Remove(networkPlayer.username);
         updatePlayerList();
     }
-                    
+
     public void OnPlayerChange(NetworkPlayer updatedNetworkPlayer)
     {
         // All player updates pass through here, including movement and interactions
         // though we need to handle those interactions differently. Keep this purely for movement!
         bool isLocal = updatedNetworkPlayer.username == _localNetworkPlayer.username;
-        
+
         CCDebug.Log("player id " + updatedNetworkPlayer.id + " is local: " + isLocal, LogLevel.Verbose, LogMessageCategory.Networking);
 
         GameObject remotePlayerAvatar;
         remotePlayerAvatars.TryGetValue(updatedNetworkPlayer.username, out remotePlayerAvatar);
-        
+
         if (!isLocal)
         {
             if (remotePlayerAvatar != null)
@@ -359,7 +368,7 @@ public class NetworkController : MonoBehaviour
     }
     private bool isLocalPlayer(NetworkPlayer networkPlayer)
     {
-        return networkPlayer.username == _localNetworkPlayer.username; 
+        return networkPlayer.username == _localNetworkPlayer.username;
     }
 
     private bool isRemotePlayer(NetworkPlayer networkPlayer)
@@ -368,11 +377,12 @@ public class NetworkController : MonoBehaviour
     }
 
     public void HandleNetworkInteraction(NetworkPlayer networkPlayer, string interactionType)
-    { 
+    {
         if (isRemotePlayer(networkPlayer))
         {
             InteractionController interactionController = FindObjectOfType<InteractionController>();
-            interactionController.HandleRemoteInteraction(networkPlayer, interactionType);
+            NetworkMessageType messageType = (NetworkMessageType)Enum.Parse(typeof(NetworkMessageType), interactionType, true);
+            interactionController.HandleRemoteInteraction(networkPlayer, messageType);
         }
         else
         {
@@ -400,11 +410,11 @@ public class NetworkController : MonoBehaviour
         {
             CCDebug.Log("Could not delete " + annotationName + " for player " + networkPlayer.username, LogLevel.Info, LogMessageCategory.Interaction);
         }
-        
+
     }
     public void BroadcastEarthInteraction(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", "interaction");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Interaction);
     }
     public void BroadcastPinUpdated(Pushpin pin, Vector3 lookDirection)
     {
@@ -417,13 +427,13 @@ public class NetworkController : MonoBehaviour
 
     public void BroadcastPlayerMovement(Vector3 pos, Quaternion rot)
     {
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "","movement");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Movement);
     }
 
     public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
     {
         CCDebug.Log("Broadcasting new Annotation event " + pos, LogLevel.Verbose, LogMessageCategory.Networking);
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, "annotation");
+        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, NetworkMessageType.Annotation);
     }
     public void BroadcastDeleteAnnotation(string annotationName)
     {
@@ -446,8 +456,9 @@ public class NetworkController : MonoBehaviour
         SimulationEvents.Instance.AnnotationAdded.RemoveListener(BroadcastAnnotation);
         SimulationEvents.Instance.AnnotationDeleted.RemoveListener(BroadcastDeleteAnnotation);
         SimulationEvents.Instance.PushPinUpdated.RemoveListener(BroadcastPinUpdated);
+        SimulationEvents.Instance.NetworkConnection.RemoveListener(OnConnectedToServer);
     }
-    
+
     public NetworkPlayer GetNetworkPlayerByName(string name)
     {
         return colyseusClient.GetPlayerById(name);

@@ -200,4 +200,5 @@ public class SimulationManager
     } 
     public Pushpin CrashSiteForGroup;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
+    
 }

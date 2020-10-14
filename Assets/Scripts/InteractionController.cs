@@ -102,11 +102,11 @@ public class InteractionController : MonoBehaviour
         }
     }
 
-    public void HandleRemoteInteraction(NetworkPlayer updatedNetworkPlayer, string interactionType)
+    public void HandleRemoteInteraction(NetworkPlayer updatedNetworkPlayer, NetworkMessageType interactionType)
     {
         switch (interactionType)
         {
-            case "interaction":
+            case NetworkMessageType.Interaction:
                 // show indicator
                 CCDebug.Log("Interaction update: " + updatedNetworkPlayer.interactionTarget.position.x + "," +
                             updatedNetworkPlayer.interactionTarget.position.y + "," +
@@ -116,7 +116,7 @@ public class InteractionController : MonoBehaviour
                     Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.interactionTarget.rotation),
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username), false);
                 break;
-            case "celestialinteraction":
+            case NetworkMessageType.CelestialInteraction:
                 CCDebug.Log("remote player selected star", LogLevel.Info, LogMessageCategory.Networking);
                 // highlight star/ constellation
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
@@ -126,7 +126,7 @@ public class InteractionController : MonoBehaviour
                 sc.HandleSelectStar(false, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
                 manager.GetRemotePlayer(updatedNetworkPlayer.username).SelectedCelestialSphereItem = sc.starData;
                 break;
-            case "locationpin":
+            case NetworkMessageType.LocationPin:
                 // add / move player pin
                 CCDebug.Log("remote player pinned a location", LogLevel.Info, LogMessageCategory.Networking);
                 Pushpin remotePlayerPin = NetworkPlayerPinToPushpin(updatedNetworkPlayer);
@@ -141,7 +141,7 @@ public class InteractionController : MonoBehaviour
                     updatedNetworkPlayer.username, 
                     false); 
                 break;
-            case "annotation":
+            case NetworkMessageType.Annotation:
                 // add annotation
                 ArraySchema<NetworkTransform> annotations = updatedNetworkPlayer.annotations;
                 NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
