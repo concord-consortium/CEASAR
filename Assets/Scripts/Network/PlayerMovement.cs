@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                     
                 network.BroadcastPlayerMovement(transform.position, rot);
-                GetCameraRotationAndUpdatePin();
+                getCameraRotationAndUpdatePin();
                     
                 // Log movement:
                 string movementInfo = "local player moved to P:" +
@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         return shouldSendUpdate;
         
     }
-    public void GetCameraRotationAndUpdatePin(bool sendUpdate = true)
+    private void getCameraRotationAndUpdatePin()
     {
         if (sceneName == SCENE_HORIZON)
         {
@@ -91,14 +91,10 @@ public class PlayerMovement : MonoBehaviour
 
             if (manager.LocalPlayerLookDirection != cameraRotation)
             {
-                if (sendUpdate && Time.time - manager.MovementSendInterval > lastSend)
-                {                    
-                    manager.LocalPlayerLookDirection = cameraRotation;
+                manager.LocalPlayerLookDirection = cameraRotation;
 
-                    CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
-                    SimulationEvents.Instance.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
-                    lastSend = Time.time;
-                }
+                CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
+                SimulationEvents.Instance.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
             }
         }
     }
