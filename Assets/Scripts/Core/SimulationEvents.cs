@@ -19,6 +19,8 @@ public class PushPinSelectedEvent : UnityEvent<Pushpin> { }
 [System.Serializable]
 public class PushPinUpdatedEvent : UnityEvent<Pushpin, Vector3> { }
 [System.Serializable]
+public class PlayerNorthPinEvent: UnityEvent<float> { }
+[System.Serializable]
 public class DrawModeEvent: UnityEvent<bool> { }
 [System.Serializable]
 public class PlayerJoinedEvent : UnityEvent<string> { }
@@ -41,6 +43,7 @@ public class SimulationEvents
         if (AnnotationClear == null) AnnotationClear = new AnnotationClearEvent();
         if (PushPinSelected == null) PushPinSelected = new PushPinSelectedEvent();
         if (PushPinUpdated == null) PushPinUpdated = new PushPinUpdatedEvent();
+        if (PlayerNorthPin == null) PlayerNorthPin = new PlayerNorthPinEvent();
         if (DrawMode == null) DrawMode = new DrawModeEvent();
         if (PlayerJoined == null) PlayerJoined = new PlayerJoinedEvent();
         if (PlayerLeft == null) PlayerLeft = new PlayerLeftEvent();
@@ -96,6 +99,10 @@ public class SimulationEvents
     /// When a user updates their own pushpin - this will network the event
     /// </summary>
     public PushPinUpdatedEvent PushPinUpdated;
+    /// <summary>
+    ///  When a user places the North pin in the direction they believe is North
+    /// </summary>
+    public PlayerNorthPinEvent PlayerNorthPin;
     /// <summary>
     /// When a user enters / exits draw mode
     /// </summary>
