@@ -15,7 +15,9 @@ public class PlayerMovement : MonoBehaviour
     string sceneName = "";
     private Transform cameraTransform;
     private Vector3 lastCameraRotation;
-    
+    [SerializeField]
+    float threshold = 5f;
+
     private SimulationManager manager
     {
         get { return SimulationManager.Instance; }
@@ -30,38 +32,55 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         if (sceneName != SimulationConstants.SCENE_LOAD) {
-            if (lastPos != transform.position || lastRot != transform.rotation)
+            if (shouldSendPositionUpdate())
             {
-                // send update - no more frequently than once per second
-                if (Time.time - manager.MovementSendInterval > lastSend)
+                // Broadcast movement to network:
+                if (!network) network = FindObjectOfType<NetworkController>();
+                Quaternion rot = transform.rotation;
+                if (useLocalRotation)
                 {
-                    // Broadcast movement to network:
-                    if (!network) network = FindObjectOfType<NetworkController>();
-                    Quaternion rot = transform.rotation;
-                    if (useLocalRotation)
-                    {
-                        rot = transform.localRotation;
-                    }
-                    
-                    network.BroadcastPlayerMovement(transform.position, rot);
-                    GetCameraRotationAndUpdatePin();
-                    
-                    // Log movement:
-                    string movementInfo = "local player moved to P:" +
-                        transform.position.ToString() + " R:" + rot.ToString();
-                    CCLogger.Log(LOG_EVENT_PLAYER_MOVE, movementInfo);
-
-                    // update local comparators
-                    lastPos = transform.position;
-                    lastRot = rot;
-                    lastSend = Time.time;
+                    rot = transform.localRotation;
                 }
+                    
+                network.BroadcastPlayerMovement(transform.position, rot);
+                GetCameraRotationAndUpdatePin();
+                    
+                // Log movement:
+                string movementInfo = "local player moved to P:" +
+                    transform.position.ToString() + " R:" + rot.ToString();
+                CCLogger.Log(LOG_EVENT_PLAYER_MOVE, movementInfo);
+
+                // update local comparators
+                lastPos = transform.position;
+                lastRot = rot;
+                lastSend = Time.time;
             }
-            GetCameraRotationAndUpdatePin();
+            GetCameraRotationAndUpdatePin(false);
         }
     }
-
-    public void GetCameraRotationAndUpdatePin()
+    bool shouldSendPositionUpdate()
+    {
+        bool shouldSendUpdate = false;
+        float timeDeltaSinceLastSend = Time.time - manager.MovementSendInterval;
+        float maxSendDelta = lastSend * 10;
+        // send update - no more frequently than once per second
+        if (timeDeltaSinceLastSend > lastSend)
+        {
+            bool hasMoved = (lastPos != transform.position || lastRot != transform.rotation);            
+            if (hasMoved || (timeDeltaSinceLastSend > maxSendDelta))
+            {
+                float delta = Mathf.Abs(Vector3.Magnitude(lastRot.eulerAngles - transform.rotation.eulerAngles));
+                shouldSendUpdate = delta > threshold;
+                if (shouldSendUpdate)
+                {
+                    Debug.Log(delta);
+                }
+            }
+        }
+        return shouldSendUpdate;
+        
+    }
+    public void GetCameraRotationAndUpdatePin(bool sendUpdate = true)
     {
         if (sceneName == SimulationConstants.SCENE_HORIZON)
         {
@@ -75,11 +94,11 @@ public class PlayerMovement : MonoBehaviour
 
             if (manager.LocalPlayerLookDirection != cameraRotation)
             {
-                if (Time.time - manager.MovementSendInterval > lastSend)
-                {
-                    CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
+                if (sendUpdate && Time.time - manager.MovementSendInterval > lastSend)
+                {                    
                     manager.LocalPlayerLookDirection = cameraRotation;
-                    
+
+                    CCDebug.Log("Sending updated pin", LogLevel.Verbose, LogMessageCategory.Networking);
                     SimulationEvents.Instance.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
                     lastSend = Time.time;
                 }
