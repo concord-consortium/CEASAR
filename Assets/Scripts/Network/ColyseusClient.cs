@@ -146,21 +146,21 @@ public class ColyseusClient : MonoBehaviour
             {
                 if (message.updateType == NetworkMessageType.DeleteAnnotation.ToString())
                 {
-                    networkController.HandleAnnotationDelete(getPlayer(message.playerId), message.metadata);
+                    networkController.HandleAnnotationDelete(GetPlayerById(message.playerId), message.metadata);
                 }
                 else
                 {
-                    networkController.HandleNetworkInteraction(getPlayer(message.playerId), message.updateType);
+                    networkController.HandleNetworkInteraction(GetPlayerById(message.playerId), message.updateType);
                 }
             }
         });
     }
-
-    NetworkPlayer getPlayer(string playerId)
+    
+    public NetworkPlayer GetPlayerById(string playerId)
     {
-        if (players.ContainsKey(playerId))
+        if (players != null && players.ContainsKey(playerId))
         {
-            return players.Values.First(p => p.id == playerId);
+            return players[playerId];
         }
         else return null;
     }
@@ -187,15 +187,6 @@ public class ColyseusClient : MonoBehaviour
         CCDebug.Log("closing connection");
         await room.Leave(true);
         room = null;
-    }
-
-    public NetworkPlayer GetPlayerById(string username)
-    {
-        if (players != null && players.ContainsKey(username))
-        {
-            return players[username];
-        }
-        else return null;
     }
 
     void OnStateChangeHandler (RoomState state, bool isFirstState)
