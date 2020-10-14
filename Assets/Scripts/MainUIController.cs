@@ -787,6 +787,7 @@ public class MainUIController : MonoBehaviour
                 northPin.transform.position = new Vector3(0, 0.1f, 0);
                 northPin.transform.localRotation = Quaternion.Euler(0, manager.LocalPlayerLookDirection.y, 0);
                 hasSetNorthPin = true;
+                SimulationEvents.Instance.PlayerNorthPin.Invoke(manager.LocalPlayerLookDirection.y);
                 DontDestroyOnLoad(northPin);
             }
         }

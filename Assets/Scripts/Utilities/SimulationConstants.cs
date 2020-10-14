@@ -105,6 +105,7 @@ public static class SimulationConstants
     public static readonly string LOG_EVENT_ANNOTATION_CLEARED = "Annotation Cleared";
     public static readonly string LOG_EVENT_PUSHPIN_SELECTED = "PushPin Selected";
     public static readonly string LOG_EVENT_PUSHPIN_UPDATED = "PushPin Updated";
+    public static readonly string LOG_EVENT_NORTHPIN_UPDATED = "Player North Pin Updated";
     public static readonly string LOG_EVENT_DRAWMODE_STARTED = "DrawMode Started";
     public static readonly string LOG_EVENT_DRAWMODE_ENDED = "DrawMode Ended";
     public static readonly string LOG_EVENT_SIM_TIME_CHANGED = "Simulation Time Changed";

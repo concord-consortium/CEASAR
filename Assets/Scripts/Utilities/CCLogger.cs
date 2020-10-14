@@ -32,6 +32,7 @@ public class CCLogger
     public string selectedObject;
     public string selectedStar;
     public string crashSite;
+    public string northPinDirection;
     private static CCLogger instance;
 
     // Singleton Access
@@ -84,6 +85,7 @@ public class CCLogger
         lastSimulationTime = "";
         lastHeading = "";
         lastCompassHeading = "";
+        northPinDirection = "";
     }
 
     // Add Simulation state to the Logging event for context.
@@ -103,7 +105,7 @@ public class CCLogger
         lastCompassHeading = Utils.CalcCompassOrdinal(manager.LocalPlayerLookDirection.y);
         lastSimulationTime = manager.CurrentSimulationTime.ToString();
         activity = CalcActivityName();
-
+        northPinDirection = manager.PlayerNorthPinDirection.ToString();
 
         if (manager.CurrentLocationName != null && manager.CurrentLocationName.Length > 0)
         {
@@ -138,6 +140,7 @@ public class CCLogger
         eventDispatcher.AnnotationClear.AddListener(AnnotationClear);
         eventDispatcher.PushPinSelected.AddListener(PushPinSelected);
         eventDispatcher.PushPinUpdated.AddListener(PushPinUpdated);
+        eventDispatcher.PlayerNorthPin.AddListener(PlayerNorthPinUpdated);
         eventDispatcher.DrawMode.AddListener(DrawMode);
         eventDispatcher.SimulationTimeChanged.AddListener(SimulationTimeChanged);
         eventDispatcher.SnapshotCreated.AddListener(SnapshotCreated);
@@ -156,6 +159,7 @@ public class CCLogger
         eventDispatcher.AnnotationClear.RemoveListener(AnnotationClear);
         eventDispatcher.PushPinSelected.RemoveListener(PushPinSelected);
         eventDispatcher.PushPinUpdated.RemoveListener(PushPinUpdated);
+        eventDispatcher.PlayerNorthPin.RemoveListener(PlayerNorthPinUpdated);
         eventDispatcher.DrawMode.RemoveListener(DrawMode);
         eventDispatcher.SimulationTimeChanged.RemoveListener(SimulationTimeChanged);
         eventDispatcher.SnapshotCreated.RemoveListener(SnapshotCreated);
@@ -212,6 +216,12 @@ public class CCLogger
         lastHeading = rotation.ToString();
         string msg = $"Pushpin Updated: {pin.ToString()}, {rotation.ToString()}";
         _logAsync(LOG_EVENT_PUSHPIN_UPDATED, msg);
+    }
+
+    private void PlayerNorthPinUpdated(float pinDirection)
+    {
+        string msg = $"Positioned the North Pin: {pinDirection.ToString()}";
+        _logAsync(LOG_EVENT_NORTHPIN_UPDATED, msg);
     }
 
     private void DrawMode(bool isDrawing)
