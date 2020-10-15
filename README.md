@@ -5,15 +5,16 @@ Traditional ways of learning about the stars and motions of the sun, moon, and p
 
 ## Project Configuration
 
-Project uses Unity 2019.2.13f1 and is built using the Unity Cloud Build feature. AR and VR features are currently in-development. For AR, using the Unity AR Foundation toolkit, enabling builds for both Android and iOS with image targets. Previous experiments used the Vuforia library for this purpose, but due to license restrictions this is no longer used. For VR, the project currently uses the Oculus Quest, and hence the Oculus libraries are included for VR builds.
+Project uses Unity 2020.1.8f1 and is built using the Unity Cloud Build feature. AR and VR features are currently in-development. For AR, this project will use the Hololens2, though this work has not yet been completed. For VR, the project currently uses the Oculus Quest, and hence the Oculus libraries are included for VR builds.
 
-TThe AR and VR experiences are connected to the same multiplayer server as desktop clients, enabling students to collaborate cross-platform and share perspectives on the sky.
+All clients on different platforms connect to the same multiplayer server, enabling students to collaborate cross-platform and share perspectives on the sky.
 
 ## Network Components
 This project relies on a central network server built from [Colyseus](https://github.com/colyseus/colyseus-unity3d) hosted on Heroku for multiplayer functionality (currently early in development). The network server software is available [here](https://github.com/concord-consortium/CEASAR-server)
 
 ## Builds
-Unity Cloud Build is currently used from Master branch for most builds. WebGL builds currently require manual intervention to remove all the Oculus libraries. Even though we don't use the microphone in the project, unused Oculus VR code that assumes access to the microphone will cause builds to fail, so the simple solution is to locally remove Oculus pieces and generate a WebGL build from the required version of the project.
+Unity Cloud Build is currently used from Master branch for most builds. WebGL builds currently require manual intervention to ignore all the Oculus libraries.
+To build for WebGL, in the Unity editor, rename the `Oculus` folder to `Oculus~` to hide the folder from Unity. When the build has completed, the folder name can be changed back.
 
 ## Data Attribution
 Star data sourced from the [HYG Database](https://astronexus.com/hyg)
