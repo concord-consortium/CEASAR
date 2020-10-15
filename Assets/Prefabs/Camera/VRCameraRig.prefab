@@ -164,6 +164,8 @@ MonoBehaviour:
   useRecommendedMSAALevel: 1
   _monoscopic: 0
   enableAdaptiveResolution: 0
+  enableColorGamut: 0
+  colorGamut: 0
   minRenderScale: 0.7
   maxRenderScale: 1
   _headPoseRelativeOffsetRotation: {x: 0, y: 0, z: 0}
@@ -497,7 +499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useLocalRotation: 1
+  useLocalRotation: 0
+  threshold: 10
 --- !u!1 &4680472575867578741
 GameObject:
   m_ObjectHideFlags: 0

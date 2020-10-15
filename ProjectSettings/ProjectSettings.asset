@@ -175,9 +175,10 @@ PlayerSettings:
   applicationIdentifier:
     Android: org.concord.ceasar
     Standalone: com.ConcordConsortium.CEASAR
+    Windows Store Apps: com.ConcordConsortium.CEASAR
   buildNumber: {}
-  AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 25
+  AndroidBundleVersionCode: 2
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 0
   aotOptions: 
