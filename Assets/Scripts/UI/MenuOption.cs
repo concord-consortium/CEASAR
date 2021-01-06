@@ -13,6 +13,7 @@ public class MenuOption : MonoBehaviour
     public string TooltipText;
     public AudioClip ClickSound;
     public Sprite ButtonIcon;
+    public string IconText;
     public UnityEvent OnClick;
 
     [SerializeField] private GameObject buttonText;
@@ -49,6 +50,12 @@ public class MenuOption : MonoBehaviour
                 spriteIcon.SetActive(true);
                 spriteIcon.GetComponent<SpriteRenderer>().sprite = ButtonIcon;
                 textIconCharacter.SetActive(false);
+            }
+            else
+            {
+                textIconCharacter.SetActive(true);
+                textIconCharacter.GetComponent<TMP_Text>().text = IconText;
+                spriteIcon.SetActive(false);
             }
 
             // Interaction handlers may change between platforms. Each handler script needs a public

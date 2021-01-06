@@ -351,11 +351,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 17.9
   m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 14
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -519,6 +519,7 @@ MonoBehaviour:
   TooltipText: Tooltip Text
   ClickSound: {fileID: 8300000, guid: 896b550230a934933a1055c23cb5b0ba, type: 3}
   ButtonIcon: {fileID: 21300000, guid: f743853004adf4a43a8e78ffd38fabd3, type: 3}
+  IconText: 
   OnClick:
     m_PersistentCalls:
       m_Calls:
