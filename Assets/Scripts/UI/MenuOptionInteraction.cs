@@ -2,70 +2,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine.Events;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// A non-VR set of event handlers for regular desktop interaction with the menu
+/// </summary>
 public class MenuOptionInteraction : MonoBehaviour, 
     IPointerEnterHandler, 
     IPointerExitHandler,
     IPointerDownHandler,
     IPointerUpHandler
 {
-    public string DisplayText;
-    public string TooltipText;
-    public AudioClip ClickSound;
-    public UnityEvent OnClick;
-
-    [SerializeField]
-    private Animator buttonAnimator;
-    [SerializeField]
-    private GameObject tooltipObject;
-    
-
-    private void OnEnable()
+    private MenuOption _menuOption;
+    public void Setup(MenuOption menuOption)
     {
-        if (buttonAnimator == null)
-        {
-            buttonAnimator = transform.parent.gameObject.GetComponent<Animator>();
-        }
-
-        if (tooltipObject)
-        {
-            tooltipObject.GetComponent<TMP_Text>().text = TooltipText;
-        }
+        _menuOption = menuOption;
     }
-
+   
     public void OnPointerEnter(PointerEventData eventData)
     {
-        buttonAnimator.SetBool("hover", true);
-        if (tooltipObject) tooltipObject.SetActive(true);
+        _menuOption.Hover(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        buttonAnimator.SetBool("hover", false);
-        
-        if (tooltipObject) tooltipObject.SetActive(false);
+        _menuOption.Hover(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        buttonAnimator.SetBool("click", true);
+        _menuOption.Click(true);
     }
     public void OnPointerUp(PointerEventData eventData)
     {
-        buttonAnimator.SetBool("click", false);
-        OnClick.Invoke();
+        _menuOption.Click(false);
     }
 
-    public void TestButton()
-    {
-        Debug.Log(DisplayText + " " + TooltipText);
-        if (ClickSound)
-        {
-            GetComponent<AudioSource>().PlayOneShot(ClickSound);
-        }
-    }
 
 }
