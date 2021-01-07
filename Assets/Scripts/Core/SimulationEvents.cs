@@ -32,6 +32,7 @@ public class SnapshotCreatedEvent: UnityEvent<Pushpin> { }
 public class SnapshotDeletedEvent: UnityEvent<Pushpin> { }
 public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 public class NetworkConnectionEvent: UnityEvent<bool> { }
+[System.Serializable] public class StarSelectedEvent: UnityEvent<Star> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -52,6 +53,7 @@ public class SimulationEvents
         if (SnapshotLoaded == null) SnapshotLoaded = new SnapshotLoadedEvent();
         if (SnapshotDeleted == null) SnapshotDeleted = new SnapshotDeletedEvent();
         if (NetworkConnection == null) NetworkConnection = new NetworkConnectionEvent();
+        if (StarSelected == null) StarSelected = new StarSelectedEvent();
     }
     private static SimulationEvents instance;
 
@@ -138,4 +140,9 @@ public class SimulationEvents
     /// For monitoring changes in network connection status
     /// </summary>
     public NetworkConnectionEvent NetworkConnection;
+
+    /// <summary>
+    /// For when users select a star
+    /// </summary>
+    public StarSelectedEvent StarSelected;
 }

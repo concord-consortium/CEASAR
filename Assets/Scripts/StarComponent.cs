@@ -91,6 +91,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
                 // update dropdown, if visible
                 mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
+                SimulationEvents.Instance.StarSelected.Invoke(starData);
             }
 
             if (broadcastToNetwork)
