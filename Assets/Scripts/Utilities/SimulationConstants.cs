@@ -75,7 +75,7 @@ public static class SimulationConstants
     public static readonly string[] PANELS_ALWAYS = {PANEL_TITLE, PANEL_TOGGLE, PANEL_SCENESELECTION};
     public static readonly string[] PANELS_STARS = {PANEL_CONSTELLATION, PANEL_VISIBILITY, PANEL_SPHEREMOVEMENT};
     public static readonly string[] PANELS_HORIZON =
-        {PANEL_CURRENTTIME, PANEL_DATETIME, PANEL_DRAWING, PANEL_LOCATION, PANEL_SNAPSHOT, PANEL_NETWORK};
+        {PANEL_CURRENTTIME};
 
     public static readonly string[] PANELS_EARTH = {PANEL_CURRENTTIME, PANEL_LOCATION, PANEL_NETWORK};
 
