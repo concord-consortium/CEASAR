@@ -68,12 +68,6 @@ public class SimulationEvents
     /// </summary>
     public LocationSelectedEvent LocationSelected;
 
-
-    /// <summary>
-    /// Use this to listen for changes to location
-    /// </summary>
-    //public LocationChangeEvent LocationChanged;
-
     /// <summary>
     /// This is where we handle specific annotations drawn in Horizon view
     /// </summary>

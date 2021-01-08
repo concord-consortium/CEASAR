@@ -178,6 +178,11 @@ public class SimulationManager
         return remotePlayers[playerName];
     }
 
+    public Player[] AllRemotePlayers
+    {
+        get { return remotePlayers.Values.ToArray(); }
+    }
+
     private string groupName;
 
     public string GroupName
