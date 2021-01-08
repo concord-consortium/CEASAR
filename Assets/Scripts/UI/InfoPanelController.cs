@@ -20,15 +20,17 @@ public class InfoPanelController : MonoBehaviour
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
         events.PlayerLeft.AddListener(playerListChanged);
+        playerListChanged(manager.LocalUsername);
+        updatePushpinText(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
     }
 
     private void updatePushpinText(Pushpin pin, Vector3 lookDirection)
     {
         StringBuilder details = new StringBuilder();
-        details.Append(pin.SelectedDateTime.ToShortDateString())
+        details.AppendLine(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
-            .Append(pin.SelectedDateTime.ToShortTimeString())
-            .AppendLine(pin.Location.ToDisplayString());
+            .Append(manager.CurrentSimulationTime.ToShortTimeString());
+        details.AppendLine(manager.CurrentLocationName);
         pushPinDetailsText.text = pin.ToString();
     }
     
@@ -52,25 +54,29 @@ public class InfoPanelController : MonoBehaviour
 
     private void playerListChanged(string playerName)
     {
+        // Clear the list
+        foreach (Transform t in networkUserList.transform)
+        {
+            Destroy(t.gameObject);
+        }
+        // add local user
+        addPlayerToList(manager.LocalUsername);
+        
+        // update network players
         foreach (Player p in manager.AllRemotePlayers)
         {
-            GameObject networkUserObj = Instantiate(networkUserPrefab);
-            networkUserObj.transform.parent = networkUserList.transform;
-            networkUserObj.transform.localPosition = Vector3.zero;
-            networkUserObj.transform.localScale = Vector3.one;
-            networkUserObj.GetComponent<TMP_Text>().text = p.Name;
-            networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(p.Name);
+            addPlayerToList(p.Name);
         }
+    }
 
-        for (int i = 0; i < 6; i++)
-        {
-            GameObject networkUserObj = Instantiate(networkUserPrefab);
-            networkUserObj.transform.parent = networkUserList.transform;
-            networkUserObj.transform.localPosition = Vector3.zero;
-            networkUserObj.transform.localScale = Vector3.one;
-            networkUserObj.GetComponent<TMP_Text>().text = manager.LocalUsername + "_" + i;
-            networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(manager.LocalUsername);
-        }
+    private void addPlayerToList(string playerName)
+    {
+        GameObject networkUserObj = Instantiate(networkUserPrefab);
+        networkUserObj.transform.parent = networkUserList.transform;
+        networkUserObj.transform.localPosition = Vector3.zero;
+        networkUserObj.transform.localScale = Vector3.one;
+        networkUserObj.GetComponent<TMP_Text>().text = playerName;
+        networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(playerName);
     }
 
     private void OnDisable()

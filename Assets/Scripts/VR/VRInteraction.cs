@@ -245,17 +245,16 @@ public class VRInteraction : MonoBehaviour
                         // Seems like a crazy way to determine if the UI is in the way, but after multiple attempts at a more
                         // elegant solution, settled on this since it works.
 
-                        if (FindObjectOfType<LaserPointer>().GetComponent<LineRenderer>().enabled)
-
-                        {
+                        //if (FindObjectOfType<LaserPointer>().GetComponent<LineRenderer>().enabled)
+                        //{
                             // Blocked by the UI layer
-                            return;
-                        }
-                        else
-                        {
-                            // allow annotation where the star is
-                            annotationTool.Annotate(laserEndPos);
-                        }
+                            //return;
+                        //}
+                        //else
+                        //{
+                        // allow annotation where the star is
+                        annotationTool.Annotate(laserEndPos);
+                        //}
 
                     }
                 }
