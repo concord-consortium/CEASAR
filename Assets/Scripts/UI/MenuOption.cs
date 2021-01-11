@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,10 @@ public class MenuOption : MonoBehaviour
     public Sprite ButtonIcon;
     public string IconText;
     public UnityEvent OnClick;
+    public bool holdButtonEnabled;
 
+    private bool isHeld = false;
+    
     [SerializeField] private GameObject buttonText;
     [SerializeField] private Animator buttonAnimator;
     [SerializeField] private GameObject tooltipObject;
@@ -64,7 +68,6 @@ public class MenuOption : MonoBehaviour
             // or a hand, etc.
             interactionHandlerObject.SendMessage("Setup", this);
         }
-
     }
 
     public void Hover(bool isHovering)
@@ -86,19 +89,37 @@ public class MenuOption : MonoBehaviour
         if (isClicking)
         {
             buttonAnimator.SetBool("click", true);
+            if (holdButtonEnabled) isHeld = true;
         }
         else
         {
+            if (!isHeld)
+            {
+                playButtonSound();
+            }
+            isHeld = false;
             buttonAnimator.SetBool("click", false);
+            
             OnClick.Invoke();
         }
     }
     public void TestButton()
     {
         Debug.Log(DisplayText + " " + TooltipText);
+    }
+
+    private void playButtonSound()
+    {
         if (ClickSound)
         {
             GetComponent<AudioSource>().PlayOneShot(ClickSound);
+        }
+    }
+    private void Update()
+    {
+        if (isHeld)
+        {
+            OnClick.Invoke();
         }
     }
 }

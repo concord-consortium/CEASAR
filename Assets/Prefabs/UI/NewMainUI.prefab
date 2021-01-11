@@ -425,6 +425,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 116888072}
   m_maskType: 0
+  _SortingLayer: 0
   _SortingLayerID: 712761403
   _SortingOrder: 1
 --- !u!1 &1158416077
@@ -594,6 +595,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1158416079}
   m_maskType: 0
+  _SortingLayer: 0
   _SortingLayerID: 712761403
   _SortingOrder: 1
 --- !u!1 &1256655150
@@ -885,6 +887,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1390345019}
   m_maskType: 0
+  _SortingLayer: 0
   _SortingLayerID: -1925183175
   _SortingOrder: 0
 --- !u!1 &1633411601
@@ -1686,8 +1689,24 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1138278620019608638}
   m_maskType: 0
+  _SortingLayer: 0
   _SortingLayerID: -1925183175
   _SortingOrder: 0
+--- !u!114 &4065120565607174563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924655830052370028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47576ed3048d449e1af161a9c2b731a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraContainer: {fileID: 0}
+  enableControls: 1
+  controlContainer: {fileID: 0}
 --- !u!1 &3749118308378444599
 GameObject:
   m_ObjectHideFlags: 0
@@ -2313,6 +2332,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 8822027177151074488}
   m_maskType: 0
+  _SortingLayer: 0
   _SortingLayerID: 712761403
   _SortingOrder: 1
 --- !u!1 &8142670465594572125
@@ -4649,6 +4669,46 @@ PrefabInstance:
       propertyPath: TooltipText
       value: Camera Up
       objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: holdButtonEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4065120565607174563}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LookUpDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIControlCamera, GameAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338406850557988, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4414338406919502190, guid: df732f0f11572433aa2199385f4062d2,
         type: 3}
       propertyPath: ButtonIcon
@@ -4746,6 +4806,46 @@ PrefabInstance:
       propertyPath: TooltipText
       value: Camera Right
       objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: holdButtonEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4065120565607174563}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LookLeftRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIControlCamera, GameAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407357107046, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
         type: 3}
       propertyPath: ButtonIcon
@@ -4762,6 +4862,46 @@ PrefabInstance:
       propertyPath: TooltipText
       value: Camera Left
       objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: holdButtonEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4065120565607174563}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LookLeftRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIControlCamera, GameAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407809304852, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
         type: 3}
       propertyPath: ButtonIcon
@@ -4777,6 +4917,46 @@ PrefabInstance:
         type: 3}
       propertyPath: TooltipText
       value: Camera Down
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: holdButtonEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4065120565607174563}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LookUpDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIControlCamera, GameAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414338407902415817, guid: df732f0f11572433aa2199385f4062d2,
+        type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df732f0f11572433aa2199385f4062d2, type: 3}
