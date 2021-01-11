@@ -515,7 +515,8 @@ PrefabInstance:
       propertyPath: m_PlaneDistance
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8526940164271635083, guid: 3f7c87f32d2f643fda949ce90473b5d1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3f7c87f32d2f643fda949ce90473b5d1, type: 3}
 --- !u!1 &294856019
 GameObject:
