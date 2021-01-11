@@ -90,31 +90,7 @@ public class MainUIController : MonoBehaviour
 
     private bool hasSetNorthPin = false;
     
-    public bool IsDrawing {
-        get { return isDrawing; }
-        set { 
-            isDrawing = value;
-            if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
-            if (!isDrawing)
-            {
-                AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
-                if (annotationTool)
-                {
-                    annotationTool.EndDrawingMode();
-                }
-            }
-        }
-    }
-
     private bool hideAnnotations = false;
-
-    private bool isPinningLocation = true;
-    public bool IsPinningLocation {
-        get { return isPinningLocation; }
-        set { 
-            isPinningLocation = value;
-        }
-    }
 
     private Dictionary<string, string> buttonPanelLookups;
 
@@ -124,6 +100,8 @@ public class MainUIController : MonoBehaviour
     private float lastSendTime = 0;
     
     private bool hasCompletedSetup = false;
+
+    private MenuController menuController;
     
     private void Awake()
     {
@@ -401,47 +379,16 @@ public class MainUIController : MonoBehaviour
 
     public void ToggleDrawMode()
     {
-        if (!hideAnnotations)
-        {
-            IsDrawing = !IsDrawing;
-            events.DrawMode.Invoke(IsDrawing);
-        }
+        menuController.ToggleDrawMode();
     }
 
     public void HideAnnotations(bool hide)
     {
-        if (hide && isDrawing)
-        {
-            // turn off drawing
-            ToggleDrawMode();
-        }
-        // If we hide annotations, we can't draw til we turn them back on
-        hideAnnotations = hide;
-        SceneLoader loader = FindObjectOfType<SceneLoader>();
-        
-        int layerMaskAnnotations = 19;
-        if (hideAnnotations)
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
-        else
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
+        menuController.HideAnnotations(hide);
     }
     public void JumpToCrashSite()
     {
-        // This is now used to change the view in Horizon mode to your crash site pin
-        Pushpin crashPin = manager.CrashSiteForGroup;
-        if (crashPin == null) crashPin = UserRecord.GroupPins[manager.GroupName];
-        manager.JumpToPin(crashPin);
-        SimulationEvents.Instance.PushPinSelected.Invoke(crashPin);
-        if (SceneManager.GetActiveScene().name != "Horizon")
-        {
-            SceneManager.LoadScene("Horizon");
-        }
+        menuController.JumpToCrashSite();
     }
     public void ChangeYear(float newYear)
     {

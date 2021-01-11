@@ -231,4 +231,14 @@ public class MenuController : MonoBehaviour
             }
         }
     }
+    
+    public void ChangeStarQuantity(float newVal)
+    {
+        if (dataController)
+        {
+            if (newVal > 0) dataController.ShowMoreStars();
+            else dataController.ShowFewerStars();
+        }
+        
+    }
 }

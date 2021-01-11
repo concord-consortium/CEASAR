@@ -36,7 +36,7 @@ public class VRInteraction : MonoBehaviour
     float activeLaserWidth = 0.02f;
     float inactiveLaserWidth = 0.01f;
     GameObject mainUI;
-    MainUIController mainUIController;
+    MenuController menuController;
     GameObject networkUI;
 
     GameObject earthModel;
@@ -121,7 +121,7 @@ public class VRInteraction : MonoBehaviour
             updateLaser(false);
             // Next, detect if the user is holding down the Interact button also
 
-            if (mainUIController == null) mainUIController = FindObjectOfType<MainUIController>();
+            if (menuController == null) menuController = FindObjectOfType<MenuController>();
 
             // Raycast, then if we hit the Earth or a star we can show the interaction
             ray = new Ray(laserStartPos, forwardDirection);
@@ -140,7 +140,7 @@ public class VRInteraction : MonoBehaviour
                         Collider c = hit.collider;
                         if (c is SphereCollider)
                         {
-                            if (mainUIController.IsPinningLocation)
+                            if (menuController.IsPinningLocation)
                             {
                                 interactionController.SetEarthLocationPin(hit.point);
                             }
@@ -186,7 +186,7 @@ public class VRInteraction : MonoBehaviour
                     if (interactionTrigger())
                     {
                         hapticFeedback();
-                        if (mainUIController.IsDrawing && annotationTool != null)
+                        if (menuController.IsDrawing && annotationTool != null)
                         {
                             // allow annotation where the star is
                             annotationTool.Annotate(laserEndPos);
@@ -212,7 +212,7 @@ public class VRInteraction : MonoBehaviour
                             hapticFeedback();
                         }
                         currentLine = nextLine;
-                        if (!mainUIController.IsDrawing)
+                        if (!menuController.IsDrawing)
                         {
                             // When we're not drawing we can highlight and delete annotations
                             currentLine.Highlight(true);
@@ -240,7 +240,7 @@ public class VRInteraction : MonoBehaviour
 
                 if (interactionTrigger())
                 {
-                    if (mainUIController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
+                    if (menuController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
                     {
                         // Seems like a crazy way to determine if the UI is in the way, but after multiple attempts at a more
                         // elegant solution, settled on this since it works.

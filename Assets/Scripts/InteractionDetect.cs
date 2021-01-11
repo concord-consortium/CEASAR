@@ -15,7 +15,7 @@ public class InteractionDetect : MonoBehaviour
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
-    MainUIController mainUIController;
+    MenuController mainUIController;
     private PushpinComponent lastPin;
     
     // Start is called before the first frame update
@@ -26,7 +26,7 @@ public class InteractionDetect : MonoBehaviour
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         manager = SimulationManager.Instance;
         interactionController = FindObjectOfType<InteractionController>();
-        mainUIController = FindObjectOfType<MainUIController>();
+        mainUIController = FindObjectOfType<MenuController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
     }
 
