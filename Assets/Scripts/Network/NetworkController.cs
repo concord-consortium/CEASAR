@@ -23,7 +23,6 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
-    public NetworkUI networkUI;
     private ServerRecord _selectedNetwork = ServerList.Web;
 
     SimulationManager manager;
@@ -38,9 +37,11 @@ public class NetworkController : MonoBehaviour
         get { return colyseusClient != null && colyseusClient.IsConnecting; }
     }
 
+    private string _serverStatusMessage = "";
     public string ServerStatusMessage
     {
-        set { networkUI.ConnectionStatusText = value; }
+        set { _serverStatusMessage = value; }
+        get { return _serverStatusMessage; }
     }
 
     public bool devMode = false;
@@ -55,8 +56,6 @@ public class NetworkController : MonoBehaviour
     public void Setup()
     {
         FindDependencies();
-        networkUI.Username = manager.LocalUsername;
-        networkUI.SetDevMode = devMode;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         SimulationEvents.Instance.NetworkConnection.AddListener(OnConnectedToServer);
@@ -98,7 +97,6 @@ public class NetworkController : MonoBehaviour
     {
         manager = SimulationManager.Instance;
         colyseusClient = GetComponent<ColyseusClient>();
-        networkUI = FindObjectOfType<NetworkUI>();
         colyseusClient = GetComponent<ColyseusClient>();
     }
 
@@ -109,7 +107,7 @@ public class NetworkController : MonoBehaviour
         if (_isConnected != IsConnected)
         {
             _isConnected = IsConnected;
-            RefreshUI();
+            SimulationEvents.Instance.NetworkUpdate.Invoke(IsConnected);
         }
     }
 
@@ -117,20 +115,14 @@ public class NetworkController : MonoBehaviour
     {
         if (active)
         {
-            RefreshUI();
+            //RefreshUI();
         }
     }
 
     public void RefreshUI()
     {
         // refresh connection status on hide/show and on scene change
-        networkUI = FindObjectOfType<NetworkUI>();
-        if (networkUI)
-        {
-            networkUI.ConnectedStatusUpdate(IsConnected);
-            updatePlayerList();
-        }
-
+        SimulationEvents.Instance.NetworkUpdate.Invoke(IsConnected);
     }
 
 
@@ -228,13 +220,6 @@ public class NetworkController : MonoBehaviour
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCDebug.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
-
-        if (devMode)
-        {
-            networkUI.DebugMessage = listOfPlayersForDebug;
-        }
-
-        networkUI.Username = manager.LocalUsername;
     }
 
     public void OnPlayerAdd(NetworkPlayer networkPlayer)

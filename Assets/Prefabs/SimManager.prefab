@@ -49,7 +49,7 @@ MonoBehaviour:
     type: 3}
   celestialSpherePrefab: {fileID: 3593076565269543302, guid: 37233d25d9339419abd3bbacedde00bc,
     type: 3}
-  mainUIPrefab: {fileID: 2724144226800310059, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+  mainUIPrefab: {fileID: 4405461873502054170, guid: 3f7c87f32d2f643fda949ce90473b5d1,
     type: 3}
   starMaterial: {fileID: 2100000, guid: 47e79cbb5bb264818ad75173c0ceffdb, type: 2}
   maxStars: 10000

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
@@ -28,7 +29,24 @@ public class MenuController : MonoBehaviour
     private GameObject annotationsObject;
     private bool hideAnnotations = false;
     private bool hasSetNorthPin = false;
+    private ConstellationDropdown _constellationDropdown;
+    private CityDropdown _cityDropdown;
+    private SnapGrid _snapshotGrid;
+    
     public GameObject drawModeIndicator;
+    [SerializeField] private GameObject menuContainerObject;
+    [SerializeField] private TMP_Text showHideMenuToggle;
+    [SerializeField] private Canvas _interactionCanvas;
+    private string _menuShowIcon = "≡";
+    private string _menuHideIcon = "X";
+    private bool showMainMenu = true;
+    public void ToggleMainMenu()
+    {
+        showMainMenu = !showMainMenu;
+        menuContainerObject.SetActive(showMainMenu);
+        if (showMainMenu) showHideMenuToggle.text = _menuHideIcon;
+        else showHideMenuToggle.text = _menuShowIcon;
+    }
     private bool isDrawing = false;
     public bool IsDrawing {
         get { return isDrawing; }
@@ -53,6 +71,55 @@ public class MenuController : MonoBehaviour
             isPinningLocation = value;
         }
     }
+
+    private bool _hasCompletedSetup = false;
+
+    private void OnEnable()
+    {
+        if (!_interactionCanvas) _interactionCanvas = transform.parent.GetComponent<Canvas>();
+    }
+
+    private void Awake()
+    {
+        // DontDestroyOnLoad(this.transform.root.gameObject);
+    }
+    private void Start()
+    {
+        // Should only happen once, but just in case
+        if (!_hasCompletedSetup)
+        {
+            Init();
+            _hasCompletedSetup = true;
+        }
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ClearStarSelection();
+        HideNorthPin();
+        HideAnnotations(scene.name != SimulationConstants.SCENE_HORIZON);
+    }
+    
+    void OnDisable()
+    {
+        events.PushPinSelected.RemoveListener(updateOnPinSelected);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void Init()
+    {
+        // Set camera mode (will need to change for VR)
+        #if UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBGL || UNITY_EDITOR
+        Camera cam = Camera.main;
+        _interactionCanvas.worldCamera = cam;
+        _interactionCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        _interactionCanvas.planeDistance = 1;
+        #endif
+        
+        snapshotsController = GetComponent<SnapshotsController>();
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    
     public void ToggleDrawMode()
     {
         if (!hideAnnotations)
@@ -239,6 +306,27 @@ public class MenuController : MonoBehaviour
             if (newVal > 0) dataController.ShowMoreStars();
             else dataController.ShowFewerStars();
         }
-        
+    }
+    
+    public void LoadEarthScene()
+    {
+        if (_currentSceneName != SimulationConstants.SCENE_EARTH)
+        {
+            SceneManager.LoadScene(SimulationConstants.SCENE_EARTH);
+        }
+    }
+    public void LoadHorizonScene()
+    {
+        if (_currentSceneName != SimulationConstants.SCENE_HORIZON)
+        {
+            SceneManager.LoadScene(SimulationConstants.SCENE_HORIZON);
+        }
+    }
+    public void LoadStarsScene()
+    {
+        if (_currentSceneName != SimulationConstants.SCENE_STARS)
+        {
+            SceneManager.LoadScene(SimulationConstants.SCENE_STARS);
+        }
     }
 }

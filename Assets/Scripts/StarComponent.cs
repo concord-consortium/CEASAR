@@ -73,25 +73,16 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         if (!menuController.IsDrawing)
         {
             CCDebug.Log("Selected star: " + starData.uniqueId, LogLevel.Info, LogMessageCategory.Interaction);
-            MainUIController mainUIController = FindObjectOfType<MainUIController>();
             if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
-            if (mainUIController && mainUIController.starInfoPanel)
+            
+            if (constellationsController)
             {
-                if (constellationsController)
-                {
-                    constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
-                }
-
-                // make sure it's visible
-                SimulationManager.Instance.CurrentlySelectedStar = this;
-                mainUIController.ShowPanel("StarInfoPanel");
-
-                mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
-
-                // update dropdown, if visible
-                mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
-                
+                constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
             }
+
+            // make sure it's visible
+            SimulationManager.Instance.CurrentlySelectedStar = this;
+            
             SimulationEvents.Instance.StarSelected.Invoke(starData);
             if (broadcastToNetwork)
             {

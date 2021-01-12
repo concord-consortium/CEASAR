@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SnapItem : MonoBehaviour
 {
-    public TextMeshProUGUI snapItemText;
+    public TMP_Text snapItemText;
     [SerializeField]
     private Pushpin snapshot;
 
@@ -18,10 +18,10 @@ public class SnapItem : MonoBehaviour
     void Start()
     {
         mainUIController = FindObjectOfType<MainUIController>();
-        Button pb = pinButton.GetComponent<Button>();
-        pb.onClick.AddListener( () => RestoreSnapItem());
-        Button db = deleteButton.GetComponent<Button>();
-        db.onClick.AddListener(() => DeleteSnapItem());
+        MenuOption pb = pinButton.GetComponent<MenuOption>();
+        pb.OnClick.AddListener( () => RestoreSnapItem());
+        MenuOption db = deleteButton.GetComponent<MenuOption>();
+        db.OnClick.AddListener(() => DeleteSnapItem());
     }
 
     public void SetSnapPin(Pushpin pin)

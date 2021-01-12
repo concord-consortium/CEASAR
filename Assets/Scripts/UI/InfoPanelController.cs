@@ -14,12 +14,23 @@ public class InfoPanelController : MonoBehaviour
     public TMP_Text constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
+    
+    [SerializeField] private Canvas _informationCanvas;
     private void OnEnable()
     {
+        if (!_informationCanvas) _informationCanvas = transform.parent.GetComponent<Canvas>();
+        // Set camera mode (will need to change for VR)
+#if UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBGL || UNITY_EDITOR
+        Camera cam = Camera.main;
+        _informationCanvas.worldCamera = cam;
+        _informationCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        _informationCanvas.planeDistance = 1;
+#endif
         events.PushPinUpdated.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
         events.PlayerLeft.AddListener(playerListChanged);
+        events.NetworkConnection.AddListener(connectionStatusUpdated);
         playerListChanged(manager.LocalUsername);
         updatePushpinText(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
     }
@@ -52,6 +63,11 @@ public class InfoPanelController : MonoBehaviour
         constellationText.text =  description.ToString();
     }
 
+    private void connectionStatusUpdated(bool isConnected)
+    {
+        CCDebug.Log("Connection Status: " + isConnected, LogLevel.Info, LogMessageCategory.Networking);
+        // playerListChanged(manager.LocalUsername);
+    }
     private void playerListChanged(string playerName)
     {
         // Clear the list
@@ -79,20 +95,22 @@ public class InfoPanelController : MonoBehaviour
         networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(playerName);
     }
 
-    private void OnDisable()
+    private void removeAllListeners()
     {
         events.PushPinUpdated.RemoveListener(updatePushpinText);
         events.StarSelected.RemoveListener(starSelectedText);
         events.PlayerJoined.RemoveListener(playerListChanged);
         events.PlayerLeft.RemoveListener(playerListChanged);
+        events.NetworkConnection.RemoveListener(connectionStatusUpdated);
+    }
+    private void OnDisable()
+    {
+        removeAllListeners();
     }
 
     private void OnDestroy()
     {
-        events.PushPinUpdated.RemoveListener(updatePushpinText);
-        events.StarSelected.RemoveListener(starSelectedText);
-        events.PlayerJoined.RemoveListener(playerListChanged);
-        events.PlayerLeft.RemoveListener(playerListChanged);
+       removeAllListeners();
     }
     
 }
