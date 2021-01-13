@@ -10,22 +10,13 @@ public class InfoPanelController : MonoBehaviour
     private SimulationManager manager { get { return SimulationManager.Instance; } }
     private SimulationEvents events { get { return SimulationEvents.Instance; } }
     
-    public TMP_Text pushPinDetailsText;
-    public TMP_Text constellationText;
+    public GameObject pushPinDetailsText;
+    public GameObject constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
     
-    [SerializeField] private Canvas _informationCanvas;
     private void OnEnable()
     {
-        if (!_informationCanvas) _informationCanvas = transform.parent.GetComponent<Canvas>();
-        // Set camera mode (will need to change for VR)
-#if UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBGL || UNITY_EDITOR
-        Camera cam = Camera.main;
-        _informationCanvas.worldCamera = cam;
-        _informationCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        _informationCanvas.planeDistance = 1;
-#endif
         events.PushPinUpdated.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
@@ -42,7 +33,9 @@ public class InfoPanelController : MonoBehaviour
             .Append(" ")
             .Append(manager.CurrentSimulationTime.ToShortTimeString());
         details.AppendLine(manager.CurrentLocationName);
-        pushPinDetailsText.text = pin.ToString();
+        
+        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(pin.ToString());   
+        
     }
     
     private void starSelectedText(Star starData)
@@ -60,7 +53,7 @@ public class InfoPanelController : MonoBehaviour
             .Append(altAz.Azimuth.ToString("F2"))
             .Append("  Mag: ")
             .Append(starData.Mag.ToString());
-        constellationText.text =  description.ToString();
+        constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
     }
 
     private void connectionStatusUpdated(bool isConnected)

@@ -402,12 +402,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: mainUIPrefab
-      value: 
-      objectReference: {fileID: 4405461873502054170, guid: 3f7c87f32d2f643fda949ce90473b5d1,
-        type: 3}
-    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
       propertyPath: showPoleLine
       value: 0
       objectReference: {fileID: 0}

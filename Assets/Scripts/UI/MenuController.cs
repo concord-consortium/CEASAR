@@ -29,14 +29,11 @@ public class MenuController : MonoBehaviour
     private GameObject annotationsObject;
     private bool hideAnnotations = false;
     private bool hasSetNorthPin = false;
-    private ConstellationDropdown _constellationDropdown;
-    private CityDropdown _cityDropdown;
     private SnapGrid _snapshotGrid;
     
     public GameObject drawModeIndicator;
     [SerializeField] private GameObject menuContainerObject;
-    [SerializeField] private TMP_Text showHideMenuToggle;
-    [SerializeField] private Canvas _interactionCanvas;
+    [SerializeField] private GameObject showHideMenuToggle;
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
@@ -44,8 +41,12 @@ public class MenuController : MonoBehaviour
     {
         showMainMenu = !showMainMenu;
         menuContainerObject.SetActive(showMainMenu);
-        if (showMainMenu) showHideMenuToggle.text = _menuHideIcon;
-        else showHideMenuToggle.text = _menuShowIcon;
+        if (showMainMenu)
+        {
+            // use SendMessage because text component on canvas ui vs world ui is different
+            showHideMenuToggle.SendMessage("SetText", _menuHideIcon);
+        }
+        else showHideMenuToggle.SendMessage("SetText", _menuShowIcon);
     }
     private bool isDrawing = false;
     public bool IsDrawing {
@@ -73,12 +74,7 @@ public class MenuController : MonoBehaviour
     }
 
     private bool _hasCompletedSetup = false;
-
-    private void OnEnable()
-    {
-        if (!_interactionCanvas) _interactionCanvas = transform.parent.GetComponent<Canvas>();
-    }
-
+    
     private void Awake()
     {
         // DontDestroyOnLoad(this.transform.root.gameObject);
@@ -107,14 +103,6 @@ public class MenuController : MonoBehaviour
 
     void Init()
     {
-        // Set camera mode (will need to change for VR)
-        #if UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBGL || UNITY_EDITOR
-        Camera cam = Camera.main;
-        _interactionCanvas.worldCamera = cam;
-        _interactionCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        _interactionCanvas.planeDistance = 1;
-        #endif
-        
         snapshotsController = GetComponent<SnapshotsController>();
         
         SceneManager.sceneLoaded += OnSceneLoaded;

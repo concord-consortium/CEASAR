@@ -3,35 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SelectionListMode { Constellation, Location, Snapshots }
+public enum SelectionListMode { Constellation = 0, Location = 1, Snapshots = 2 }
 public class SelectionPanelController : MonoBehaviour
 {
     private ConstellationDropdown _constellationDropdown;
-    private CityDropdown _cityDropdown;
+    private CityList _cityList;
     private SnapGrid _snapshotGrid;
-    
-    [SerializeField] private Canvas _selectionCanvas;
 
     [SerializeField] private GameObject selectionConstellation;
     [SerializeField] private GameObject selectionLocation;
     [SerializeField] private GameObject selectionSnapshots;
     private void OnEnable()
     {
-        
-        if (!_selectionCanvas) _selectionCanvas = transform.parent.GetComponent<Canvas>();
-        // Set camera mode (will need to change for VR)
-#if UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_WEBGL || UNITY_EDITOR
-        Camera cam = Camera.main;
-        _selectionCanvas.worldCamera = cam;
-        _selectionCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        _selectionCanvas.planeDistance = 1;
-#endif
         _constellationDropdown = FindObjectOfType<ConstellationDropdown>();
-        _cityDropdown = FindObjectOfType<CityDropdown>();
+        _cityList = FindObjectOfType<CityList>();
         _snapshotGrid = FindObjectOfType<SnapGrid>();
-        if (_cityDropdown)
+        if (_cityList)
         {
-            _cityDropdown.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
+            _cityList.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
         }
         if (_constellationDropdown)
         {
