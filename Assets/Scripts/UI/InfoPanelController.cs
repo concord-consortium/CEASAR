@@ -81,7 +81,7 @@ public class InfoPanelController : MonoBehaviour
     private void addPlayerToList(string playerName)
     {
         GameObject networkUserObj = Instantiate(networkUserPrefab);
-        networkUserObj.transform.parent = networkUserList.transform;
+        networkUserObj.transform.SetParent(networkUserList.transform, false);
         networkUserObj.transform.localPosition = Vector3.zero;
         networkUserObj.transform.localScale = Vector3.one;
         networkUserObj.GetComponent<TMP_Text>().text = playerName;
