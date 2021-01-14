@@ -8,6 +8,7 @@ public class SelectionPanelController : MonoBehaviour
 {
     private ConstellationDropdown _constellationDropdown;
     private CityList _cityList;
+    private CityDropdown _cityDropdown;
     private SnapGrid _snapshotGrid;
 
     [SerializeField] private GameObject selectionConstellation;
@@ -17,10 +18,18 @@ public class SelectionPanelController : MonoBehaviour
     {
         _constellationDropdown = FindObjectOfType<ConstellationDropdown>();
         _cityList = FindObjectOfType<CityList>();
+        _cityDropdown = FindObjectOfType<CityDropdown>();
         _snapshotGrid = FindObjectOfType<SnapGrid>();
         if (_cityList)
         {
+            Debug.Log("found city list");
             _cityList.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
+        }
+
+        if (_cityDropdown)
+        {
+            Debug.Log("found city drop down");
+            _cityDropdown.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
         }
         if (_constellationDropdown)
         {

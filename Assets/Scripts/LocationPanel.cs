@@ -8,17 +8,16 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class LocationPanel : MonoBehaviour
 {
-    // public bool showLocationCoordinates = true;
     public TextMeshProUGUI latLongInfo;
     
     private SimulationManager manager { get { return SimulationManager.Instance;}}
     void Start()
     {
         UpdateLocationPanel(manager.LocalPlayerPin);
-        // latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
     }
     public void UpdateLocationPanel(Pushpin pin)
     {
+        if (!latLongInfo) latLongInfo = GetComponent<TextMeshProUGUI>();
         // HIDE IF WE ARE AT CRASH SITE! The Pushpin itself hides coordinates for all crash sites that are a match,
         // but for our current crash site (by group) we display custom text.
         if (pin.Location == manager.CrashSiteForGroup.Location)

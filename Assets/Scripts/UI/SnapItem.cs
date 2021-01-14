@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 using UnityEngine.UI;
 
 public class SnapItem : MonoBehaviour
@@ -14,14 +15,16 @@ public class SnapItem : MonoBehaviour
     public GameObject deleteButton;
 
     private MainUIController mainUIController;
+    private MenuController _menuController;
 
     void Start()
     {
         mainUIController = FindObjectOfType<MainUIController>();
-        MenuOption pb = pinButton.GetComponent<MenuOption>();
-        pb.OnClick.AddListener( () => RestoreSnapItem());
-        MenuOption db = deleteButton.GetComponent<MenuOption>();
-        db.OnClick.AddListener(() => DeleteSnapItem());
+        _menuController = FindObjectOfType<MenuController>();
+        Button pb = pinButton.GetComponent<Button>();
+        pb.onClick.AddListener( () => RestoreSnapItem());
+        Button db = deleteButton.GetComponent<Button>();
+        db.onClick.AddListener(() => DeleteSnapItem());
     }
 
     public void SetSnapPin(Pushpin pin)
@@ -30,7 +33,8 @@ public class SnapItem : MonoBehaviour
     }
     public void DeleteSnapItem()
     {
-        mainUIController.DeleteSnapshot(this.snapshot);
+        if (mainUIController) mainUIController.DeleteSnapshot(this.snapshot);
+        else if (_menuController) _menuController.DeleteSnapshot(this.snapshot);
         Destroy(this.gameObject);
     }
 
@@ -38,6 +42,7 @@ public class SnapItem : MonoBehaviour
     {
         CCDebug.Log($"Restoring my snapshot {this.snapshot}", LogLevel.Info, LogMessageCategory.Event);
         Pushpin p = new Pushpin(this.snapshot.SelectedDateTime, this.snapshot.Location, this.snapshot.LocationName);
-        mainUIController.RestoreSnapshot(p);
+        if (mainUIController) mainUIController.RestoreSnapshot(p);
+        else if (_menuController) _menuController.RestoreSnapshot(p);
     }
 }

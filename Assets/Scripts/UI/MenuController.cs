@@ -104,7 +104,7 @@ public class MenuController : MonoBehaviour
     void Init()
     {
         snapshotsController = GetComponent<SnapshotsController>();
-        
+        snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     
