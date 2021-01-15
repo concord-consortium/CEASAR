@@ -7,6 +7,7 @@ public enum SelectionListMode { Constellation = 0, Location = 1, Snapshots = 2 }
 public class SelectionPanelController : MonoBehaviour
 {
     private ConstellationDropdown _constellationDropdown;
+    private ConstellationList _constellationList;
     private CityList _cityList;
     private CityDropdown _cityDropdown;
     private SnapGrid _snapshotGrid;
@@ -17,6 +18,7 @@ public class SelectionPanelController : MonoBehaviour
     private void OnEnable()
     {
         _constellationDropdown = FindObjectOfType<ConstellationDropdown>();
+        _constellationList = FindObjectOfType<ConstellationList>();
         _cityList = FindObjectOfType<CityList>();
         _cityDropdown = FindObjectOfType<CityDropdown>();
         _snapshotGrid = FindObjectOfType<SnapGrid>();
@@ -34,6 +36,11 @@ public class SelectionPanelController : MonoBehaviour
         if (_constellationDropdown)
         {
             _constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, "all");
+        }
+
+        if (_constellationList)
+        {
+            _constellationList.InitConstellations(DataManager.Instance.ConstellationFullNames, "all");
         }
     }
 

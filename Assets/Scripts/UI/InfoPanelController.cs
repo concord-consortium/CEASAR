@@ -40,20 +40,31 @@ public class InfoPanelController : MonoBehaviour
     
     private void starSelectedText(Star starData)
     {
-        double longitudeTimeOffset = manager.CurrentLatLng.Longitude/15d;
-        double lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
-        AltAz altAz = Utils.CalculateAltitudeAzimuthForStar(starData.RA, starData.Dec,
-            lst, manager.CurrentLatLng.Latitude);
         StringBuilder description = new StringBuilder();
-        description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
-        description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
-        description.Append("Alt/Az: ")
-            .Append(altAz.Altitude.ToString("F2"))
-            .Append(", ")
-            .Append(altAz.Azimuth.ToString("F2"))
-            .Append("  Mag: ")
-            .Append(starData.Mag.ToString());
-        constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
+        if (starData == null)
+        {
+            
+            description.Append("Now showing constellation: ");
+            description.Append(manager.CurrentlySelectedConstellation);
+            constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
+        }
+        else
+        {
+            double longitudeTimeOffset = manager.CurrentLatLng.Longitude/15d;
+            double lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
+            AltAz altAz = Utils.CalculateAltitudeAzimuthForStar(starData.RA, starData.Dec,
+                lst, manager.CurrentLatLng.Latitude);
+            description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
+            description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
+            description.Append("Alt/Az: ")
+                .Append(altAz.Altitude.ToString("F2"))
+                .Append(", ")
+                .Append(altAz.Azimuth.ToString("F2"))
+                .Append("  Mag: ")
+                .Append(starData.Mag.ToString());
+            constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
+        }
+        
     }
 
     private void connectionStatusUpdated(bool isConnected)

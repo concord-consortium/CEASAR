@@ -111,7 +111,7 @@ public class SimulationManager
     public float MovementSendInterval = 1.0f;
     
     public StarComponent CurrentlySelectedStar;
-
+    public string CurrentlySelectedConstellation;
 
     /// <summary>
     /// A shortcut to LocalPlayer.Pin.SelectedDateTime
