@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -11,9 +12,10 @@ public class LocationPanel : MonoBehaviour
     public TextMeshProUGUI latLongInfo;
     
     private SimulationManager manager { get { return SimulationManager.Instance;}}
-    void Start()
+    void OnEnable()
     {
         UpdateLocationPanel(manager.LocalPlayerPin);
+        SimulationEvents.Instance.PushPinSelected.AddListener(UpdateLocationPanel);
     }
     public void UpdateLocationPanel(Pushpin pin)
     {
@@ -30,13 +32,8 @@ public class LocationPanel : MonoBehaviour
         }
     }
 
-    // void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.L))
-    //     {
-    //         showLocationCoordinates = !showLocationCoordinates;
-    //         latLongInfo.enabled = showLocationCoordinates;
-    //     }
-    //
-    // }
+    private void OnDisable()
+    {
+        SimulationEvents.Instance.PushPinSelected.RemoveListener(UpdateLocationPanel);
+    }
 }
