@@ -310,9 +310,11 @@ public class DataController : MonoBehaviour
         if (!string.IsNullOrEmpty(newCity))
         {
             // verify a valid city was entered
-            var matchedCity = dataManager.Cities.Where(c => c.Name == newCity).First();
-            if (matchedCity != null)
+            var matchedCities = dataManager.Cities.Where(c => c.Name == newCity);
+            
+            if (matchedCities.Count() > 0)
             {
+                var matchedCity = matchedCities.First();
                 // check if this is a custom location
                 if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
                 {

@@ -141,6 +141,15 @@ public class SimulationManager
     {
         get { return LocalPlayer.Pin.LocationName; }
     }
+    
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin.LocationNameDetail
+    /// Will hide the name / lat/long of a location if at the crash site
+    /// </summary>
+    public string CurrentLocationDisplayName
+    {
+        get { return LocalPlayer.Pin.LocationNameDetail; }
+    }
 
     /// <summary>
     /// A shortcut to LocalPlayer.Pin

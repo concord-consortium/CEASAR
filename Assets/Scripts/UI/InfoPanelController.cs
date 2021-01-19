@@ -19,24 +19,25 @@ public class InfoPanelController : MonoBehaviour
     
     private void OnEnable()
     {
-        events.PushPinUpdated.AddListener(updatePushpinText);
+        events.PushPinSelected.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
         events.PlayerLeft.AddListener(playerListChanged);
         events.NetworkConnection.AddListener(connectionStatusUpdated);
         playerListChanged(manager.LocalUsername);
-        updatePushpinText(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        updatePushpinText(manager.LocalPlayerPin);
     }
 
-    private void updatePushpinText(Pushpin pin, Vector3 lookDirection)
+    private void updatePushpinText(Pushpin pin)
     {
         StringBuilder details = new StringBuilder();
-        details.AppendLine(manager.CurrentSimulationTime.ToShortDateString())
+        details.Append(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
             .Append(manager.CurrentSimulationTime.ToShortTimeString());
-        details.AppendLine(manager.CurrentLocationName);
+        details.AppendLine();
+        details.Append(manager.CurrentLocationDisplayName);
         
-        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(pin.ToString());   
+        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());   
         
     }
     
@@ -107,7 +108,7 @@ public class InfoPanelController : MonoBehaviour
 
     private void removeAllListeners()
     {
-        events.PushPinUpdated.RemoveListener(updatePushpinText);
+        events.PushPinSelected.RemoveListener(updatePushpinText);
         events.StarSelected.RemoveListener(starSelectedText);
         events.PlayerJoined.RemoveListener(playerListChanged);
         events.PlayerLeft.RemoveListener(playerListChanged);

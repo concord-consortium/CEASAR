@@ -146,6 +146,7 @@ public class MenuController : MonoBehaviour
         Pushpin crashPin = manager.CrashSiteForGroup;
         if (crashPin == null) crashPin = UserRecord.GroupPins[manager.GroupName];
         manager.JumpToPin(crashPin);
+        SimulationEvents.Instance.LocationSelected.Invoke(crashPin.LocationName);
         SimulationEvents.Instance.PushPinSelected.Invoke(crashPin);
         if (SceneManager.GetActiveScene().name != "Horizon")
         {
