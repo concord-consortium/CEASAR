@@ -212,7 +212,7 @@ public class NetworkController : MonoBehaviour
         }
     }
 
-    void updatePlayerList()
+    void _updateDebugPlayerList()
     {
         string listOfPlayersForDebug = "";
         foreach (var p in remotePlayerAvatars.Keys)
@@ -275,7 +275,7 @@ public class NetworkController : MonoBehaviour
             }
             SimulationEvents.Instance.PlayerJoined.Invoke(networkPlayer.username);
         }
-        updatePlayerList();
+        _updateDebugPlayerList();
     }
 
     void updateAvatarForPlayer(NetworkPlayer networkPlayer)
@@ -316,14 +316,19 @@ public class NetworkController : MonoBehaviour
     }
     public void OnPlayerRemove(NetworkPlayer networkPlayer)
     {
-        SimulationEvents.Instance.PlayerLeft.Invoke(networkPlayer.username);
-        SimulationEvents.Instance.AnnotationClear.Invoke(networkPlayer.username);
         // TODO: clear pushpins for player
+        // Clear annotations
+        SimulationEvents.Instance.AnnotationClear.Invoke(networkPlayer.username);
+        // Remove player avatar, if it exists
         GameObject remotePlayerAvatar;
         remotePlayerAvatars.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
         remotePlayerAvatars.Remove(networkPlayer.username);
-        updatePlayerList();
+        // Remove details of the remote player from the manager
+        manager.RemoveRemotePlayer(networkPlayer.username);
+        _updateDebugPlayerList();
+        // Broadcast the event so network player list UI can be updated
+        SimulationEvents.Instance.PlayerLeft.Invoke(networkPlayer.username);
     }
 
     public void OnPlayerChange(NetworkPlayer updatedNetworkPlayer)

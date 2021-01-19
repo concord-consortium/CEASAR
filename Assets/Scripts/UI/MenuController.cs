@@ -317,4 +317,11 @@ public class MenuController : MonoBehaviour
             SceneManager.LoadScene(SimulationConstants.SCENE_STARS);
         }
     }
+    public void QuitApplication()
+    {
+        CCDebug.Log("Quit application called", LogLevel.Warning, LogMessageCategory.UI);
+#if !UNITY_WEBGL && !UNITY_EDITOR
+        Application.Quit();
+#endif
+    }
 }

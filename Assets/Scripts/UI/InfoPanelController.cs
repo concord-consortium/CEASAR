@@ -14,6 +14,8 @@ public class InfoPanelController : MonoBehaviour
     public GameObject constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
+    public GameObject networkStatusText;
+    public GameObject networkGroupText;
     
     private void OnEnable()
     {
@@ -70,13 +72,16 @@ public class InfoPanelController : MonoBehaviour
     private void connectionStatusUpdated(bool isConnected)
     {
         CCDebug.Log("Connection Status: " + isConnected, LogLevel.Info, LogMessageCategory.Networking);
-        // playerListChanged(manager.LocalUsername);
+        string status = isConnected ? "Connected as " + manager.LocalUsername : "Not connected";
+        networkStatusText.GetComponent<TextMeshProUGUI>().SetText(status);
+        networkGroupText.GetComponent<TextMeshProUGUI>().SetText(manager.GroupName);
     }
     private void playerListChanged(string playerName)
     {
         // Clear the list
         foreach (Transform t in networkUserList.transform)
         {
+            Debug.Log("destroying " + t.name);
             Destroy(t.gameObject);
         }
         // add local user
@@ -97,6 +102,7 @@ public class InfoPanelController : MonoBehaviour
         networkUserObj.transform.localScale = Vector3.one;
         networkUserObj.GetComponent<TMP_Text>().text = playerName;
         networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(playerName);
+        networkUserObj.name = playerName;
     }
 
     private void removeAllListeners()

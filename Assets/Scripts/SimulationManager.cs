@@ -169,6 +169,13 @@ public class SimulationManager
             remotePlayers.Add(playerName, p);
         }
     }
+    public void RemoveRemotePlayer(string playerName)
+    {
+        if (remotePlayers.ContainsKey(playerName))
+        {
+            remotePlayers.Remove(playerName);
+        }
+    }
     public Player GetRemotePlayer(string playerName)
     {
         if (!remotePlayers.ContainsKey(playerName))
