@@ -20,44 +20,42 @@ public class ConstellationItem : MonoBehaviour
         gameObject.name = constellationName;
         _constellationName = constellationName;
         constellationLabel.SetText(constellationName);
-        selectButton.onClick.AddListener(() => selectConstellation(_constellationName));
+        selectButton.onClick.AddListener(() => selectThisConstellation());
         _isSelected = selected;
-        
-        setSelectedStatus();
-        SimulationEvents.Instance.StarSelected.AddListener((star) => onStarSelected(star));
-    }
-
-    private void selectConstellation(string constellationName)
-    {
-        bool shouldSelectThisConstellation = constellationName == _constellationName;
-        if (shouldSelectThisConstellation && !_isSelected)
-        {
-            // only change selection and invoke event if this city is the new city to select
-            constellationsController.SelectConstellationByName(constellationName);
-            _isSelected = true;
-        }
-
-        _isSelected = shouldSelectThisConstellation;
-        setSelectedStatus();
-    }
-    
-    private void setSelectedStatus()
-    {
         selectedIcon.SetActive(_isSelected);
+        
+        SimulationEvents.Instance.StarSelected.AddListener((star) => onStarSelected());
+        SimulationEvents.Instance.ConstellationSelected.AddListener((constellationSelectedName) => onSelectConstellation(constellationSelectedName));
     }
 
-    private void onStarSelected(Star star)
+    private void selectThisConstellation()
     {
-        if (star == null)
-        {
-            if (SimulationManager.Instance.CurrentlySelectedConstellation == "all")
-            {
-                selectedIcon.SetActive(true);
-            } else selectedIcon.SetActive(false);
-        }
+        if (SimulationManager.Instance.CurrentlySelectedConstellation == _constellationName) return;
         else
         {
-            selectedIcon.SetActive(star.Constellation == _constellationName);
+            if (!_isSelected)
+            {
+                constellationsController.SelectConstellationByName(_constellationName);
+                _isSelected = true;
+                selectedIcon.SetActive(true);
+            }
         }
+    }
+    private void onSelectConstellation(string cname)
+    {
+        _isSelected = cname == _constellationName;
+        
+        selectedIcon.SetActive(_isSelected || cname == SimulationConstants.CONSTELLATIONS_ALL);
+    }
+    
+    private void onStarSelected()
+    {
+        
+        if (SimulationManager.Instance.CurrentlySelectedConstellation == SimulationConstants.CONSTELLATIONS_ALL ||
+            SimulationManager.Instance.CurrentlySelectedConstellation == _constellationName)
+        {
+            selectedIcon.SetActive(true);
+        } else selectedIcon.SetActive(false);
+        
     }
 }

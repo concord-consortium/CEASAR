@@ -13,19 +13,23 @@ public class ConstellationList : MonoBehaviour
         {
             constellations.Sort();
             allConstellations = new List<string>();
-            allConstellations.Add("all");
-            allConstellations.Add("none");
+            allConstellations.Add(SimulationConstants.CONSTELLATIONS_ALL);
+            allConstellations.Add(SimulationConstants.CONSTELLATIONS_NONE);
             allConstellations.AddRange(constellations);
             
             string[] _constellations = allConstellations.ToArray();
             
             for (int i = 0; i < _constellations.Length; i++)
             {
-                GameObject constellationObject = Instantiate(constellationTextObject);
-                constellationObject.transform.SetParent(contentContainer);
-                constellationObject.transform.localScale = Vector3.one;
-                bool isSelected = currentConstellation == _constellations[i];
-                constellationObject.GetComponent<ConstellationItem>().Init(_constellations[i], isSelected);
+                string c = _constellations[i];
+                if (!string.IsNullOrEmpty(c))
+                {
+                    GameObject constellationObject = Instantiate(constellationTextObject);
+                    constellationObject.transform.SetParent(contentContainer);
+                    constellationObject.transform.localScale = Vector3.one;
+                    bool isSelected = currentConstellation == c;
+                    constellationObject.GetComponent<ConstellationItem>().Init(c, isSelected);
+                }
             }
 
             // cache the list of names

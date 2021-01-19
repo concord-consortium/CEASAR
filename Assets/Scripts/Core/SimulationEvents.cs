@@ -34,6 +34,7 @@ public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 public class NetworkConnectionEvent: UnityEvent<bool> { }
 public class NetworkConnectionUpdateEvent: UnityEvent<bool> { }
 [System.Serializable] public class StarSelectedEvent: UnityEvent<Star> { }
+[System.Serializable] public class ConstellationSelectedEvent: UnityEvent<string> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -56,6 +57,7 @@ public class SimulationEvents
         if (NetworkConnection == null) NetworkConnection = new NetworkConnectionEvent();
         if (NetworkUpdate == null) NetworkUpdate = new NetworkConnectionUpdateEvent();
         if (StarSelected == null) StarSelected = new StarSelectedEvent();
+        if (ConstellationSelected == null) ConstellationSelected = new ConstellationSelectedEvent();
     }
     private static SimulationEvents instance;
 
@@ -144,4 +146,6 @@ public class SimulationEvents
     /// For when users select a star
     /// </summary>
     public StarSelectedEvent StarSelected;
+
+    public ConstellationSelectedEvent ConstellationSelected;
 }

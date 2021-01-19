@@ -82,6 +82,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
             // make sure it's visible
             SimulationManager.Instance.CurrentlySelectedStar = this;
+            SimulationManager.Instance.CurrentlySelectedConstellation = this.starData.ConstellationFullName;
             
             SimulationEvents.Instance.StarSelected.Invoke(starData);
             if (broadcastToNetwork)

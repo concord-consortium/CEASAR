@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum SelectionListMode { Constellation = 0, Location = 1, Snapshots = 2 }
 public class SelectionPanelController : MonoBehaviour
@@ -33,14 +34,17 @@ public class SelectionPanelController : MonoBehaviour
             Debug.Log("found city drop down");
             _cityDropdown.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
         }
+        string initialConstellation =
+            SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ? "all" : "none";
         if (_constellationDropdown)
         {
-            _constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, "all");
+            _constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, initialConstellation);
         }
 
         if (_constellationList)
         {
-            _constellationList.InitConstellations(DataManager.Instance.ConstellationFullNames, "all");
+            
+            _constellationList.InitConstellations(DataManager.Instance.ConstellationFullNames, initialConstellation);
         }
     }
 

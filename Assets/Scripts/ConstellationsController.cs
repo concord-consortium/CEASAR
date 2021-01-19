@@ -95,19 +95,21 @@ public class ConstellationsController : MonoBehaviour
     {
         CCDebug.Log("Selected constellation " + constellationName, LogLevel.Info, LogMessageCategory.Interaction);
         
-            if (constellationName.ToLower() == "all")
+            if (constellationName.ToLower() == SimulationConstants.CONSTELLATIONS_ALL)
             {
                 HighlightAllConstellations(true);
                 manager.CurrentlySelectedStar = null;
-                manager.CurrentlySelectedConstellation = "all";
+                manager.CurrentlySelectedConstellation = SimulationConstants.CONSTELLATIONS_ALL;
                 SimulationEvents.Instance.StarSelected.Invoke(null);
+                SimulationEvents.Instance.ConstellationSelected.Invoke(SimulationConstants.CONSTELLATIONS_ALL);
             }
-            else if (constellationName.ToLower() == "none")
+            else if (constellationName.ToLower() == SimulationConstants.CONSTELLATIONS_NONE)
             {
                 HighlightAllConstellations(false);
                 manager.CurrentlySelectedStar = null;
-                manager.CurrentlySelectedConstellation = "none";
+                manager.CurrentlySelectedConstellation = SimulationConstants.CONSTELLATIONS_NONE;
                 SimulationEvents.Instance.StarSelected.Invoke(null);
+                SimulationEvents.Instance.ConstellationSelected.Invoke(SimulationConstants.CONSTELLATIONS_NONE);
             }
             else
             {
@@ -123,6 +125,7 @@ public class ConstellationsController : MonoBehaviour
                     manager.CurrentlySelectedStar = sc;
                     manager.CurrentlySelectedConstellation = brightestStar.ConstellationFullName;
                     SimulationEvents.Instance.StarSelected.Invoke(brightestStar);
+                    SimulationEvents.Instance.ConstellationSelected.Invoke(brightestStar.ConstellationFullName);
                     // broadcast selection
                     InteractionController interactionController = FindObjectOfType<InteractionController>();
                     interactionController.ShowCelestialObjectInteraction(brightestStar.ProperName,
