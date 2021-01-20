@@ -233,6 +233,13 @@ public class UserRecord
         }
     }
 
+    public static string GetDisplayUsername(string username)
+    {
+        string colorName = GetColorNameForUsername(username);
+        string displayName = colorName.FirstCharToUpper() + " " + username.Substring(colorName.Length);
+        return displayName;
+    }
+
     private static string getPref(string prefKey)
     {
         string pref = PlayerPrefs.GetString(prefKey);
