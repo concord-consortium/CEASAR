@@ -30,7 +30,6 @@ public class CityItem : MonoBehaviour
         {
             // only change selection and invoke event if this city is the new city to select
             SimulationEvents.Instance.LocationSelected.Invoke(_cityName);
-            _isSelected = true;
         }
 
         _isSelected = shouldSelectThisCity;
@@ -44,9 +43,11 @@ public class CityItem : MonoBehaviour
             _isSelected = true;
             setSelectedStatus();
         }
-
-        _isSelected = false;
-        setSelectedStatus();
+        else
+        {
+            _isSelected = false;
+            setSelectedStatus();
+        }
     }
     private void setSelectedStatus()
     {

@@ -201,7 +201,9 @@ public class DataController : MonoBehaviour
                     if (dataStar.Mag < MinMagnitudeValue) MinMagnitudeValue = dataStar.Mag;
                     if (dataStar.Mag > MaxMagnitudeValue) MaxMagnitudeValue = dataStar.Mag;
                     
-                    // show or hide based on magnitude threshold
+                    // show or hide based on magnitude threshold - note that magnitudes are 
+                    // a strange scale where lower numbers are brighter. The threshold is used to
+                    // limit the number of stars shown by hiding stars that appear more dim (higher magnitude)
                     if (dataStar.Mag > magnitudeThreshold)
                     {
                         newStar.ShowStar(false);

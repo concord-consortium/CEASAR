@@ -1,9 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
 using static SimulationConstants;
@@ -72,7 +70,6 @@ public class NetworkController : MonoBehaviour
             ConnectToServer();
         }
         FindDependencies();
-        RefreshUI();
         CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
@@ -88,7 +85,6 @@ public class NetworkController : MonoBehaviour
                 updateAvatarForPlayer(remoteNetworkPlayer);
             }
         }
-        RefreshUI();
     }
 
     // TODO: Decouple depedency tree using events
@@ -96,7 +92,6 @@ public class NetworkController : MonoBehaviour
     private void FindDependencies()
     {
         manager = SimulationManager.Instance;
-        colyseusClient = GetComponent<ColyseusClient>();
         colyseusClient = GetComponent<ColyseusClient>();
     }
 
@@ -110,21 +105,6 @@ public class NetworkController : MonoBehaviour
             SimulationEvents.Instance.NetworkUpdate.Invoke(IsConnected);
         }
     }
-
-    public void NetworkPanelToggled(bool active)
-    {
-        if (active)
-        {
-            //RefreshUI();
-        }
-    }
-
-    public void RefreshUI()
-    {
-        // refresh connection status on hide/show and on scene change
-        SimulationEvents.Instance.NetworkUpdate.Invoke(IsConnected);
-    }
-
 
     public void SetNetworkAddress(ServerRecord destination)
     {
@@ -141,7 +121,6 @@ public class NetworkController : MonoBehaviour
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = _selectedNetwork;
             manager.server.address = endpoint;
-            RefreshUI();
             CCLogger.Log(LOG_EVENT_CONNECT, "connected");
         }
     }
@@ -191,7 +170,6 @@ public class NetworkController : MonoBehaviour
         }
         remotePlayerAvatars.Clear();
         CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
-        RefreshUI();
     }
 
     void updateLocalAvatar()

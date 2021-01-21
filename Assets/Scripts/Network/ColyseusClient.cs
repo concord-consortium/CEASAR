@@ -89,7 +89,6 @@ public class ColyseusClient : MonoBehaviour
                 Disconnect();
                 connecting = false;
                 networkController.ServerStatusMessage = ex.Message;
-                networkController.RefreshUI();
             }
         }
     }   

@@ -11512,7 +11512,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2659469049956018244}
         m_TargetAssemblyTypeName: MenuController, GameAssembly
         m_MethodName: HideAnnotations
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

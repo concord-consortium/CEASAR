@@ -115,7 +115,7 @@ public class ConstellationsController : MonoBehaviour
             {
                 List<Star> allStarsInConstellation = DataManager.Instance.AllStarsInConstellationByFullName(constellationName);
                 CCDebug.Log("Count of stars: " + allStarsInConstellation.Count, LogLevel.Info, LogMessageCategory.Interaction);
-                if (allStarsInConstellation != null && allStarsInConstellation.Count > 0)
+                if (allStarsInConstellation.Count > 0)
                 {
                     Star brightestStar = allStarsInConstellation.OrderBy(s => s.Mag).FirstOrDefault();
                     CCDebug.Log(brightestStar.ProperName, LogLevel.Info, LogMessageCategory.Interaction);

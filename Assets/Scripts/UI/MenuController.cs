@@ -92,7 +92,7 @@ public class MenuController : MonoBehaviour
     {
         ClearStarSelection();
         HideNorthPin();
-        HideAnnotations(scene.name != SimulationConstants.SCENE_HORIZON);
+        HideAnnotations();
     }
     
     void OnDisable()
@@ -117,18 +117,27 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void HideAnnotations(bool hide)
+    public void HideAnnotations()
     {
-        if (hide && isDrawing)
+        if (isDrawing)
         {
             // turn off drawing
             ToggleDrawMode();
         }
         // If we hide annotations, we can't draw til we turn them back on
-        hideAnnotations = hide;
+        if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
+        {
+            // every other scene we need to hide annotations
+            hideAnnotations = true;
+        }
+        else
+        {
+            // use this as a toggle within Horizon view
+            hideAnnotations = !hideAnnotations;
+        }
+
         SceneLoader loader = FindObjectOfType<SceneLoader>();
-        
-        int layerMaskAnnotations = 19;
+        int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
         if (hideAnnotations)
         {
             LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
@@ -201,22 +210,16 @@ public class MenuController : MonoBehaviour
 
     public void CreateSnapshot()
     {
-        // Update local player pin to remote players - unsure if this is needed
-        // calculateUserDateTime(true);
         // get values from simulation manager
         Pushpin newPin = new Pushpin(manager.CurrentSimulationTime, manager.CurrentLatLng, manager.CurrentLocationName);
         manager.LocalUserSnapshots.Add(newPin);
         // add a snapshot to the controller
         snapshotsController.SaveSnapshot(newPin, manager.LocalUserSnapshots.Count - 1);
-        // add snapshot to dropdown list
-        // AddSnapshotToGrid(newPin);
     }
 
     public void RestoreSnapshot(Pushpin snapshot)
     {
-        // int snapshotIndex = manager.LocalUserSnapshots.FindIndex(el => el.Location == snapshot.Location && el.SelectedDateTime == snapshot.SelectedDateTime);
-        // // user restores snapshot from UI
-        // Pushpin snap = manager.LocalUserSnapshots[snapshotIndex];
+        // user restores snapshot from UI
         CCDebug.Log(snapshot.SelectedDateTime + " " + snapshot.LocationName + " " + snapshot.Location, LogLevel.Info, LogMessageCategory.Event);
         SimulationEvents.Instance.SnapshotLoaded.Invoke(snapshot);
         RestoreSnapshotOrPin(snapshot);
@@ -226,10 +229,6 @@ public class MenuController : MonoBehaviour
     {
         // Update the manager so everything is ready to read the new pin values
         manager.JumpToPin(pin);
-        
-        // updateTimeSlidersFromPin(pin);
-        // updateStarInfoPanel();
-        
         // update local player perspective on select
         events.PushPinSelected.Invoke(pin);
         // broadcast the update to current perspective to the network
