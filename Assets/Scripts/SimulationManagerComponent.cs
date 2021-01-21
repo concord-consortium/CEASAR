@@ -175,10 +175,10 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
-        MainUIController mainUIController = FindObjectOfType<MainUIController>();
-        if (!mainUIController) 
+        GameObject mainUI = GameObject.FindGameObjectWithTag("MainUI");
+        if (!mainUI) 
         {
-            mainUIController = Instantiate(mainUIPrefab).GetComponent<MainUIController>();
+            Instantiate(mainUIPrefab);
             manager.NetworkControllerComponent.Setup();
         } 
         sceneLoader.SetupCameras();

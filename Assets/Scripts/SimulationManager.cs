@@ -222,7 +222,26 @@ public class SimulationManager
     } 
     public Pushpin CrashSiteForGroup;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
-    public float PlayerNorthPinDirection = -1;
+    private bool _hasSetNorthPin = false;
+    public bool HasSetNorthPin
+    {
+        get { return _hasSetNorthPin; }
+    }
+
+    private float _playerNorthPinDirection = -1;
+
+    public float PlayerNorthPinDirection
+    {
+        set
+        {
+            _playerNorthPinDirection = value;
+            _hasSetNorthPin = true;
+        }
+        get
+        {
+            return _playerNorthPinDirection;
+        }
+    }
     
     /// <summary>
     /// Compare a pin datetime with current simulation time - useful for network players "are we at the same time"
