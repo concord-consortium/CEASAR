@@ -75,7 +75,7 @@ public class InfoPanelController : MonoBehaviour
         CCDebug.Log("Connection Status: " + isConnected, LogLevel.Info, LogMessageCategory.Networking);
         string status = isConnected ? "Connected as " + manager.LocalUsername : "Not connected";
         networkStatusText.GetComponent<TextMeshProUGUI>().SetText(status);
-        networkGroupText.GetComponent<TextMeshProUGUI>().SetText(manager.GroupName);
+        networkGroupText.GetComponent<TextMeshProUGUI>().SetText(manager.GroupName.FirstCharToUpper());
     }
     private void playerListChanged(string playerName)
     {
@@ -93,6 +93,16 @@ public class InfoPanelController : MonoBehaviour
         {
             addPlayerToList(p.Name);
         }
+#if UNITY_EDITOR
+        if (manager.AllRemotePlayers.Length < 7)
+        {
+            int difference = 7 - manager.AllRemotePlayers.Length;
+            for (int i = 0; i < difference; i++)
+            {
+                addPlayerToList("GreenTestuser1");
+            }
+        }
+#endif
     }
 
     private void addPlayerToList(string playerName)
