@@ -32,6 +32,8 @@ public class DataController : MonoBehaviour
    
     private float magnitudeThreshold = 4.5f;
 
+    public float MagnitudeThreshold => magnitudeThreshold;
+
     public StarComponent GetStarById(string uniqueId)
     {
         return allStarComponents[uniqueId];

@@ -92,7 +92,7 @@ public class MenuController : MonoBehaviour
     {
         ClearStarSelection();
         HideNorthPin();
-        HideAnnotations();
+        ToggleAnnotationsVisibility();
     }
     
     void OnDisable()
@@ -104,7 +104,8 @@ public class MenuController : MonoBehaviour
     void Init()
     {
         snapshotsController = GetComponent<SnapshotsController>();
-        snapshotsController.Init();
+        // When running tests, there may be no snapshots controller on this game object
+        if (snapshotsController) snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     
@@ -117,7 +118,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void HideAnnotations()
+    public void ToggleAnnotationsVisibility()
     {
         if (isDrawing)
         {

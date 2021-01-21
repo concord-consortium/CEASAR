@@ -4404,7 +4404,7 @@ GameObject:
   - component: {fileID: 2659469049286361352}
   - component: {fileID: 2659469049286361353}
   - component: {fileID: 2659469049286361354}
-  - component: {fileID: 4186923804010632229}
+  - component: {fileID: 4542920711850343970}
   m_Layer: 5
   m_Name: Button6
   m_TagString: Untagged
@@ -4516,8 +4516,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4186923804010632229}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 4542920711850343970}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -4528,7 +4528,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4186923804010632229
+--- !u!114 &4542920711850343970
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5366,7 +5366,7 @@ GameObject:
   - component: {fileID: 2659469049315770076}
   - component: {fileID: 2659469049315770077}
   m_Layer: 5
-  m_Name: Network
+  m_Name: Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5585,7 +5585,7 @@ GameObject:
   - component: {fileID: 2659469049324270374}
   - component: {fileID: 2659469049324270375}
   - component: {fileID: 2659469049324270368}
-  - component: {fileID: 4546546295905642366}
+  - component: {fileID: 301531152105706997}
   m_Layer: 5
   m_Name: Button8
   m_TagString: Untagged
@@ -5697,8 +5697,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4546546295905642366}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 301531152105706997}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -5709,7 +5709,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4546546295905642366
+--- !u!114 &301531152105706997
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11401,7 +11401,7 @@ GameObject:
   - component: {fileID: 2659469049869185710}
   - component: {fileID: 2659469049869185711}
   m_Layer: 5
-  m_Name: Hide Annotations
+  m_Name: ShowHide Annotations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11511,7 +11511,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2659469049956018244}
         m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: HideAnnotations
+        m_MethodName: ToggleAnnotationsVisibility
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11744,7 +11744,7 @@ GameObject:
   - component: {fileID: 2659469049876268362}
   - component: {fileID: 2659469049876268363}
   - component: {fileID: 2659469049876268372}
-  - component: {fileID: 6230781207918072697}
+  - component: {fileID: 7537391889967494495}
   m_Layer: 5
   m_Name: Button4
   m_TagString: Untagged
@@ -11856,8 +11856,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6230781207918072697}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 7537391889967494495}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -11868,7 +11868,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6230781207918072697
+--- !u!114 &7537391889967494495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12692,7 +12692,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 5}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 45, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2659469049918175269
 CanvasRenderer:
@@ -12722,7 +12722,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 221d7f393bcea4eccb73d20a9742ce40, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd09eec56bca64e169535ea92745bf6a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13716,7 +13716,7 @@ GameObject:
   - component: {fileID: 2659469049991531835}
   - component: {fileID: 2659469049991531780}
   - component: {fileID: 2659469049991531781}
-  - component: {fileID: 6905256275897714112}
+  - component: {fileID: 245923153968460822}
   m_Layer: 5
   m_Name: Button1
   m_TagString: Untagged
@@ -13828,8 +13828,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6905256275897714112}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 245923153968460822}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -13840,7 +13840,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6905256275897714112
+--- !u!114 &245923153968460822
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14018,7 +14018,7 @@ GameObject:
   - component: {fileID: 2659469050019181623}
   - component: {fileID: 2659469050019181616}
   - component: {fileID: 2659469050019181617}
-  - component: {fileID: 5635653328230140509}
+  - component: {fileID: 6609948337339957069}
   m_Layer: 5
   m_Name: Button7
   m_TagString: Untagged
@@ -14130,8 +14130,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5635653328230140509}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 6609948337339957069}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -14142,7 +14142,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5635653328230140509
+--- !u!114 &6609948337339957069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14167,9 +14167,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2659469050027041507}
-  - component: {fileID: 6641620723560651639}
+  - component: {fileID: 8572470450890528858}
   m_Layer: 5
-  m_Name: Network Menu
+  m_Name: Group Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14203,7 +14203,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6641620723560651639
+--- !u!114 &8572470450890528858
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14216,14 +14216,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerButtons:
-  - {fileID: 6905256275897714112}
-  - {fileID: 2722999587444244464}
-  - {fileID: 2579890485775869379}
-  - {fileID: 6230781207918072697}
-  - {fileID: 6108487391763638541}
-  - {fileID: 4186923804010632229}
-  - {fileID: 5635653328230140509}
-  - {fileID: 4546546295905642366}
+  - {fileID: 245923153968460822}
+  - {fileID: 7660704232837751056}
+  - {fileID: 1263555373926526728}
+  - {fileID: 7537391889967494495}
+  - {fileID: 8024157989716324001}
+  - {fileID: 4542920711850343970}
+  - {fileID: 6609948337339957069}
+  - {fileID: 301531152105706997}
 --- !u!1 &2659469050030943023
 GameObject:
   m_ObjectHideFlags: 0
@@ -17785,7 +17785,7 @@ GameObject:
   - component: {fileID: 2659469050439692174}
   - component: {fileID: 2659469050439692175}
   - component: {fileID: 2659469050439692168}
-  - component: {fileID: 6108487391763638541}
+  - component: {fileID: 8024157989716324001}
   m_Layer: 5
   m_Name: Button5
   m_TagString: Untagged
@@ -17897,8 +17897,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6108487391763638541}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 8024157989716324001}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -17909,7 +17909,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6108487391763638541
+--- !u!114 &8024157989716324001
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22251,7 +22251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Network
+  m_text: Group
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22332,7 +22332,7 @@ GameObject:
   - component: {fileID: 2659469050874439321}
   - component: {fileID: 2659469050874439322}
   - component: {fileID: 2659469050874439323}
-  - component: {fileID: 2722999587444244464}
+  - component: {fileID: 7660704232837751056}
   m_Layer: 5
   m_Name: Button2
   m_TagString: Untagged
@@ -22444,8 +22444,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2722999587444244464}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 7660704232837751056}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -22456,7 +22456,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2722999587444244464
+--- !u!114 &7660704232837751056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23251,7 +23251,7 @@ GameObject:
   - component: {fileID: 2659469050930178958}
   - component: {fileID: 2659469050930178959}
   - component: {fileID: 2659469050930178952}
-  - component: {fileID: 2579890485775869379}
+  - component: {fileID: 1263555373926526728}
   m_Layer: 5
   m_Name: Button3
   m_TagString: Untagged
@@ -23363,8 +23363,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2579890485775869379}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 1263555373926526728}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -23375,7 +23375,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2579890485775869379
+--- !u!114 &1263555373926526728
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

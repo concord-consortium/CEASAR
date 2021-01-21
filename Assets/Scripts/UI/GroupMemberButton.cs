@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkPlayerButton : MonoBehaviour
+public class GroupMemberButton : MonoBehaviour
 {
    [SerializeField] private Image locationIcon;
    [SerializeField] private Image timeIcon;

@@ -384,7 +384,7 @@ public class MainUIController : MonoBehaviour
 
     public void HideAnnotations(bool hide)
     {
-        menuController.HideAnnotations();
+        menuController.ToggleAnnotationsVisibility();
     }
     public void JumpToCrashSite()
     {

@@ -1,16 +1,39 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
 public class TestMenuFunctions
 {
+    private SimulationManager manager;
+    private SimulationManagerComponent simController;
+    private MenuController menuPanel;
+    
+    [UnitySetUp]
+    public IEnumerator SetUp()
+    {
+        yield return null;
+        manager = SimulationManager.Instance;
+        setupMenu();
+    }
+
+    private void setupMenu()
+    {
+        if (menuPanel == null)
+        {
+            menuPanel = GameObject.FindObjectOfType<MenuController>();
+            if (menuPanel == null)
+            {
+                menuPanel = new GameObject().AddComponent<MenuController>();
+            }
+        }
+    }
+
     // A Test behaves as an ordinary method
     [Test]
-    public void TestMenuFunctionsSimplePasses()
+    public void TestSimpleStaticFunctions()
     {
         // Use the Assert class to test conditions
         Assert.That(!string.IsNullOrEmpty(SimulationManager.Instance.LocalUsername));
@@ -26,19 +49,19 @@ public class TestMenuFunctions
         // Use the Assert class to test conditions.
         // Use yield to skip a frame.
         yield return null;
-        
-        GameObject menu = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/NewMainUI.prefab");
-
-        Assert.NotNull(menu);
-        
-        // InfoPanelController infoPanel = menu.GetComponentInChildren<InfoPanelController>();
-        // string displayedText = infoPanel.pushPinDetailsText.text;
-        // Assert.IsTrue(displayedText.Contains(DateTime.UtcNow.ToShortDateString()));
         int currentYear = SimulationManager.Instance.CurrentSimulationTime.Year;
         int currentMonth = SimulationManager.Instance.CurrentSimulationTime.Month;
         int currentDay = SimulationManager.Instance.CurrentSimulationTime.DayOfYear;
-        
-        MenuController menuPanel = menu.GetComponentInChildren<MenuController>();
+
+        if (menuPanel == null)
+        {
+            menuPanel = GameObject.FindObjectOfType<MenuController>();
+            if (menuPanel == null)
+            {
+                menuPanel = new GameObject().AddComponent<MenuController>();
+            }
+        }
+
         menuPanel.ChangeYear(1);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.Year > currentYear);
         menuPanel.ChangeYear(-2);
@@ -59,7 +82,6 @@ public class TestMenuFunctions
         }
         menuPanel.ChangeDay(-1);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.DayOfYear <= currentDay);
-
     }
-}
 
+}
