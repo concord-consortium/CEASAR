@@ -8,7 +8,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     public Color constellationColor;
 
     private ConstellationsController constellationsController;
-    private MainUIController mainUIController;
+    private MenuController menuController;
     private Vector3 initialScale;
     // Scene-specific value
     private Vector3 sceneInitialScale;
@@ -43,7 +43,6 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         SetStarScale(magnitudeScale);
         starColor = StarColor.GetColorFromColorIndexSimple(star.ColorIndex);
         Utils.SetObjectColor(this.gameObject, starColor);
-        CCDebug.Log(star.ColorIndex, LogLevel.Verbose, LogMessageCategory.Rendering);
         transform.LookAt(constellationsController.transform);
         if (starHighlightOutline != null) starHighlightOutline.SetActive(false);
     }
@@ -70,29 +69,22 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     public void HandleSelectStar(bool broadcastToNetwork, Color playerColor)
     {
-        if (!mainUIController) mainUIController = FindObjectOfType<MainUIController>();
-        if (!mainUIController.IsDrawing)
+        if (!menuController) menuController = FindObjectOfType<MenuController>();
+        if (!menuController.IsDrawing)
         {
             CCDebug.Log("Selected star: " + starData.uniqueId, LogLevel.Info, LogMessageCategory.Interaction);
-            MainUIController mainUIController = FindObjectOfType<MainUIController>();
             if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
-            if (mainUIController && mainUIController.starInfoPanel)
+            
+            if (constellationsController)
             {
-                if (constellationsController)
-                {
-                    constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
-                }
-
-                // make sure it's visible
-                SimulationManager.Instance.CurrentlySelectedStar = this;
-                mainUIController.ShowPanel("StarInfoPanel");
-
-                mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
-
-                // update dropdown, if visible
-                mainUIController.ChangeConstellationHighlight(starData.ConstellationFullName);
+                constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
             }
 
+            // make sure it's visible
+            SimulationManager.Instance.CurrentlySelectedStar = this;
+            SimulationManager.Instance.CurrentlySelectedConstellation = this.starData.ConstellationFullName;
+            
+            SimulationEvents.Instance.StarSelected.Invoke(starData);
             if (broadcastToNetwork)
             {
                 InteractionController interactionController = FindObjectOfType<InteractionController>();

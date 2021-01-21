@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg class="MuiSvgIcon-root jss1823" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z" style="fill: rgb(255, 255, 255);"/>
+  <line style="stroke-width: 0.5px; stroke: rgb(255, 255, 255);" x1="8" y1="8" x2="8" y2="21"/>
+  <line style="stroke-width: 0.5px; stroke: rgb(255, 255, 255);" x1="12" y1="8" x2="12" y2="21"/>
+  <line style="stroke-width: 0.5px; stroke: rgb(255, 255, 255);" x1="16" y1="8" x2="16" y2="21"/>
+  <line style="stroke-width: 0.5px; stroke: rgb(255, 255, 255);" x1="4" y1="12.5" x2="20" y2="12.5"/>
+  <line style="stroke-width: 0.5px; stroke: rgb(255, 255, 255);" x1="4" y1="17" x2="20" y2="17"/>
+</svg>

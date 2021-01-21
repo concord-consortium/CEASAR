@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -96,8 +96,10 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 9502d8c932a1445ef8aab93c1d7768fe,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -117,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -326,10 +330,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5403287526488722157, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
+    - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: m_Name
-      value: SimManager
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -348,6 +352,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -360,16 +369,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722155, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -393,17 +392,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: magnitudeScale
-      value: 0.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
-      propertyPath: colorByConstellation
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
-      propertyPath: showConstellationConnections
+      propertyPath: showEquator
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
@@ -418,15 +407,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: showEquator
-      value: 1
+      propertyPath: magnitudeScale
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: mainUIPrefab
-      value: 
-      objectReference: {fileID: 2724144226800310059, guid: f2f8e74f1a333614a8717f2c31eb93b6,
+      propertyPath: colorByConstellation
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
+      propertyPath: showConstellationConnections
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403287526488722157, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
+        type: 3}
+      propertyPath: m_Name
+      value: SimManager
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f, type: 3}
 --- !u!1 &1910891709
@@ -454,8 +452,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1910891709}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -578,9 +577,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4711208715938537054, guid: 8cf24d223972c40f89e3806dd2fafe26, type: 3}
 --- !u!23 &3642365462875182381
 MeshRenderer:
@@ -596,6 +595,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -620,6 +621,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &7039338957646621140
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -653,3 +655,4 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 2f684bf48430e496d86b331f873dbb5e, type: 3}
   - {fileID: 2800000, guid: 8cb187203b93b4bae83621e9f3e2eb1d, type: 3}
   - {fileID: 2800000, guid: 366e01cbcc37849f2847fdf2f6913bd2, type: 3}
+  sunlight: {fileID: 0}

@@ -111,7 +111,7 @@ public class SimulationManager
     public float MovementSendInterval = 1.0f;
     
     public StarComponent CurrentlySelectedStar;
-
+    public string CurrentlySelectedConstellation;
 
     /// <summary>
     /// A shortcut to LocalPlayer.Pin.SelectedDateTime
@@ -141,6 +141,15 @@ public class SimulationManager
     {
         get { return LocalPlayer.Pin.LocationName; }
     }
+    
+    /// <summary>
+    /// A shortcut to LocalPlayer.Pin.LocationNameDetail
+    /// Will hide the name / lat/long of a location if at the crash site
+    /// </summary>
+    public string CurrentLocationDisplayName
+    {
+        get { return LocalPlayer.Pin.LocationNameDetail; }
+    }
 
     /// <summary>
     /// A shortcut to LocalPlayer.Pin
@@ -166,7 +175,15 @@ public class SimulationManager
         if (!remotePlayers.ContainsKey(playerName))
         {
             Player p = new Player(playerName);
+            p.DisplayName = UserRecord.GetDisplayUsername(playerName);
             remotePlayers.Add(playerName, p);
+        }
+    }
+    public void RemoveRemotePlayer(string playerName)
+    {
+        if (remotePlayers.ContainsKey(playerName))
+        {
+            remotePlayers.Remove(playerName);
         }
     }
     public Player GetRemotePlayer(string playerName)
@@ -176,6 +193,11 @@ public class SimulationManager
             remotePlayers.Add(playerName, new Player(playerName));
         }
         return remotePlayers[playerName];
+    }
+
+    public Player[] AllRemotePlayers
+    {
+        get { return remotePlayers.Values.ToArray(); }
     }
 
     private string groupName;
@@ -201,5 +223,19 @@ public class SimulationManager
     public Pushpin CrashSiteForGroup;
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
     public float PlayerNorthPinDirection = -1;
+    
+    /// <summary>
+    /// Compare a pin datetime with current simulation time - useful for network players "are we at the same time"
+    /// via https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=net-5.0#comparison-01
+    /// </summary>
+    /// <param name="otherPinDateTime">Datetime of the pin to compare</param>
+    /// <returns>True if the pin has diverged, false if the pin is within tolerance window</returns>
+    public bool PinTimeHasDiverged(DateTime otherPinDateTime)
+    {
+        // tolerance - how far out can we be before we're marked as diverged
+        int windowInSeconds = 60; // up to 1 minute is ok
+        long delta = (long)(CurrentSimulationTime - otherPinDateTime).TotalSeconds;
+        return Math.Abs(delta) > windowInSeconds;
+    }
 
 }

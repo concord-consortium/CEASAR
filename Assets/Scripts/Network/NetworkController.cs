@@ -1,9 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using Colyseus.Schema;
 using GameDevWare.Serialization;
 using UnityEngine.SceneManagement;
 using static SimulationConstants;
@@ -23,7 +21,6 @@ public class NetworkController : MonoBehaviour
     public bool autoConnect = false;
     public List<string> scenesWithAvatars;
 
-    public NetworkUI networkUI;
     private ServerRecord _selectedNetwork = ServerList.Web;
 
     SimulationManager manager;
@@ -38,9 +35,11 @@ public class NetworkController : MonoBehaviour
         get { return colyseusClient != null && colyseusClient.IsConnecting; }
     }
 
+    private string _serverStatusMessage = "";
     public string ServerStatusMessage
     {
-        set { networkUI.ConnectionStatusText = value; }
+        set { _serverStatusMessage = value; }
+        get { return _serverStatusMessage; }
     }
 
     public bool devMode = false;
@@ -55,8 +54,6 @@ public class NetworkController : MonoBehaviour
     public void Setup()
     {
         FindDependencies();
-        networkUI.Username = manager.LocalUsername;
-        networkUI.SetDevMode = devMode;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         SimulationEvents.Instance.NetworkConnection.AddListener(OnConnectedToServer);
@@ -73,7 +70,6 @@ public class NetworkController : MonoBehaviour
             ConnectToServer();
         }
         FindDependencies();
-        RefreshUI();
         CCLogger.Log(LOG_EVENT_SCENE, "OnSceneLoaded: " + scene.name);
     }
 
@@ -89,7 +85,6 @@ public class NetworkController : MonoBehaviour
                 updateAvatarForPlayer(remoteNetworkPlayer);
             }
         }
-        RefreshUI();
     }
 
     // TODO: Decouple depedency tree using events
@@ -97,8 +92,6 @@ public class NetworkController : MonoBehaviour
     private void FindDependencies()
     {
         manager = SimulationManager.Instance;
-        colyseusClient = GetComponent<ColyseusClient>();
-        networkUI = FindObjectOfType<NetworkUI>();
         colyseusClient = GetComponent<ColyseusClient>();
     }
 
@@ -109,30 +102,9 @@ public class NetworkController : MonoBehaviour
         if (_isConnected != IsConnected)
         {
             _isConnected = IsConnected;
-            RefreshUI();
+            SimulationEvents.Instance.NetworkUpdate.Invoke(IsConnected);
         }
     }
-
-    public void NetworkPanelToggled(bool active)
-    {
-        if (active)
-        {
-            RefreshUI();
-        }
-    }
-
-    public void RefreshUI()
-    {
-        // refresh connection status on hide/show and on scene change
-        networkUI = FindObjectOfType<NetworkUI>();
-        if (networkUI)
-        {
-            networkUI.ConnectedStatusUpdate(IsConnected);
-            updatePlayerList();
-        }
-
-    }
-
 
     public void SetNetworkAddress(ServerRecord destination)
     {
@@ -149,7 +121,6 @@ public class NetworkController : MonoBehaviour
             colyseusClient.ConnectToServer(endpoint, user.Username, user.group);
             manager.server = _selectedNetwork;
             manager.server.address = endpoint;
-            RefreshUI();
             CCLogger.Log(LOG_EVENT_CONNECT, "connected");
         }
     }
@@ -199,7 +170,6 @@ public class NetworkController : MonoBehaviour
         }
         remotePlayerAvatars.Clear();
         CCLogger.Log(LOG_EVENT_DISCONNECT, "disconnected");
-        RefreshUI();
     }
 
     void updateLocalAvatar()
@@ -220,7 +190,7 @@ public class NetworkController : MonoBehaviour
         }
     }
 
-    void updatePlayerList()
+    void _updateDebugPlayerList()
     {
         string listOfPlayersForDebug = "";
         foreach (var p in remotePlayerAvatars.Keys)
@@ -228,13 +198,6 @@ public class NetworkController : MonoBehaviour
             listOfPlayersForDebug = listOfPlayersForDebug + p + " \n";
         }
         if (!string.IsNullOrEmpty(listOfPlayersForDebug)) CCDebug.Log(listOfPlayersForDebug, LogLevel.Info, LogMessageCategory.Networking);
-
-        if (devMode)
-        {
-            networkUI.DebugMessage = listOfPlayersForDebug;
-        }
-
-        networkUI.Username = manager.LocalUsername;
     }
 
     public void OnPlayerAdd(NetworkPlayer networkPlayer)
@@ -290,7 +253,7 @@ public class NetworkController : MonoBehaviour
             }
             SimulationEvents.Instance.PlayerJoined.Invoke(networkPlayer.username);
         }
-        updatePlayerList();
+        _updateDebugPlayerList();
     }
 
     void updateAvatarForPlayer(NetworkPlayer networkPlayer)
@@ -331,14 +294,19 @@ public class NetworkController : MonoBehaviour
     }
     public void OnPlayerRemove(NetworkPlayer networkPlayer)
     {
-        SimulationEvents.Instance.PlayerLeft.Invoke(networkPlayer.username);
-        SimulationEvents.Instance.AnnotationClear.Invoke(networkPlayer.username);
         // TODO: clear pushpins for player
+        // Clear annotations
+        SimulationEvents.Instance.AnnotationClear.Invoke(networkPlayer.username);
+        // Remove player avatar, if it exists
         GameObject remotePlayerAvatar;
         remotePlayerAvatars.TryGetValue(networkPlayer.username, out remotePlayerAvatar);
         Destroy(remotePlayerAvatar);
         remotePlayerAvatars.Remove(networkPlayer.username);
-        updatePlayerList();
+        // Remove details of the remote player from the manager
+        manager.RemoveRemotePlayer(networkPlayer.username);
+        _updateDebugPlayerList();
+        // Broadcast the event so network player list UI can be updated
+        SimulationEvents.Instance.PlayerLeft.Invoke(networkPlayer.username);
     }
 
     public void OnPlayerChange(NetworkPlayer updatedNetworkPlayer)

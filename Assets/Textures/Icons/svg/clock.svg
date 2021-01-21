@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <circle style="paint-order: fill; fill: rgba(216, 216, 216, 0); stroke-width: 20px; stroke: rgb(255, 255, 255);" cx="250" cy="250" r="228.994"/>
+  <line style="stroke-width: 17px; stroke-linecap: round; stroke: rgb(255, 255, 255);" x1="250" y1="63.3" x2="250" y2="248.794"/>
+  <line style="stroke-width: 17px; stroke-linecap: round; stroke: rgb(255, 255, 255);" x1="251.458" y1="250" x2="357.805" y2="250"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="68.553" cy="147.387" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="146.876" cy="68.513" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="355.538" cy="69.909" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="430.533" cy="145.527" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="431.661" cy="353.124" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="354.162" cy="430.014" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="147.244" cy="433.066" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="69.144" cy="355.444" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="250.041" cy="40.787" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="250.504" cy="459.769" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="458.475" cy="248.783" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="41.332" cy="249.309" r="10"/>
+  <circle style="fill: rgb(216, 216, 216); stroke: rgb(255, 255, 255);" cx="146.876" cy="68.513" r="20" transform="matrix(1, 0, 0, 1, 103.605306, 180.619151)"/>
+</svg>

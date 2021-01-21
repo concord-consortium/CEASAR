@@ -75,7 +75,7 @@ public static class SimulationConstants
     public static readonly string[] PANELS_ALWAYS = {PANEL_TITLE, PANEL_TOGGLE, PANEL_SCENESELECTION};
     public static readonly string[] PANELS_STARS = {PANEL_CONSTELLATION, PANEL_VISIBILITY, PANEL_SPHEREMOVEMENT};
     public static readonly string[] PANELS_HORIZON =
-        {PANEL_CURRENTTIME, PANEL_DATETIME, PANEL_DRAWING, PANEL_LOCATION, PANEL_SNAPSHOT, PANEL_NETWORK};
+        {PANEL_CURRENTTIME};
 
     public static readonly string[] PANELS_EARTH = {PANEL_CURRENTTIME, PANEL_LOCATION, PANEL_NETWORK};
 
@@ -88,6 +88,10 @@ public static class SimulationConstants
 
     public static readonly string[] BUTTONS_HORIZON = {BUTTON_TOGGLE_MOVEMENT};
 
+    // Constellations
+    public static readonly string CONSTELLATIONS_ALL = "all";
+    public static readonly string CONSTELLATIONS_NONE = "none";
+    
     // ======== Logging configuration: ====================================================
     public static readonly string LOG_URL = "http://cc-log-manager.herokuapp.com/api/logs";
     public static readonly string LOG_APP_NAME = "CEASAR";

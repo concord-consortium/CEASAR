@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player
 {
     public string Name;
+    public string DisplayName;
     public UserRecord PlayerUserRecord;
     public Pushpin Pin;
     public Vector3 AvatarPosition;

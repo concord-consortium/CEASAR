@@ -32,6 +32,9 @@ public class SnapshotCreatedEvent: UnityEvent<Pushpin> { }
 public class SnapshotDeletedEvent: UnityEvent<Pushpin> { }
 public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 public class NetworkConnectionEvent: UnityEvent<bool> { }
+public class NetworkConnectionUpdateEvent: UnityEvent<bool> { }
+[System.Serializable] public class StarSelectedEvent: UnityEvent<Star> { }
+[System.Serializable] public class ConstellationSelectedEvent: UnityEvent<string> { }
 public class SimulationEvents
 {
     protected SimulationEvents() 
@@ -52,6 +55,9 @@ public class SimulationEvents
         if (SnapshotLoaded == null) SnapshotLoaded = new SnapshotLoadedEvent();
         if (SnapshotDeleted == null) SnapshotDeleted = new SnapshotDeletedEvent();
         if (NetworkConnection == null) NetworkConnection = new NetworkConnectionEvent();
+        if (NetworkUpdate == null) NetworkUpdate = new NetworkConnectionUpdateEvent();
+        if (StarSelected == null) StarSelected = new StarSelectedEvent();
+        if (ConstellationSelected == null) ConstellationSelected = new ConstellationSelectedEvent();
     }
     private static SimulationEvents instance;
 
@@ -65,12 +71,6 @@ public class SimulationEvents
     /// This is more useful when selecting the location from the drop down panel.
     /// </summary>
     public LocationSelectedEvent LocationSelected;
-
-
-    /// <summary>
-    /// Use this to listen for changes to location
-    /// </summary>
-    //public LocationChangeEvent LocationChanged;
 
     /// <summary>
     /// This is where we handle specific annotations drawn in Horizon view
@@ -135,7 +135,17 @@ public class SimulationEvents
     public SnapshotDeletedEvent SnapshotDeleted;
 
     /// <summary>
-    /// For monitoring changes in network connection status
+    /// For monitoring changes in network connection status via Colyseus
     /// </summary>
     public NetworkConnectionEvent NetworkConnection;
+    /// <summary>
+    /// For updating changes in network connection status via UI
+    /// </summary>
+    public NetworkConnectionUpdateEvent NetworkUpdate;
+    /// <summary>
+    /// For when users select a star
+    /// </summary>
+    public StarSelectedEvent StarSelected;
+
+    public ConstellationSelectedEvent ConstellationSelected;
 }

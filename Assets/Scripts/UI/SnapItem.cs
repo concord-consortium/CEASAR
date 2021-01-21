@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 using UnityEngine.UI;
 
 public class SnapItem : MonoBehaviour
 {
-    public TextMeshProUGUI snapItemText;
+    public TMP_Text snapItemText;
     [SerializeField]
     private Pushpin snapshot;
 
@@ -14,10 +15,12 @@ public class SnapItem : MonoBehaviour
     public GameObject deleteButton;
 
     private MainUIController mainUIController;
+    private MenuController _menuController;
 
     void Start()
     {
         mainUIController = FindObjectOfType<MainUIController>();
+        _menuController = FindObjectOfType<MenuController>();
         Button pb = pinButton.GetComponent<Button>();
         pb.onClick.AddListener( () => RestoreSnapItem());
         Button db = deleteButton.GetComponent<Button>();
@@ -30,7 +33,8 @@ public class SnapItem : MonoBehaviour
     }
     public void DeleteSnapItem()
     {
-        mainUIController.DeleteSnapshot(this.snapshot);
+        if (mainUIController) mainUIController.DeleteSnapshot(this.snapshot);
+        else if (_menuController) _menuController.DeleteSnapshot(this.snapshot);
         Destroy(this.gameObject);
     }
 
@@ -38,6 +42,7 @@ public class SnapItem : MonoBehaviour
     {
         CCDebug.Log($"Restoring my snapshot {this.snapshot}", LogLevel.Info, LogMessageCategory.Event);
         Pushpin p = new Pushpin(this.snapshot.SelectedDateTime, this.snapshot.Location, this.snapshot.LocationName);
-        mainUIController.RestoreSnapshot(p);
+        if (mainUIController) mainUIController.RestoreSnapshot(p);
+        else if (_menuController) _menuController.RestoreSnapshot(p);
     }
 }

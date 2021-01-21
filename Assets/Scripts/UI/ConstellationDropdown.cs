@@ -9,7 +9,7 @@ public class ConstellationDropdown : MonoBehaviour
 {
     ConstellationsController constellationsController;
     TMP_Dropdown dropdown;
-
+    private List<string> allConstellationNames;
     SimulationManager manager { get => SimulationManager.Instance; }
 
     private DataManager dataManager { get => DataManager.Instance; }
@@ -55,7 +55,7 @@ public class ConstellationDropdown : MonoBehaviour
                     StarComponent sc = dc.GetStarById(brightestStar.uniqueId);
                     manager.CurrentlySelectedStar = sc;
                     
-                    // update UI
+                    // update legacy UI
                    updateStarPanel(true);
                     
                     // broadcast selection
@@ -70,33 +70,42 @@ public class ConstellationDropdown : MonoBehaviour
 
     void updateStarPanel(bool showPanel)
     {
-        // update UI
+        // update UI (legacy)
         MainUIController mainUIController = FindObjectOfType<MainUIController>();
-        if (!showPanel)
+        if (mainUIController != null)
         {
-            mainUIController.HidePanel("StarInfoPanel");
-        }
-        else
-        {
-            mainUIController.ShowPanel("StarInfoPanel");
-            mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
+            if (!showPanel)
+            {
+                mainUIController.HidePanel("StarInfoPanel");
+            }
+            else
+            {
+                mainUIController.ShowPanel("StarInfoPanel");
+                mainUIController.starInfoPanel.GetComponent<StarInfoPanel>().UpdateStarInfoPanel();
+            }
         }
     }
 
     public void InitConstellationNames(List<string> constellationNames, string currentConstellation)
     {
-        var options = new List<string>(constellationNames);
-        // Get dropdown reference in case InitConstellationNames is called before Start
-        dropdown = GetComponent<TMP_Dropdown>();
-        options.Remove("");
-        dropdown.AddOptions(options);
-        int initialValue = options.IndexOf(currentConstellation);
-
-        if (initialValue < 0)
+        if (allConstellationNames == null || allConstellationNames.Count == 0)
         {
-            initialValue = 0;
+            allConstellationNames = constellationNames;
+            allConstellationNames.Remove("");
+            allConstellationNames.Sort();
+
+            // Get dropdown reference in case InitConstellationNames is called before Start
+            dropdown = GetComponent<TMP_Dropdown>();
+            dropdown.AddOptions(allConstellationNames);
+            int initialValue = allConstellationNames.IndexOf(currentConstellation);
+
+            if (initialValue < 0)
+            {
+                initialValue = 0;
+            }
+
+            dropdown.value = initialValue;
         }
-        dropdown.value = initialValue;
     }
 
     public void UpdateConstellationSelection(string currentConstellation)

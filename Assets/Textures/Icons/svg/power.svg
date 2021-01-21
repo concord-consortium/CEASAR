@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1, 0, 0, 1, -0.000217, 0.000204)">
+    <path style="stroke-linecap: round; fill: none; stroke-width: 40px; stroke: rgb(255, 255, 255);" d="M 249.873 78.845 C 381.628 78.845 463.975 221.474 398.098 335.578 C 332.22 449.68 167.526 449.68 101.649 335.578 C 67.285 276.059 71.855 201.76 113.254 146.902" transform="matrix(0.89787, 0.440261, -0.440261, 0.89787, 135.597674, -84.532817)"/>
+    <line style="stroke-linecap: round; stroke-width: 40px; stroke: rgb(255, 255, 255);" x1="252.769" y1="26.47" x2="252.769" y2="158.498"/>
+  </g>
+</svg>

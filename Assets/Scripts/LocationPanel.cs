@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -8,17 +9,17 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class LocationPanel : MonoBehaviour
 {
-    // public bool showLocationCoordinates = true;
     public TextMeshProUGUI latLongInfo;
     
     private SimulationManager manager { get { return SimulationManager.Instance;}}
-    void Start()
+    void OnEnable()
     {
         UpdateLocationPanel(manager.LocalPlayerPin);
-        // latLongInfo.enabled = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH || showLocationCoordinates;
+        SimulationEvents.Instance.PushPinSelected.AddListener(UpdateLocationPanel);
     }
     public void UpdateLocationPanel(Pushpin pin)
     {
+        if (!latLongInfo) latLongInfo = GetComponent<TextMeshProUGUI>();
         // HIDE IF WE ARE AT CRASH SITE! The Pushpin itself hides coordinates for all crash sites that are a match,
         // but for our current crash site (by group) we display custom text.
         if (pin.Location == manager.CrashSiteForGroup.Location)
@@ -31,13 +32,8 @@ public class LocationPanel : MonoBehaviour
         }
     }
 
-    // void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.L))
-    //     {
-    //         showLocationCoordinates = !showLocationCoordinates;
-    //         latLongInfo.enabled = showLocationCoordinates;
-    //     }
-    //
-    // }
+    private void OnDisable()
+    {
+        SimulationEvents.Instance.PushPinSelected.RemoveListener(UpdateLocationPanel);
+    }
 }

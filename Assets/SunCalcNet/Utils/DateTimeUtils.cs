@@ -3,7 +3,7 @@ using System;
 
 namespace SunCalcNet.Utils
 {
-    internal static class DateTimeUtils
+    public static class DateTimeUtils
     {
         private const int DayMs = 1000 * 60 * 60 * 24;
         private const double J1899 = 2415018.5;

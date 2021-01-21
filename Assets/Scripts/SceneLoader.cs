@@ -128,8 +128,8 @@ public class SceneLoader : MonoBehaviour
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
 #if !UNITY_WEBGL
-        LaserPointer lp = FindObjectOfType<LaserPointer>();
-        lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
+        // LaserPointer lp = FindObjectOfType<LaserPointer>();
+        // lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
         
 #endif
         // some scene-specific pieces to remove

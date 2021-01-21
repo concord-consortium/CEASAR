@@ -25,6 +25,13 @@ public class DataController : MonoBehaviour
     public Constellation constellationPrefab;
     private Dictionary<string, StarComponent> allStarComponents;
 
+    public float MinMagnitudeValue = -2;
+    public float MaxMagnitudeValue = 8;
+
+    private float _magnitudeVisibilityIncrement = 0.5f;
+   
+    private float magnitudeThreshold = 4.5f;
+
     public StarComponent GetStarById(string uniqueId)
     {
         return allStarComponents[uniqueId];
@@ -48,7 +55,6 @@ public class DataController : MonoBehaviour
     private bool showConstellationConnections = true;
     private int maxStars = 10000;
     private float magnitudeScale = 0.5f;
-    private float magnitudeThreshold = 4.5f;
 
     private bool showHorizonView = false;
     private float simulationTimeScale = 10f;
@@ -192,12 +198,20 @@ public class DataController : MonoBehaviour
                     allStarComponents[dataStar.uniqueId] = newStar;
                     starCount++;
 
-                    // show or hide based on magnitude threshold
+                    if (dataStar.Mag < MinMagnitudeValue) MinMagnitudeValue = dataStar.Mag;
+                    if (dataStar.Mag > MaxMagnitudeValue) MaxMagnitudeValue = dataStar.Mag;
+                    
+                    // show or hide based on magnitude threshold - note that magnitudes are 
+                    // a strange scale where lower numbers are brighter. The threshold is used to
+                    // limit the number of stars shown by hiding stars that appear more dim (higher magnitude)
                     if (dataStar.Mag > magnitudeThreshold)
                     {
                         newStar.ShowStar(false);
                     }
+                    
                     constellation.AddStar(newStar.gameObject);
+                    
+                    
                 }
                 constellationsController.AddConstellation(constellation);
             }
@@ -298,9 +312,11 @@ public class DataController : MonoBehaviour
         if (!string.IsNullOrEmpty(newCity))
         {
             // verify a valid city was entered
-            var matchedCity = dataManager.Cities.Where(c => c.Name == newCity).First();
-            if (matchedCity != null)
+            var matchedCities = dataManager.Cities.Where(c => c.Name == newCity);
+            
+            if (matchedCities.Count() > 0)
             {
+                var matchedCity = matchedCities.First();
                 // check if this is a custom location
                 if (matchedCity.Name != SimulationConstants.CUSTOM_LOCATION)
                 {
@@ -340,6 +356,20 @@ public class DataController : MonoBehaviour
         }
     }
 
+    public void ShowMoreStars()
+    {
+        float newThreshold = magnitudeThreshold + _magnitudeVisibilityIncrement;
+        if (newThreshold <= MaxMagnitudeValue) SetMagnitudeThreshold(newThreshold);
+    }
+
+    public void ShowFewerStars()
+    {
+        float newThreshold = magnitudeThreshold - _magnitudeVisibilityIncrement;
+        if (newThreshold >= ((MaxMagnitudeValue - MinMagnitudeValue) / 3))
+        {
+            SetMagnitudeThreshold(newThreshold);
+        }
+    }
     public void ToggleRunSimulation()
     {
         runSimulation = !runSimulation;
