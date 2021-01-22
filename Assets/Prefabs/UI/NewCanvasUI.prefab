@@ -1823,7 +1823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Usernames here
+  m_text: Connecting to server...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3204,9 +3204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: Zoom In
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6191,7 +6189,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d990e380f4dda4e4091c59573e7ee5e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d4d34c7d6d92409ebfaf7616c779383, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6620,7 +6618,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2659469049404517756
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9685,9 +9683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: Zoom Out
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -12869,7 +12865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d990e380f4dda4e4091c59573e7ee5e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1399faf956fcf447bad2bed31271975a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12967,12 +12963,12 @@ GameObject:
   - component: {fileID: 2659469049938205550}
   - component: {fileID: 2659469049938205551}
   m_Layer: 5
-  m_Name: Button3
+  m_Name: Zoom In
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2659469049938205545
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13075,9 +13071,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2659469049956018244}
-        m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: ToggleMainMenu
+      - m_Target: {fileID: 2659469049956018299}
+        m_TargetAssemblyTypeName: UIControlCamera, GameAssembly
+        m_MethodName: ZoomIn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15758,12 +15754,12 @@ GameObject:
   - component: {fileID: 2659469050176855854}
   - component: {fileID: 2659469050176855855}
   m_Layer: 5
-  m_Name: Button1
+  m_Name: Zoom Out
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2659469050176855849
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15866,9 +15862,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2659469049956018244}
-        m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: ToggleMainMenu
+      - m_Target: {fileID: 2659469049956018299}
+        m_TargetAssemblyTypeName: UIControlCamera, GameAssembly
+        m_MethodName: ZoomOut
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17361,7 +17357,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2659469050390928343
 RectTransform:
   m_ObjectHideFlags: 0

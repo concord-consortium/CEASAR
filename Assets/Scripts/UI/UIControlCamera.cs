@@ -118,8 +118,25 @@ public class UIControlCamera : MonoBehaviour
             {
                 if (cameraContainer == null && mainCam.transform.parent)
                     cameraContainer = mainCam.transform.parent;
+                else cameraContainer = mainCam.transform;
                 cameraContainer.transform.Rotate(Vector3.up, speed * Time.deltaTime, Space.World);
             }
+        }
+    }
+    public void ZoomOut()
+    {
+        float fov = mainCam.fieldOfView;
+        if (fov < 75)
+        {
+            mainCam.fieldOfView = fov + 15f;
+        }
+    }
+    public void ZoomIn()
+    {
+        float fov = mainCam.fieldOfView;
+        if (fov > 45)
+        {
+            mainCam.fieldOfView = fov - 15f;
         }
     }
 
