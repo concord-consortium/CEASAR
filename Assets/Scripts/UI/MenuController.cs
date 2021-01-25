@@ -28,15 +28,17 @@ public class MenuController : MonoBehaviour
     private SnapshotsController snapshotsController;
     private GameObject annotationsObject;
     private bool hideAnnotations = false;
-    private bool hasSetNorthPin = false;
     private SnapGrid _snapshotGrid;
     
     public GameObject drawModeIndicator;
     [SerializeField] private GameObject menuContainerObject;
     [SerializeField] private GameObject showHideMenuToggle;
+    [SerializeField] private GameObject northPinPrefab;
+    
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
+    
     public void ToggleMainMenu()
     {
         showMainMenu = !showMainMenu;
@@ -77,8 +79,9 @@ public class MenuController : MonoBehaviour
     
     private void Awake()
     {
-        // DontDestroyOnLoad(this.transform.root.gameObject);
+        DontDestroyOnLoad(this.transform.root.gameObject);
     }
+    
     private void Start()
     {
         // Should only happen once, but just in case
@@ -91,8 +94,8 @@ public class MenuController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ClearStarSelection();
-        HideNorthPin();
-        HideAnnotations();
+        CheckDisplayNorthPin();
+        ToggleAnnotationsVisibility();
     }
     
     void OnDisable()
@@ -104,7 +107,8 @@ public class MenuController : MonoBehaviour
     void Init()
     {
         snapshotsController = GetComponent<SnapshotsController>();
-        snapshotsController.Init();
+        // When running tests, there may be no snapshots controller on this game object
+        if (snapshotsController) snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     
@@ -117,7 +121,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void HideAnnotations()
+    public void ToggleAnnotationsVisibility()
     {
         if (isDrawing)
         {
@@ -252,22 +256,23 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void HideNorthPin()
+    public void CheckDisplayNorthPin()
     {
-        if (hasSetNorthPin)
+        bool shouldDisplay = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON;
+        GameObject[] northPins = GameObject.FindGameObjectsWithTag("NorthPin");
+        // if we've changed scene, place our pin
+        if (shouldDisplay && manager.HasSetNorthPin && northPins.Length == 0)
         {
-            GameObject northPin = GameObject.Find("NorthPin");
-            if (northPin != null)
+            GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+            
+            northPin.transform.localRotation = Quaternion.Euler(0, manager.PlayerNorthPinDirection, 0);
+        }
+
+        if (northPins.Length > 0)
+        {
+            foreach (GameObject np in northPins)
             {
-                if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
-                {
-                    northPin.transform.position = new Vector3(0, 0.1f, -100000);
-                }
-                else
-                {
-                    northPin.transform.position = new Vector3(0, 0.1f, 0);
-                }
-                
+                np.SetActive(shouldDisplay);
             }
         }
     }
@@ -275,16 +280,28 @@ public class MenuController : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)
         {
-            GameObject northPin = GameObject.Find("NorthPin");
-            if (northPin != null)
+            if (!manager.HasSetNorthPin)
             {
-                northPin.transform.position = new Vector3(0, 0.1f, 0);
-                northPin.transform.localRotation = Quaternion.Euler(0, manager.LocalPlayerLookDirection.y, 0);
-                hasSetNorthPin = true;
-                SimulationEvents.Instance.PlayerNorthPin.Invoke(manager.LocalPlayerLookDirection.y);
-                DontDestroyOnLoad(northPin);
+                GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+                setNorthPin(northPin);
+            }
+            else
+            {
+                // previously placed the pin, now we move it
+                GameObject northPin = GameObject.FindGameObjectWithTag("NorthPin");
+                if (northPin != null)
+                {
+                    setNorthPin(northPin);
+                }
             }
         }
+    }
+
+    private void setNorthPin(GameObject northPin)
+    {
+        northPin.transform.localRotation = Quaternion.Euler(0, manager.LocalPlayerLookDirection.y, 0);
+        manager.PlayerNorthPinDirection = manager.LocalPlayerLookDirection.y;
+        SimulationEvents.Instance.PlayerNorthPin.Invoke(manager.LocalPlayerLookDirection.y);
     }
     
     public void ChangeStarQuantity(float newVal)

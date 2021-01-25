@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkPlayersUIController : MonoBehaviour
+public class GroupUIController : MonoBehaviour
 {
-   [SerializeField] private NetworkPlayerButton[] playerButtons;
+   [SerializeField] private GroupMemberButton[] playerButtons;
    private SimulationManager manager { get { return SimulationManager.Instance; } }
    private SimulationEvents events { get { return SimulationEvents.Instance; } }
    private void OnEnable()
@@ -21,7 +21,7 @@ public class NetworkPlayersUIController : MonoBehaviour
       Debug.Log("clearing player buttons");
       for (int i = 0; i < playerButtons.Length; i++)
       {
-         NetworkPlayerButton b = playerButtons[i];
+         GroupMemberButton b = playerButtons[i];
          b.Reset();
       }
    }
@@ -45,7 +45,7 @@ public class NetworkPlayersUIController : MonoBehaviour
          for (int i = 0; i < maxButtons; i++)
          {
             Player p = manager.AllRemotePlayers[i];
-            NetworkPlayerButton b = playerButtons[i];
+            GroupMemberButton b = playerButtons[i];
             if (p != null)
             {
                b.name = p.Name;

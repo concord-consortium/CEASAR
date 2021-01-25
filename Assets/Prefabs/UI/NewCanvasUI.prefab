@@ -1823,7 +1823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Usernames here
+  m_text: Connecting to server...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2001,7 +2001,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -125, y: 0}
-  m_SizeDelta: {x: 250, y: 70}
+  m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8081119468811776782
 MonoBehaviour:
@@ -2018,13 +2018,13 @@ MonoBehaviour:
   m_Padding:
     m_Left: 20
     m_Right: 20
-    m_Top: 25
+    m_Top: 22
     m_Bottom: 20
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 110, y: 20}
-  m_Spacing: {x: 2, y: 0}
+  m_Spacing: {x: 2, y: -2}
   m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!1 &1161453809500994870
@@ -3204,9 +3204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: Zoom In
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3545,6 +3543,42 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: MenuController, GameAssembly
         m_MethodName: LoadStarsScene
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469049404517757}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050485428121}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050424934769}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4404,7 +4438,7 @@ GameObject:
   - component: {fileID: 2659469049286361352}
   - component: {fileID: 2659469049286361353}
   - component: {fileID: 2659469049286361354}
-  - component: {fileID: 4186923804010632229}
+  - component: {fileID: 4542920711850343970}
   m_Layer: 5
   m_Name: Button6
   m_TagString: Untagged
@@ -4516,8 +4550,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4186923804010632229}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 4542920711850343970}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -4528,7 +4562,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4186923804010632229
+--- !u!114 &4542920711850343970
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5366,7 +5400,7 @@ GameObject:
   - component: {fileID: 2659469049315770076}
   - component: {fileID: 2659469049315770077}
   m_Layer: 5
-  m_Name: Network
+  m_Name: Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5585,7 +5619,7 @@ GameObject:
   - component: {fileID: 2659469049324270374}
   - component: {fileID: 2659469049324270375}
   - component: {fileID: 2659469049324270368}
-  - component: {fileID: 4546546295905642366}
+  - component: {fileID: 301531152105706997}
   m_Layer: 5
   m_Name: Button8
   m_TagString: Untagged
@@ -5697,8 +5731,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4546546295905642366}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 301531152105706997}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -5709,7 +5743,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4546546295905642366
+--- !u!114 &301531152105706997
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6155,7 +6189,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d990e380f4dda4e4091c59573e7ee5e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d4d34c7d6d92409ebfaf7616c779383, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7225,6 +7259,42 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: MenuController, GameAssembly
         m_MethodName: LoadEarthScene
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469049404517757}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050485428121}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050424934769}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9613,9 +9683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: Zoom Out
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11401,7 +11469,7 @@ GameObject:
   - component: {fileID: 2659469049869185710}
   - component: {fileID: 2659469049869185711}
   m_Layer: 5
-  m_Name: Hide Annotations
+  m_Name: ShowHide Annotations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11511,7 +11579,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2659469049956018244}
         m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: HideAnnotations
+        m_MethodName: ToggleAnnotationsVisibility
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11744,7 +11812,7 @@ GameObject:
   - component: {fileID: 2659469049876268362}
   - component: {fileID: 2659469049876268363}
   - component: {fileID: 2659469049876268372}
-  - component: {fileID: 6230781207918072697}
+  - component: {fileID: 7537391889967494495}
   m_Layer: 5
   m_Name: Button4
   m_TagString: Untagged
@@ -11856,8 +11924,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6230781207918072697}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 7537391889967494495}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -11868,7 +11936,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6230781207918072697
+--- !u!114 &7537391889967494495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12692,7 +12760,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 5}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 45, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2659469049918175269
 CanvasRenderer:
@@ -12722,7 +12790,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 221d7f393bcea4eccb73d20a9742ce40, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd09eec56bca64e169535ea92745bf6a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12797,7 +12865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d990e380f4dda4e4091c59573e7ee5e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1399faf956fcf447bad2bed31271975a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12895,12 +12963,12 @@ GameObject:
   - component: {fileID: 2659469049938205550}
   - component: {fileID: 2659469049938205551}
   m_Layer: 5
-  m_Name: Button3
+  m_Name: Zoom In
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2659469049938205545
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13003,9 +13071,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2659469049956018244}
-        m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: ToggleMainMenu
+      - m_Target: {fileID: 2659469049956018299}
+        m_TargetAssemblyTypeName: UIControlCamera, GameAssembly
+        m_MethodName: ZoomIn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13278,6 +13346,8 @@ MonoBehaviour:
   drawModeIndicator: {fileID: 2659469049906863999}
   menuContainerObject: {fileID: 2659469051218002175}
   showHideMenuToggle: {fileID: 2659469051061220418}
+  northPinPrefab: {fileID: 1367411613529184850, guid: 7f57e9773dcaa4c2e8e9efacf071dfc8,
+    type: 3}
 --- !u!114 &2659469049956018299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13716,7 +13786,7 @@ GameObject:
   - component: {fileID: 2659469049991531835}
   - component: {fileID: 2659469049991531780}
   - component: {fileID: 2659469049991531781}
-  - component: {fileID: 6905256275897714112}
+  - component: {fileID: 245923153968460822}
   m_Layer: 5
   m_Name: Button1
   m_TagString: Untagged
@@ -13828,8 +13898,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6905256275897714112}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 245923153968460822}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -13840,7 +13910,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6905256275897714112
+--- !u!114 &245923153968460822
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14018,7 +14088,7 @@ GameObject:
   - component: {fileID: 2659469050019181623}
   - component: {fileID: 2659469050019181616}
   - component: {fileID: 2659469050019181617}
-  - component: {fileID: 5635653328230140509}
+  - component: {fileID: 6609948337339957069}
   m_Layer: 5
   m_Name: Button7
   m_TagString: Untagged
@@ -14130,8 +14200,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5635653328230140509}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 6609948337339957069}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -14142,7 +14212,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5635653328230140509
+--- !u!114 &6609948337339957069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14167,9 +14237,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2659469050027041507}
-  - component: {fileID: 6641620723560651639}
+  - component: {fileID: 8572470450890528858}
   m_Layer: 5
-  m_Name: Network Menu
+  m_Name: Group Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14203,7 +14273,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6641620723560651639
+--- !u!114 &8572470450890528858
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14216,14 +14286,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerButtons:
-  - {fileID: 6905256275897714112}
-  - {fileID: 2722999587444244464}
-  - {fileID: 2579890485775869379}
-  - {fileID: 6230781207918072697}
-  - {fileID: 6108487391763638541}
-  - {fileID: 4186923804010632229}
-  - {fileID: 5635653328230140509}
-  - {fileID: 4546546295905642366}
+  - {fileID: 245923153968460822}
+  - {fileID: 7660704232837751056}
+  - {fileID: 1263555373926526728}
+  - {fileID: 7537391889967494495}
+  - {fileID: 8024157989716324001}
+  - {fileID: 4542920711850343970}
+  - {fileID: 6609948337339957069}
+  - {fileID: 301531152105706997}
 --- !u!1 &2659469050030943023
 GameObject:
   m_ObjectHideFlags: 0
@@ -14793,7 +14863,7 @@ GameObject:
   - component: {fileID: 2659469050094229312}
   m_Layer: 5
   m_Name: NewCanvasUI
-  m_TagString: Untagged
+  m_TagString: MainUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15684,12 +15754,12 @@ GameObject:
   - component: {fileID: 2659469050176855854}
   - component: {fileID: 2659469050176855855}
   m_Layer: 5
-  m_Name: Button1
+  m_Name: Zoom Out
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2659469050176855849
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15792,9 +15862,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2659469049956018244}
-        m_TargetAssemblyTypeName: MenuController, GameAssembly
-        m_MethodName: ToggleMainMenu
+      - m_Target: {fileID: 2659469049956018299}
+        m_TargetAssemblyTypeName: UIControlCamera, GameAssembly
+        m_MethodName: ZoomOut
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17785,7 +17855,7 @@ GameObject:
   - component: {fileID: 2659469050439692174}
   - component: {fileID: 2659469050439692175}
   - component: {fileID: 2659469050439692168}
-  - component: {fileID: 6108487391763638541}
+  - component: {fileID: 8024157989716324001}
   m_Layer: 5
   m_Name: Button5
   m_TagString: Untagged
@@ -17897,8 +17967,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6108487391763638541}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 8024157989716324001}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -17909,7 +17979,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6108487391763638541
+--- !u!114 &8024157989716324001
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22251,7 +22321,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Network
+  m_text: Group
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22332,7 +22402,7 @@ GameObject:
   - component: {fileID: 2659469050874439321}
   - component: {fileID: 2659469050874439322}
   - component: {fileID: 2659469050874439323}
-  - component: {fileID: 2722999587444244464}
+  - component: {fileID: 7660704232837751056}
   m_Layer: 5
   m_Name: Button2
   m_TagString: Untagged
@@ -22444,8 +22514,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2722999587444244464}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 7660704232837751056}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -22456,7 +22526,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2722999587444244464
+--- !u!114 &7660704232837751056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22597,6 +22667,42 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: MenuController, GameAssembly
         m_MethodName: LoadHorizonScene
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469049404517757}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050485428121}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2659469050424934769}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -23251,7 +23357,7 @@ GameObject:
   - component: {fileID: 2659469050930178958}
   - component: {fileID: 2659469050930178959}
   - component: {fileID: 2659469050930178952}
-  - component: {fileID: 2579890485775869379}
+  - component: {fileID: 1263555373926526728}
   m_Layer: 5
   m_Name: Button3
   m_TagString: Untagged
@@ -23363,8 +23469,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2579890485775869379}
-        m_TargetAssemblyTypeName: NetworkPlayerButton, GameAssembly
+      - m_Target: {fileID: 1263555373926526728}
+        m_TargetAssemblyTypeName: GroupMemberButton, GameAssembly
         m_MethodName: PlayerClicked
         m_Mode: 1
         m_Arguments:
@@ -23375,7 +23481,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2579890485775869379
+--- !u!114 &1263555373926526728
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28663,10 +28769,10 @@ RectTransform:
   m_Father: {fileID: 8502955971515056852}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 149.99998, y: -35}
-  m_SizeDelta: {x: 300, y: 70}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4165510089262498119
 CanvasRenderer:
@@ -30230,7 +30336,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 35, y: 5}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4836633723321265408
 CanvasRenderer:
@@ -30260,7 +30366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 221d7f393bcea4eccb73d20a9742ce40, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd09eec56bca64e169535ea92745bf6a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -31240,8 +31346,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -175}
-  m_SizeDelta: {x: 300, y: 70}
+  m_AnchoredPosition: {x: 150, y: -190}
+  m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8569286364825967310
 GameObject:
@@ -31670,7 +31776,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 37.5, y: 15}
+  m_AnchoredPosition: {x: 37.5, y: 25}
   m_SizeDelta: {x: 75, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6793209208069865454
@@ -31701,7 +31807,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Alpha
+  m_text: Epsilon
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -31728,8 +31834,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

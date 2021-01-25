@@ -15,6 +15,7 @@ TagManager:
   - MainUI
   - WorldUI
   - SceneButton
+  - NorthPin
   layers:
   - Default
   - TransparentFX
