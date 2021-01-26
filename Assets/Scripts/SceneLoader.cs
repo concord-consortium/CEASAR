@@ -16,9 +16,10 @@ public class SceneLoader : MonoBehaviour
     [SerializeField]
     private GameObject defaultEventSystem;
 
-    private GameObject vrCamera;
-    
+    private GameObject cameraGameObject;
     private GameObject cameraControlUI;
+    private string currentSceneName;
+    private Camera currentCamera;
 
     public LayerMask DefaultSceneCameraLayers;
 
@@ -26,21 +27,21 @@ public class SceneLoader : MonoBehaviour
     public LogMessageCategory[] LogCategories;
     private void Start()
     {
-        
         CCDebug.CurrentLevel = LogLevel;
 
         if (LogCategories != null && LogCategories.Length > 0)
         {
             CCDebug.Categories = LogCategories;
         }
-        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_LOAD)
+        currentSceneName = SceneManager.GetActiveScene().name;
+        if (currentSceneName == SimulationConstants.SCENE_LOAD)
         {
             SetupCameras();
         }
     }
+
     public void SetupCameras()
     {
-#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         var inputDevices = new List<InputDevice>();
         InputDevices.GetDevices(inputDevices);
         if (inputDevices.Count == 0)
@@ -52,62 +53,114 @@ public class SceneLoader : MonoBehaviour
         foreach (var device in inputDevices)
         {
             CCDebug.Log(string.Format("Device found with name '{0}' and role '{1}'", device.name, device.role.ToString()), LogLevel.Info, LogMessageCategory.All);
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
             if ((device.name.ToLower().Contains("oculus") || device.name.ToLower().Contains("quest")) && device.role.ToString().ToLower() == "generic")
             {
                 // we have an XR device attached! Oculus Quest is detected as Rift S if it is connected with USB3 Oculus Link
                 // TODO: If we detect an HTC Vive, Valve Index, or other headset, we need to do more work to use different controllers
                 CCDebug.Log("Setting up XR device: " + device.name, LogLevel.Info, LogMessageCategory.All);
-                setupXRCameras();
+                setupVRCamera();
+                setupVREventSystem();
+                hideOnScreenCameraControl();
+                hideAvatars();
             }
-        }
+            else
+            {
+             CCDebug.Log("Unknown device: " + device.name, LogLevel.Info, LogMessageCategory.All);
+            }
+#elif UNITY_WSA_10_0
+
+            // setupXRCamera();
+            // setupWorldSpaceUI();
+            // setupMRTKEventSystem();
+            // hideOnScreenCameraControl();
+            hideAvatars();
 #else
         setupStandardCameras();
 #endif
-
+        }
     }
 
-    private void setupXRCameras()
+    private void setupXRCamera()
+    {
+        cameraGameObject = GameObject.FindGameObjectWithTag("MainCamera");
+        cameraGameObject.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+        cameraGameObject.GetComponent<Camera>().backgroundColor = Color.black;
+    }
+
+    private void setupVRCamera()
     {
         GameObject existingCamera = GameObject.FindGameObjectWithTag("MainCamera");
         if (existingCamera != null)
         {
             existingCamera.SetActive(false);
         }
-        vrCamera = Instantiate(vrCameraRig);
-
-        string currentScene = SceneManager.GetActiveScene().name;
-
+        cameraGameObject = Instantiate(vrCameraRig);
+        currentCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+        if (currentSceneName == SimulationConstants.SCENE_EARTH || currentSceneName == SimulationConstants.SCENE_STARS)
+        {
+            currentCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            currentCamera.GetComponent<Camera>().backgroundColor = Color.black;
+        }
+        if (currentSceneName == SimulationConstants.SCENE_HORIZON)
+        {
+            cameraGameObject.transform.position = new Vector3(0, 2, 0);
+            cameraGameObject.transform.rotation = Quaternion.Euler(0, SimulationManager.Instance.LocalPlayerLookDirection.y, 0);
+        }
+        if (currentSceneName == SimulationConstants.SCENE_STARS)
+        {
+            cameraGameObject.transform.position = new Vector3(0, 0, 0);
+        }
+        DefaultSceneCameraLayers = currentCamera.GetComponent<Camera>().cullingMask;
+        // when webgl is the target, the LaserPointer component does not exist
+#if !UNITY_WEBGL && !UNITY_WSA_10_0
+        LaserPointer lp = FindObjectOfType<LaserPointer>();
+        lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
+#endif
+    }
+    private void setupWorldSpaceUI()
+    {
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
         {
-            if (c.gameObject.transform.tag != "WorldUI")
+            if (c.CompareTag("WorldUI"))
             {
-
                 c.renderMode = RenderMode.WorldSpace;
-
                 c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
                 c.planeDistance = 10;
-                c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+#if UNITY_WSA_10_0
+                // c.gameObject.AddComponent<NearInteractionTouchableUnityUI>();
+                c.transform.localScale = new Vector3(0.0015f, 0.0015f, 0.0015f);
+                c.planeDistance = 1;
+#endif
+
+                c.worldCamera = currentCamera;
                 c.GetComponent<GraphicRaycaster>().enabled = false;
-#if !UNITY_WEBGL
+#if !(UNITY_WEBGL || UNITY_WSA_10_0)
                 if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
                 c.GetComponent<OVRRaycaster>().enabled = true;
 #endif
-
-                if (c.gameObject.name == "MainUI")
+                if (c.CompareTag("MainUI"))
                 {
-                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
+                    //c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
                     c.transform.position = new Vector3(3, 4, 5);
-                    
-                    if (currentScene == SimulationConstants.SCENE_EARTH)
+#if UNITY_WSA_10_0
+                    c.transform.position = new Vector3(0.4f, 0.5f, 1.2f);
+#endif
+
+                    if (currentSceneName == SimulationConstants.SCENE_EARTH)
                     {
                         c.transform.position = new Vector3(6, 2, 1);
                         c.transform.rotation = Quaternion.Euler(0, 30, 0);
                     }
 
-                    if (currentScene == SimulationConstants.SCENE_HORIZON)
+                    if (currentSceneName == SimulationConstants.SCENE_HORIZON)
                     {
                         c.transform.rotation = Quaternion.Euler(SimulationManager.Instance.LocalPlayerLookDirection);
+                    }
+                    if (currentSceneName == SimulationConstants.SCENE_LOAD)
+                    {
+                        c.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
                     }
 
                 }
@@ -118,51 +171,26 @@ public class SceneLoader : MonoBehaviour
                 }
                 else
                 {
-                    c.transform.position = new Vector3(0, 1, 4);
+                    c.transform.position = new Vector3(0, 1, 1);
                 }
             }
         }
+    }
+
+    private void setupVREventSystem()
+    {
         Camera vrCam = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
-        
+
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
-#if !UNITY_WEBGL
-        // LaserPointer lp = FindObjectOfType<LaserPointer>();
-        // lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
-        
-#endif
-        // some scene-specific pieces to remove
-        cameraControlUI = GameObject.Find("CameraControlUI");
-        if (cameraControlUI != null)
-        {
-            cameraControlUI.SetActive(false);
-        }
-        if (currentScene == SimulationConstants.SCENE_EARTH || currentScene == SimulationConstants.SCENE_STARS)
-        {
-            vrCam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-            vrCam.GetComponent<Camera>().backgroundColor = Color.black;
-
-        }
-        if (currentScene == SimulationConstants.SCENE_HORIZON)
-        {
-            vrCamera.transform.position = new Vector3(0, 2, 0);
-            vrCamera.transform.rotation = Quaternion.Euler(0, SimulationManager.Instance.LocalPlayerLookDirection.y, 0);
-        }
-        if (currentScene == SimulationConstants.SCENE_STARS)
-        {
-            vrCamera.transform.position = new Vector3(0, 0, 0);
-        }
-        GameObject avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
-        if (avatar != null)
-        {
-            avatar.SetActive(false);
-        }
-
-        DefaultSceneCameraLayers = vrCam.GetComponent<Camera>().cullingMask;
     }
 
-
+    private void setupMRTKEventSystem()
+    {
+        if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
+        if (defaultEventSystem) defaultEventSystem.SetActive(false);
+    }
     private void setupStandardCameras()
     {
         GameObject cam = GameObject.FindGameObjectWithTag("MainCamera");
@@ -187,7 +215,25 @@ public class SceneLoader : MonoBehaviour
             CCDebug.Log($"Setting rotation to {SimulationManager.Instance.LocalPlayerLookDirection}");
             cam.transform.rotation = Quaternion.Euler(SimulationManager.Instance.LocalPlayerLookDirection);
         }
-        
+
         DefaultSceneCameraLayers = cam.GetComponent<Camera>().cullingMask;
     }
+    private void hideOnScreenCameraControl()
+    {
+        // some scene-specific pieces to remove
+        cameraControlUI = GameObject.Find("CameraControlUI");
+        if (cameraControlUI != null)
+        {
+            cameraControlUI.SetActive(false);
+        }
+    }
+    private void hideAvatars()
+    {
+        GameObject avatar = GameObject.FindGameObjectWithTag("LocalPlayerAvatar");
+        if (avatar != null)
+        {
+            avatar.SetActive(false);
+        }
+    }
+
 }

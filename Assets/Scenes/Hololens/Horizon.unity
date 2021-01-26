@@ -186,7 +186,7 @@ PrefabInstance:
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: radius
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -222,7 +222,7 @@ PrefabInstance:
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: magnitudeThreshold
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -2322,8 +2322,8 @@ GameObject:
   - component: {fileID: 1826548887}
   - component: {fileID: 1826548888}
   - component: {fileID: 1826548890}
-  - component: {fileID: 1826548889}
   - component: {fileID: 1826548891}
+  - component: {fileID: 1826548889}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2348,7 +2348,7 @@ Camera:
   m_GameObject: {fileID: 1826548883}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2524,7 +2524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d9acc7968244a8886f3af591305bcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeProfile: {fileID: 11400000, guid: 31a611a779d3499e8e35f1a2018ca841, type: 2}
+  activeProfile: {fileID: 11400000, guid: 21878dc7c8480164088d1c25d5f87a76, type: 2}
 --- !u!4 &1979996731
 Transform:
   m_ObjectHideFlags: 0
