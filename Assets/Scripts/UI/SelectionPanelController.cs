@@ -7,44 +7,43 @@ using UnityEngine.SceneManagement;
 public enum SelectionListMode { Constellation = 0, Location = 1, Snapshots = 2 }
 public class SelectionPanelController : MonoBehaviour
 {
-    private ConstellationDropdown _constellationDropdown;
-    private ConstellationList _constellationList;
-    private CityList _cityList;
-    private CityDropdown _cityDropdown;
-    private SnapGrid _snapshotGrid;
+    [SerializeField] private ConstellationDropdown constellationDropdown;
+    [SerializeField] private ConstellationList constellationList;
+    [SerializeField] private CityList cityList;
+    [SerializeField] private CityDropdown cityDropdown;
+    [SerializeField] private SnapGrid snapshotGrid;
 
     [SerializeField] private GameObject selectionConstellation;
     [SerializeField] private GameObject selectionLocation;
     [SerializeField] private GameObject selectionSnapshots;
     private void OnEnable()
     {
-        _constellationDropdown = FindObjectOfType<ConstellationDropdown>();
-        _constellationList = FindObjectOfType<ConstellationList>();
-        _cityList = FindObjectOfType<CityList>();
-        _cityDropdown = FindObjectOfType<CityDropdown>();
-        _snapshotGrid = FindObjectOfType<SnapGrid>();
-        if (_cityList)
+        if (!constellationDropdown) constellationDropdown = FindObjectOfType<ConstellationDropdown>();
+        if (!constellationList) constellationList = FindObjectOfType<ConstellationList>();
+        if (!cityList) cityList = FindObjectOfType<CityList>();
+        if (!cityDropdown) cityDropdown = FindObjectOfType<CityDropdown>();
+        if (!snapshotGrid) snapshotGrid = FindObjectOfType<SnapGrid>();
+        if (cityList && !cityList.HasCompletedSetup)
         {
-            Debug.Log("found city list");
-            _cityList.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
+            StartCoroutine(cityList.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName));
         }
 
-        if (_cityDropdown)
+        if (cityDropdown)
         {
             Debug.Log("found city drop down");
-            _cityDropdown.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
+            cityDropdown.InitCityNames(DataManager.Instance.CityNames, SimulationManager.Instance.CurrentLocationName);
         }
+        
         string initialConstellation =
             SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS ? "all" : "none";
-        if (_constellationDropdown)
+        if (constellationDropdown)
         {
-            _constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, initialConstellation);
+            constellationDropdown.InitConstellationNames(DataManager.Instance.ConstellationFullNames, initialConstellation);
         }
 
-        if (_constellationList)
+        if (constellationList && !constellationList.HasCompletedSetup)
         {
-            
-            _constellationList.InitConstellations(DataManager.Instance.ConstellationFullNames, initialConstellation);
+            StartCoroutine(constellationList.InitConstellations(DataManager.Instance.ConstellationFullNames, initialConstellation));
         }
     }
 
