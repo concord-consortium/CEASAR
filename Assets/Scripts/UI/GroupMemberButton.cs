@@ -16,11 +16,14 @@ public class GroupMemberButton : MonoBehaviour
    
    public void Setup(Player p)
    {
-      playerName.SetText(p.DisplayName);
-      Color playerColor = UserRecord.GetColorForUsername(p.Name);
-      playerName.color = playerColor;
-      playerIcon.color = playerColor;
-      _player = p;
+        if (playerName)
+        {
+            playerName.SetText(p.DisplayName);
+            Color playerColor = UserRecord.GetColorForUsername(p.Name);
+            playerName.color = playerColor;
+            playerIcon.color = playerColor;
+            _player = p;
+        }
    }
 
    void Update()
@@ -33,13 +36,13 @@ public class GroupMemberButton : MonoBehaviour
    }
    public void Reset()
    {
-      playerIcon.color = Color.clear;
-      timeIcon.color = Color.clear;
-      locationIcon.color = Color.clear;
-      playerName.color = Color.clear;
-      playerName.SetText("");
-      this.name = "playerButton";
-      _player = null;
+        if (playerIcon) playerIcon.color = Color.clear;
+        if(timeIcon) timeIcon.color = Color.clear;
+        if(locationIcon) locationIcon.color = Color.clear;
+        if (playerName) playerName.color = Color.clear;
+        if (playerName) playerName.SetText("");
+        this.name = "playerButton";
+        _player = null;
    }
 
    private void showTimeIcon(bool show)
