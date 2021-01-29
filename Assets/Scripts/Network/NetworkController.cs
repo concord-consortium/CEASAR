@@ -65,7 +65,7 @@ public class NetworkController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CCDebug.Log("OnSceneLoaded: " + scene.name);
-        if (autoConnect)
+        if (autoConnect && !colyseusClient.IsConnected)
         {
             ConnectToServer();
         }

@@ -18,6 +18,7 @@ public class SimulationManagerComponent : MonoBehaviour
     private GameObject celestialSpherePrefab;
 
     [SerializeField] private GameObject mainUIPrefab;
+    [SerializeField] private GameObject infoPanelPrefab;
     [SerializeField]
     private Material starMaterial;
     // Celestial Sphere scene-specific settings
@@ -180,6 +181,11 @@ public class SimulationManagerComponent : MonoBehaviour
         {
             Instantiate(mainUIPrefab);
             manager.NetworkControllerComponent.Setup();
+        } 
+        GameObject infoPanel = GameObject.FindGameObjectWithTag("InfoPanelUI");
+        if (!infoPanel) 
+        {
+            Instantiate(infoPanelPrefab);
         } 
         sceneLoader.SetupCameras();
         

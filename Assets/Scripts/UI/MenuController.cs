@@ -32,23 +32,37 @@ public class MenuController : MonoBehaviour
     
     public GameObject drawModeIndicator;
     [SerializeField] private GameObject menuContainerObject;
+    [SerializeField] private GameObject informationPanelObject;
     [SerializeField] private GameObject showHideMenuToggle;
+    [SerializeField] private GameObject showHideInfoPanelToggle;
     [SerializeField] private GameObject northPinPrefab;
     
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
+    private bool showInfoPanel = true;
     
     public void ToggleMainMenu()
     {
         showMainMenu = !showMainMenu;
         menuContainerObject.SetActive(showMainMenu);
-        if (showMainMenu)
+        if (showMainMenu && showHideMenuToggle != null)
         {
             // use SendMessage because text component on canvas ui vs world ui is different
             showHideMenuToggle.SendMessage("SetText", _menuHideIcon);
         }
         else showHideMenuToggle.SendMessage("SetText", _menuShowIcon);
+    }
+    public void ToggleInfoPanel()
+    {
+        showInfoPanel = !showInfoPanel;
+        informationPanelObject.SetActive(showInfoPanel);
+        if (showInfoPanel && showHideInfoPanelToggle != null)
+        {
+            // use SendMessage because text component on canvas ui vs world ui is different
+            showHideInfoPanelToggle.SendMessage("SetText", _menuHideIcon);
+        }
+        else showHideInfoPanelToggle.SendMessage("SetText", _menuShowIcon);
     }
     private bool isDrawing = false;
     public bool IsDrawing {
