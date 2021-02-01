@@ -16,6 +16,7 @@ TagManager:
   - WorldUI
   - SceneButton
   - NorthPin
+  - InfoPanelUI
   layers:
   - Default
   - TransparentFX
@@ -48,7 +49,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Spatial Awareness
   m_SortingLayers:
   - name: Background
     uniqueID: 4205683931

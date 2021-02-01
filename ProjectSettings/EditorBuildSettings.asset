@@ -23,8 +23,22 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Planets.unity
     guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
+  - enabled: 0
+    path: Assets/Scenes/Hololens/LoadSim.unity
+    guid: 56f7442df6742ff4f8b5d867ed77af7e
+  - enabled: 0
+    path: Assets/Scenes/Hololens/Horizon.unity
+    guid: 0f1e4f299d5ee054bbbf90a3a1b7583e
+  - enabled: 0
+    path: Assets/Scenes/Hololens/EarthInteraction.unity
+    guid: 143062f4e1a2e704181e51ad0bb712f1
+  - enabled: 0
+    path: Assets/Scenes/Hololens/Stars.unity
+    guid: c54ed6a11af40ea4085c2192f0ed4672
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 315ed5add61d444adbf4da548c6087f6,
+      type: 2}
+    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 070ce72220779924580f76fdac6d4f8f,
       type: 2}
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 1019c8589c43e441b8998b7b637a2044,
       type: 2}

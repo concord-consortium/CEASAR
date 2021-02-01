@@ -18,7 +18,7 @@ public class SceneLoader : MonoBehaviour
 
     private GameObject vrCamera;
     
-    private GameObject cameraControlUI;
+    private UIControlCamera cameraControlUI;
 
     public LayerMask DefaultSceneCameraLayers;
 
@@ -80,23 +80,21 @@ public class SceneLoader : MonoBehaviour
         Canvas[] allUICanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas c in allUICanvases)
         {
-            if (c.gameObject.transform.tag != "WorldUI")
+            if (!c.CompareTag("WorldUI"))
             {
-
                 c.renderMode = RenderMode.WorldSpace;
 
                 c.transform.localScale = new Vector3(0.007f, 0.007f, 0.007f);
                 c.planeDistance = 10;
                 c.worldCamera = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
                 c.GetComponent<GraphicRaycaster>().enabled = false;
-#if !UNITY_WEBGL
+#if !UNITY_WEBGL && UNITY_ANDROID || UNITY_STANDALONE_WIN
                 if (c.GetComponent<OVRRaycaster>() == null) c.gameObject.AddComponent<OVRRaycaster>();
                 c.GetComponent<OVRRaycaster>().enabled = true;
 #endif
-
-                if (c.gameObject.name == "MainUI")
+                if (c.CompareTag("MainUI"))
                 {
-                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(440, 750);
+                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 500);
                     c.transform.position = new Vector3(3, 4, 5);
                     
                     if (currentScene == SimulationConstants.SCENE_EARTH)
@@ -109,11 +107,10 @@ public class SceneLoader : MonoBehaviour
                     {
                         c.transform.rotation = Quaternion.Euler(SimulationManager.Instance.LocalPlayerLookDirection);
                     }
-
                 }
-                else if (c.gameObject.name == "NetworkUI")
+                else if (c.CompareTag("InfoPanelUI"))
                 {
-                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+                    c.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 400);
                     c.transform.position = new Vector3(-3, 3, 5);
                 }
                 else
@@ -127,16 +124,16 @@ public class SceneLoader : MonoBehaviour
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
-#if !UNITY_WEBGL
+#if !UNITY_WEBGL && UNITY_ANDROID || UNITY_STANDALONE_WIN
         // LaserPointer lp = FindObjectOfType<LaserPointer>();
         // lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
         
 #endif
         // some scene-specific pieces to remove
-        cameraControlUI = GameObject.Find("CameraControlUI");
-        if (cameraControlUI != null)
+        GameObject movementMenu = GameObject.Find("Movement Menu");
+        if (movementMenu != null)
         {
-            cameraControlUI.SetActive(false);
+            movementMenu.gameObject.SetActive(false);
         }
         if (currentScene == SimulationConstants.SCENE_EARTH || currentScene == SimulationConstants.SCENE_STARS)
         {
@@ -173,13 +170,14 @@ public class SceneLoader : MonoBehaviour
             cam.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
             cam.GetComponent<Camera>().backgroundColor = Color.black;
         }
-        if (cameraControlUI == null) cameraControlUI = GameObject.Find("CameraControlUI");
+
+        if (cameraControlUI == null) cameraControlUI = FindObjectOfType<UIControlCamera>();
         if (cameraControlUI != null)
         {
             bool orbitControlMode = SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH;
-            cameraControlUI.GetComponent<UIControlCamera>().enableControls = true;
-            cameraControlUI.GetComponent<UIControlCamera>().cameraContainer = cam.transform;
-            cameraControlUI.GetComponent<UIControlCamera>().OrbitControlMode = orbitControlMode;
+            cameraControlUI.enableControls = true;
+            cameraControlUI.cameraContainer = cam.transform;
+            cameraControlUI.OrbitControlMode = orbitControlMode;
         }
 
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_HORIZON)

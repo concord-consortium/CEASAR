@@ -219,8 +219,21 @@ public class SimulationManager
                 }
             }
         }
-    } 
-    public Pushpin CrashSiteForGroup;
+    }
+    private Pushpin _crashSiteForGroup;
+    public Pushpin CrashSiteForGroup {
+        get { 
+            if (_crashSiteForGroup == null)
+            {
+                _crashSiteForGroup = UserRecord.GroupPins["alpha"];
+            }
+            return _crashSiteForGroup;
+        }
+        set {
+            _crashSiteForGroup = value;
+        }
+    }
+
     public List<Pushpin> LocalUserSnapshots = new List<Pushpin>();
     private bool _hasSetNorthPin = false;
     public bool HasSetNorthPin

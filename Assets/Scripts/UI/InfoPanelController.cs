@@ -17,6 +17,11 @@ public class InfoPanelController : MonoBehaviour
     public GameObject networkStatusText;
     public GameObject networkGroupText;
     
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.transform.root.gameObject);
+    }
+
     private void OnEnable()
     {
         events.PushPinSelected.AddListener(updatePushpinText);

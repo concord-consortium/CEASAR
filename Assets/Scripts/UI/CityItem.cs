@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -11,16 +12,46 @@ public class CityItem : MonoBehaviour
     [SerializeField] private TMP_Text cityNameLabel;
     private string _cityName;
     private bool _isSelected = false;
-    
+    private bool _setupComplete = false;
+
+    private void OnEnable()
+    {
+        initExisting();
+    }
+    private void OnApplicationQuit()
+    {
+        SimulationEvents.Instance.PushPinUpdated.RemoveAllListeners();
+        selectButton.onClick = null;
+    }
+
     public void Init(string cityName, bool selected)
     {
         gameObject.name = cityName;
         _cityName = cityName;
         cityNameLabel.SetText(cityName);
-        selectButton.onClick.AddListener(() => selectCity(_cityName));
+        
         _isSelected = selected;
+        finishSetup();
+    }
+    /// <summary>
+    /// For lists of cities that come pre-bundled in prefab form (for easier VR integration)
+    /// </summary>
+    void initExisting()
+    {
+        _cityName = gameObject.name;
+        _isSelected = SimulationManager.Instance.CurrentLocationName == _cityName;
+        finishSetup();
+    }
+
+    void finishSetup()
+    {
         setSelectedStatus();
-        SimulationEvents.Instance.PushPinUpdated.AddListener((p, lookDirection) => pinUpdated(p));
+        if (!_setupComplete)
+        {
+            selectButton.onClick.AddListener(() => selectCity(_cityName));
+            SimulationEvents.Instance.PushPinUpdated.AddListener((p, lookDirection) => pinUpdated(p));
+            _setupComplete = true;
+        }
     }
 
     private void selectCity(string cityName)
