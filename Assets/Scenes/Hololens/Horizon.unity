@@ -1549,6 +1549,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: MainUI
       objectReference: {fileID: 0}
+    - target: {fileID: 3011058017223921902, guid: c01918ea671bdc849b28453cad635117,
+        type: 3}
+      propertyPath: trackedHandness
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3108328461818086434, guid: c01918ea671bdc849b28453cad635117,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -3065,6 +3070,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InformationPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3728735833971861650, guid: 830cfde47971c4aa78f6e1b450656b93,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3728735833971861661, guid: 830cfde47971c4aa78f6e1b450656b93,
         type: 3}
@@ -4671,6 +4681,75 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useLocalRotation: 0
   threshold: 5
+--- !u!1001 &2065664383
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781502, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440148374216781503, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_Name
+      value: HandInfoPanel
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2215bc7919bfa3b429b07ac3a230e38e, type: 3}
 --- !u!23 &1618443104764210
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -22,7 +22,7 @@ public class InfoPanelController : MonoBehaviour
         DontDestroyOnLoad(this.transform.root.gameObject);
     }
 
-    private void OnEnable()
+    private void Start()
     {
         events.PushPinSelected.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
@@ -42,7 +42,7 @@ public class InfoPanelController : MonoBehaviour
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
         
-        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());   
+        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
         
     }
     
@@ -131,7 +131,7 @@ public class InfoPanelController : MonoBehaviour
     }
     private void OnDisable()
     {
-        removeAllListeners();
+        // removeAllListeners();
     }
 
     private void OnDestroy()
