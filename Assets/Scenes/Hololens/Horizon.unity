@@ -1479,6 +1479,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3011058016301326695, guid: c01918ea671bdc849b28453cad635117,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3011058016881073311, guid: c01918ea671bdc849b28453cad635117,
         type: 3}
       propertyPath: m_IsActive
@@ -4747,6 +4752,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HandInfoPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589958142623597473, guid: 2215bc7919bfa3b429b07ac3a230e38e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2215bc7919bfa3b429b07ac3a230e38e, type: 3}

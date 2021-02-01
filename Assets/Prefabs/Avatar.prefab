@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4252276347598981934}
   - component: {fileID: 5068828250317386008}
   - component: {fileID: 1541516519151373793}
+  - component: {fileID: 5803105054349292751}
   m_Layer: 0
   m_Name: Avatar
   m_TagString: LocalPlayerAvatar
@@ -54,6 +55,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -78,3 +80,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &5803105054349292751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961596688562665789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17db91fbb9caa8842a1462c99d1a85d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  avatarScale: 0.5
+  horizonSceneAvatarOffset: {x: 1, y: 0, z: 1}
