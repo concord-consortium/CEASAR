@@ -20,6 +20,7 @@ public class InfoPanelController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
+        manager.InfoPanel = this;
     }
 
     private void Start()

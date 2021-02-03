@@ -176,14 +176,13 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
-        GameObject mainUI = GameObject.FindGameObjectWithTag("MainUI");
-        if (!mainUI) 
+        if (!manager.MainMenu) 
         {
             Instantiate(mainUIPrefab);
             manager.NetworkControllerComponent.Setup();
         } 
-        GameObject infoPanel = GameObject.FindGameObjectWithTag("InfoPanelUI");
-        if (!infoPanel) 
+       
+        if (!manager.InfoPanel) 
         {
             Instantiate(infoPanelPrefab);
         } 

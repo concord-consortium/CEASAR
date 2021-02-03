@@ -94,6 +94,7 @@ public class MenuController : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
+        manager.MainMenu = this;
     }
     
     private void Start()
