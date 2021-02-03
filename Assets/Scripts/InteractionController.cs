@@ -196,12 +196,12 @@ public class InteractionController : MonoBehaviour
     public void ShowEarthMarkerInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-
+        Vector3 earthPos = earth.transform.position;
         if (interactionIndicator)
         {
             GameObject indicatorObj = Instantiate(interactionIndicator);
             indicatorObj.transform.localRotation = rot;
-            indicatorObj.transform.position = pos;
+            indicatorObj.transform.position = pos + earthPos;
             Utils.SetObjectColor(indicatorObj, playerColor);
             StartCoroutine(selfDestruct(indicatorObj));
         }
@@ -256,7 +256,7 @@ public class InteractionController : MonoBehaviour
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
             float radius = (size.x / 2) - 0.1f;
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
-            earthRelativePos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
+            earthRelativePos = pos + earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
         return earthRelativePos;
     }
@@ -327,7 +327,7 @@ public class InteractionController : MonoBehaviour
     void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
         Vector3 pos = getEarthRelativePos(pin.Location);
-        pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos);
+        pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
         pinObject.transform.position = pos;
         pinObject.GetComponent<Renderer>().material.color = c;
         
