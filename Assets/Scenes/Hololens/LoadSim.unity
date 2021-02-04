@@ -3937,12 +3937,17 @@ PrefabInstance:
     - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
       propertyPath: LogCategories.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}
       propertyPath: LogCategories.Array.data[3]
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5449054363899760968, guid: a7e37d7916f88254aa1bcc2822bfaf62,
+        type: 3}
+      propertyPath: LogCategories.Array.data[4]
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5449054363899760969, guid: a7e37d7916f88254aa1bcc2822bfaf62,
         type: 3}

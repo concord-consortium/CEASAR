@@ -318,6 +318,11 @@ public class InteractionController : MonoBehaviour
         {
             pinObject = Instantiate(locationPinPrefab);
             pinObject.name = pinName;
+            if (earth != null)
+            {
+                
+                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.5f;
+            }
             pinObject.transform.parent = this.transform;
         }
 

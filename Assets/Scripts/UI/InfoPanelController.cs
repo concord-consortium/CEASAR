@@ -16,7 +16,10 @@ public class InfoPanelController : MonoBehaviour
     public GameObject networkUserPrefab;
     public GameObject networkStatusText;
     public GameObject networkGroupText;
-    
+
+    public TextMeshProUGUI debugText;
+
+    private string lastDebugMessage = "";
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
@@ -33,7 +36,14 @@ public class InfoPanelController : MonoBehaviour
         playerListChanged(manager.LocalUsername);
         updatePushpinText(manager.LocalPlayerPin);
     }
-
+    private void Update()
+    {
+        if (debugText != null && lastDebugMessage != manager.LastLogMessageDebug)
+        {
+            debugText.SetText(manager.LastLogMessageDebug);
+            lastDebugMessage = manager.LastLogMessageDebug;
+        }
+    }
     private void updatePushpinText(Pushpin pin)
     {
         StringBuilder details = new StringBuilder();

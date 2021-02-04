@@ -272,4 +272,6 @@ public class SimulationManager
 
     public MenuController MainMenu;
     public InfoPanelController InfoPanel;
+
+    public string LastLogMessageDebug;
 }

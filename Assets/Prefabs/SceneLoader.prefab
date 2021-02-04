@@ -53,5 +53,5 @@ MonoBehaviour:
   DefaultSceneCameraLayers:
     serializedVersion: 2
     m_Bits: 0
-  LogLevel: 1
-  LogCategories: 00000000060000000200000005000000
+  LogLevel: 0
+  LogCategories: 0000000006000000020000000500000003000000

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+using Microsoft.MixedReality.Toolkit.Input;
 
 // This component is a MonoBehaviour so we can add references to prefabs and scene stuff in the inspector
 public class SimulationManagerComponent : MonoBehaviour
@@ -188,6 +189,15 @@ public class SimulationManagerComponent : MonoBehaviour
         } 
         sceneLoader.SetupCameras();
         
+    }
+
+    public void HandleEarthInteraction(InputEventData inputEvent)
+    {
+        Debug.LogWarning(inputEvent);
+        if (manager.InteractionControllerObject)
+        {
+            manager.InteractionControllerObject.GetComponent<InteractionController>().SetEarthLocationPin(inputEvent.selectedObject.transform.position);
+        }
     }
 
 }
