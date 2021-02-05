@@ -223,12 +223,15 @@ public class InteractionController : MonoBehaviour
     public void SetEarthLocationPin(Vector3 pos)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-        Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
-        manager.JumpToPin(p);
-        // broadcast the update
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
-        AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
+        // Sanity check inputs are valid before updating the pin
+        if (!float.IsNaN(latLng.Latitude) && !float.IsNaN(latLng.Longitude)){
+            Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
+            manager.JumpToPin(p);
+            // broadcast the update
+            events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+            events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+            AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
+        }
     }
 
     string getPinName(string pinOwner)
@@ -254,7 +257,7 @@ public class InteractionController : MonoBehaviour
         if (earth)
         {
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
-            float radius = (size.x / 2) - 0.1f;
+            float radius = size.x > 0.5f ? (size.x / 2) - 0.1f : (size.x/2) - 0.05f;
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
             earthRelativePos = pos + earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
@@ -320,8 +323,7 @@ public class InteractionController : MonoBehaviour
             pinObject.name = pinName;
             if (earth != null)
             {
-                
-                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.5f;
+                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
             }
             pinObject.transform.parent = this.transform;
         }
@@ -333,6 +335,7 @@ public class InteractionController : MonoBehaviour
     {
         Vector3 pos = getEarthRelativePos(pin.Location);
         pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
+        pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
         pinObject.transform.position = pos;
         pinObject.GetComponent<Renderer>().material.color = c;
         

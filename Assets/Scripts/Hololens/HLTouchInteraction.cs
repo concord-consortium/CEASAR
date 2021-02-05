@@ -50,8 +50,6 @@ public class HLTouchInteraction : MonoBehaviour, IMixedRealityInputHandler, IMix
 
     void IMixedRealityTouchHandler.OnTouchUpdated(HandTrackingInputEventData eventData)
     {
-        // CCDebug.Log("TouchUpdated " + eventData.InputSource.Pointers[0].Position, LogLevel.Verbose, LogMessageCategory.VR);
-        // CCDebug.Log("TouchUpdated " + eventData.InputSource.Pointers[0].Position, LogLevel.Display, LogMessageCategory.VR);
         Vector3 touchPosition = eventData.InputSource.Pointers[0].Position;
         SimulationManager.Instance.InteractionControllerObject.GetComponent<InteractionController>().SetEarthLocationPin(touchPosition);
     }
