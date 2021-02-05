@@ -195,6 +195,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
+      propertyPath: starPrefab
+      value: 
+      objectReference: {fileID: 5188296271615159055, guid: 76b56519ec5b8584c97512a51e12bece,
+        type: 3}
+    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
+        type: 3}
       propertyPath: showEquator
       value: 0
       objectReference: {fileID: 0}
