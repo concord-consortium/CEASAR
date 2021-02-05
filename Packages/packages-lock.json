@@ -1,15 +1,5 @@
 {
   "dependencies": {
-    "com.microsoft.mixedreality.toolkit.examples": {
-      "version": "2.5.3",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.microsoft.mixedreality.toolkit.foundation": "2.5.3",
-        "com.microsoft.mixedreality.toolkit.extensions": "2.5.3"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
     "com.microsoft.mixedreality.toolkit.extensions": {
       "version": "2.5.3",
       "depth": 0,
