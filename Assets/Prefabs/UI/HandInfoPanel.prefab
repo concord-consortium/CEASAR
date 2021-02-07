@@ -773,6 +773,7 @@ GameObject:
   - component: {fileID: 2440148374216781501}
   - component: {fileID: 2440148374216781499}
   - component: {fileID: 2440148374216781500}
+  - component: {fileID: 4147162667330661136}
   m_Layer: 0
   m_Name: HandInfoPanel
   m_TagString: InfoPanelUI
@@ -982,6 +983,26 @@ MonoBehaviour:
   useGazeActivation: 1
   eyeGazeProximityThreshold: 0.0125
   headGazeProximityThreshold: 0.03
+--- !u!114 &4147162667330661136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2440148374216781503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a94e329da2e34d409e393c426b4b72b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pushPinDetailsText: {fileID: 2188813815233008637}
+  constellationText: {fileID: 48696018591092212}
+  networkUserList: {fileID: 1503603649835373735}
+  networkUserPrefab: {fileID: 7577592127271943077, guid: 1060ad0539984411388171fa274364c1,
+    type: 3}
+  networkStatusText: {fileID: 1173528061409290798}
+  networkGroupText: {fileID: 7178572079193617124}
+  debugText: {fileID: 0}
 --- !u!1 &3220100458297391411
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,7 +1198,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4589958142163763538}
-  - component: {fileID: 4151776739559798494}
   m_Layer: 5
   m_Name: Information
   m_TagString: Untagged
@@ -1207,26 +1227,6 @@ RectTransform:
   m_AnchoredPosition: {x: -17.65, y: -12.63}
   m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4151776739559798494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4589958142163763539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a94e329da2e34d409e393c426b4b72b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pushPinDetailsText: {fileID: 2188813815233008637}
-  constellationText: {fileID: 48696018591092212}
-  networkUserList: {fileID: 1503603649835373735}
-  networkUserPrefab: {fileID: 7577592127271943077, guid: 1060ad0539984411388171fa274364c1,
-    type: 3}
-  networkStatusText: {fileID: 1173528061409290798}
-  networkGroupText: {fileID: 7178572079193617124}
-  debugText: {fileID: 0}
 --- !u!1 &4589958142623597473
 GameObject:
   m_ObjectHideFlags: 0

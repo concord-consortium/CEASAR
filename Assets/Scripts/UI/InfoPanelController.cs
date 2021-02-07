@@ -28,6 +28,8 @@ public class InfoPanelController : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("wiring up event listeners ");
+        Debug.Log(events.PushPinSelected.GetPersistentEventCount());
         events.PushPinSelected.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
@@ -134,6 +136,7 @@ public class InfoPanelController : MonoBehaviour
 
     private void removeAllListeners()
     {
+        Debug.Log("removing listeners ");
         events.PushPinSelected.RemoveListener(updatePushpinText);
         events.StarSelected.RemoveListener(starSelectedText);
         events.PlayerJoined.RemoveListener(playerListChanged);

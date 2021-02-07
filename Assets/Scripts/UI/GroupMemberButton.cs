@@ -9,6 +9,11 @@ public class GroupMemberButton : MonoBehaviour
    [SerializeField] private Image locationIcon;
    [SerializeField] private Image timeIcon;
    [SerializeField] private Image playerIcon;
+
+   [SerializeField] private SpriteRenderer locationSpriteIcon;
+   [SerializeField] private SpriteRenderer timeSpriteIcon;
+   [SerializeField] private SpriteRenderer playerSpriteIcon;
+
    [SerializeField] private TMP_Text playerName;
    private Player _player;
    private SimulationManager manager { get { return SimulationManager.Instance; } }
@@ -21,7 +26,7 @@ public class GroupMemberButton : MonoBehaviour
             playerName.SetText(p.DisplayName);
             Color playerColor = UserRecord.GetColorForUsername(p.Name);
             playerName.color = playerColor;
-            playerIcon.color = playerColor;
+            setIconColor(playerColor, playerIcon, playerSpriteIcon);
             _player = p;
         }
    }
@@ -36,9 +41,10 @@ public class GroupMemberButton : MonoBehaviour
    }
    public void Reset()
    {
-        if (playerIcon) playerIcon.color = Color.clear;
-        if(timeIcon) timeIcon.color = Color.clear;
-        if(locationIcon) locationIcon.color = Color.clear;
+        setIconColor(Color.clear, playerIcon, playerSpriteIcon);
+        setIconColor(Color.clear, timeIcon, timeSpriteIcon);
+        setIconColor(Color.clear, locationIcon, locationSpriteIcon);
+ 
         if (playerName) playerName.color = Color.clear;
         if (playerName) playerName.SetText("");
         this.name = "playerButton";
@@ -47,15 +53,34 @@ public class GroupMemberButton : MonoBehaviour
 
    private void showTimeIcon(bool show)
    {
-      if (show) timeIcon.color = Color.white;
-      else timeIcon.color = Color.clear;
+        if (show)
+        {
+            setIconColor(Color.white, timeIcon, timeSpriteIcon);
+        }
+
+        else
+        {
+            setIconColor(Color.clear, timeIcon, timeSpriteIcon);
+        }
    }
    private void showLocationIcon(bool show)
    {
-      if (show) locationIcon.color = Color.white;
-      else locationIcon.color = Color.clear;
+        if (show)
+        {
+            setIconColor(Color.white, locationIcon, locationSpriteIcon);
+        }
+        else
+        {
+            setIconColor(Color.clear, locationIcon, locationSpriteIcon);
+        }
    }
 
+    private void setIconColor(Color c, Image imageIcon, SpriteRenderer spriteIcon)
+    {
+        // Regular UI uses Image components for icons. MRTK used SpriteRenderer in the sample, so we handle both here
+        if (imageIcon) imageIcon.color = c;
+        if (spriteIcon) spriteIcon.color = c;
+    }
    public void PlayerClicked()
    {
       if (_player != null)
