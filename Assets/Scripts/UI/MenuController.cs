@@ -36,6 +36,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject showHideMenuToggle;
     [SerializeField] private GameObject showHideInfoPanelToggle;
     [SerializeField] private GameObject northPinPrefab;
+    [SerializeField] private TMP_Text annotateMenuTitle;
     
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
@@ -70,6 +71,8 @@ public class MenuController : MonoBehaviour
         set { 
             isDrawing = value;
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+            if (annotateMenuTitle) annotateMenuTitle.SetText(isDrawing ? "Annotate Menu (Drawing)" : "Annotate Menu");
+
             if (!isDrawing)
             {
                 if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
@@ -89,14 +92,19 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    float northPinVerticalOffset = 0.1f;
+
     private bool _hasCompletedSetup = false;
     
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
         manager.MainMenu = this;
+#if UNITY_WSA
+        northPinVerticalOffset = -1.5f;
+#endif
     }
-    
+
     private void Start()
     {
         // Should only happen once, but just in case
@@ -286,7 +294,7 @@ public class MenuController : MonoBehaviour
         // if we've changed scene, place our pin
         if (shouldDisplay && manager.HasSetNorthPin && northPins.Length == 0)
         {
-            GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+            GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
             
             northPin.transform.localRotation = Quaternion.Euler(0, manager.PlayerNorthPinDirection, 0);
         }
@@ -305,7 +313,8 @@ public class MenuController : MonoBehaviour
         {
             if (!manager.HasSetNorthPin)
             {
-                GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+                
+                GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
                 setNorthPin(northPin);
             }
             else

@@ -12,7 +12,7 @@ public class CityList : MonoBehaviour
     [SerializeField] private GameObject cityTextObject;
     [SerializeField] private RectTransform contentContainer;
     public bool HasCompletedSetup = false;
-    public IEnumerator InitCityNames(List<string> cityNames, string currentCity)
+    public IEnumerator InitCityNames(List<string> cityNames, string currentCity, bool forceUpdate)
     {
         yield return new WaitForEndOfFrame();
         CityItem[] _existingCityItems = FindObjectsOfType<CityItem>();
@@ -20,21 +20,24 @@ public class CityList : MonoBehaviour
         {
             if (allCityNames == null || allCityNames.Count == 0)
             {
-                // Keeping the option to regenerate the city list in case our list changes
-                // in future updates. Ideally, we'll run this in the editor and use a pre-populated prefab
-                // to speed things up at runtime. This also helps when moving to VR since all child elements are
-                // positioned together when switching to world-space canvas
-                string[] cities = cityNames.ToArray();
-                if (_existingCityItems.Length == 0)
+                if (forceUpdate)
                 {
-                    for (int i = 0; i < cities.Length; i++)
+                    // Keeping the option to regenerate the city list in case our list changes
+                    // in future updates. Ideally, we'll run this in the editor and use a pre-populated prefab
+                    // to speed things up at runtime. This also helps when moving to VR since all child elements are
+                    // positioned together when switching to world-space canvas
+                    string[] cities = cityNames.ToArray();
+                    if (_existingCityItems.Length == 0)
                     {
-                        Debug.Log(cities[i] + " Creating!");
-                        GameObject cityObject = Instantiate(cityTextObject);
-                        cityObject.transform.SetParent(contentContainer);
-                        cityObject.transform.localScale = Vector3.one;
-                        bool isSelected = SimulationManager.Instance.CurrentLocationName == cities[i];
-                        cityObject.GetComponent<CityItem>().Init(cities[i], isSelected);
+                        for (int i = 0; i < cities.Length; i++)
+                        {
+                            Debug.Log(cities[i] + " Creating!");
+                            GameObject cityObject = Instantiate(cityTextObject);
+                            cityObject.transform.SetParent(contentContainer);
+                            cityObject.transform.localScale = Vector3.one;
+                            bool isSelected = SimulationManager.Instance.CurrentLocationName == cities[i];
+                            cityObject.GetComponent<CityItem>().Init(cities[i], isSelected);
+                        }
                     }
                 }
 

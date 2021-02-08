@@ -70,7 +70,7 @@ public class InteractionController : MonoBehaviour
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
-        bool showPins = scene.name == "EarthInteraction";
+        bool showPins = scene.name == SimulationConstants.SCENE_EARTH;
         this.showPins(showPins);
     }
     
@@ -272,11 +272,14 @@ public class InteractionController : MonoBehaviour
         string pinName = getPinName(manager.LocalUsername);
         if (localPlayerPinObject == null) 
         {
-            localPlayerPinObject = getPinObject(pinName);
-            localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
+            localPlayerPinObject = getPinObject(pinName);            
         }
-
-        updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
+        if (localPlayerPinObject)
+        {
+            localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
+            updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
+        }
+        
     }
     
     // This is used for local pins and remote pins
@@ -326,33 +329,43 @@ public class InteractionController : MonoBehaviour
                 pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
             }
             pinObject.transform.parent = this.transform;
-        }
-
+        }        
         return pinObject;
     }
     // Update the visible pin in-game to show at the correct location with the correct color.
     void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
-        if (earth)
+        if (!shouldShowPins())
         {
-            Vector3 pos = getEarthRelativePos(pin.Location);
-            pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
-            pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
-            pinObject.transform.position = pos;
-            pinObject.GetComponent<Renderer>().material.color = c;
+            pinObject.SetActive(false);
+        }
+        else
+        {
+            if (earth)
+            {
+                Vector3 pos = getEarthRelativePos(pin.Location);
+                pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
+                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+                pinObject.transform.position = pos;
+                pinObject.GetComponent<Renderer>().material.color = c;
 
-            // HIDE IF WE ARE AT THE CRASH SITE
-            if (pin.IsCrashSite())
-            {
-                pinObject.SetActive(false);
-            }
-            else
-            {
-                pinObject.SetActive(true);
+
+                // HIDE IF WE ARE AT THE CRASH SITE
+                if (pin.IsCrashSite())
+                {
+                    pinObject.SetActive(false);
+                }
+                else
+                {
+                    pinObject.SetActive(true);
+                }
             }
         }
     }
-    
+    bool shouldShowPins()
+    {
+        return SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH;
+    }
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
         yield return new WaitForSeconds(3.0f);

@@ -2,12 +2,12 @@
 using Microsoft.MixedReality.Toolkit;
 using UnityEngine;
 
-public class HLPointerInteraction : MonoBehaviour, IMixedRealityPointerHandler, IMixedRealityFocusHandler
+public class HLPointerInteraction : MonoBehaviour, IMixedRealityPointerHandler
 {
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
-    MenuController mainUIController;
+    [SerializeField] MenuController mainUIController;
     private int layerMaskEarth;
     private int layerMaskStarsAnnotations;
     void Start()
@@ -16,17 +16,8 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityPointerHandler, 
         layerMaskStarsAnnotations = LayerMask.GetMask("Stars", "Annotations");
         manager = SimulationManager.Instance;
         interactionController = FindObjectOfType<InteractionController>();
-        mainUIController = FindObjectOfType<MenuController>();
+        if (!mainUIController) mainUIController = FindObjectOfType<MenuController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
-    }
-    void IMixedRealityFocusHandler.OnFocusEnter(FocusEventData eventData)
-    {
-        
-    }
-
-    void IMixedRealityFocusHandler.OnFocusExit(FocusEventData eventData)
-    {
-        
     }
 
     void IMixedRealityPointerHandler.OnPointerClicked(MixedRealityPointerEventData eventData)

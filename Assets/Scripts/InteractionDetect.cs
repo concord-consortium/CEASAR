@@ -86,7 +86,7 @@ public class InteractionDetect : MonoBehaviour
                 }
             } 
         }
-        if (mainUIController.IsDrawing && annotationTool)
+        if (mainUIController && mainUIController.IsDrawing && annotationTool)
         {
             ray = camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray, out hit, manager.SceneRadius);// layerMaskStarsAnnotations);

@@ -179,13 +179,31 @@ public class SimulationManagerComponent : MonoBehaviour
         }
         if (!manager.MainMenu) 
         {
-            Instantiate(mainUIPrefab);
+            MenuController sceneMenu = FindObjectOfType<MenuController>();
+            if (!sceneMenu)
+            {
+                Instantiate(mainUIPrefab);
+            } else
+            {
+                manager.MainMenu = sceneMenu;
+            }
+               
+            
             manager.NetworkControllerComponent.Setup();
         } 
        
         if (!manager.InfoPanel) 
         {
-            Instantiate(infoPanelPrefab);
+            InfoPanelController sceneInfoPanel = FindObjectOfType<InfoPanelController>();
+            if (!sceneInfoPanel)
+            {
+                Instantiate(infoPanelPrefab);
+            }
+            else
+            {
+                manager.InfoPanel = sceneInfoPanel;
+            }
+            
         } 
         sceneLoader.SetupCameras();
         
