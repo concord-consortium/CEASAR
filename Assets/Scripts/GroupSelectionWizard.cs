@@ -260,7 +260,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
         return selectedGroupPin;
     }
-    private void LaunchScene()
+    public void LaunchScene()
     {
         DisableNext();
         DisableRestart();

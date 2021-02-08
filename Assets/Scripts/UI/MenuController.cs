@@ -41,7 +41,7 @@ public class MenuController : MonoBehaviour
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
     private bool showInfoPanel = true;
-    
+    private AnnotationTool annotationTool;
     public void ToggleMainMenu()
     {
         showMainMenu = !showMainMenu;
@@ -72,7 +72,7 @@ public class MenuController : MonoBehaviour
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
             if (!isDrawing)
             {
-                AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+                if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
                 if (annotationTool)
                 {
                     annotationTool.EndDrawingMode();
@@ -135,7 +135,15 @@ public class MenuController : MonoBehaviour
             events.DrawMode.Invoke(IsDrawing);
         }
     }
-
+    public void UndoAnnotation()
+    {
+        if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+        if (annotationTool)
+        {
+            annotationTool.UndoAnnotation();
+        }
+        
+    }
     public void ToggleAnnotationsVisibility()
     {
         if (isDrawing)

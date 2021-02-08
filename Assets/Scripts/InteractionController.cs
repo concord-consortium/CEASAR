@@ -333,20 +333,23 @@ public class InteractionController : MonoBehaviour
     // Update the visible pin in-game to show at the correct location with the correct color.
     void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
-        Vector3 pos = getEarthRelativePos(pin.Location);
-        pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
-        pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
-        pinObject.transform.position = pos;
-        pinObject.GetComponent<Renderer>().material.color = c;
-        
-        // HIDE IF WE ARE AT THE CRASH SITE
-        if (pin.IsCrashSite())
+        if (earth)
         {
-            pinObject.SetActive(false);
-        }
-        else
-        {
-            pinObject.SetActive(true);
+            Vector3 pos = getEarthRelativePos(pin.Location);
+            pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
+            pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+            pinObject.transform.position = pos;
+            pinObject.GetComponent<Renderer>().material.color = c;
+
+            // HIDE IF WE ARE AT THE CRASH SITE
+            if (pin.IsCrashSite())
+            {
+                pinObject.SetActive(false);
+            }
+            else
+            {
+                pinObject.SetActive(true);
+            }
         }
     }
     
