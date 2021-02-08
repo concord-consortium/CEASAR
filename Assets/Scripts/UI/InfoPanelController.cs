@@ -41,7 +41,6 @@ public class InfoPanelController : MonoBehaviour
             .Append(manager.CurrentSimulationTime.ToShortTimeString());
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
-        
         pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());   
         
     }
@@ -51,7 +50,6 @@ public class InfoPanelController : MonoBehaviour
         StringBuilder description = new StringBuilder();
         if (starData == null)
         {
-            
             description.Append("Now showing constellation: ");
             description.Append(manager.CurrentlySelectedConstellation);
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
