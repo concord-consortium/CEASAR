@@ -82,16 +82,16 @@ public static class DataImport
         {
             if (!line.StartsWith("ConstellationID"))
             {
-                string[] values = line.Split('\t');
-                if (values.Length >= 6)
+                string[] values = line.Split(' '); //line.Split('\t');
+                if (values.Length >= 4) // new data has two fewer columns, previously if (values.Length >= 6)
                 {
                     for (int i = 0; i < values.Length; i++)
                     {
                         if (i > 4 && (i - 1) % 2 == 0 && (values[0])[0] != '.')
                         {
                             ConstellationConnection connection = new ConstellationConnection();
-                            connection.constellationNameAbbr = values[1];
-                            connection.constellationNameFull = values[2];
+                            connection.constellationNameAbbr = values[0];
+                            connection.constellationNameFull = values[0];
                             connection.startStarHipId = int.Parse(values[i - 1]);
                             connection.endStarHipId = int.Parse(values[i]);
                             connections.Add(connection);

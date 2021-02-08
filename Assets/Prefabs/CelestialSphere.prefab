@@ -48,16 +48,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starData: {fileID: 4900000, guid: 8df84216f85a60f40abed9505f618716, type: 3}
   cityData: {fileID: 4900000, guid: 0ee7a92f473e2d9449aad54fed65dcfb, type: 3}
-  constellationConnectionData: {fileID: 4900000, guid: 3a4ebe9b6d34d57418e20e783bbcafb1,
+  constellationConnectionData: {fileID: 4900000, guid: 6eda7ad47c7df429c89db5aaeadb00d1,
     type: 3}
   starPrefab: {fileID: 5188296271615159055, guid: 69c731feafd4f40058f07a5156523556,
     type: 3}
   starMaterial: {fileID: 0}
   allConstellations: {fileID: 3593076565337986687}
-  constellationFullNames: []
   constellationPrefab: {fileID: 7798315545024252162, guid: 5f8788d5211448f4e99b39b1c46445b9,
     type: 3}
-  cities: []
+  MinMagnitudeValue: -2
+  MaxMagnitudeValue: 8
   lst: 0
   julianDate: 0
   longitudeTimeOffset: 0
@@ -201,6 +201,7 @@ LineRenderer:
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

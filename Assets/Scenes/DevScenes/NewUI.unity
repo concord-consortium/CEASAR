@@ -387,6 +387,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 938131104902968919, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1059537130250206819, guid: d70ff804b22a04071b55a98cd3ed3a81,
         type: 3}
       propertyPath: m_Pivot.x
@@ -496,6 +501,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InteractionMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146667523581569865, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5172106227384477605, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5287082724063348633, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5330698323685014323, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8043806381499072805, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349459844417327817, guid: d70ff804b22a04071b55a98cd3ed3a81,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d70ff804b22a04071b55a98cd3ed3a81, type: 3}
