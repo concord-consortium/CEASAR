@@ -16,19 +16,28 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     
     public GameObject starHighlightOutline;
     private SimulationManager manager {get {return SimulationManager.Instance;}}
+    private Renderer _renderer;
+    void Start()
+    {
+        _renderer = GetComponent<Renderer>();
+    }
     void Update()
     {
-        if (starHighlightOutline != null)
+        // sleep this if we're not visible
+        if (_renderer.isVisible)
         {
-            if (manager.CurrentlySelectedStar != null && manager.CurrentlySelectedStar == this)
+            if (starHighlightOutline != null)
             {
-                if (starHighlightOutline.activeInHierarchy == false) starHighlightOutline.SetActive(true);
-            }
-            else
-            {
-                if (starHighlightOutline.activeInHierarchy)
+                if (manager.CurrentlySelectedStar != null && manager.CurrentlySelectedStar == this)
                 {
-                    starHighlightOutline.SetActive(false);
+                    if (starHighlightOutline.activeInHierarchy == false) starHighlightOutline.SetActive(true);
+                }
+                else
+                {
+                    if (starHighlightOutline.activeInHierarchy)
+                    {
+                        starHighlightOutline.SetActive(false);
+                    }
                 }
             }
         }

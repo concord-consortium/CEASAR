@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+#if UNITY_WSA
+using Microsoft.MixedReality.Toolkit.Input;
+#endif
 
 // This component is a MonoBehaviour so we can add references to prefabs and scene stuff in the inspector
 public class SimulationManagerComponent : MonoBehaviour
@@ -176,19 +179,46 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
-        GameObject mainUI = GameObject.FindGameObjectWithTag("MainUI");
-        if (!mainUI) 
+        if (!manager.MainMenu) 
         {
-            Instantiate(mainUIPrefab);
+            MenuController sceneMenu = FindObjectOfType<MenuController>();
+            if (!sceneMenu)
+            {
+                Instantiate(mainUIPrefab);
+            } else
+            {
+                manager.MainMenu = sceneMenu;
+            }
+               
+            
             manager.NetworkControllerComponent.Setup();
         } 
-        GameObject infoPanel = GameObject.FindGameObjectWithTag("InfoPanelUI");
-        if (!infoPanel) 
+       
+        if (!manager.InfoPanel) 
         {
-            Instantiate(infoPanelPrefab);
+            InfoPanelController sceneInfoPanel = FindObjectOfType<InfoPanelController>();
+            if (!sceneInfoPanel)
+            {
+                Instantiate(infoPanelPrefab);
+            }
+            else
+            {
+                manager.InfoPanel = sceneInfoPanel;
+            }
+            
         } 
         sceneLoader.SetupCameras();
         
     }
+    #if UNITY_WSA
+    public void HandleEarthInteraction(InputEventData inputEvent)
+    {
+        Debug.LogWarning(inputEvent);
+        if (manager.InteractionControllerObject)
+        {
+            manager.InteractionControllerObject.GetComponent<InteractionController>().SetEarthLocationPin(inputEvent.selectedObject.transform.position);
+        }
+    }
+#endif
 
 }

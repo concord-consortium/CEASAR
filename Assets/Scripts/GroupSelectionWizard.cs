@@ -260,7 +260,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
         return selectedGroupPin;
     }
-    private void LaunchScene()
+    public void LaunchScene()
     {
         DisableNext();
         DisableRestart();
@@ -274,7 +274,11 @@ public class GroupSelectionWizard : MonoBehaviour
         float lookDirection = rnd.Next(0, 360);
         manager.LocalPlayerLookDirection = new Vector3(0, lookDirection, 0);
         userRecord.SaveToPrefs();
-        
+
+        ButtonPanel.SetActive(false);
+        LoadSim loader = FindObjectOfType<LoadSim>();
+        loader.LoadSceneByName(SimulationConstants.SCENE_HORIZON);
+        /*
         if(NextScreen)
         {
             SetTitleText($"{userRecord.Username} in {userRecord.group}");
@@ -304,6 +308,7 @@ public class GroupSelectionWizard : MonoBehaviour
                 }
             }
         }
+        */
     }
 
     private void EnableNext()

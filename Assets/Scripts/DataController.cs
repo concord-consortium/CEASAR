@@ -208,7 +208,8 @@ public class DataController : MonoBehaviour
                     // limit the number of stars shown by hiding stars that appear more dim (higher magnitude)
                     if (dataStar.Mag > magnitudeThreshold)
                     {
-                        newStar.ShowStar(false);
+                        bool starIsConstellationConnection = DataManager.Instance.ConstellationConnectionStars.Contains(dataStar.Hipparcos);
+                        newStar.ShowStar(starIsConstellationConnection || false);
                     }
                     
                     constellation.AddStar(newStar.gameObject);
@@ -354,7 +355,8 @@ public class DataController : MonoBehaviour
         magnitudeThreshold = newVal;
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            starComponent.ShowStar(starComponent.starData.Mag < magnitudeThreshold);
+            bool starIsConstellationConnection = DataManager.Instance.ConstellationConnectionStars.Contains(starComponent.starData.Hipparcos);
+            starComponent.ShowStar(starIsConstellationConnection || starComponent.starData.Mag < magnitudeThreshold);
         }
     }
 

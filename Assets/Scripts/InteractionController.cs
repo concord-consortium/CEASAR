@@ -70,7 +70,7 @@ public class InteractionController : MonoBehaviour
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
-        bool showPins = scene.name == "EarthInteraction";
+        bool showPins = scene.name == SimulationConstants.SCENE_EARTH;
         this.showPins(showPins);
     }
     
@@ -196,12 +196,12 @@ public class InteractionController : MonoBehaviour
     public void ShowEarthMarkerInteraction(Vector3 pos, Quaternion rot, Color playerColor, bool isLocal)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-
+        Vector3 earthPos = earth.transform.position;
         if (interactionIndicator)
         {
             GameObject indicatorObj = Instantiate(interactionIndicator);
             indicatorObj.transform.localRotation = rot;
-            indicatorObj.transform.position = pos;
+            indicatorObj.transform.position = pos + earthPos;
             Utils.SetObjectColor(indicatorObj, playerColor);
             StartCoroutine(selfDestruct(indicatorObj));
         }
@@ -223,12 +223,15 @@ public class InteractionController : MonoBehaviour
     public void SetEarthLocationPin(Vector3 pos)
     {
         LatLng latLng = getEarthRelativeLatLng(pos);
-        Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
-        manager.JumpToPin(p);
-        // broadcast the update
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
-        AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
+        // Sanity check inputs are valid before updating the pin
+        if (!float.IsNaN(latLng.Latitude) && !float.IsNaN(latLng.Longitude)){
+            Pushpin p = new Pushpin(manager.CurrentSimulationTime, latLng, SimulationConstants.CUSTOM_LOCATION);
+            manager.JumpToPin(p);
+            // broadcast the update
+            events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+            events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+            AddOrUpdatePin(p, manager.LocalPlayerColor, manager.LocalUsername, true);
+        }
     }
 
     string getPinName(string pinOwner)
@@ -254,9 +257,9 @@ public class InteractionController : MonoBehaviour
         if (earth)
         {
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
-            float radius = (size.x / 2) - 0.1f;
+            float radius = size.x > 0.5f ? (size.x / 2) - 0.1f : (size.x/2) - 0.05f;
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
-            earthRelativePos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
+            earthRelativePos = pos + earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
         return earthRelativePos;
     }
@@ -269,11 +272,14 @@ public class InteractionController : MonoBehaviour
         string pinName = getPinName(manager.LocalUsername);
         if (localPlayerPinObject == null) 
         {
-            localPlayerPinObject = getPinObject(pinName);
-            localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
+            localPlayerPinObject = getPinObject(pinName);            
         }
-
-        updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
+        if (localPlayerPinObject)
+        {
+            localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
+            updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
+        }
+        
     }
     
     // This is used for local pins and remote pins
@@ -318,30 +324,48 @@ public class InteractionController : MonoBehaviour
         {
             pinObject = Instantiate(locationPinPrefab);
             pinObject.name = pinName;
+            if (earth != null)
+            {
+                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+            }
             pinObject.transform.parent = this.transform;
-        }
-
+        }        
         return pinObject;
     }
     // Update the visible pin in-game to show at the correct location with the correct color.
     void updatePinObject(GameObject pinObject, Pushpin pin, Color c)
     {
-        Vector3 pos = getEarthRelativePos(pin.Location);
-        pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos);
-        pinObject.transform.position = pos;
-        pinObject.GetComponent<Renderer>().material.color = c;
-        
-        // HIDE IF WE ARE AT THE CRASH SITE
-        if (pin.IsCrashSite())
+        if (!shouldShowPins())
         {
             pinObject.SetActive(false);
         }
         else
         {
-            pinObject.SetActive(true);
+            if (earth)
+            {
+                Vector3 pos = getEarthRelativePos(pin.Location);
+                pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
+                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+                pinObject.transform.position = pos;
+                pinObject.GetComponent<Renderer>().material.color = c;
+
+
+                // HIDE IF WE ARE AT THE CRASH SITE
+                if (pin.IsCrashSite())
+                {
+                    pinObject.SetActive(false);
+                }
+                else
+                {
+                    pinObject.SetActive(true);
+                }
+            }
         }
     }
-    
+    bool shouldShowPins()
+    {
+        return SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH;
+    }
     IEnumerator selfDestruct(GameObject indicatorObj)
     {
         yield return new WaitForSeconds(3.0f);

@@ -4,13 +4,17 @@ using System.Linq;
 using UnityEngine;
 public static class DataImport
 {
+    private static List<int> constellationConnectionStars;
+
     public static void ImportAllData(string starData, int maxStars, string cityData, string constellationData)
     {
         DataManager dataManager = DataManager.Instance;
+        dataManager.MaxStarCount = maxStars;
+        dataManager.Connections = importConstellationConnectionData(constellationData);
+        dataManager.ConstellationConnectionStars = constellationConnectionStars;
         dataManager.Stars = importStarData(starData);
         dataManager.Cities = importCityData(cityData);
-        dataManager.Connections = importConstellationConnectionData(constellationData);
-        dataManager.MaxStarCount = maxStars;
+
     }
     
     private static List<Star> importStarData(string sourceData)
@@ -87,7 +91,7 @@ public static class DataImport
                 {
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (i > 4 && (i - 1) % 2 == 0 && (values[0])[0] != '.')
+                        if (i > 2 && (i - 1) % 2 == 0 && (values[0])[0] != '.')
                         {
                             ConstellationConnection connection = new ConstellationConnection();
                             connection.constellationNameAbbr = values[0];
@@ -95,11 +99,18 @@ public static class DataImport
                             connection.startStarHipId = int.Parse(values[i - 1]);
                             connection.endStarHipId = int.Parse(values[i]);
                             connections.Add(connection);
+
                         }
                     }
                 }
             }
         }
+        List<int> connectionStars = new List<int>();
+        connectionStars.AddRange(connections.Select(c => c.startStarHipId));
+        connectionStars.AddRange(connections.Select(c => c.endStarHipId));
+        constellationConnectionStars = new List<int>();
+        constellationConnectionStars.AddRange(connectionStars.Distinct());
+
         return connections;
     }
 

@@ -77,7 +77,7 @@ public class AnnotationTool : MonoBehaviour
                 }
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
                 myAnnotations.Add(currentAnnotation);
-                currentAnnotation.name = SimulationManager.Instance.LocalUsername + "_annotation" + myAnnotations.Count;
+                currentAnnotation.name = getMyAnnotationName(myAnnotations.Count);
                 
                 // Broadcast adding an annotation
                 SimulationEvents.Instance.AnnotationAdded.Invoke(
@@ -92,7 +92,20 @@ public class AnnotationTool : MonoBehaviour
             }
         }
     }
+    public void UndoAnnotation()
+    {
+        if (myAnnotations.Count > 0)
+        {
+            string annotationName = getMyAnnotationName(myAnnotations.Count - 1);
+            GameObject lineObject = myAnnotations.Find(a => a.name == annotationName);
+            lineObject.GetComponent<AnnotationLine>().HandleDeleteAnnotation();
+        }
+    }
 
+    string getMyAnnotationName(int annotationNumber)
+    {
+        return SimulationManager.Instance.LocalUsername + "_annotation" + annotationNumber;
+    }
     public void AddAnnotation(NetworkTransform lastAnnotation, NetworkPlayer p)
     {
         Vector3 pos = Utils.NetworkV3ToVector3(lastAnnotation.position);

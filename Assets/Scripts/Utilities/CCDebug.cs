@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public enum LogLevel { Verbose, Info, Warning, Error }
+public enum LogLevel { Verbose, Info, Warning, Error, Display }
 public enum LogMessageCategory {All, Rendering, Networking, VR, UI, Interaction, Event, EventLog}
 
 public static class CCDebug
@@ -40,6 +40,10 @@ public static class CCDebug
                     break;
                 case LogLevel.Error:
                     Debug.LogError(logMessage);
+                    break;
+                case LogLevel.Display:
+                    Debug.Log(logMessage);
+                    SimulationManager.Instance.LastLogMessageDebug = logMessage.ToString();
                     break;
             }
         }
