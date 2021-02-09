@@ -201,26 +201,26 @@ public class MenuController : MonoBehaviour
     {
         // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddYears(yearChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
     
     public void ChangeMonth(int monthChange)
     {
         // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMonths(monthChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
 
     public void ChangeDay(int dayChange)
     {
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddDays(dayChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
 
     public void ChangeTime(int hourChange)
     {
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddHours(hourChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
     public void ClearStarSelection()
     {
