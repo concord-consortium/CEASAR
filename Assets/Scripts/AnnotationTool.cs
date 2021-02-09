@@ -96,9 +96,18 @@ public class AnnotationTool : MonoBehaviour
     {
         if (myAnnotations.Count > 0)
         {
-            string annotationName = getMyAnnotationName(myAnnotations.Count - 1);
-            GameObject lineObject = myAnnotations.Find(a => a.name == annotationName);
-            lineObject.GetComponent<AnnotationLine>().HandleDeleteAnnotation();
+            if (myAnnotations.Count == 1)
+            {
+                GameObject lineObject = myAnnotations[0];
+                lineObject.GetComponent<AnnotationLine>().HandleDeleteAnnotation();
+            }
+            else
+            {
+                // we number the annotations as 1, 2, 3, 4 so no need to correct for 0-based array
+                string annotationName = getMyAnnotationName(myAnnotations.Count);
+                GameObject lineObject = myAnnotations.Find(a => a.name == annotationName);
+                lineObject.GetComponent<AnnotationLine>().HandleDeleteAnnotation();
+            }
         }
     }
 
