@@ -9,7 +9,6 @@ public class AnnotationTool : MonoBehaviour
     private Vector3 endPointForDrawing = Vector3.zero;
     
     public GameObject annotationLinePrefab;
-    public GameObject annotationLineHighlightPrefab;
     
     public float annotationWidth = 1;
     public float annotationHighlightWidthMultiplier = 1.5f;
@@ -60,21 +59,10 @@ public class AnnotationTool : MonoBehaviour
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
+              
+                currentAnnotation.GetComponent<Renderer>().material.color = SimulationManager.Instance.LocalPlayerColor;
+                currentAnnotation.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.white);
 
-                if (annotationLineHighlightPrefab)
-                {
-                    Vector3 highlightScale = new Vector3(annotationWidth * annotationHighlightWidthMultiplier, annotationWidth * annotationHighlightWidthMultiplier, distance.magnitude);
-                    GameObject highlightObject = Instantiate(annotationLineHighlightPrefab);
-                    highlightObject.transform.position = startPointForDrawing;
-                    highlightObject.transform.LookAt(endPointForDrawing);
-                    highlightObject.transform.position = midPosition * 1.005f;
-                    highlightObject.transform.localScale = highlightScale;
-                    
-                    highlightObject.GetComponent<Renderer>().material.color =
-                        SimulationManager.Instance.LocalPlayerColor;
-                    
-                    highlightObject.transform.parent = currentAnnotation.transform;
-                }
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
                 myAnnotations.Add(currentAnnotation);
                 currentAnnotation.name = getMyAnnotationName(myAnnotations.Count);
@@ -133,14 +121,8 @@ public class AnnotationTool : MonoBehaviour
         currentAnnotation.transform.localScale = scale;
         currentAnnotation.name = annotationName;
 
-        if (annotationLineHighlightPrefab)
-        {
-            GameObject highlightObject = Instantiate(annotationLineHighlightPrefab, currentAnnotation.transform);
-            Transform ht = highlightObject.transform;
-            ht.position *= 1.005f;
-            ht.localScale = new Vector3(ht.localScale.x * annotationHighlightWidthMultiplier, ht.localScale.y * annotationHighlightWidthMultiplier, ht.localScale.z);
-            highlightObject.GetComponent<Renderer>().material.color = playerColor;
-        }
+        currentAnnotation.GetComponent<Renderer>().material.color = playerColor;
+        currentAnnotation.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.white);
     }
 
     void DeleteAnnotation(string annotationName)
