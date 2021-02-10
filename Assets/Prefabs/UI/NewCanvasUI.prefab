@@ -11361,6 +11361,7 @@ RectTransform:
   m_Children:
   - {fileID: 2659469050658025122}
   - {fileID: 2659469050448411947}
+  - {fileID: 7598334269913642307}
   m_Father: {fileID: 2659469051070312521}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13196,12 +13197,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawModeIndicator: {fileID: 2659469049906863999}
+  drawModeOffIndicator: {fileID: 2659469050306806242}
+  showAnnotationsIndicator: {fileID: 8091694814693975761}
+  hideAnnotationsIndicator: {fileID: 2659469050448411956}
+  annotationsButtonText: {fileID: 2659469050658025121}
   menuContainerObject: {fileID: 2659469051218002175}
   informationPanelObject: {fileID: 0}
   showHideMenuToggle: {fileID: 2659469051061220418}
   showHideInfoPanelToggle: {fileID: 0}
   northPinPrefab: {fileID: 1367411613529184850, guid: 7f57e9773dcaa4c2e8e9efacf071dfc8,
     type: 3}
+  annotateMenuTitle: {fileID: 0}
 --- !u!114 &2659469049956018299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17515,14 +17521,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 820a94f3d63fb4f3da4b115e4a03910f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  constellationDropdown: {fileID: 0}
   constellationList: {fileID: 0}
   cityList: {fileID: 0}
-  cityDropdown: {fileID: 0}
   snapshotGrid: {fileID: 0}
   selectionConstellation: {fileID: 558691531}
   selectionLocation: {fileID: 239462089}
   selectionSnapshots: {fileID: 1811221962}
+  ForceUpdateLists: 0
 --- !u!1 &2659469050425056526
 GameObject:
   m_ObjectHideFlags: 0
@@ -17819,7 +17824,7 @@ GameObject:
   - component: {fileID: 2659469050448411945}
   - component: {fileID: 2659469050448411946}
   m_Layer: 5
-  m_Name: Image
+  m_Name: invisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30849,6 +30854,80 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: ae2f9627a7b29495691acb1a759a3d8c, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8091694814693975761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7598334269913642307}
+  - component: {fileID: 7587909589645449863}
+  - component: {fileID: 4805548827152012042}
+  m_Layer: 5
+  m_Name: visible
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7598334269913642307
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8091694814693975761}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2659469049869185705}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 5}
+  m_SizeDelta: {x: 40, y: 40}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7587909589645449863
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8091694814693975761}
+  m_CullTransparentMesh: 0
+--- !u!114 &4805548827152012042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8091694814693975761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 66bf94ef144a245c7ad11947035e07ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

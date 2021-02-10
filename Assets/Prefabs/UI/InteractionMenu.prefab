@@ -17442,14 +17442,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 820a94f3d63fb4f3da4b115e4a03910f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  constellationDropdown: {fileID: 0}
   constellationList: {fileID: 4991202892466796903}
   cityList: {fileID: 5481053096982043856}
-  cityDropdown: {fileID: 0}
   snapshotGrid: {fileID: 4459795674582097715}
   selectionConstellation: {fileID: 7939083315572988206}
   selectionLocation: {fileID: 444523982827348626}
   selectionSnapshots: {fileID: 6496053025646956806}
+  ForceUpdateLists: 0
 --- !u!1 &1722718945029401876
 GameObject:
   m_ObjectHideFlags: 0
@@ -26257,6 +26256,9 @@ MonoBehaviour:
   locationIcon: {fileID: 6641933329219203903}
   timeIcon: {fileID: 6963592976759896665}
   playerIcon: {fileID: 6561653302230558467}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 2266944378650797159}
 --- !u!1 &2364781661829683795
 GameObject:
@@ -43424,6 +43426,7 @@ MonoBehaviour:
   cityTextObject: {fileID: 917706609530491656, guid: c3f9edbe4b99f4711b3162e108f83ee0,
     type: 3}
   contentContainer: {fileID: 1534341073406861535}
+  HasCompletedSetup: 0
 --- !u!1 &3976507358835275019
 GameObject:
   m_ObjectHideFlags: 0
@@ -43913,6 +43916,9 @@ MonoBehaviour:
   locationIcon: {fileID: 2445630709480596940}
   timeIcon: {fileID: 4730197969987211435}
   playerIcon: {fileID: 5858320846099673098}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 692677887570894806}
 --- !u!1 &4057851229810206464
 GameObject:
@@ -54223,6 +54229,9 @@ MonoBehaviour:
   locationIcon: {fileID: 7805482632192140237}
   timeIcon: {fileID: 5304564669816372912}
   playerIcon: {fileID: 7725189466751331575}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 4744943883377722716}
 --- !u!1 &4916190400267281737
 GameObject:
@@ -60263,6 +60272,7 @@ MonoBehaviour:
   constellationTextObject: {fileID: 917706609530491656, guid: 23aca6b43f6614ff89012162bd76205b,
     type: 3}
   contentContainer: {fileID: 4172479896866979855}
+  HasCompletedSetup: 0
 --- !u!1 &5400460647440298602
 GameObject:
   m_ObjectHideFlags: 0
@@ -62231,6 +62241,9 @@ MonoBehaviour:
   locationIcon: {fileID: 3219545362423063337}
   timeIcon: {fileID: 3485008686765755070}
   playerIcon: {fileID: 3042457673907279810}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 3840575303087465497}
 --- !u!1 &5594404293763699754
 GameObject:
@@ -66214,6 +66227,9 @@ MonoBehaviour:
   locationIcon: {fileID: 2993628390130062309}
   timeIcon: {fileID: 7797788877370668292}
   playerIcon: {fileID: 6780057892241194016}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 8691136034165802525}
 --- !u!1 &5986978662911429796
 GameObject:
@@ -70825,6 +70841,9 @@ MonoBehaviour:
   locationIcon: {fileID: 7364841969711006995}
   timeIcon: {fileID: 5634278412269818704}
   playerIcon: {fileID: 958053973211686477}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 7263876997238862073}
 --- !u!1 &6458969074131372969
 GameObject:
@@ -82846,10 +82865,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawModeIndicator: {fileID: 3730541923119052999}
+  drawModeOffIndicator: {fileID: 2636350217345473775}
+  showAnnotationsIndicator: {fileID: 0}
+  hideAnnotationsIndicator: {fileID: 0}
+  annotationsButtonText: {fileID: 1243478679224832560}
   menuContainerObject: {fileID: 4480416945259224394}
+  informationPanelObject: {fileID: 0}
   showHideMenuToggle: {fileID: 1877320250941385219}
+  showHideInfoPanelToggle: {fileID: 0}
   northPinPrefab: {fileID: 1367411613529184850, guid: 7f57e9773dcaa4c2e8e9efacf071dfc8,
     type: 3}
+  annotateMenuTitle: {fileID: 0}
 --- !u!114 &3438795660351382241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92314,6 +92340,9 @@ MonoBehaviour:
   locationIcon: {fileID: 7774541650531836224}
   timeIcon: {fileID: 4703671275625285352}
   playerIcon: {fileID: 4472026361392230753}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 8212650503788742318}
 --- !u!1 &8750845513292591355
 GameObject:
@@ -95819,6 +95848,9 @@ MonoBehaviour:
   locationIcon: {fileID: 7064516346054197871}
   timeIcon: {fileID: 1557497719891363313}
   playerIcon: {fileID: 4825679668547181934}
+  locationSpriteIcon: {fileID: 0}
+  timeSpriteIcon: {fileID: 0}
+  playerSpriteIcon: {fileID: 0}
   playerName: {fileID: 3740392593853264708}
 --- !u!1 &9080035566230045263
 GameObject:

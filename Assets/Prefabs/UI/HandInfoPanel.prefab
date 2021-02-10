@@ -1002,7 +1002,7 @@ MonoBehaviour:
     type: 3}
   networkStatusText: {fileID: 1173528061409290798}
   networkGroupText: {fileID: 7178572079193617124}
-  debugText: {fileID: 0}
+  debugText: {fileID: 961139557012031219}
 --- !u!1 &3220100458297391411
 GameObject:
   m_ObjectHideFlags: 0
