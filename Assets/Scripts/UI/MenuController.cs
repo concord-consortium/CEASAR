@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
@@ -26,11 +25,42 @@ public class MenuController : MonoBehaviour
         }
     }
     private SnapshotsController snapshotsController;
+    private ConstellationsController constellationsController;
     private GameObject annotationsObject;
-    private bool hideAnnotations = false;
-    private SnapGrid _snapshotGrid;
-    
+
+
     public GameObject drawModeIndicator;
+    public GameObject drawModeOffIndicator;
+    public GameObject showAnnotationsIndicator;
+    public GameObject hideAnnotationsIndicator;
+    public TMP_Text annotationsButtonText;
+
+    private bool _hideAnnotations = false;
+    // Make this a property so we can have side effect triggered when the value is changed
+    private bool hideAnnotations {
+        get { return _hideAnnotations; }
+        set { 
+            _hideAnnotations = value;
+            if (showAnnotationsIndicator) showAnnotationsIndicator.SetActive(!_hideAnnotations);
+            if (hideAnnotationsIndicator) hideAnnotationsIndicator.SetActive(_hideAnnotations);
+            if (annotationsButtonText) annotationsButtonText.SetText(_hideAnnotations ? "Show Drawings" : "Hide Drawings");
+            SceneLoader loader = FindObjectOfType<SceneLoader>();
+            int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
+            if (_hideAnnotations)
+            {
+                LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
+                Camera.main.cullingMask = newLayerMask;
+            }
+            else
+            {
+                LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
+                Camera.main.cullingMask = newLayerMask;
+            }
+        }
+    }
+    private SnapGrid _snapshotGrid;
+
+
     [SerializeField] private GameObject menuContainerObject;
     [SerializeField] private GameObject informationPanelObject;
     [SerializeField] private GameObject showHideMenuToggle;
@@ -71,8 +101,10 @@ public class MenuController : MonoBehaviour
         set { 
             isDrawing = value;
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+            if (drawModeOffIndicator) drawModeOffIndicator.SetActive(!isDrawing);
             if (annotateMenuTitle) annotateMenuTitle.SetText(isDrawing ? "Annotate Menu (Drawing)" : "Annotate Menu");
-
+            if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+            CCDebug.Log("Draw toggled: " + isDrawing + " tool: " + (annotationTool != null), LogLevel.Display, LogMessageCategory.All);
             if (!isDrawing)
             {
                 if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
@@ -133,15 +165,15 @@ public class MenuController : MonoBehaviour
         // When running tests, there may be no snapshots controller on this game object
         if (snapshotsController) snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        hideAnnotations = false;
     }
     
     public void ToggleDrawMode()
     {
-        if (!hideAnnotations)
-        {
-            IsDrawing = !IsDrawing;
-            events.DrawMode.Invoke(IsDrawing);
-        }
+        IsDrawing = !IsDrawing;
+        if (IsDrawing) hideAnnotations = false;
+        events.DrawMode.Invoke(IsDrawing);
+        
     }
     public void UndoAnnotation()
     {
@@ -171,19 +203,8 @@ public class MenuController : MonoBehaviour
             hideAnnotations = !hideAnnotations;
         }
 
-        SceneLoader loader = FindObjectOfType<SceneLoader>();
-        int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
-        if (hideAnnotations)
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
-        else
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
     }
+
     public void JumpToCrashSite()
     {
         // This is now used to change the view in Horizon mode to your crash site pin
@@ -344,7 +365,17 @@ public class MenuController : MonoBehaviour
             else dataController.ShowFewerStars();
         }
     }
-    
+    public void ShowAllConstellations()
+    {
+        if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
+        constellationsController.SelectConstellationByName(SimulationConstants.CONSTELLATIONS_ALL);
+    }
+    public void ShowNoConstellations()
+    {
+        if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
+        constellationsController.SelectConstellationByName(SimulationConstants.CONSTELLATIONS_NONE);
+    }
+
     public void LoadEarthScene()
     {
         if (_currentSceneName != SimulationConstants.SCENE_EARTH)
@@ -370,7 +401,21 @@ public class MenuController : MonoBehaviour
     {
         CCDebug.Log("Quit application called", LogLevel.Warning, LogMessageCategory.UI);
 #if !UNITY_WEBGL && !UNITY_EDITOR
-        Application.Quit();
+        StartCoroutine(waitAndQuitApplication());
 #endif
+    }
+
+    IEnumerator waitAndQuitApplication()
+    {
+        NetworkController nc = FindObjectOfType<NetworkController>();
+        if (nc != null) nc.Disconnect();
+        
+        yield return new WaitForSeconds(1f);
+        Application.Quit();
+    }
+
+    private void OnApplicationQuit()
+    {
+       
     }
 }

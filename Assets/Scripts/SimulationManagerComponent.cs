@@ -210,7 +210,8 @@ public class SimulationManagerComponent : MonoBehaviour
         sceneLoader.SetupCameras();
         
     }
-    #if UNITY_WSA
+
+#if UNITY_WSA
     public void HandleEarthInteraction(InputEventData inputEvent)
     {
         Debug.LogWarning(inputEvent);

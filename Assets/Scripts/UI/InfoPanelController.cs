@@ -49,9 +49,9 @@ public class InfoPanelController : MonoBehaviour
     private void updatePushpinText(Pushpin pin)
     {
         StringBuilder details = new StringBuilder();
-        details.Append(manager.CurrentSimulationTime.ToShortDateString())
+        details.Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortDateString())
             .Append(" ")
-            .Append(manager.CurrentSimulationTime.ToShortTimeString());
+            .Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortTimeString());
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
         

@@ -467,8 +467,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -125, y: 0}
-  m_SizeDelta: {x: 250, y: 100}
+  m_AnchoredPosition: {x: -130, y: 0}
+  m_SizeDelta: {x: 255, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7454182141131115729
 MonoBehaviour:
@@ -490,7 +490,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 110, y: 20}
+  m_CellSize: {x: 115, y: 20}
   m_Spacing: {x: 2, y: -2}
   m_Constraint: 1
   m_ConstraintCount: 2
@@ -797,6 +797,7 @@ MonoBehaviour:
     type: 3}
   networkStatusText: {fileID: 2036993095036600605}
   networkGroupText: {fileID: 8039636329028065751}
+  debugText: {fileID: 0}
 --- !u!1 &3728735833971861650
 GameObject:
   m_ObjectHideFlags: 0
