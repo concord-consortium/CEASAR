@@ -197,7 +197,7 @@ PrefabInstance:
         type: 3}
       propertyPath: starPrefab
       value: 
-      objectReference: {fileID: 5188296271615159055, guid: 76b56519ec5b8584c97512a51e12bece,
+      objectReference: {fileID: 5188296271615159055, guid: dbcee993bd1d67d4cb199a5492d34f42,
         type: 3}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -789,9 +789,10 @@ GameObject:
   - component: {fileID: 1826548887}
   - component: {fileID: 1826548888}
   - component: {fileID: 1826548890}
-  - component: {fileID: 1826548889}
   - component: {fileID: 1826548891}
   - component: {fileID: 1826548892}
+  - component: {fileID: 1826548889}
+  - component: {fileID: 1826548893}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -965,6 +966,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useLocalRotation: 0
   threshold: 5
+--- !u!114 &1826548893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826548883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e23972b80ee9e143a9550cb74b0cde4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  annotationTool: {fileID: 0}
+  mainUIController: {fileID: 0}
 --- !u!1 &1833591003 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4558564313004885982, guid: e3125ffca64f542c18ec0ff778d7b8fe,

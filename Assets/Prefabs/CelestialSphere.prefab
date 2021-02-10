@@ -298,7 +298,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   annotationLinePrefab: {fileID: 2034434946690713381, guid: 80dd72a098901304eaefa835cfebb414,
     type: 3}
-  annotationLineHighlightPrefab: {fileID: 2034434946690713381, guid: 3c5f44bbfc4184a08a643cbddf2a8ebd,
-    type: 3}
+  annotationLineHighlightPrefab: {fileID: 0}
   annotationWidth: 0.5
   annotationHighlightWidthMultiplier: 2

@@ -1,8 +1,9 @@
-﻿using Microsoft.MixedReality.Toolkit.Input;
+﻿using System;
+using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
 using UnityEngine;
 
-public class HLPointerInteraction : MonoBehaviour, IMixedRealityPointerHandler
+public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IMixedRealityPointerHandler
 {
     SimulationManager manager;
     InteractionController interactionController;
@@ -18,35 +19,131 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityPointerHandler
         interactionController = FindObjectOfType<InteractionController>();
         if (!mainUIController) mainUIController = FindObjectOfType<MenuController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+        
+        
     }
 
-    void IMixedRealityPointerHandler.OnPointerClicked(MixedRealityPointerEventData eventData)
+    void OnEnable()
     {
-        CCDebug.Log(eventData.Count, LogLevel.Verbose, LogMessageCategory.VR);
-        CCDebug.Log("PointerClicked " + eventData.Pointer.Result, LogLevel.Display, LogMessageCategory.VR);
-        var pos = eventData.Pointer.Position;
-        float r = SimulationManager.Instance.SceneRadius + 2f;
-        if (mainUIController.IsDrawing && annotationTool)
+        CoreServices.InputSystem?.RegisterHandler<IMixedRealityPointerHandler>(this);
+        CoreServices.InputSystem?.RegisterHandler<IMixedRealityFocusHandler>(this);
+    }
+
+    private void OnDisable()
+    {
+        CoreServices.InputSystem?.UnregisterHandler<IMixedRealityPointerHandler>(this);
+        CoreServices.InputSystem?.RegisterHandler<IMixedRealityFocusHandler>(this);
+    }
+
+    /*void Update()
+    {
+        foreach(var source in CoreServices.InputSystem.DetectedInputSources)
         {
+            // Ignore anything that is not a hand because we want articulated hands
+            if (source.SourceType == Microsoft.MixedReality.Toolkit.Input.InputSourceType.Hand)
+            {
+                foreach (var p in source.Pointers)
+                {
+                    if (p is IMixedRealityNearPointer)
+                    {
+                        // Ignore near pointers, we only want the rays
+                        continue;
+                    }
+                    if (p.Result != null)
+                    {
+                        var startPoint = p.Position;
+                        var endPoint = p.Result.Details.Point;
+                        var hitObject = p.Result.Details.Object;
+                        if (hitObject)
+                        {
+                            Debug.Log(hitObject.name);
+                        }
+                        else
+                        {
+                            Debug.Log(endPoint);
+                        }
+                    }
+
+                }
+            }
+        }
+    }*/
+
+    public void OnPointerClicked(MixedRealityPointerEventData eventData)
+    {
+        // detectClick(eventData);
+    }
+
+    public void OnPointerDown(MixedRealityPointerEventData eventData)
+    {
+        detectClick(eventData);
+
+    }
+
+    public void OnPointerDragged(MixedRealityPointerEventData eventData)
+    {
+        CCDebug.Log(eventData, LogLevel.Verbose, LogMessageCategory.VR);
+    }
+
+    public void OnPointerUp(MixedRealityPointerEventData eventData)
+    {
+        CCDebug.Log(eventData, LogLevel.Verbose, LogMessageCategory.VR);
+    }
+
+    void detectClick(MixedRealityPointerEventData eventData)
+    {
+        CCDebug.Log("PointerClicked " + eventData.Pointer.Result, LogLevel.Display, LogMessageCategory.VR);
+        var pos = eventData.Pointer.Result.Details.Point;
+        if (!mainUIController) mainUIController = FindObjectOfType<MenuController>();
+        if (mainUIController)
+        {
+            if (mainUIController.IsDrawing)
+            {
+                addAnnotation(pos);
+            }
+            else
+            {
+                var hitObject = eventData.Pointer.Result.Details.Object;
+                if (hitObject)
+                {
+                    StarComponent sc = hitObject.GetComponent<StarComponent>();
+                    if (sc) sc.HandleSelectStar();
+                }
+            }
+        }
+    }
+
+    void addAnnotation(Vector3 pos)
+    {
+        float r = SimulationManager.Instance.SceneRadius + 2f;
+        
+        if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+        
+        if (mainUIController && mainUIController.IsDrawing && annotationTool)
+        {
+            // point outwards for annotating
             annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
         }
-
+    }
+    public void OnFocusEnter(FocusEventData eventData)
+    {
+       // throw new System.NotImplementedException();
+       var hitObject = eventData.Pointer.Result.Details.Object;
+       if (hitObject)
+       {
+           StarComponent sc = hitObject.GetComponent<StarComponent>();
+           if (sc) sc.CursorHighlightStar(true);
+       }
     }
 
-    void IMixedRealityPointerHandler.OnPointerDown(MixedRealityPointerEventData eventData)
+    public void OnFocusExit(FocusEventData eventData)
     {
-
-        CCDebug.Log(eventData, LogLevel.Display, LogMessageCategory.VR);
-
-    }
-
-    void IMixedRealityPointerHandler.OnPointerDragged(MixedRealityPointerEventData eventData)
-    {
-        CCDebug.Log(eventData, LogLevel.Verbose, LogMessageCategory.VR);
-    }
-
-    void IMixedRealityPointerHandler.OnPointerUp(MixedRealityPointerEventData eventData)
-    {
-        CCDebug.Log(eventData, LogLevel.Verbose, LogMessageCategory.VR);
+       // throw new System.NotImplementedException();
+       var hitObject = eventData.Pointer.Result.Details.Object;
+       if (hitObject)
+       {
+           StarComponent sc = hitObject.GetComponent<StarComponent>();
+           if (sc) sc.CursorHighlightStar(false);
+       }
     }
 }
