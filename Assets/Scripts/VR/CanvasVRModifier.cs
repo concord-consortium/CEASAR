@@ -23,7 +23,7 @@ public class CanvasVRModifier : MonoBehaviour
                 {
                     OVRrc.pointer = vrInteraction.GetComponent<VRInteraction>().vrPointerInstance;
                 }
-                
+
                 OVRrc.blockingObjects = OVRRaycaster.BlockingObjects.All;
             }
         }

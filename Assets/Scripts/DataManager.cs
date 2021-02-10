@@ -45,9 +45,11 @@ public class DataManager
         set
         {
             maxStarCount = value;
-            // filteredStars = stars.OrderBy(s => s.Mag).Take(maxStarCount).ToList();
         }
     }
+
+    // Track all stars that are part of constellations, i.e. form a node between constellation lines
+    // we need to ensure these are always available
     private List<int> _constellationConnectionStars;
     public List<int> ConstellationConnectionStars {
         get { return _constellationConnectionStars; }

@@ -14,7 +14,8 @@ public class InteractionController : MonoBehaviour
     private GameObject localPlayerPinObject;
     //private List<GameObject> remotePins;
     private Dictionary<string, GameObject> remotePins;
-    
+    // Earth object in Hololens view is smaller, so we need to resize pins slightly differently
+    private bool _isSmallEarth = false;
     // Cached reference to earth object for lat/lng
     private GameObject _earth;
     private GameObject earth
@@ -71,6 +72,10 @@ public class InteractionController : MonoBehaviour
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
         bool showPins = scene.name == SimulationConstants.SCENE_EARTH;
+        foreach(Player p in manager.AllRemotePlayers)
+        {
+            AddOrUpdatePin(p.Pin, UserRecord.GetColorForUsername(p.Name), p.Name, false);
+        }
         this.showPins(showPins);
     }
     
@@ -245,6 +250,7 @@ public class InteractionController : MonoBehaviour
         {
             Vector3 earthPos = pos - earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
+            _isSmallEarth = size.x < 0.5f;
             float radius = size.x / 2;
             latLng = Utils.LatLngFromPosition(earthPos, radius);
         }
@@ -257,7 +263,10 @@ public class InteractionController : MonoBehaviour
         if (earth)
         {
             Vector3 size = earth.GetComponent<Renderer>().bounds.size;
-            float radius = size.x > 0.5f ? (size.x / 2) - 0.1f : (size.x/2) - 0.05f;
+            _isSmallEarth = size.x < 0.5f;
+            // the radius here is for positioning pins, we need them very slightly embedded
+            // which means slightly different radii for smaller Earth models to make it look better
+            float radius = !_isSmallEarth ? (size.x / 2) - 0.1f : (size.x/2) - 0.05f;
             Vector3 pos = Utils.PositionFromLatLng(latlng, radius);
             earthRelativePos = pos + earth.transform.position; // Earth should be at 0,0,0 but in case it's moved, this would account for the difference
         }
@@ -326,7 +335,7 @@ public class InteractionController : MonoBehaviour
             pinObject.name = pinName;
             if (earth != null)
             {
-                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+                pinObject.transform.localScale = !_isSmallEarth ? Vector3.one : Vector3.one * 0.3f;
             }
             pinObject.transform.parent = this.transform;
         }        
@@ -345,7 +354,8 @@ public class InteractionController : MonoBehaviour
             {
                 Vector3 pos = getEarthRelativePos(pin.Location);
                 pinObject.transform.localRotation = pos == Vector3.zero ? Quaternion.Euler(Vector3.zero) : Quaternion.LookRotation(pos - earth.transform.position);
-                pinObject.transform.localScale = earth.transform.parent.localScale.magnitude > 0.9 ? Vector3.one : Vector3.one * 0.3f;
+                // scale pins for different model sizes
+                pinObject.transform.localScale = !_isSmallEarth ? Vector3.one : Vector3.one * 0.3f;
                 pinObject.transform.position = pos;
                 pinObject.GetComponent<Renderer>().material.color = c;
 
