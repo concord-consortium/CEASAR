@@ -188,13 +188,6 @@ public class DataController : MonoBehaviour
                     // Add star data, then position, scale and color
                     newStar.Init(constellationsController, dataStar, dataManager.MaxMag, magnitudeScale, manager.InitialRadius);
 
-                    // Eventually store constellation color and observed star color separately
-                    // newStar.SetStarColor(constellationColor, Color.white);
-                    // // color by constellation
-                    // if (colorByConstellation == true)
-                    // {
-                    //     Utils.SetObjectColor(newStar.gameObject, constellationColor);
-                    // }
                     constellation.highlightColor = constellationColor;
 
                     allStarComponents[dataStar.uniqueId] = newStar;
@@ -208,7 +201,8 @@ public class DataController : MonoBehaviour
                     // limit the number of stars shown by hiding stars that appear more dim (higher magnitude)
                     if (dataStar.Mag > magnitudeThreshold)
                     {
-                        newStar.ShowStar(false);
+                        bool starIsConstellationConnection = DataManager.Instance.ConstellationConnectionStars.Contains(dataStar.Hipparcos);
+                        newStar.ShowStar(starIsConstellationConnection || false);
                     }
                     
                     constellation.AddStar(newStar.gameObject);
@@ -231,7 +225,7 @@ public class DataController : MonoBehaviour
 
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
+            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : starComponent.starColor);
             starComponent.SetStarScale(magnitudeScale);
             if (starMaterial)
             {
@@ -354,7 +348,8 @@ public class DataController : MonoBehaviour
         magnitudeThreshold = newVal;
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            starComponent.ShowStar(starComponent.starData.Mag < magnitudeThreshold);
+            bool starIsConstellationConnection = DataManager.Instance.ConstellationConnectionStars.Contains(starComponent.starData.Hipparcos);
+            starComponent.ShowStar(starIsConstellationConnection || starComponent.starData.Mag < magnitudeThreshold);
         }
     }
 

@@ -124,11 +124,7 @@ public class SceneLoader : MonoBehaviour
         if (!defaultEventSystem) defaultEventSystem = GameObject.Find("EventSystem");
         if (defaultEventSystem) defaultEventSystem.SetActive(false);
         Instantiate(vrEventSystem);
-#if !UNITY_WEBGL && UNITY_ANDROID || UNITY_STANDALONE_WIN
-        // LaserPointer lp = FindObjectOfType<LaserPointer>();
-        // lp.laserBeamBehavior = LaserPointer.LaserBeamBehavior.OnWhenHitTarget;
-        
-#endif
+
         // some scene-specific pieces to remove
         GameObject movementMenu = GameObject.Find("Movement Menu");
         if (movementMenu != null)

@@ -9,7 +9,7 @@ public class ConstellationList : MonoBehaviour
     [SerializeField] private GameObject constellationTextObject;
     [SerializeField] private RectTransform contentContainer;
     public bool HasCompletedSetup = false;
-    public IEnumerator InitConstellations(List<string> constellations, string currentConstellation)
+    public IEnumerator InitConstellations(List<string> constellations, string currentConstellation, bool forceUpdate)
     {
         yield return new WaitForEndOfFrame();
         ConstellationItem[] _existingConstellationItems = FindObjectsOfType<ConstellationItem>();
@@ -22,27 +22,29 @@ public class ConstellationList : MonoBehaviour
         {
             if (allConstellations == null || allConstellations.Count == 0)
             {
-                constellations.Sort();
-                allConstellations = new List<string>();
-                allConstellations.Add(SimulationConstants.CONSTELLATIONS_ALL);
-                allConstellations.Add(SimulationConstants.CONSTELLATIONS_NONE);
-                allConstellations.AddRange(constellations);
-
-                string[] _constellations = allConstellations.ToArray();
-                    
-                for (int i = 0; i < _constellations.Length; i++)
+                if (forceUpdate)
                 {
-                    string c = _constellations[i];
-                    if (!string.IsNullOrEmpty(c))
+                    constellations.Sort();
+                    allConstellations = new List<string>();
+                    allConstellations.Add(SimulationConstants.CONSTELLATIONS_ALL);
+                    allConstellations.Add(SimulationConstants.CONSTELLATIONS_NONE);
+                    allConstellations.AddRange(constellations);
+
+                    string[] _constellations = allConstellations.ToArray();
+
+                    for (int i = 0; i < _constellations.Length; i++)
                     {
-                        GameObject constellationObject = Instantiate(constellationTextObject);
-                        constellationObject.transform.SetParent(contentContainer);
-                        constellationObject.transform.localScale = Vector3.one;
-                        bool isSelected = currentConstellation == c;
-                        constellationObject.GetComponent<ConstellationItem>().Init(c, isSelected);
+                        string c = _constellations[i];
+                        if (!string.IsNullOrEmpty(c))
+                        {
+                            GameObject constellationObject = Instantiate(constellationTextObject);
+                            constellationObject.transform.SetParent(contentContainer);
+                            constellationObject.transform.localScale = Vector3.one;
+                            bool isSelected = currentConstellation == c;
+                            constellationObject.GetComponent<ConstellationItem>().Init(c, isSelected);
+                        }
                     }
                 }
-                
                 // cache the list of names
                 allConstellations = constellations;
             }

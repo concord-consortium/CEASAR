@@ -270,4 +270,8 @@ public class SimulationManager
         return Math.Abs(delta) > windowInSeconds;
     }
 
+    public MenuController MainMenu;
+    public InfoPanelController InfoPanel;
+
+    public string LastLogMessageDebug;
 }

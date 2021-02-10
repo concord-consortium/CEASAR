@@ -28,7 +28,7 @@ public class VRInteraction : MonoBehaviour
 #if !UNITY_WEBGL
     OVRInputModule m_InputModule;
 #endif
-    bool shouldShowIndicator;
+    private bool shouldShowIndicator = true;
     bool allowStarInteractions;
     Vector3 laserStartPos = Vector3.zero;
     Vector3 forwardDirection = Vector3.forward;
@@ -36,8 +36,8 @@ public class VRInteraction : MonoBehaviour
     float activeLaserWidth = 0.02f;
     float inactiveLaserWidth = 0.01f;
     GameObject mainUI;
+    private GameObject infoPanelUI;
     MenuController menuController;
-    GameObject networkUI;
 
     GameObject earthModel;
 
@@ -46,7 +46,7 @@ public class VRInteraction : MonoBehaviour
 
     public AnnotationTool annotationTool;
 
-    private float menuDistance = 8f;
+    private float menuDistance = 6f;
 
     #region Camera Move for Earth view
     private float distance = 20.0f;
@@ -65,8 +65,7 @@ public class VRInteraction : MonoBehaviour
     private void Start()
     {
         string sceneName = SceneManager.GetActiveScene().name;
-        shouldShowIndicator = sceneName != "LoadSim";
-        allowStarInteractions = sceneName == "Horizon" || sceneName == "Stars";
+        allowStarInteractions = sceneName == SimulationConstants.SCENE_HORIZON || sceneName == SimulationConstants.SCENE_STARS;
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
         _vrPointer = Instantiate(vrPointerPrefab);
         laserLineRenderer = _vrPointer.GetComponent<LineRenderer>();
@@ -84,7 +83,14 @@ public class VRInteraction : MonoBehaviour
         laserLongDistance = (manager.SceneRadius + 2);
 
         // test moving 
-        positionCanvasTransformRelativeToOrigin(2);
+        if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
+        if (infoPanelUI == null) infoPanelUI = GameObject.FindGameObjectWithTag("InfoPanelUI");
+        if (mainUI)
+        {
+            positionCanvasTransformRelativeToOrigin(mainUI, 1.5f);
+        }
+
+        
     }
     void Update()
     {
@@ -105,7 +111,7 @@ public class VRInteraction : MonoBehaviour
 
     void showIndicator(GameObject controllerObject, bool showIndicator)
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         if (showIndicator)
         {
 
@@ -125,187 +131,192 @@ public class VRInteraction : MonoBehaviour
 
             // Raycast, then if we hit the Earth or a star we can show the interaction
             ray = new Ray(laserStartPos, forwardDirection);
-
-            // Look for close-by objects (Earth in the EarthInteraction scene)
-            if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+            bool uiBlock = false;
+            if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskUI) > 0)
             {
+                // UI layer, skip the rest.
+                if (hits.Length > 0) uiBlock = true;
                 for (int i = 0; i < hits.Length; i++)
                 {
                     hit = hits[i];
                     laserEndPos = hit.point;
                     updateLaser(true);
-
-                    if (interactionTrigger())
+                }
+            }
+            else if (!uiBlock)
+            {
+                // Look for close-by objects (Earth in the EarthInteraction scene)
+                if (Physics.RaycastNonAlloc(ray, hits, laserShortDistance, layerMaskEarth) > 0)
+                {
+                    for (int i = 0; i < hits.Length; i++)
                     {
-                        Collider c = hit.collider;
-                        if (c is SphereCollider)
+                        hit = hits[i];
+                        laserEndPos = hit.point;
+                        updateLaser(true);
+
+                        if (interactionTrigger())
                         {
-                            if (menuController.IsPinningLocation)
+                            Collider c = hit.collider;
+                            if (c is SphereCollider)
                             {
-                                interactionController.SetEarthLocationPin(hit.point);
+                                if (menuController.IsPinningLocation)
+                                {
+                                    interactionController.SetEarthLocationPin(hit.point);
+                                }
+                                else
+                                {
+                                    interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                                }
                             }
-                            else
+                            else if (c is MeshCollider)
                             {
-                                interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
+                                Renderer rend = hit.transform.GetComponent<Renderer>();
+                                // hit.textureCoord only possible on the Mesh collider
+                                manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
                             }
-                        }
-                        else if (c is MeshCollider)
-                        {
-                            Renderer rend = hit.transform.GetComponent<Renderer>();
-                            // hit.textureCoord only possible on the Mesh collider
-                            manager.HorizonGroundColor = Utils.GetColorFromTexture(rend, hit.textureCoord);
                         }
                     }
                 }
-            }
-            // Look for distant objects (stars in other views)
-            else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStarsAnnotations))
-            {
-                // Handle stars separately
-                StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
-                if (nextStar != null)
+                // Look for distant objects (stars in other views)
+                else if (allowStarInteractions && Physics.Raycast(ray, out hit, laserLongDistance, layerMaskStarsAnnotations))
                 {
-                    
-                    if (nextStar != currentStar)
+                    // Handle stars separately
+                    StarComponent nextStar = hit.transform.GetComponent<StarComponent>();
+                    if (nextStar != null)
                     {
-                        // remove highlighting from previous star
-                        if (currentStar != null) currentStar.CursorHighlightStar(false);
-                        // remove highlighting from previously-hovered annotation
-                        if (currentLine != null)
+
+                        if (nextStar != currentStar)
                         {
-                            currentLine.Highlight(false);
-                            currentLine = null;
+                            // remove highlighting from previous star
+                            if (currentStar != null) currentStar.CursorHighlightStar(false);
+                            // remove highlighting from previously-hovered annotation
+                            if (currentLine != null)
+                            {
+                                currentLine.Highlight(false);
+                                currentLine = null;
+                            }
+                            // vibrate only on new star highlight
+                            hapticFeedback();
                         }
-                        // vibrate only on new star highlight
-                        hapticFeedback();
+
+                        currentStar = nextStar;
+                        currentStar.CursorHighlightStar(true);
+
+                        if (interactionTrigger())
+                        {
+                            hapticFeedback();
+                            if (menuController.IsDrawing && annotationTool != null)
+                            {
+                                // allow annotation where the star is
+                                annotationTool.Annotate(laserEndPos);
+                            }
+                            else
+                            {
+                                // select the star
+                                currentStar.HandleSelectStar(true);
+                            }
+
+                        }
                     }
-
-                    currentStar = nextStar;
-                    currentStar.CursorHighlightStar(true);
-
-                    if (interactionTrigger())
+                    else
                     {
-                        hapticFeedback();
-                        if (menuController.IsDrawing && annotationTool != null)
+                        AnnotationLine nextLine = hit.transform.GetComponent<AnnotationLine>();
+                        // we hit an annotation
+                        if (nextLine != null)
                         {
-                            // allow annotation where the star is
-                            annotationTool.Annotate(laserEndPos);
-                        }
-                        else
-                        {
-                            // select the star
-                            currentStar.HandleSelectStar(true);
-                        }
+                            if (nextLine != currentLine)
+                            {
+                                // remove highlighting from previous line
+                                if (currentLine != null) currentLine.Highlight(false);
+                                hapticFeedback();
+                            }
+                            currentLine = nextLine;
+                            if (!menuController.IsDrawing)
+                            {
+                                // When we're not drawing we can highlight and delete annotations
+                                currentLine.Highlight(true);
 
+                                if (interactionFingerTrigger())
+                                {
+                                    // delete the line
+                                    currentLine.HandleDeleteAnnotation();
+                                    currentLine = null;
+                                    hapticFeedback();
+                                }
+
+                            }
+
+                        }
                     }
                 }
                 else
                 {
-                    AnnotationLine nextLine = hit.transform.GetComponent<AnnotationLine>();
-                    // we hit an annotation
-                    if (nextLine != null)
+                    if (currentStar != null)
                     {
-                        if (nextLine != currentLine)
-                        {
-                            // remove highlighting from previous line
-                            if (currentLine != null) currentLine.Highlight(false);
-                            hapticFeedback();
-                        }
-                        currentLine = nextLine;
-                        if (!menuController.IsDrawing)
-                        {
-                            // When we're not drawing we can highlight and delete annotations
-                            currentLine.Highlight(true);
+                        currentStar.CursorHighlightStar(false);
+                    }
+                    updateLaser(false);
 
-                            if (interactionFingerTrigger())
-                            {
-                                // delete the line
-                                currentLine.HandleDeleteAnnotation();
-                                currentLine = null;
-                                hapticFeedback();
-                            } 
-                           
+                    if (interactionTrigger())
+                    {
+                        if (menuController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
+                        {
+                            // allow annotation
+                            annotationTool.Annotate(laserEndPos);
                         }
-                        
                     }
                 }
             }
-            else
-            {
-                if (currentStar != null)
-                {
-                    currentStar.CursorHighlightStar(false);
-                }
-                updateLaser(false);
-
-                if (interactionTrigger())
-                {
-                    if (menuController.IsDrawing && annotationTool != null && !EventSystem.current.IsPointerOverGameObject())
-                    {
-                        // Seems like a crazy way to determine if the UI is in the way, but after multiple attempts at a more
-                        // elegant solution, settled on this since it works.
-
-                        //if (FindObjectOfType<LaserPointer>().GetComponent<LineRenderer>().enabled)
-                        //{
-                            // Blocked by the UI layer
-                            //return;
-                        //}
-                        //else
-                        //{
-                        // allow annotation where the star is
-                        annotationTool.Annotate(laserEndPos);
-                        //}
-
-                    }
-                }
-            }
-
         }
 #endif
     }
-    void positionCanvasTransformRelativeToOrigin(float verticalOffset = 0)
+    void positionCanvasTransformRelativeToOrigin(GameObject canvasObject, float verticalOffset = 0)
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         Transform origin = this.transform;
-        if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
         
         if (m_InputModule != null && m_InputModule.rayTransform != null) origin = m_InputModule.rayTransform;
-
-        // one last null check - this will be the case on LoadSim
-        if (mainUI != null)
-        {
-            Vector3 newRotation = origin.transform.rotation.eulerAngles;
-            newRotation.x = 0;
-            newRotation.z = 0;
-            newRotation.y += 30;
-            mainUI.transform.rotation = Quaternion.Euler(newRotation);
-            Vector3 pos = origin.position + (origin.forward * menuDistance);
-            pos.y += verticalOffset;
-            mainUI.transform.position = pos;
-        }
+        
+        Vector3 pos = origin.position + (origin.forward * menuDistance);
+        pos.y += verticalOffset;
+        canvasObject.transform.position = pos;
+        
+        Vector3 camPos = Camera.main.transform.position;
+        Vector3 relativePos = pos - camPos;
+        canvasObject.transform.rotation = Quaternion.LookRotation(relativePos, Vector3.up);
 #endif
     }
     void toggleMenu()
     {
-        if (menuButton())
+        if (menuButton() && mainUI)
         {
-            positionCanvasTransformRelativeToOrigin();
+            positionCanvasTransformRelativeToOrigin(mainUI);
+        }
+
+        if (infoPanelButton() && infoPanelUI)
+        {
+            positionCanvasTransformRelativeToOrigin(infoPanelUI);
         }
     }
 
     void moveAroundEarth()
     {
-#if !UNITY_WEBGL
-        if (SceneManager.GetActiveScene().name == "EarthInteraction")
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
+        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH)
         {
             if (!earthModel) earthModel = GameObject.Find("EarthContainer");
            
             if (grabTrigger())
             {
-                if (mainUI == null) mainUI = GameObject.Find("MainUI");
+                if (mainUI == null) mainUI = GameObject.FindGameObjectWithTag("MainUI");
+                if (infoPanelUI == null) infoPanelUI = GameObject.FindGameObjectWithTag("InfoPanelUI");
                 if (mainUI && mainUI.transform.parent == null)
                 {
                     mainUI.transform.parent = this.transform;
+                }
+                if (infoPanelUI && infoPanelUI.transform.parent == null)
+                {
+                    infoPanelUI.transform.parent = this.transform;
                 }
                 
                 // rotate VR camera around Earth
@@ -356,7 +367,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool interactionTrigger(bool oneShot = true)
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         if (oneShot)
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger) ||
@@ -373,7 +384,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool interactionFingerTrigger()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         return (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) ||
                         OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger));
 #else 
@@ -382,7 +393,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool grabTrigger()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         return (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) ||
                         OVRInput.Get(OVRInput.Button.SecondaryHandTrigger));
 #else 
@@ -391,7 +402,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool leftMenuTrigger()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         return (OVRInput.Get(OVRInput.Button.Two));
 #else 
         return false;
@@ -399,7 +410,7 @@ public class VRInteraction : MonoBehaviour
     }
     bool rightMenuTrigger()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         return (OVRInput.Get(OVRInput.Button.Four));
 #else 
         return false;
@@ -407,7 +418,12 @@ public class VRInteraction : MonoBehaviour
     }
     bool menuButton()
     {
-        return leftMenuTrigger() || rightMenuTrigger();
+        return leftMenuTrigger();
+    }
+
+    bool infoPanelButton()
+    {
+        return rightMenuTrigger();
     }
 
     void setDrawStartPoint()
@@ -417,14 +433,14 @@ public class VRInteraction : MonoBehaviour
 
     void hapticFeedback()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         OVRInput.SetControllerVibration(0.1f, 0.2f, OVRInput.GetActiveController());
         StartCoroutine(stopHaptic());
 #endif
     }
     IEnumerator stopHaptic()
     {
-#if !UNITY_WEBGL
+#if UNITY_ANDROID || UNITY_STANDALONE_WIN
         yield return new WaitForSeconds(0.1f);
         OVRInput.SetControllerVibration(0f, 0f, OVRInput.GetActiveController());
 #else

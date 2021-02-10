@@ -45,10 +45,19 @@ public class DataManager
         set
         {
             maxStarCount = value;
-            filteredStars = stars.OrderBy(s => s.Mag).Take(maxStarCount).ToList();
         }
     }
 
+    // Track all stars that are part of constellations, i.e. form a node between constellation lines
+    // we need to ensure these are always available
+    private List<int> _constellationConnectionStars;
+    public List<int> ConstellationConnectionStars {
+        get { return _constellationConnectionStars; }
+        set {
+            _constellationConnectionStars = value;
+
+        }
+    }
     private List<Star> filteredStars;
 
     public List<Star> Stars
@@ -77,6 +86,15 @@ public class DataManager
         else
         {
             filteredStars = stars;
+        }
+        // need to add all stars with constellation lines
+        if (ConstellationConnectionStars != null)
+        {
+            List<Star> connectionStars = stars.Where(s => ConstellationConnectionStars.Contains(s.Hipparcos)).ToList();
+            foreach (Star s in connectionStars)
+            {
+                if (!filteredStars.Contains(s)) filteredStars.Add(s);
+            }
         }
 
         MinMag = filteredStars.Min(s => s.Mag);

@@ -16,14 +16,20 @@ public class InfoPanelController : MonoBehaviour
     public GameObject networkUserPrefab;
     public GameObject networkStatusText;
     public GameObject networkGroupText;
-    
+
+    public TextMeshProUGUI debugText;
+
+    private string lastDebugMessage = "";
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
+        manager.InfoPanel = this;
     }
 
-    private void OnEnable()
+    private void Start()
     {
+        Debug.Log("wiring up event listeners ");
+        Debug.Log(events.PushPinSelected.GetPersistentEventCount());
         events.PushPinSelected.AddListener(updatePushpinText);
         events.StarSelected.AddListener(starSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
@@ -32,16 +38,24 @@ public class InfoPanelController : MonoBehaviour
         playerListChanged(manager.LocalUsername);
         updatePushpinText(manager.LocalPlayerPin);
     }
-
+    private void Update()
+    {
+        if (debugText != null && lastDebugMessage != manager.LastLogMessageDebug)
+        {
+            debugText.SetText(manager.LastLogMessageDebug);
+            lastDebugMessage = manager.LastLogMessageDebug;
+        }
+    }
     private void updatePushpinText(Pushpin pin)
     {
         StringBuilder details = new StringBuilder();
-        details.Append(manager.CurrentSimulationTime.ToShortDateString())
+        details.Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortDateString())
             .Append(" ")
-            .Append(manager.CurrentSimulationTime.ToShortTimeString());
+            .Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortTimeString());
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
-        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());   
+        
+        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
         
     }
     
@@ -50,6 +64,7 @@ public class InfoPanelController : MonoBehaviour
         StringBuilder description = new StringBuilder();
         if (starData == null)
         {
+            
             description.Append("Now showing constellation: ");
             description.Append(manager.CurrentlySelectedConstellation);
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
@@ -121,6 +136,7 @@ public class InfoPanelController : MonoBehaviour
 
     private void removeAllListeners()
     {
+        Debug.Log("removing listeners ");
         events.PushPinSelected.RemoveListener(updatePushpinText);
         events.StarSelected.RemoveListener(starSelectedText);
         events.PlayerJoined.RemoveListener(playerListChanged);
@@ -129,7 +145,7 @@ public class InfoPanelController : MonoBehaviour
     }
     private void OnDisable()
     {
-        removeAllListeners();
+        // removeAllListeners();
     }
 
     private void OnDestroy()

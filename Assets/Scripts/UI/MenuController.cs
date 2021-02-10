@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
@@ -26,22 +25,54 @@ public class MenuController : MonoBehaviour
         }
     }
     private SnapshotsController snapshotsController;
+    private ConstellationsController constellationsController;
     private GameObject annotationsObject;
-    private bool hideAnnotations = false;
-    private SnapGrid _snapshotGrid;
-    
+
+
     public GameObject drawModeIndicator;
+    public GameObject drawModeOffIndicator;
+    public GameObject showAnnotationsIndicator;
+    public GameObject hideAnnotationsIndicator;
+    public TMP_Text annotationsButtonText;
+
+    private bool _hideAnnotations = false;
+    // Make this a property so we can have side effect triggered when the value is changed
+    private bool hideAnnotations {
+        get { return _hideAnnotations; }
+        set { 
+            _hideAnnotations = value;
+            if (showAnnotationsIndicator) showAnnotationsIndicator.SetActive(!_hideAnnotations);
+            if (hideAnnotationsIndicator) hideAnnotationsIndicator.SetActive(_hideAnnotations);
+            if (annotationsButtonText) annotationsButtonText.SetText(_hideAnnotations ? "Show Drawings" : "Hide Drawings");
+            SceneLoader loader = FindObjectOfType<SceneLoader>();
+            int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
+            if (_hideAnnotations)
+            {
+                LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
+                Camera.main.cullingMask = newLayerMask;
+            }
+            else
+            {
+                LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
+                Camera.main.cullingMask = newLayerMask;
+            }
+        }
+    }
+    private SnapGrid _snapshotGrid;
+
+
     [SerializeField] private GameObject menuContainerObject;
     [SerializeField] private GameObject informationPanelObject;
     [SerializeField] private GameObject showHideMenuToggle;
     [SerializeField] private GameObject showHideInfoPanelToggle;
     [SerializeField] private GameObject northPinPrefab;
+    [SerializeField] private TMP_Text annotateMenuTitle;
     
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
     private bool showInfoPanel = true;
-    
+    private AnnotationTool annotationTool;
     public void ToggleMainMenu()
     {
         showMainMenu = !showMainMenu;
@@ -70,9 +101,13 @@ public class MenuController : MonoBehaviour
         set { 
             isDrawing = value;
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
+            if (drawModeOffIndicator) drawModeOffIndicator.SetActive(!isDrawing);
+            if (annotateMenuTitle) annotateMenuTitle.SetText(isDrawing ? "Annotate Menu (Drawing)" : "Annotate Menu");
+            if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+            CCDebug.Log("Draw toggled: " + isDrawing + " tool: " + (annotationTool != null), LogLevel.Display, LogMessageCategory.All);
             if (!isDrawing)
             {
-                AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+                if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
                 if (annotationTool)
                 {
                     annotationTool.EndDrawingMode();
@@ -89,13 +124,19 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    float northPinVerticalOffset = 0.1f;
+
     private bool _hasCompletedSetup = false;
     
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
+        manager.MainMenu = this;
+#if UNITY_WSA
+        northPinVerticalOffset = -1.5f;
+#endif
     }
-    
+
     private void Start()
     {
         // Should only happen once, but just in case
@@ -124,17 +165,25 @@ public class MenuController : MonoBehaviour
         // When running tests, there may be no snapshots controller on this game object
         if (snapshotsController) snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        hideAnnotations = false;
     }
     
     public void ToggleDrawMode()
     {
-        if (!hideAnnotations)
-        {
-            IsDrawing = !IsDrawing;
-            events.DrawMode.Invoke(IsDrawing);
-        }
+        IsDrawing = !IsDrawing;
+        if (IsDrawing) hideAnnotations = false;
+        events.DrawMode.Invoke(IsDrawing);
+        
     }
-
+    public void UndoAnnotation()
+    {
+        if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+        if (annotationTool)
+        {
+            annotationTool.UndoAnnotation();
+        }
+        
+    }
     public void ToggleAnnotationsVisibility()
     {
         if (isDrawing)
@@ -154,19 +203,8 @@ public class MenuController : MonoBehaviour
             hideAnnotations = !hideAnnotations;
         }
 
-        SceneLoader loader = FindObjectOfType<SceneLoader>();
-        int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
-        if (hideAnnotations)
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
-        else
-        {
-            LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
-            Camera.main.cullingMask = newLayerMask;
-        }
     }
+
     public void JumpToCrashSite()
     {
         // This is now used to change the view in Horizon mode to your crash site pin
@@ -184,26 +222,26 @@ public class MenuController : MonoBehaviour
     {
         // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddYears(yearChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
     
     public void ChangeMonth(int monthChange)
     {
         // Setting simulation time updates Local User Pin
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMonths(monthChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
 
     public void ChangeDay(int dayChange)
     {
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddDays(dayChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
 
     public void ChangeTime(int hourChange)
     {
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddHours(hourChange);
-        events.PushPinUpdated.Invoke(manager.LocalPlayerPin, manager.LocalPlayerLookDirection);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
     public void ClearStarSelection()
     {
@@ -277,7 +315,7 @@ public class MenuController : MonoBehaviour
         // if we've changed scene, place our pin
         if (shouldDisplay && manager.HasSetNorthPin && northPins.Length == 0)
         {
-            GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+            GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
             
             northPin.transform.localRotation = Quaternion.Euler(0, manager.PlayerNorthPinDirection, 0);
         }
@@ -296,7 +334,8 @@ public class MenuController : MonoBehaviour
         {
             if (!manager.HasSetNorthPin)
             {
-                GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+                
+                GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
                 setNorthPin(northPin);
             }
             else
@@ -326,7 +365,17 @@ public class MenuController : MonoBehaviour
             else dataController.ShowFewerStars();
         }
     }
-    
+    public void ShowAllConstellations()
+    {
+        if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
+        constellationsController.SelectConstellationByName(SimulationConstants.CONSTELLATIONS_ALL);
+    }
+    public void ShowNoConstellations()
+    {
+        if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
+        constellationsController.SelectConstellationByName(SimulationConstants.CONSTELLATIONS_NONE);
+    }
+
     public void LoadEarthScene()
     {
         if (_currentSceneName != SimulationConstants.SCENE_EARTH)
@@ -352,7 +401,21 @@ public class MenuController : MonoBehaviour
     {
         CCDebug.Log("Quit application called", LogLevel.Warning, LogMessageCategory.UI);
 #if !UNITY_WEBGL && !UNITY_EDITOR
-        Application.Quit();
+        StartCoroutine(waitAndQuitApplication());
 #endif
+    }
+
+    IEnumerator waitAndQuitApplication()
+    {
+        NetworkController nc = FindObjectOfType<NetworkController>();
+        if (nc != null) nc.Disconnect();
+        
+        yield return new WaitForSeconds(1f);
+        Application.Quit();
+    }
+
+    private void OnApplicationQuit()
+    {
+       
     }
 }

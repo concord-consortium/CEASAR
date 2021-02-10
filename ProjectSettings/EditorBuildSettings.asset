@@ -18,10 +18,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Stars.unity
     guid: faff0818eabc04885abbe66a8ff2406b
   - enabled: 0
-    path: Assets/Scenes/ARPlanets.unity
+    path: Assets/Scenes/DevScenes/ARPlanets.unity
     guid: a2b0d60b5ca16465b93124b84f9b10ce
   - enabled: 0
-    path: Assets/Scenes/Planets.unity
+    path: Assets/Scenes/DevScenes/Planets.unity
     guid: 5d63f5fb8d9ab496b85df7d0808ebbdb
   - enabled: 0
     path: Assets/Scenes/Hololens/LoadSim.unity
