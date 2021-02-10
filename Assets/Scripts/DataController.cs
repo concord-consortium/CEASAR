@@ -188,13 +188,6 @@ public class DataController : MonoBehaviour
                     // Add star data, then position, scale and color
                     newStar.Init(constellationsController, dataStar, dataManager.MaxMag, magnitudeScale, manager.InitialRadius);
 
-                    // Eventually store constellation color and observed star color separately
-                    // newStar.SetStarColor(constellationColor, Color.white);
-                    // // color by constellation
-                    // if (colorByConstellation == true)
-                    // {
-                    //     Utils.SetObjectColor(newStar.gameObject, constellationColor);
-                    // }
                     constellation.highlightColor = constellationColor;
 
                     allStarComponents[dataStar.uniqueId] = newStar;
@@ -232,7 +225,7 @@ public class DataController : MonoBehaviour
 
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : Color.white);
+            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : starComponent.starColor);
             starComponent.SetStarScale(magnitudeScale);
             if (starMaterial)
             {

@@ -72,7 +72,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         }
         else
         {
-            HandleSelectStar(broadcastToNetwork, Color.white);
+            HandleSelectStar(broadcastToNetwork, starColor);
         }
     }
 
