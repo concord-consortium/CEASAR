@@ -19,6 +19,8 @@ This project relies on a central network server built from [Colyseus](https://gi
 ## Builds
 Current setup: Unity 2019.4.18f1 (or 2019.4.x since the 2019.4 is the LTS version). At time of writing, 2020 is in Tech release (unstable) mode, and frequently introduces breaking changes and incompatibilities with Oculus and MRTK libraries.
 
+In-Editor testing: The network panel is set to show extra entries in Editor mode - this proved useful in UI design, and is a useful feature (using conditional compilation) should this be required elsewhere. Much of the `SceneLoader` component uses conditional compilation to set up cameras and UI for different build targets.
+
 Unity Cloud Build is currently used from Master branch for most builds. You can build standalone desktop builds at any time on either Mac or Windows if required.
 
 To build for WebGL, in the Unity editor, change the build target to WebGL then rename the `Oculus` folder to `Oculus~` to hide the folder from Unity. When the build has completed, the folder name can be changed back.
