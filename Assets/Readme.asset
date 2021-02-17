@@ -21,15 +21,15 @@ MonoBehaviour:
     url: 
   - heading: About
     text: This project is designed to visualize the stars in the sky, and help students
-      understand the relative positions and movement of the Earth, Moon, and Sun,
-      and other celestial bodies.
-    linkText: 
-    url: 
+      understand the positions of the constellations in the sky, and how those constellations appear to move
+      in relation to the observers latitude and longitue, and the current date and time. 
+      It also shows the relative positions and movement of the Earth, Moon, and Sun.
+    linkText: The main Github readme has more details about this application.
+    url: https://github.com/concord-consortium/CEASAR
   - heading: Collaboration
     text: This project can be run in multiplayer environments to enable collaborative
       exploration of the simulation using a platform called Colyseus. To run with
-      multiplayer, the server application must be started (located in the CEASAR-SERVER
-      folder at the root of the project)
-    linkText: 
-    url: 
+      multiplayer, the server application must be available. 
+    linkText: Full details on the Network stack are on Github.
+    url: https://github.com/concord-consortium/CEASAR-server
   loadedLayout: 1
