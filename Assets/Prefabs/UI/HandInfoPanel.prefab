@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -110, y: 0}
-  m_SizeDelta: {x: 230, y: 50}
+  m_SizeDelta: {x: 230, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7337887836801866942
 CanvasRenderer:
@@ -69,7 +69,9 @@ MonoBehaviour:
 
     Constellation
 
-    Alt/Az, Mag'
+    Alt/Az, Mag
+
+    RA Dec Dist'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1053,7 +1055,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -35}
+  m_AnchoredPosition: {x: 150, y: -25}
   m_SizeDelta: {x: 300, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4589958142163763539
@@ -1339,8 +1341,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -35}
-  m_SizeDelta: {x: 300, y: 70}
+  m_AnchoredPosition: {x: 150, y: -40}
+  m_SizeDelta: {x: 300, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7592515853024729637
 CanvasRenderer:
@@ -1547,8 +1549,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -105}
-  m_SizeDelta: {x: 300, y: 70}
+  m_AnchoredPosition: {x: 150, y: -100}
+  m_SizeDelta: {x: 300, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8058681409646848866
 GameObject:
@@ -1725,7 +1727,7 @@ PrefabInstance:
     - target: {fileID: 3753379978463475562, guid: 8927fd7eb5ad753478a98816d5b8311d,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 25
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 3753379978463475562, guid: 8927fd7eb5ad753478a98816d5b8311d,
         type: 3}
@@ -1740,7 +1742,7 @@ PrefabInstance:
     - target: {fileID: 3753379978463475562, guid: 8927fd7eb5ad753478a98816d5b8311d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -9.6
+      value: -9.1
       objectReference: {fileID: 0}
     - target: {fileID: 6139673850051770958, guid: 8927fd7eb5ad753478a98816d5b8311d,
         type: 3}
