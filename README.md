@@ -32,9 +32,9 @@ As of July 2021 Unity Cloud Builds are no longer running. Previously Cloud Build
 To build for `WebGL`:
 * in the Unity editor, change the build target to `WebGL`
 * Rename the `Oculus` folder to `Oculus~` to hide the folder from Unity
-* Do the build to WebGL
+* Create the WebGL build in a folder named `CEASAR`
 * When the build has completed, Rename the `Oculus~` folder to `Oculus` to return the folder to normal
-* By default, the Unity WebGL build uses static 960 x 600 pixel dimensions for the content frame. CSS adjustments can be made to the `index.html` file to change how the CEASAR content frame is shown in the browser.
+* By default, the Unity WebGL build uses static 960 x 600 pixel dimensions for the content frame. CSS adjustments can be made to the `index.html` file located in the build folder to change how the CEASAR content frame is shown in the browser. The `index.html` file located in `Assets\HTML` contains CSS that allows the CEASAR content frame to fill the browser window. You can copy this file over the built `index.html` file located in the WebGL build root folder if you have made the WebGL build in a folder named `CEASAR` (otherwise the copied `index.html` file will contain references to file names that do not exsit in the WebGL build folder).
 
 ### Building for Oculus Quest
 To build for Oculus Quest, you need:
