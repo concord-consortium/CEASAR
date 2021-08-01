@@ -49,12 +49,11 @@ public class InfoPanelController : MonoBehaviour
     private void updatePushpinText(Pushpin pin)
     {
         StringBuilder details = new StringBuilder();
-        details.Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortDateString())
+        details.Append(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
-            .Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortTimeString());
+            .Append(manager.CurrentSimulationTime.ToString("HH:mm"));
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
-
         pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
 
     }
