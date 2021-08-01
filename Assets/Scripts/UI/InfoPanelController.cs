@@ -9,7 +9,7 @@ public class InfoPanelController : MonoBehaviour
 {
     private SimulationManager manager { get { return SimulationManager.Instance; } }
     private SimulationEvents events { get { return SimulationEvents.Instance; } }
-    
+
     public GameObject pushPinDetailsText;
     public GameObject constellationText;
     public GameObject networkUserList;
@@ -54,17 +54,16 @@ public class InfoPanelController : MonoBehaviour
             .Append(manager.CurrentSimulationTime.ToUniversalTime().ToShortTimeString());
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
-        
+
         pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
-        
+
     }
-    
+
     private void starSelectedText(Star starData)
     {
         StringBuilder description = new StringBuilder();
         if (starData == null)
         {
-            
             description.Append("Now showing constellation: ");
             description.Append(manager.CurrentlySelectedConstellation);
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
@@ -82,10 +81,15 @@ public class InfoPanelController : MonoBehaviour
                 .Append(", ")
                 .Append(altAz.Azimuth.ToString("F2"))
                 .Append("  Mag: ")
-                .Append(starData.Mag.ToString());
+                .AppendLine(starData.Mag.ToString());
+            description.Append("R.A: ")
+                .Append(starData.RA.ToString("F2"))
+                .Append("  Dec: ")
+                .Append(starData.Dec.ToString("F2"))
+                // A value of 10000000 indicates missing or dubious (e.g., negative) parallax data in Hipparcos
+                .Append(starData.Dist != 10000000 ?  "  Dist: " + (starData.Dist * 3.262f).ToString("F0") + "ly": "");
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
         }
-        
     }
 
     private void connectionStatusUpdated(bool isConnected)
@@ -105,7 +109,7 @@ public class InfoPanelController : MonoBehaviour
         }
         // add local user
         addPlayerToList(manager.LocalUsername);
-        
+
         // update network players
         foreach (Player p in manager.AllRemotePlayers)
         {
@@ -152,5 +156,5 @@ public class InfoPanelController : MonoBehaviour
     {
        removeAllListeners();
     }
-    
+
 }
