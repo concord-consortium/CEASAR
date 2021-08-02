@@ -39,7 +39,7 @@ public class MenuController : MonoBehaviour
     // Make this a property so we can have side effect triggered when the value is changed
     private bool hideAnnotations {
         get { return _hideAnnotations; }
-        set { 
+        set {
             _hideAnnotations = value;
             if (showAnnotationsIndicator) showAnnotationsIndicator.SetActive(!_hideAnnotations);
             if (hideAnnotationsIndicator) hideAnnotationsIndicator.SetActive(_hideAnnotations);
@@ -67,7 +67,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject showHideInfoPanelToggle;
     [SerializeField] private GameObject northPinPrefab;
     [SerializeField] private TMP_Text annotateMenuTitle;
-    
+
     private string _menuShowIcon = "≡";
     private string _menuHideIcon = "X";
     private bool showMainMenu = true;
@@ -98,7 +98,7 @@ public class MenuController : MonoBehaviour
     private bool isDrawing = false;
     public bool IsDrawing {
         get { return isDrawing; }
-        set { 
+        set {
             isDrawing = value;
             if (drawModeIndicator) drawModeIndicator.SetActive(isDrawing);
             if (drawModeOffIndicator) drawModeOffIndicator.SetActive(!isDrawing);
@@ -119,7 +119,7 @@ public class MenuController : MonoBehaviour
     private bool isPinningLocation = true;
     public bool IsPinningLocation {
         get { return isPinningLocation; }
-        set { 
+        set {
             isPinningLocation = value;
         }
     }
@@ -127,7 +127,7 @@ public class MenuController : MonoBehaviour
     float northPinVerticalOffset = 0.1f;
 
     private bool _hasCompletedSetup = false;
-    
+
     private void Awake()
     {
         DontDestroyOnLoad(this.transform.root.gameObject);
@@ -152,7 +152,7 @@ public class MenuController : MonoBehaviour
         CheckDisplayNorthPin();
         ToggleAnnotationsVisibility();
     }
-    
+
     void OnDisable()
     {
         events.PushPinSelected.RemoveListener(updateOnPinSelected);
@@ -167,13 +167,13 @@ public class MenuController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         hideAnnotations = false;
     }
-    
+
     public void ToggleDrawMode()
     {
         IsDrawing = !IsDrawing;
         if (IsDrawing) hideAnnotations = false;
         events.DrawMode.Invoke(IsDrawing);
-        
+
     }
     public void UndoAnnotation()
     {
@@ -182,7 +182,7 @@ public class MenuController : MonoBehaviour
         {
             annotationTool.UndoAnnotation();
         }
-        
+
     }
     public void ToggleAnnotationsVisibility()
     {
@@ -224,7 +224,7 @@ public class MenuController : MonoBehaviour
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddYears(yearChange);
         events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
-    
+
     public void ChangeMonth(int monthChange)
     {
         // Setting simulation time updates Local User Pin
@@ -238,11 +238,18 @@ public class MenuController : MonoBehaviour
         events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
 
-    public void ChangeTime(int hourChange)
+    public void ChangeHour(int hourChange)
     {
         manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddHours(hourChange);
         events.PushPinSelected.Invoke(manager.LocalPlayerPin);
     }
+
+    public void ChangeMinute(int minuteChange)
+    {
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMinutes(minuteChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+    }
+
     public void ClearStarSelection()
     {
         manager.CurrentlySelectedStar = null;
@@ -262,7 +269,7 @@ public class MenuController : MonoBehaviour
             dataController.ToggleRunSimulation();
         }
     }
- 
+
 
     public void CreateSnapshot()
     {
@@ -290,7 +297,7 @@ public class MenuController : MonoBehaviour
         // broadcast the update to current perspective to the network
         events.PushPinUpdated.Invoke(pin, manager.LocalPlayerLookDirection);
     }
-    
+
       public void DeleteSnapshot(Pushpin deleteSnap)
     {
         Pushpin match = manager.LocalUserSnapshots.Find(p => p.Equals(deleteSnap));
@@ -316,7 +323,7 @@ public class MenuController : MonoBehaviour
         if (shouldDisplay && manager.HasSetNorthPin && northPins.Length == 0)
         {
             GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
-            
+
             northPin.transform.localRotation = Quaternion.Euler(0, manager.PlayerNorthPinDirection, 0);
         }
 
@@ -334,7 +341,7 @@ public class MenuController : MonoBehaviour
         {
             if (!manager.HasSetNorthPin)
             {
-                
+
                 GameObject northPin = Instantiate(northPinPrefab, new Vector3(0, northPinVerticalOffset, 0), Quaternion.identity);
                 setNorthPin(northPin);
             }
@@ -356,7 +363,7 @@ public class MenuController : MonoBehaviour
         manager.PlayerNorthPinDirection = manager.LocalPlayerLookDirection.y;
         SimulationEvents.Instance.PlayerNorthPin.Invoke(manager.LocalPlayerLookDirection.y);
     }
-    
+
     public void ChangeStarQuantity(float newVal)
     {
         if (dataController)
@@ -409,13 +416,13 @@ public class MenuController : MonoBehaviour
     {
         NetworkController nc = FindObjectOfType<NetworkController>();
         if (nc != null) nc.Disconnect();
-        
+
         yield return new WaitForSeconds(1f);
         Application.Quit();
     }
 
     private void OnApplicationQuit()
     {
-       
+
     }
 }
