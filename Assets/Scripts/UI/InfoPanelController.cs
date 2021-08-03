@@ -108,12 +108,14 @@ public class InfoPanelController : MonoBehaviour
     private void sunSelectedText(bool selected)
     {
         var solarPosition = SunCalc.GetSunPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
+        double azimuth = 180f + (solarPosition.Azimuth * 180f / Mathf.PI);
+        double altitude = solarPosition.Altitude * 180f / Mathf.PI;
         StringBuilder description = new StringBuilder();
         description.AppendLine("The Sun");
         description.Append("Alt/Az: ")
-            .Append(solarPosition.Altitude.ToString("F2"))
+            .Append(altitude.ToString("F2"))
             .Append(", ")
-            .AppendLine(solarPosition.Azimuth.ToString("F2"));
+            .AppendLine(azimuth.ToString("F2"));
         constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
         textDisplayObject = TextDisplayObject.Sun;
     }
@@ -121,12 +123,14 @@ public class InfoPanelController : MonoBehaviour
     private void moonSelectedText(bool selected)
     {
         var lunarPosition = MoonCalc.GetMoonPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
+        double azimuth = 180f + (lunarPosition.Azimuth * 180f / Mathf.PI);
+        double altitude = lunarPosition.Altitude * 180f / Mathf.PI;
         StringBuilder description = new StringBuilder();
         description.AppendLine("The Moon");
         description.Append("Alt/Az: ")
-            .Append(lunarPosition.Altitude.ToString("F2"))
+            .Append(altitude.ToString("F2"))
             .Append(", ")
-            .AppendLine(lunarPosition.Azimuth.ToString("F2"));
+            .AppendLine(azimuth.ToString("F2"));
         constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
         textDisplayObject = TextDisplayObject.Moon;
     }
