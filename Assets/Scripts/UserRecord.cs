@@ -266,9 +266,10 @@ public class UserRecord
 
     private static string UsernameListItem(string username, List<string> list)
     {
+        string lowerCaseUserName = username.ToLower();
         foreach (string item in list)
         {
-            if (username.IndexOf(item, System.StringComparison.CurrentCultureIgnoreCase) >= 0)
+            if (lowerCaseUserName.IndexOf(item) >= 0)
             {
                 return item;
             }
