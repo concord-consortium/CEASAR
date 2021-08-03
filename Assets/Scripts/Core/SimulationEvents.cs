@@ -34,10 +34,12 @@ public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 public class NetworkConnectionEvent: UnityEvent<bool> { }
 public class NetworkConnectionUpdateEvent: UnityEvent<bool> { }
 [System.Serializable] public class StarSelectedEvent: UnityEvent<Star> { }
+[System.Serializable] public class SunSelectedEvent: UnityEvent<bool> { }
+[System.Serializable] public class MoonSelectedEvent: UnityEvent<bool> { }
 [System.Serializable] public class ConstellationSelectedEvent: UnityEvent<string> { }
 public class SimulationEvents
 {
-    protected SimulationEvents() 
+    protected SimulationEvents()
     {
         if (LocationSelected == null) LocationSelected = new LocationSelectedEvent();
         if (AnnotationAdded == null) AnnotationAdded = new AnnotationAddedEvent();
@@ -57,6 +59,8 @@ public class SimulationEvents
         if (NetworkConnection == null) NetworkConnection = new NetworkConnectionEvent();
         if (NetworkUpdate == null) NetworkUpdate = new NetworkConnectionUpdateEvent();
         if (StarSelected == null) StarSelected = new StarSelectedEvent();
+        if (SunSelected == null) SunSelected = new SunSelectedEvent();
+        if (MoonSelected == null) MoonSelected = new MoonSelectedEvent();
         if (ConstellationSelected == null) ConstellationSelected = new ConstellationSelectedEvent();
     }
     private static SimulationEvents instance;
@@ -76,12 +80,12 @@ public class SimulationEvents
     /// This is where we handle specific annotations drawn in Horizon view
     /// </summary>
     public AnnotationAddedEvent AnnotationAdded;
-    
+
     /// <summary>
     /// Deleting an annotation must be sync'd
     /// </summary>
     public AnnotationDeletedEvent AnnotationDeleted;
-    
+
     /// <summary>
     /// Receiving annotations from remote players
     /// </summary>
@@ -146,6 +150,14 @@ public class SimulationEvents
     /// For when users select a star
     /// </summary>
     public StarSelectedEvent StarSelected;
+    /// <summary>
+    /// For when users select the sun
+    /// </summary>
+    public SunSelectedEvent SunSelected;
+    /// <summary>
+    /// For when users select the moon
+    /// </summary>
+    public MoonSelectedEvent MoonSelected;
 
     public ConstellationSelectedEvent ConstellationSelected;
 }
