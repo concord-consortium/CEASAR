@@ -51,7 +51,8 @@ public class InfoPanelController : MonoBehaviour
         StringBuilder details = new StringBuilder();
         details.Append(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
-            .Append(manager.CurrentSimulationTime.ToString("HH:mm"));
+            .Append(manager.CurrentSimulationTime.ToString("HH:mm"))
+            .Append(" UTC");
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
         pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());

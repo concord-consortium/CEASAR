@@ -49,10 +49,10 @@ public class Pushpin
         get
         {
             return this.LocationNameDetail + "\n" + this.SelectedDateTime.ToShortDateString() + " " +
-                   this.SelectedDateTime.ToString("HH:mm:ss");
+                   this.SelectedDateTime.ToString("HH:mm:ss") + " UTC";
         }
     }
-    
+
     public override string ToString()
     {
         return Location.ToString() + " " + SelectedDateTime.ToString();
@@ -61,18 +61,18 @@ public class Pushpin
     public override bool Equals(System.Object obj)
     {
         //Check for null and compare run-time types.
-        if ((obj == null) || ! this.GetType().Equals(obj.GetType())) 
+        if ((obj == null) || ! this.GetType().Equals(obj.GetType()))
         {
             return false;
         }
-        else { 
-            Pushpin p = (Pushpin) obj; 
+        else {
+            Pushpin p = (Pushpin) obj;
             return (Location == p.Location) && (SelectedDateTime == p.SelectedDateTime);
-        }   
+        }
     }
 
     public override int GetHashCode()
-    { 
+    {
         int t = this.SelectedDateTime.Hour + this.SelectedDateTime.Minute + this.SelectedDateTime.Second;
         int ll = (int)this.Location.Latitude + (int)this.Location.Longitude;
         return (t + ll);
@@ -93,7 +93,7 @@ public struct LatLng
     {
         return "" + Latitude.ToString("F2") + "," + Longitude.ToString("F2");
     }
-    
+
     public LatLng(string latlngString)
     {
         float defaultLatitude = 0;
@@ -115,13 +115,13 @@ public struct LatLng
             }
         }
     }
-    
-    public static bool operator ==(LatLng l1, LatLng l2) 
+
+    public static bool operator ==(LatLng l1, LatLng l2)
     {
         return l1.Equals(l2);
     }
 
-    public static bool operator !=(LatLng l1, LatLng l2) 
+    public static bool operator !=(LatLng l1, LatLng l2)
     {
         return !l1.Equals(l2);
     }
