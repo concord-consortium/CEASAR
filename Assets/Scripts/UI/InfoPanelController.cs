@@ -68,7 +68,7 @@ public class InfoPanelController : MonoBehaviour
         details.AppendLine();
         details.Append(manager.CurrentLocationDisplayName);
         pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
-
+        updateSelectSunOrMoonText();
     }
 
     private void starSelectedText(Star starData)
@@ -132,6 +132,10 @@ public class InfoPanelController : MonoBehaviour
     }
 
     private void simulationTimeChanged() {
+        updateSelectSunOrMoonText();
+    }
+
+    private void updateSelectSunOrMoonText() {
         if (textDisplayObject == TextDisplayObject.Sun)
         {
             sunSelectedText(true);
