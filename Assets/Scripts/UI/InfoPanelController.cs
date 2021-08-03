@@ -25,6 +25,7 @@ public class InfoPanelController : MonoBehaviour
         Star
     }
     TextDisplayObject textDisplayObject = TextDisplayObject.None;
+    Star currentStarData;
 
     public TextMeshProUGUI debugText;
 
@@ -103,6 +104,7 @@ public class InfoPanelController : MonoBehaviour
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
         }
         textDisplayObject = TextDisplayObject.Star;
+        currentStarData = starData;
     }
 
     private void sunSelectedText(bool selected)
@@ -144,9 +146,13 @@ public class InfoPanelController : MonoBehaviour
         {
             sunSelectedText(true);
         }
-        if (textDisplayObject == TextDisplayObject.Moon)
+        else if (textDisplayObject == TextDisplayObject.Moon)
         {
             moonSelectedText(true);
+        }
+        else if (textDisplayObject == TextDisplayObject.Star)
+        {
+            starSelectedText(currentStarData);
         }
     }
 
