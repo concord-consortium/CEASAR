@@ -99,7 +99,7 @@ public class InfoPanelController : MonoBehaviour
                 .Append("  Dec: ")
                 .Append(starData.Dec.ToString("F2"))
                 // A value of 10000000 indicates missing or dubious (e.g., negative) parallax data in Hipparcos
-                .Append(starData.Dist != 10000000 ?  "  Dist: " + (starData.Dist * 3.262f).ToString("F0") + "ly": "");
+                .Append(starData.Dist != 10000000 ?  "  Dist: " + (starData.Dist * 3.262f).ToString("F0") + " ly": "");
             constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
         }
         textDisplayObject = TextDisplayObject.Star;
