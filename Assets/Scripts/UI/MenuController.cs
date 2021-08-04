@@ -28,6 +28,8 @@ public class MenuController : MonoBehaviour
     private ConstellationsController constellationsController;
     private GameObject annotationsObject;
 
+    private UIControlCamera cameraControlUI;
+    private float rotateSpeed = 10f;
 
     public GameObject drawModeIndicator;
     public GameObject drawModeOffIndicator;
@@ -166,6 +168,7 @@ public class MenuController : MonoBehaviour
         if (snapshotsController) snapshotsController.Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
         hideAnnotations = false;
+        if (cameraControlUI == null) cameraControlUI = FindObjectOfType<UIControlCamera>();
     }
 
     public void ToggleDrawMode()
@@ -386,6 +389,55 @@ public class MenuController : MonoBehaviour
     {
         if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
         constellationsController.SelectConstellationByName(SimulationConstants.CONSTELLATIONS_NONE);
+    }
+
+    public void MoveLeft()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            manager.CelestialSphereObject.transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cameraControlUI.LookLeftRight(-20);
+        }
+    }
+    public void MoveRight()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            manager.CelestialSphereObject.transform.Rotate(Vector3.down, rotateSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cameraControlUI.LookLeftRight(20);
+        }
+    }
+    public void MoveUp()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            manager.CelestialSphereObject.transform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cameraControlUI.LookUpDown(20);
+        }
+    }
+    public void MoveDown()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            manager.CelestialSphereObject.transform.Rotate(Vector3.left, rotateSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cameraControlUI.LookUpDown(-20);
+        }
     }
 
     public void LoadEarthScene()
