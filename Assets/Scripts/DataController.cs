@@ -19,7 +19,7 @@ public class DataController : MonoBehaviour
 
     public StarComponent starPrefab;
     public Material starMaterial;
-    
+
     public GameObject allConstellations;
     private ConstellationsController constellationsController;
     public Constellation constellationPrefab;
@@ -29,7 +29,7 @@ public class DataController : MonoBehaviour
     public float MaxMagnitudeValue = 8;
 
     private float _magnitudeVisibilityIncrement = 0.5f;
-   
+
     private float magnitudeThreshold = 4.5f;
 
     public float MagnitudeThreshold => magnitudeThreshold;
@@ -44,7 +44,7 @@ public class DataController : MonoBehaviour
     {
         get { return runSimulation; }
     }
-    
+
     private LatLng currentLocation;
 
     private Quaternion initialRotation;
@@ -79,7 +79,7 @@ public class DataController : MonoBehaviour
     }
 
     private bool isReady = false;
-    
+
     bool shouldUpdate = false;
 
     void Awake()
@@ -136,7 +136,7 @@ public class DataController : MonoBehaviour
         {
             DataImport.ImportAllData(starData.text, maxStars, cityData.text, constellationConnectionData.text);
             CCDebug.Log(dataManager.Stars.Count + " stars imported");
-            allStarComponents = new Dictionary<string, StarComponent>(); 
+            allStarComponents = new Dictionary<string, StarComponent>();
         }
         if (cityData != null)
         {
@@ -195,8 +195,8 @@ public class DataController : MonoBehaviour
 
                     if (dataStar.Mag < MinMagnitudeValue) MinMagnitudeValue = dataStar.Mag;
                     if (dataStar.Mag > MaxMagnitudeValue) MaxMagnitudeValue = dataStar.Mag;
-                    
-                    // show or hide based on magnitude threshold - note that magnitudes are 
+
+                    // show or hide based on magnitude threshold - note that magnitudes are
                     // a strange scale where lower numbers are brighter. The threshold is used to
                     // limit the number of stars shown by hiding stars that appear more dim (higher magnitude)
                     if (dataStar.Mag > magnitudeThreshold)
@@ -204,10 +204,10 @@ public class DataController : MonoBehaviour
                         bool starIsConstellationConnection = DataManager.Instance.ConstellationConnectionStars.Contains(dataStar.Hipparcos);
                         newStar.ShowStar(starIsConstellationConnection || false);
                     }
-                    
+
                     constellation.AddStar(newStar.gameObject);
-                    
-                    
+
+
                 }
                 constellationsController.AddConstellation(constellation);
             }
@@ -232,7 +232,7 @@ public class DataController : MonoBehaviour
                 starComponent.GetComponent<Renderer>().material = starMaterial;
             }
         }
-        
+
         // if we're in Horizon view, set location and date / time
         if (showHorizonView)
         {
@@ -267,31 +267,31 @@ public class DataController : MonoBehaviour
                 positionNCP();
                 shouldUpdate = true;
             }
-           
+
             // allow change of time in all scenes - should work in Earth scene to switch seasons
             //double lst;
-            
+
             if (simulationTimeScale > 0 && runSimulation)
             {
                 manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddSeconds(Time.deltaTime * simulationTimeScale);
             }
-            
+
             julianDate = manager.CurrentSimulationTime.ToJulianDate();
             // Longitude relates to a time offset from UTC, 15 degrees per hour (24 hours in 360 degrees)
             longitudeTimeOffset = currentLocation.Longitude/15d;
             lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
-            
+
             // Filter and only update positions if changed time / latitude
             if (lastTime != lst) shouldUpdate = true;
 
             if (shouldUpdate)
             {
                 float rotationDueToUnityOrientation = 90;
-                
+
                 float siderealHoursPerDay = 23.9344696f;
                 float fractionOfDay = (float)lst / siderealHoursPerDay;
                 float planetRotation = (fractionOfDay * 360); // + longitudeRotation;
-                
+
                 // Start from initial rotation then rotate around for the current time and offset
                 transform.rotation = initialRotation;
                 transform.Rotate(0, (planetRotation + rotationDueToUnityOrientation), 0, Space.Self);
@@ -300,7 +300,7 @@ public class DataController : MonoBehaviour
             }
         }
     }
-    
+
     void handleSelectNewLocation(string newCity)
     {
         CCDebug.Log("Got new location! " + newCity, LogLevel.Info, LogMessageCategory.Event);
@@ -309,7 +309,7 @@ public class DataController : MonoBehaviour
         {
             // verify a valid city was entered
             var matchedCities = dataManager.Cities.Where(c => c.Name == newCity);
-            
+
             if (matchedCities.Count() > 0)
             {
                 var matchedCity = matchedCities.First();

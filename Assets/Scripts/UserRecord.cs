@@ -5,22 +5,22 @@ using System.Collections.Generic;
 
 public class UserRecord
 {
-    public static bool operator ==(UserRecord p1, UserRecord p2) 
+    public static bool operator ==(UserRecord p1, UserRecord p2)
     {
         return p1.Username.Equals(p2.Username);
     }
 
-    public static bool operator !=(UserRecord p1, UserRecord p2) 
+    public static bool operator !=(UserRecord p1, UserRecord p2)
     {
         return !p1.Username.Equals(p2.Username);
     }
-    
+
     readonly private static int COLOR_INDEX = 0;
     readonly private static int ANIMAL_INDEX = 1;
     readonly private static int NUMBER_INDEX = 2;
     readonly private static int GROUP_INDEX = 3;
     readonly private static int NUM_FIELDS = 4;
-    
+
     public const string DEFAULT_USER_COLOR = "red";
     // The username record items:
     public string group;
@@ -122,7 +122,7 @@ public class UserRecord
             return groupPins;
         }
     }
-    
+
     private static List<string> Numbers = new List<string>("1,2,3,4,5,6,7,8,9".Split(','));
     private static List<string> colorNames;
     public static List<string> ColorNames
@@ -183,13 +183,13 @@ public class UserRecord
 
         TextAsset groupList = Resources.Load("groups") as TextAsset;
         JSONObject groupsObject = JSONObject.Create(groupList.text);
-        
+
         groupNames = groupsObject.keys;
         foreach (var g in groupsObject.keys)
         {
             LatLng loc = new LatLng
             {
-                Latitude = groupsObject[g].GetField("latitude").n, 
+                Latitude = groupsObject[g].GetField("latitude").n,
                 Longitude = groupsObject[g].GetField("longitude").n
             };
             DateTime crashDt = DateTime.Parse(groupsObject[g].GetField("crashdatetime").str);
@@ -200,13 +200,14 @@ public class UserRecord
 
         ResourcesLoaded = true;
     }
-    
+
 
     public static string GetColorNameForUsername(string username)
     {
+        string lowerCaseUserName = username.ToLower();
         foreach (string colorName in colorNames)
         {
-            if (username.IndexOf(colorName, System.StringComparison.OrdinalIgnoreCase) >= 0)
+            if (lowerCaseUserName.IndexOf(colorName) >= 0)
             {
                 return colorName;
             }
@@ -265,9 +266,10 @@ public class UserRecord
 
     private static string UsernameListItem(string username, List<string> list)
     {
+        string lowerCaseUserName = username.ToLower();
         foreach (string item in list)
         {
-            if (username.IndexOf(item, System.StringComparison.CurrentCultureIgnoreCase) >= 0)
+            if (lowerCaseUserName.IndexOf(item) >= 0)
             {
                 return item;
             }

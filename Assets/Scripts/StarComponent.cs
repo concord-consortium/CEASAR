@@ -13,7 +13,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     // Scene-specific value
     private Vector3 sceneInitialScale;
     private float scaleFactor = 2f;
-    
+
     public GameObject starHighlightOutline;
     private SimulationManager manager {get {return SimulationManager.Instance;}}
     private Renderer _renderer;
@@ -83,7 +83,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         {
             CCDebug.Log("Selected star: " + starData.uniqueId, LogLevel.Info, LogMessageCategory.Interaction);
             if (!constellationsController) constellationsController = FindObjectOfType<ConstellationsController>();
-            
+
             if (constellationsController)
             {
                 constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
@@ -92,7 +92,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             // make sure it's visible
             SimulationManager.Instance.CurrentlySelectedStar = this;
             SimulationManager.Instance.CurrentlySelectedConstellation = this.starData.ConstellationFullName;
-            
+
             SimulationEvents.Instance.StarSelected.Invoke(starData);
             if (broadcastToNetwork)
             {
@@ -115,14 +115,12 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         constellationsController.HoveredStar = highlight ? this : null;
     }
 
-   
     public void SetStarColor(Color constellationColor, Color starColor)
     {
         // Store star color - not yet using real values
         this.starColor = starColor;
         // Store constellation color
         this.constellationColor = constellationColor;
-
     }
 
     public void ShowStar(bool show)
