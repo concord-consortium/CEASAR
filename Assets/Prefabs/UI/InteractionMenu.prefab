@@ -40163,9 +40163,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookUpDown
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveDown
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -40201,9 +40201,9 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookUpDown
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveDown
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -43414,9 +43414,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookLeftRight
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveLeft
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -43452,9 +43452,9 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookLeftRight
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveLeft
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -56537,9 +56537,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookUpDown
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveUp
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -56575,9 +56575,9 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookUpDown
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveUp
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -100149,9 +100149,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookLeftRight
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveRight
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -100187,9 +100187,9 @@ MonoBehaviour:
   onHoldClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
-        m_MethodName: LookLeftRight
-        m_Mode: 4
+      - m_Target: {fileID: 1282574470823667025}
+        m_MethodName: MoveRight
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
