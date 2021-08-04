@@ -21,10 +21,10 @@ public class GroupSelectionWizard : MonoBehaviour
     private List<Action> steps;
     private int currentStep;
     private List<GameObject> buttons;
- 
+
     // The user record:
     private UserRecord userRecord;
-    
+
     private SimulationManager manager { get { return SimulationManager.Instance; }}
 
     // Start is called before the first frame update
@@ -65,13 +65,13 @@ public class GroupSelectionWizard : MonoBehaviour
             Button b = FastLoginButton.GetComponent<Button>();
             TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             tgui.text = $"{userRecord.Username} {userRecord.group}";
-            
+
             if (!string.IsNullOrEmpty(userRecord.group))
             {
                 TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
                 textMesh.text = userRecord.group;
             }
-            
+
             b.onClick.AddListener(LaunchScene);
         }
         else
@@ -134,12 +134,12 @@ public class GroupSelectionWizard : MonoBehaviour
 
 
     private void ShowAnimals()
-    { 
+    {
         SetTitleText("Pick an animal name");
         foreach (string name in UserRecord.AnimalNames)
         {
             Button b = addButton();
-            
+
             buttons.Add(b.gameObject);
             TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (label != null)
@@ -160,7 +160,7 @@ public class GroupSelectionWizard : MonoBehaviour
         foreach (int number in numbers)
         {
             string numberString = number.ToString();
-           
+
             Button b = addButton();
             buttons.Add(b.gameObject);
             TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
@@ -187,7 +187,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void HandleGroupClick(string name)
     {
         userRecord.group = name;
-        
+
         if (GroupLabel)
         {
             TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
@@ -250,24 +250,40 @@ public class GroupSelectionWizard : MonoBehaviour
         steps[currentStep]();
     }
 
-    private Pushpin setLocationForGroup(string groupName)
+    private Pushpin setCrashLocationForGroup(string groupName)
     {
         Pushpin selectedGroupPin = UserRecord.GroupPins[groupName];
         manager.CrashSiteForGroup = selectedGroupPin;
-        Pushpin startPin = new Pushpin(selectedGroupPin.SelectedDateTime, selectedGroupPin.Location, selectedGroupPin.LocationName);
-        manager.LocalPlayer.Pin = startPin;
+        // do not set to crash site
+        // Pushpin startPin = new Pushpin(selectedGroupPin.SelectedDateTime, selectedGroupPin.Location, selectedGroupPin.LocationName);
+        // manager.LocalPlayer.Pin = startPin;
         CCDebug.Log("User selected group " + groupName + " " + selectedGroupPin);
 
         return selectedGroupPin;
     }
+
+    private Pushpin setStartLocationForUser()
+    {
+        // set to now in Champaign, Illinois
+        DateTime now = System.DateTime.Now.ToUniversalTime();
+        LatLng latlng = new LatLng("40.1164,-88.2434");
+        Pushpin startPin = new Pushpin(now, latlng, "Champaign");
+        manager.LocalPlayer.Pin = startPin;
+
+        return startPin;
+    }
+
+
     public void LaunchScene()
     {
         DisableNext();
         DisableRestart();
         DisableFastLogin();
         DirectionsText.color = userRecord.color;
-        Pushpin pin = setLocationForGroup(userRecord.group);
-        manager.LocalPlayer = new Player(userRecord, pin);
+        Pushpin groupPin = setCrashLocationForGroup(userRecord.group);
+        Pushpin startPin = setStartLocationForUser();
+
+        manager.LocalPlayer = new Player(userRecord, startPin);
         // generate starting look direction
         // use group + day of year as a seed
         System.Random rnd = new System.Random(DateTime.UtcNow.DayOfYear + UserRecord.GroupNames.IndexOf(userRecord.group));
@@ -351,5 +367,5 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-  
+
 }

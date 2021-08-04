@@ -13,6 +13,7 @@ Brasilia	-15.7833	-47.9161	Brazil	-3
 Buenos Aires	-34.6025	-58.3975	Argentina	-3
 Cape Town	-33.92	18.435	South Africa	2
 Caribou	46.8662	-67.9919	Maine, USA	-5
+Champaign	40.1164	-88.2434	Illinois, USA	-6
 Coral Gables	25.7037	-80.2715	Florida, USA	-5
 Dar es Salaam	-6.8	39.2683	Tanzania	3
 Denver	39.7621	-104.8759	Colorado, USA	-7
