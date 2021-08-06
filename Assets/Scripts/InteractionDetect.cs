@@ -17,7 +17,7 @@ public class InteractionDetect : MonoBehaviour
     public AnnotationTool annotationTool;
     MenuController mainUIController;
     private PushpinComponent lastPin;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +39,7 @@ public class InteractionDetect : MonoBehaviour
             ray = camera.ScreenPointToRay(Input.mousePosition);
             // We have two colliders on Earth, so we collect data on all ray hits
             Physics.RaycastNonAlloc(ray, hits, 100.0F, layerMaskEarth);
-    
+
             // Do something with the object that was hit by the raycast.
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() )
             {
@@ -63,7 +63,7 @@ public class InteractionDetect : MonoBehaviour
                             {
                                 interactionController.ShowEarthMarkerInteraction(hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal), manager.LocalPlayerColor, true);
                             }
-                            
+
                         }
                         else
                         {
@@ -76,7 +76,7 @@ public class InteractionDetect : MonoBehaviour
                         if (rend == null)
                         {
                             return;
-                        } 
+                        }
                         else
                         {
                             // hit.textureCoord only possible on the Mesh collider
@@ -84,7 +84,7 @@ public class InteractionDetect : MonoBehaviour
                         }
                     }
                 }
-            } 
+            }
         }
         if (mainUIController && mainUIController.IsDrawing && annotationTool)
         {
@@ -92,7 +92,7 @@ public class InteractionDetect : MonoBehaviour
             Physics.Raycast(ray, out hit, manager.SceneRadius);// layerMaskStarsAnnotations);
             if (Input.GetMouseButtonDown(0))
             {
-                if (!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero)
+                if ((!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero) && !IsPointerOverUIElement())
                 {
                     float r = SimulationManager.Instance.SceneRadius + 2f;
                     Vector2 mousePos = Input.mousePosition;
@@ -102,5 +102,31 @@ public class InteractionDetect : MonoBehaviour
                 }
             }
         }
+    }
+
+    // Returns 'true' if we touched or hovering on Unity UI element.
+    public static bool IsPointerOverUIElement()
+    {
+        return IsPointerOverUIElement(GetEventSystemRaycastResults());
+    }
+    // Returns 'true' if we touched or hovering on Unity UI element.
+    public static bool IsPointerOverUIElement(List<RaycastResult> eventSystemRayCastResults)
+    {
+        for (int index = 0;  index < eventSystemRayCastResults.Count; index ++)
+        {
+            RaycastResult curRaysastResult = eventSystemRayCastResults [index];
+            if (curRaysastResult.gameObject.layer == LayerMask.NameToLayer("UI"))
+                return true;
+        }
+        return false;
+    }
+    // Gets all event systen raycast results of current mouse or touch position.
+    static List<RaycastResult> GetEventSystemRaycastResults()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        return raysastResults;
     }
 }
