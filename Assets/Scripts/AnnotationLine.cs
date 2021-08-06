@@ -52,6 +52,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         {
             isSelected = false;
             transform.localScale = initialScale;
+            this.GetComponent<Renderer>().material.color = initialColor;
             GetComponent<Collider>().enabled = !drawModeActive;
             isDrawing = drawModeActive;
         }
@@ -68,6 +69,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             else
             {
                 transform.localScale = initialScale;
+                this.GetComponent<Renderer>().material.color = initialColor;
                 isSelected = false;
             }
         }
@@ -97,7 +99,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             else if (holdClickDuration > 0)
             {
                 holdClickDuration = 0;
-                this.GetComponent<Renderer>().material.color = this.initialColor;
+                this.GetComponent<Renderer>().material.color = initialColor;
             }
         }
     }
