@@ -36,6 +36,9 @@ public class MenuController : MonoBehaviour
     public GameObject showAnnotationsIndicator;
     public GameObject hideAnnotationsIndicator;
     public TMP_Text annotationsButtonText;
+    public GameObject annotationDrawButton;
+    public GameObject annotationUndoButton;
+    public GameObject annotationNorthPinButton;
 
     private bool _hideAnnotations = false;
     // Make this a property so we can have side effect triggered when the value is changed
@@ -61,7 +64,6 @@ public class MenuController : MonoBehaviour
         }
     }
     private SnapGrid _snapshotGrid;
-
 
     [SerializeField] private GameObject menuContainerObject;
     [SerializeField] private GameObject informationPanelObject;
@@ -152,7 +154,19 @@ public class MenuController : MonoBehaviour
     {
         ClearStarSelection();
         CheckDisplayNorthPin();
-        ToggleAnnotationsVisibility();
+        if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS)
+        {
+            annotationDrawButton.SetActive(false);
+            annotationUndoButton.SetActive(false);
+            annotationNorthPinButton.SetActive(false);
+        }
+        else
+        {
+            ToggleAnnotationsVisibility();
+            annotationDrawButton.SetActive(true);
+            annotationUndoButton.SetActive(true);
+            annotationNorthPinButton.SetActive(true);
+        }
     }
 
     void OnDisable()
@@ -180,6 +194,7 @@ public class MenuController : MonoBehaviour
     }
     public void UndoAnnotation()
     {
+        hideAnnotations = false;
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
         if (annotationTool)
         {
@@ -195,7 +210,8 @@ public class MenuController : MonoBehaviour
             ToggleDrawMode();
         }
         // If we hide annotations, we can't draw til we turn them back on
-        if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON)
+        if (SceneManager.GetActiveScene().name != SimulationConstants.SCENE_HORIZON &&
+            SceneManager.GetActiveScene().name != SimulationConstants.SCENE_STARS)
         {
             // every other scene we need to hide annotations
             hideAnnotations = true;
@@ -482,4 +498,5 @@ public class MenuController : MonoBehaviour
     {
 
     }
+
 }

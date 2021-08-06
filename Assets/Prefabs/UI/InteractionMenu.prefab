@@ -26488,7 +26488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -180, y: 310}
+  m_AnchoredPosition: {x: -260, y: 310}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &853364602301144760
@@ -85945,6 +85945,9 @@ MonoBehaviour:
   showAnnotationsIndicator: {fileID: 8728923586205098852}
   hideAnnotationsIndicator: {fileID: 845900427345199621}
   annotationsButtonText: {fileID: 1243478679224832560}
+  annotationDrawButton: {fileID: 9059320035563489192}
+  annotationUndoButton: {fileID: 2499463845272353629}
+  annotationNorthPinButton: {fileID: 4428538327212343788}
   menuContainerObject: {fileID: 4480416945259224394}
   informationPanelObject: {fileID: 0}
   showHideMenuToggle: {fileID: 1877320250941385219}
@@ -98959,7 +98962,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -260, y: 310}
+  m_AnchoredPosition: {x: -180, y: 310}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3860522038074595600
