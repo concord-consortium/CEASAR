@@ -104,17 +104,17 @@ public class InteractionDetect : MonoBehaviour
         }
     }
 
-    // Returns 'true' if we touched or hovering on Unity UI element.
+    // Returns 'true' if we touched or are hovering over Unity UI element.
     public static bool IsPointerOverUIElement()
     {
         return IsPointerOverUIElement(GetEventSystemRaycastResults());
     }
-    // Returns 'true' if we touched or hovering on Unity UI element.
-    public static bool IsPointerOverUIElement(List<RaycastResult> eventSystemRayCastResults)
+    // Returns 'true' if we touched or are hovering over Unity UI element.
+    public static bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaycastResults)
     {
-        for (int index = 0;  index < eventSystemRayCastResults.Count; index ++)
+        for (int index = 0;  index < eventSystemRaycastResults.Count; index ++)
         {
-            RaycastResult curRaysastResult = eventSystemRayCastResults [index];
+            RaycastResult curRaysastResult = eventSystemRaycastResults [index];
             if (curRaysastResult.gameObject.layer == LayerMask.NameToLayer("UI"))
                 return true;
         }
@@ -125,8 +125,8 @@ public class InteractionDetect : MonoBehaviour
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = Input.mousePosition;
-        List<RaycastResult> raysastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, raysastResults);
-        return raysastResults;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+        return raycastResults;
     }
 }
