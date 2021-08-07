@@ -11179,7 +11179,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
+      - m_Target: {fileID: 1282574470823667025}
         m_MethodName: ZoomOut
         m_Mode: 1
         m_Arguments:
@@ -54939,7 +54939,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3438795660351382241}
+      - m_Target: {fileID: 1282574470823667025}
         m_MethodName: ZoomIn
         m_Mode: 1
         m_Arguments:

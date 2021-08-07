@@ -455,6 +455,34 @@ public class MenuController : MonoBehaviour
             cameraControlUI.LookUpDown(-20);
         }
     }
+    public void ZoomOut()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            Vector3 currPos = manager.CelestialSphereObject.transform.position;
+            if (currPos.z < 200f)
+                manager.CelestialSphereObject.transform.position = new Vector3(currPos.x, currPos.y, currPos.z + 10f);
+        }
+        else
+        {
+            cameraControlUI.ZoomOut();
+        }
+    }
+    public void ZoomIn()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == SimulationConstants.SCENE_STARS)
+        {
+            Vector3 currPos = manager.CelestialSphereObject.transform.position;
+            if (currPos.z > 0)
+                manager.CelestialSphereObject.transform.position = new Vector3(currPos.x, currPos.y, currPos.z - 10f);
+        }
+        else
+        {
+            cameraControlUI.ZoomIn();
+        }
+    }
 
     public void LoadEarthScene()
     {
