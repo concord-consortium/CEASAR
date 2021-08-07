@@ -7,9 +7,9 @@ public class AnnotationTool : MonoBehaviour
 {
     private Vector3 startPointForDrawing = Vector3.zero;
     private Vector3 endPointForDrawing = Vector3.zero;
-    
+
     public GameObject annotationLinePrefab;
-    
+
     public float annotationWidth = 1;
     public float annotationHighlightWidthMultiplier = 1.5f;
 
@@ -45,7 +45,7 @@ public class AnnotationTool : MonoBehaviour
                 // start
                 startPointForDrawing = nextPoint;
                 currentAnnotation = Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform);
-                
+
             }
             else if (endPointForDrawing == Vector3.zero)
             {
@@ -55,25 +55,26 @@ public class AnnotationTool : MonoBehaviour
                 Vector3 distance = endPointForDrawing - startPointForDrawing;
                 Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
                 Vector3 midPosition = startPointForDrawing + (distance / 2.0f);
-                
+
                 currentAnnotation.transform.LookAt(endPointForDrawing);
                 currentAnnotation.transform.position = midPosition;
                 currentAnnotation.transform.localScale = scale;
-              
+
                 currentAnnotation.GetComponent<Renderer>().material.color = SimulationManager.Instance.LocalPlayerColor;
                 currentAnnotation.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.white);
 
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
+
                 myAnnotations.Add(currentAnnotation);
                 currentAnnotation.name = getMyAnnotationName(myAnnotations.Count);
-                
+
                 // Broadcast adding an annotation
                 SimulationEvents.Instance.AnnotationAdded.Invoke(
-                    currentAnnotation.transform.localPosition, 
-                    currentAnnotation.transform.localRotation, 
-                    currentAnnotation.transform.localScale, 
+                    currentAnnotation.transform.localPosition,
+                    currentAnnotation.transform.localRotation,
+                    currentAnnotation.transform.localScale,
                     currentAnnotation.name);
-                
+
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
                 currentAnnotation = null;
@@ -111,7 +112,7 @@ public class AnnotationTool : MonoBehaviour
         string annotationName = lastAnnotation.name;
         Color c = UserRecord.GetColorForUsername(p.username);
         this.addAnnotation(pos, rot, scale, annotationName, c);
-        
+
     }
     private void addAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName, Color playerColor)
     {
@@ -142,7 +143,7 @@ public class AnnotationTool : MonoBehaviour
             StartCoroutine(sendAnnotationDelayed(myAnnotations[i], delay));
         }
     }
-    
+
     IEnumerator sendAnnotationDelayed(GameObject annotation, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -159,7 +160,7 @@ public class AnnotationTool : MonoBehaviour
             }
         }
     }
-    
+
     public void EndDrawingMode()
     {
         if (startPointForDrawing != Vector3.zero && currentAnnotation != null && endPointForDrawing == Vector3.zero)

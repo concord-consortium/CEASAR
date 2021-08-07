@@ -16,6 +16,8 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     private float holdToDeleteTime = 1f;
     private float startParticleSpeed = 0.12f;
     private AnnotationTool _annotationTool;
+    private Color initialColor;
+
     public bool IsSelected {
         get { return isSelected; }
         set { isSelected = value; }
@@ -26,7 +28,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         if (isSelected)
         {
             HoldToDeleteAnnotation(Input.GetMouseButton(0));
-           
+
         }
     }
     public void FinishDrawing()
@@ -36,6 +38,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         selectedParticles = GetComponent<ParticleSystem>();
         if (_annotationTool == null) _annotationTool = FindObjectOfType<AnnotationTool>();
         SimulationEvents.Instance.DrawMode.AddListener(HandleDrawModeToggle);
+        initialColor = this.GetComponent<Renderer>().material.color;
     }
 
     private void OnDisable()
@@ -49,7 +52,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         {
             isSelected = false;
             transform.localScale = initialScale;
-            selectedParticles.Stop();
+            this.GetComponent<Renderer>().material.color = initialColor;
             GetComponent<Collider>().enabled = !drawModeActive;
             isDrawing = drawModeActive;
         }
@@ -66,8 +69,8 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
             else
             {
                 transform.localScale = initialScale;
+                this.GetComponent<Renderer>().material.color = initialColor;
                 isSelected = false;
-                selectedParticles.Stop();
             }
         }
     }
@@ -76,11 +79,9 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
     {
         if (isSelected)
         {
-            selectedParticles.Play();
             if (holdToDelete)
             {
                 holdClickDuration += Time.deltaTime;
-                selectedParticles.startSpeed = selectedParticles.startSpeed + (holdClickDuration / 2);
                 if (holdClickDuration > holdToDeleteTime)
                 {
                     isSelected = false;
@@ -88,11 +89,17 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
 
                     HandleDeleteAnnotation();
                 }
+                Color currentColor = this.GetComponent<Renderer>().material.color;
+                float r = Mathf.Max(0, currentColor.r + Time.deltaTime);
+                float g = Mathf.Max(0, currentColor.g + Time.deltaTime);
+                float b = Mathf.Max(0, currentColor.b + Time.deltaTime);
+                Color fadeColor = new Color(r, g, b, 1f);
+                this.GetComponent<Renderer>().material.color = fadeColor;
             }
             else if (holdClickDuration > 0)
             {
-                selectedParticles.startSpeed = startParticleSpeed;
                 holdClickDuration = 0;
+                this.GetComponent<Renderer>().material.color = initialColor;
             }
         }
     }
@@ -102,7 +109,7 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         SimulationEvents.Instance.AnnotationDeleted.Invoke(this.name);
         Destroy(this.gameObject);
     }
-    
+
     #region MouseEvent Handling
     public void OnPointerDown(PointerEventData eventData) { }
     public void OnPointerEnter(PointerEventData eventData)
@@ -111,7 +118,6 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         {
             Highlight(true);
             isSelected = true;
-            selectedParticles.Play();
         }
     }
 
@@ -121,7 +127,6 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         {
             Highlight(false);
             isSelected = false;
-            selectedParticles.Stop();
         }
     }
 

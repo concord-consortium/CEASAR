@@ -93,7 +93,15 @@ public class UIControlCamera : MonoBehaviour
             }
             else
             {
-                mainCam.transform.Rotate(Vector3.left, speed * Time.deltaTime, Space.Self);
+                Vector3 currentRotation = mainCam.transform.localEulerAngles;
+                float xRotation = currentRotation.x;
+                xRotation = xRotation + speed * Time.deltaTime * -1f;
+                // values can be from 270 - 90
+                float highAngle = 270f;
+                float lowAngle = 90f;
+                if (xRotation > lowAngle && xRotation < highAngle)
+                    xRotation = currentRotation.x;
+                mainCam.transform.localRotation = Quaternion.Euler(xRotation, currentRotation.y, currentRotation.z);
             }
         }
     }
