@@ -133,42 +133,18 @@ public class UIControlCamera : MonoBehaviour
     }
     public void ZoomOut()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName == SimulationConstants.SCENE_STARS)
+        float fov = mainCam.fieldOfView;
+        if (fov < 75)
         {
-            float zPos = mainCam.transform.position.z;
-            if (zPos > -200f)
-            {
-                mainCam.transform.position = new Vector3(0, 0, zPos - 10f);
-            }
-        }
-        else
-        {
-            float fov = mainCam.fieldOfView;
-            if (fov < 75)
-            {
-                mainCam.fieldOfView = fov + 15f;
-            }
+            mainCam.fieldOfView = fov + 15f;
         }
     }
     public void ZoomIn()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName == SimulationConstants.SCENE_STARS)
+        float fov = mainCam.fieldOfView;
+        if (fov > 45)
         {
-            float zPos = mainCam.transform.position.z;
-            if (zPos < 0)
-            {
-                mainCam.transform.position = new Vector3(0, 0, zPos + 10f);
-            }
-        }
-        else
-        {
-            float fov = mainCam.fieldOfView;
-            if (fov > 45)
-            {
-                mainCam.fieldOfView = fov - 15f;
-            }
+            mainCam.fieldOfView = fov - 15f;
         }
     }
 
