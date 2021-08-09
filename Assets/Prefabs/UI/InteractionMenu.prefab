@@ -72596,7 +72596,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 255f025fd89a56d42ba33be3b1e14411, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7896d99b4112d104bb0072ee136cf3a1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -85940,6 +85940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bdbb8159a2da4c788bf3adf8aecebae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotateSpeed: 10
   drawModeIndicator: {fileID: 3730541923119052999}
   drawModeOffIndicator: {fileID: 2636350217345473775}
   showAnnotationsIndicator: {fileID: 8728923586205098852}
@@ -85948,6 +85949,7 @@ MonoBehaviour:
   annotationDrawButton: {fileID: 9059320035563489192}
   annotationUndoButton: {fileID: 2499463845272353629}
   annotationNorthPinButton: {fileID: 4428538327212343788}
+  movementButton: {fileID: 7878016313495767044}
   menuContainerObject: {fileID: 4480416945259224394}
   informationPanelObject: {fileID: 0}
   showHideMenuToggle: {fileID: 1877320250941385219}

@@ -62,6 +62,12 @@ public class SimulationManagerComponent : MonoBehaviour
     private SceneLoader sceneLoaderPrefab;
     private SceneLoader sceneLoader;
 
+    // Settings for menu
+    [SerializeField]
+    private bool allowMovement = true;
+    [SerializeField]
+    private float rotateSpeed = 10f;
+
     private void Awake()
     {
         manager = SimulationManager.Instance;
@@ -104,7 +110,7 @@ public class SimulationManagerComponent : MonoBehaviour
         {
             sceneLoader = Instantiate(sceneLoaderPrefab);
         }
-        
+
         if (manager.NetworkControllerComponent == null)
         {
             if (FindObjectOfType<NetworkController>() != null)
@@ -177,22 +183,22 @@ public class SimulationManagerComponent : MonoBehaviour
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
         }
-        if (!manager.MainMenu) 
+        if (!manager.MainMenu)
         {
             MenuController sceneMenu = FindObjectOfType<MenuController>();
             if (!sceneMenu)
             {
                 Instantiate(mainUIPrefab);
-            } else
-            {
-                manager.MainMenu = sceneMenu;
+                sceneMenu = FindObjectOfType<MenuController>();
             }
-               
-            
+            manager.MainMenu = sceneMenu;
+
             manager.NetworkControllerComponent.Setup();
-        } 
-       
-        if (!manager.InfoPanel) 
+        }
+        manager.MainMenu.movementButton.SetActive(allowMovement);
+        manager.MainMenu.rotateSpeed = rotateSpeed;
+
+        if (!manager.InfoPanel)
         {
             InfoPanelController sceneInfoPanel = FindObjectOfType<InfoPanelController>();
             if (!sceneInfoPanel)
@@ -203,10 +209,10 @@ public class SimulationManagerComponent : MonoBehaviour
             {
                 manager.InfoPanel = sceneInfoPanel;
             }
-            
-        } 
+
+        }
         sceneLoader.SetupCameras();
-        
+
     }
 
     public void HandleEarthInteraction(InputEventData inputEvent)
