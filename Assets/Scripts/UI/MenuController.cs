@@ -29,7 +29,7 @@ public class MenuController : MonoBehaviour
     private GameObject annotationsObject;
 
     private UIControlCamera cameraControlUI;
-    private float rotateSpeed = 10f;
+    public float rotateSpeed = 10f;
 
     public GameObject drawModeIndicator;
     public GameObject drawModeOffIndicator;
@@ -39,6 +39,8 @@ public class MenuController : MonoBehaviour
     public GameObject annotationDrawButton;
     public GameObject annotationUndoButton;
     public GameObject annotationNorthPinButton;
+
+    public GameObject movementButton;
 
     private bool _hideAnnotations = false;
     // Make this a property so we can have side effect triggered when the value is changed
@@ -461,7 +463,7 @@ public class MenuController : MonoBehaviour
         if (sceneName == SimulationConstants.SCENE_STARS)
         {
             Vector3 currPos = manager.CelestialSphereObject.transform.position;
-            if (currPos.z < 200f)
+            if (currPos.z < 300f)
                 manager.CelestialSphereObject.transform.position = new Vector3(currPos.x, currPos.y, currPos.z + 10f);
         }
         else
