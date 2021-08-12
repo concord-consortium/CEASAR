@@ -40,7 +40,7 @@ public class Constellation : MonoBehaviour
         foreach (GameObject starObject in stars)
         {
             StarComponent sc = starObject.GetComponent<StarComponent>();
-            Utils.SetObjectColor(starObject, highlight ? highlightColor : sc.starColor);
+            Utils.SetObjectColor(sc.StarVisible, highlight ? highlightColor : sc.starColor);
         }
     }
 
