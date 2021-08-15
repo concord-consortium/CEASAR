@@ -36,7 +36,7 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     }
 
     // this is called when another object is selected
-    private void StarSelected(Star selectedStarData)
+    private void StarSelected(Star selectedStarData, string playerName, Color playerColor)
     {
         Destroy(FloatingInfoPanel);
     }
@@ -59,7 +59,8 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
             // make a new floating info panel that is a child of the object
             FloatingInfoPanel = Instantiate(FloatingInfoPanelPrefab, new Vector3(0, -8f, 6f), new Quaternion(0, 0, 0, 0), this.transform);
-            FloatingInfoPanel.transform.localPosition = new Vector3(0, -9f, 6f);
+            FloatingInfoPanel.transform.localPosition = new Vector3(0, -9f, 5f);
+            FloatingInfoPanel.transform.localScale = new Vector3(.8f, .8f, .8f);
 
             setMoonSelectedText();
         }

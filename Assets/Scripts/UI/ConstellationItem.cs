@@ -15,7 +15,7 @@ public class ConstellationItem : MonoBehaviour
 
     private bool _isSelected = false;
     private bool _setupComplete = false;
-    
+
     private void OnEnable()
     {
         initExisting();
@@ -53,7 +53,7 @@ public class ConstellationItem : MonoBehaviour
         if (!_setupComplete)
         {
             selectButton.onClick.AddListener(() => selectThisConstellation());
-            SimulationEvents.Instance.StarSelected.AddListener((star) => onStarSelected());
+            SimulationEvents.Instance.StarSelected.AddListener((star, name, color) => onStarSelected());
             SimulationEvents.Instance.ConstellationSelected.AddListener((constellationSelectedName) =>
                 onSelectConstellation(constellationSelectedName));
             _setupComplete = true;
@@ -75,18 +75,18 @@ public class ConstellationItem : MonoBehaviour
     private void onSelectConstellation(string cname)
     {
         _isSelected = cname == _constellationName;
-        
+
         selectedIcon.SetActive(_isSelected || cname == SimulationConstants.CONSTELLATIONS_ALL);
     }
-    
+
     private void onStarSelected()
     {
-        
+
         if (SimulationManager.Instance.CurrentlySelectedConstellation == SimulationConstants.CONSTELLATIONS_ALL ||
             SimulationManager.Instance.CurrentlySelectedConstellation == _constellationName)
         {
             selectedIcon.SetActive(true);
         } else selectedIcon.SetActive(false);
-        
+
     }
 }

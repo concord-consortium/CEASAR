@@ -80,21 +80,26 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     }
 
     // this is called when another star is selected
-    private void StarSelected(Star selectedStarData)
+    private void StarSelected(Star selectedStarData, string playerName, Color playerColor)
     {
-        if (selectedStarData.Hipparcos != starData.Hipparcos)
+        if (selectedStarData.Hipparcos != starData.Hipparcos && FloatingInfoPanel)
         {
-            // WTD if this request comes from another user, then we do not destroy
-            Destroy(FloatingInfoPanel);
+            if (FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName == playerName)
+                Destroy(FloatingInfoPanel);
         }
     }
     private void SunSelected(bool selected)
     {
-        Destroy(FloatingInfoPanel);
+        if (FloatingInfoPanel)
+            Destroy(FloatingInfoPanel);
     }
     private void MoonSelected(bool selected)
     {
-        Destroy(FloatingInfoPanel);
+        if (FloatingInfoPanel)
+        {
+            // FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName !=
+            Destroy(FloatingInfoPanel);
+        }
     }
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
@@ -127,7 +132,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             SimulationManager.Instance.CurrentlySelectedStar = this;
             SimulationManager.Instance.CurrentlySelectedConstellation = this.starData.ConstellationFullName;
 
-            SimulationEvents.Instance.StarSelected.Invoke(starData);
+            SimulationEvents.Instance.StarSelected.Invoke(starData, playerName, playerColor);
             if (broadcastToNetwork)
             {
                 InteractionController interactionController = FindObjectOfType<InteractionController>();
@@ -137,7 +142,8 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
             // make a new floating info panel that is a child of the star
             FloatingInfoPanel = Instantiate(FloatingInfoPanelPrefab, new Vector3(0, -8f, 6f), new Quaternion(0, 0, 0, 0), this.transform);
-            FloatingInfoPanel.transform.localPosition = new Vector3(0, -8f, 6f);
+            FloatingInfoPanel.transform.localPosition = new Vector3(0, -6f, 5f);
+            FloatingInfoPanel.transform.localScale = new Vector3(.8f, .8f, .8f);
             FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName = playerName;
             FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerColor = playerColor;
 
@@ -159,19 +165,20 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             double lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
             AltAz altAz = Utils.CalculateAltitudeAzimuthForStar(starData.RA, starData.Dec,
                 lst, manager.CurrentLatLng.Latitude);
-            double ra = starData.RA * 15f;
+            double ra = starData.RA;
             description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
             description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
             description.Append("Alt/Az: ")
                 .Append(altAz.Altitude.ToString("F2"))
-                .Append(", ")
+                .Append("°, ")
                 .Append(altAz.Azimuth.ToString("F2"))
-                .Append("  Mag: ")
+                .Append("°  Mag: ")
                 .AppendLine(starData.Mag.ToString());
             description.Append("R.A.: ")
                 .Append(ra.ToString("F2"))
-                .Append("  Dec: ")
+                .Append("h  Dec: ")
                 .Append(starData.Dec.ToString("F2"))
+                .Append("°")
                 // A value of 10000000 indicates missing or dubious (e.g., negative) parallax data in Hipparcos
                 .Append(starData.Dist != 10000000 ?  "  Dist: " + (starData.Dist * 3.262f).ToString("F0") + " ly": "");
         }
