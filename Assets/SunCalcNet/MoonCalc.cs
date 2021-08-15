@@ -32,7 +32,7 @@ namespace SunCalcNet
 
             var azimuth = Position.GetAzimuth(h, phi, moonCoords.Declination);
 
-            return new MoonPosition(azimuth, hAltitude, moonCoords.Distance, pa);
+            return new MoonPosition(azimuth, hAltitude, moonCoords.Distance, pa, moonCoords.RightAscension, moonCoords.Declination);
         }
 
         /// <summary>

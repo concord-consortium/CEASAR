@@ -82,12 +82,23 @@ public class SunComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHand
         var solarPosition = SunCalc.GetSunPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
         double azimuth = 180f + (solarPosition.Azimuth * 180f / Mathf.PI);
         double altitude = solarPosition.Altitude * 180f / Mathf.PI;
+        double declination = solarPosition.Declination * 180f / Mathf.PI;
+        double ra = solarPosition.RA;
+        double raInDegrees = ra * 180f / Mathf.PI;
+        double raInHours = raInDegrees / 15f;
+        if (raInHours < 0) raInHours = 24f + raInHours;
         StringBuilder description = new StringBuilder();
         description.AppendLine("The Sun");
         description.Append("Alt/Az: ")
             .Append(altitude.ToString("F2"))
-            .Append(", ")
-            .AppendLine(azimuth.ToString("F2"));
+            .Append("°, ")
+            .Append(azimuth.ToString("F2"))
+            .AppendLine("°");
+        description.Append("R.A.: ")
+            .Append(raInHours.ToString("F2"))
+            .Append("h  Dec: ")
+            .Append(declination.ToString("F2"))
+            .AppendLine("°");
         FloatingInfoPanel.GetComponent<FloatingInfoPanel>().InfoText.SetText(description.ToString());
     }
 

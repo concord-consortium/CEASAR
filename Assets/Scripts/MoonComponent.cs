@@ -71,12 +71,23 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         var lunarPosition = MoonCalc.GetMoonPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
         double azimuth = 180f + (lunarPosition.Azimuth * 180f / Mathf.PI);
         double altitude = lunarPosition.Altitude * 180f / Mathf.PI;
+        double declination = lunarPosition.Declination * 180f / Mathf.PI;
+        double ra = lunarPosition.RA;
+        double raInDegrees = ra * 180f / Mathf.PI;
+        double raInHours = raInDegrees / 15f;
+        if (raInHours < 0) raInHours = 24f + raInHours;
         StringBuilder description = new StringBuilder();
         description.AppendLine("The Moon");
         description.Append("Alt/Az: ")
             .Append(altitude.ToString("F2"))
-            .Append(", ")
-            .AppendLine(azimuth.ToString("F2"));
+            .Append("°, ")
+            .Append(azimuth.ToString("F2"))
+            .AppendLine("°");
+        description.Append("R.A.: ")
+            .Append(ra.ToString("F2"))
+            .Append("h  Dec: ")
+            .Append(declination.ToString("F2"))
+            .AppendLine("°");
         FloatingInfoPanel.GetComponent<FloatingInfoPanel>().InfoText.SetText(description.ToString());
     }
 
