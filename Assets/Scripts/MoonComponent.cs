@@ -84,7 +84,7 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             .Append(azimuth.ToString("F2"))
             .AppendLine("°");
         description.Append("R.A.: ")
-            .Append(ra.ToString("F2"))
+            .Append(raInHours.ToString("F2"))
             .Append("h  Dec: ")
             .Append(declination.ToString("F2"))
             .AppendLine("°");
