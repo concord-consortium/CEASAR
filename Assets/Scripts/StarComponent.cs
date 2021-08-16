@@ -97,7 +97,6 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     {
         if (FloatingInfoPanel)
         {
-            // FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName !=
             Destroy(FloatingInfoPanel);
         }
     }
