@@ -8,23 +8,29 @@ using UnityEngine;
 public class HLTouchInteraction : MonoBehaviour, IMixedRealityInputHandler, IMixedRealityTouchHandler
 {
     private StarComponent sc;
+    private SunComponent suc;
+    private MoonComponent mc;
+    private FloatingInfoPanel fp;
     void OnEnable()
     {
         sc = GetComponent<StarComponent>();
+        suc = GetComponent<SunComponent>();
+        mc = GetComponent<MoonComponent>();
+        fp = GetComponent<FloatingInfoPanel>();
     }
     void IMixedRealityInputHandler.OnInputDown(InputEventData eventData)
     {
         if (sc)
         {
             CCDebug.Log(name, LogLevel.Display, LogMessageCategory.VR);
-            if (sc)
-            {
-                sc.HandleSelectStar(true);
-            }
+            sc.HandleSelectStar(true);
         }
 
         // CCDebug.Log("InputDown " + eventData.SourceId, LogLevel.Display, LogMessageCategory.VR);
-
+                    
+        if (mc) mc.HandleSelectMoon();
+        if (suc) suc.HandleSelectSun();
+        if (fp) fp.HandleClose();
     }
 
     void IMixedRealityInputHandler.OnInputUp(InputEventData eventData)

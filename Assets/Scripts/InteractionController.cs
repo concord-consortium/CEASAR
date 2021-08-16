@@ -65,7 +65,7 @@ public class InteractionController : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoad;
         SceneManager.sceneUnloaded += OnSceneUnload;
-        
+
         events.PushPinSelected.AddListener(UpdatePinForLocalPlayer);
     }
 
@@ -78,7 +78,7 @@ public class InteractionController : MonoBehaviour
         }
         this.showPins(showPins);
     }
-    
+
     private void OnSceneUnload(Scene scene)
     {
         // Forget about our cached earth object.
@@ -99,8 +99,8 @@ public class InteractionController : MonoBehaviour
         if (localPlayerPinObject)
         {
             localPlayerPinObject.SetActive(show);
-        } 
-        
+        }
+
         if (show)
         {
             UpdateLocalUserPinObject();
@@ -117,7 +117,7 @@ public class InteractionController : MonoBehaviour
                             updatedNetworkPlayer.interactionTarget.position.y + "," +
                             updatedNetworkPlayer.interactionTarget.position.z, LogLevel.Info, LogMessageCategory.Networking);
                 ShowEarthMarkerInteraction(
-                    Utils.NetworkV3ToVector3(updatedNetworkPlayer.interactionTarget.position), 
+                    Utils.NetworkV3ToVector3(updatedNetworkPlayer.interactionTarget.position),
                     Utils.NetworkV3ToQuaternion(updatedNetworkPlayer.interactionTarget.rotation),
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username), false);
                 break;
@@ -126,9 +126,9 @@ public class InteractionController : MonoBehaviour
                 // highlight star/ constellation
                 // TODO: Adjust how we create stars to make it possible to find the star from the network interaction
                 // this could be a simple rename, but need to check how constellation grouping works. Ideally we'll
-                // maintain a dict of stars by ID for easier lookups. 
+                // maintain a dict of stars by ID for easier lookups.
                 StarComponent sc = manager.DataControllerComponent.GetStarById(updatedNetworkPlayer.celestialObjectTarget.uniqueId);
-                sc.HandleSelectStar(false, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
+                sc.HandleSelectStar(false, updatedNetworkPlayer.username, UserRecord.GetColorForUsername(updatedNetworkPlayer.username));
                 manager.GetRemotePlayer(updatedNetworkPlayer.username).SelectedCelestialSphereItem = sc.starData;
                 break;
             case NetworkMessageType.LocationPin:
@@ -136,21 +136,21 @@ public class InteractionController : MonoBehaviour
                 CCDebug.Log("remote player pinned a location", LogLevel.Info, LogMessageCategory.Networking);
                 Pushpin remotePlayerPin = NetworkPlayerPinToPushpin(updatedNetworkPlayer);
                 Vector3 remotePlayerCameraRotation = NetworkPlayerCameraRotation(updatedNetworkPlayer);
-               
+
                 Player remotePlayer = manager.GetRemotePlayer(updatedNetworkPlayer.username);
                 remotePlayer.UpdatePlayerLookDirection(remotePlayerCameraRotation);
                 remotePlayer.Pin = remotePlayerPin;
                 AddOrUpdatePin(
                     remotePlayer.Pin,
                     UserRecord.GetColorForUsername(updatedNetworkPlayer.username),
-                    updatedNetworkPlayer.username, 
-                    false); 
+                    updatedNetworkPlayer.username,
+                    false);
                 break;
             case NetworkMessageType.Annotation:
                 // add annotation
                 ArraySchema<NetworkTransform> annotations = updatedNetworkPlayer.annotations;
                 NetworkTransform lastAnnotation = annotations[annotations.Count - 1];
-                
+
                 events.AnnotationReceived.Invoke(
                     lastAnnotation,
                     updatedNetworkPlayer);
@@ -279,18 +279,18 @@ public class InteractionController : MonoBehaviour
     public void UpdateLocalUserPinObject()
     {
         string pinName = getPinName(manager.LocalUsername);
-        if (localPlayerPinObject == null) 
+        if (localPlayerPinObject == null)
         {
-            localPlayerPinObject = getPinObject(pinName);            
+            localPlayerPinObject = getPinObject(pinName);
         }
         if (localPlayerPinObject)
         {
             localPlayerPinObject.GetComponent<PushpinComponent>().owner = manager.LocalUsername;
             updatePinObject(localPlayerPinObject, manager.LocalPlayerPin, manager.LocalPlayerColor);
         }
-        
+
     }
-    
+
     // This is used for local pins and remote pins
     public void AddOrUpdatePin(Pushpin pin, Color c, string pinOwner, bool isLocal)
     {
@@ -301,7 +301,7 @@ public class InteractionController : MonoBehaviour
                 localPlayerPinObject = Instantiate(locationPinPrefab);
                 localPlayerPinObject.name = getPinName(pinOwner);
                 localPlayerPinObject.transform.parent = this.transform;
-                
+
             }
             updatePinObject(localPlayerPinObject, pin, manager.LocalPlayerColor);
             // events.PushPinSelected.Invoke(pin);
@@ -318,7 +318,7 @@ public class InteractionController : MonoBehaviour
             // update the 3d object in scene with correct location
             updatePinObject(remotePins[pinOwner], pin, c);
         }
-        
+
     }
     void UpdatePinForLocalPlayer(Pushpin pin)
     {
@@ -338,7 +338,7 @@ public class InteractionController : MonoBehaviour
                 pinObject.transform.localScale = !_isSmallEarth ? Vector3.one : Vector3.one * 0.3f;
             }
             pinObject.transform.parent = this.transform;
-        }        
+        }
         return pinObject;
     }
     // Update the visible pin in-game to show at the correct location with the correct color.

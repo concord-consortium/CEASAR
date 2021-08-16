@@ -107,7 +107,13 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IM
                 if (hitObject)
                 {
                     StarComponent sc = hitObject.GetComponent<StarComponent>();
+                    MoonComponent mc = hitObject.GetComponent<MoonComponent>();
+                    SunComponent suc = hitObject.GetComponent<SunComponent>();
+                    FloatingInfoPanel fp = hitObject.GetComponent<FloatingInfoPanel>();
                     if (sc) sc.HandleSelectStar();
+                    if (mc) mc.HandleSelectMoon();
+                    if (suc) suc.HandleSelectSun();
+                    if (fp) fp.HandleClose();
                 }
             }
         }

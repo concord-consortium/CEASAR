@@ -183,7 +183,7 @@ public class DataController : MonoBehaviour
                     newStar.name = constellationName.shortName.Trim() == "" ? "no-const" : dataStar.Constellation;
                     if (starMaterial)
                     {
-                        newStar.GetComponent<Renderer>().material = starMaterial;
+                        newStar.StarVisible.GetComponent<Renderer>().material = starMaterial;
                     }
                     // Add star data, then position, scale and color
                     newStar.Init(constellationsController, dataStar, dataManager.MaxMag, magnitudeScale, manager.InitialRadius);
@@ -225,11 +225,11 @@ public class DataController : MonoBehaviour
 
         foreach (StarComponent starComponent in allStarComponents.Values)
         {
-            Utils.SetObjectColor(starComponent.gameObject, colorByConstellation ? starComponent.constellationColor : starComponent.starColor);
+            Utils.SetObjectColor(starComponent.StarVisible, colorByConstellation ? starComponent.constellationColor : starComponent.starColor);
             starComponent.SetStarScale(magnitudeScale);
             if (starMaterial)
             {
-                starComponent.GetComponent<Renderer>().material = starMaterial;
+                starComponent.StarVisible.GetComponent<Renderer>().material = starMaterial;
             }
         }
 

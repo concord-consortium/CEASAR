@@ -25,12 +25,24 @@ namespace SunCalcNet.Model
         /// </summary>
         public double ParallacticAngle { get; }
 
-        public MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle)
+        /// <summary>
+        /// Moon RA
+        /// </summary>
+        public double RA { get; }
+
+        /// <summary>
+        /// Moon declination
+        /// </summary>
+        public double Declination { get; }
+
+        public MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle, double ra, double declination)
         {
             Azimuth = azimuth;
             Altitude = altitude;
             Distance = distance;
             ParallacticAngle = parallacticAngle;
+            RA = ra;
+            Declination = declination;
         }
 
         public static bool operator ==(MoonPosition lhs, MoonPosition rhs)

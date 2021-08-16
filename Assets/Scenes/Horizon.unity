@@ -190,11 +190,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
-      propertyPath: maxStars
-      value: 10000
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
-        type: 3}
       propertyPath: lineWidth
       value: 0.2
       objectReference: {fileID: 0}
@@ -212,12 +207,12 @@ PrefabInstance:
         type: 3}
       propertyPath: mainUIPrefab
       value: 
-      objectReference: {fileID: 2659469050094229325, guid: 0b3055966f8c345bebfbfd3d3e76a3ac,
+      objectReference: {fileID: 3942333776023571598, guid: d70ff804b22a04071b55a98cd3ed3a81,
         type: 3}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: magnitudeScale
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -227,7 +222,7 @@ PrefabInstance:
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
       propertyPath: magnitudeThreshold
-      value: 4.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5403287526488722156, guid: 6e48567b2e4454f4ab8ea2e7d4122a7f,
         type: 3}
@@ -932,17 +927,17 @@ PrefabInstance:
     - target: {fileID: 1731728375480849594, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1731728375480849594, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1731728375480849594, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1731728375480849594, guid: 4a988639e18e84474b1d08a81605b975,
         type: 3}
@@ -1434,17 +1429,17 @@ PrefabInstance:
     - target: {fileID: 4558564313004885970, guid: e3125ffca64f542c18ec0ff778d7b8fe,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4558564313004885970, guid: e3125ffca64f542c18ec0ff778d7b8fe,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4558564313004885970, guid: e3125ffca64f542c18ec0ff778d7b8fe,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4558564313004885970, guid: e3125ffca64f542c18ec0ff778d7b8fe,
         type: 3}
@@ -2221,6 +2216,7 @@ GameObject:
   - component: {fileID: 1826548884}
   - component: {fileID: 1826548887}
   - component: {fileID: 1826548888}
+  - component: {fileID: 1826548889}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2323,6 +2319,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicator: {fileID: 0}
   annotationTool: {fileID: 0}
+--- !u!114 &1826548889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826548883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useLocalRotation: 0
+  threshold: 5
 --- !u!1 &1833591003 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4558564313004885982, guid: e3125ffca64f542c18ec0ff778d7b8fe,
@@ -2471,7 +2481,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2013239722}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ede81821eb9540b78ab34473b2aefbc, type: 3}
   m_Name: 

@@ -27,7 +27,7 @@ namespace SunCalcNet
             var azimuth = Position.GetAzimuth(h, phi, sunCoords.Declination);
             var altitude = Position.GetAltitude(h, phi, sunCoords.Declination);
 
-            return new SunPosition(azimuth, altitude);
+            return new SunPosition(azimuth, altitude, sunCoords.RightAscension, sunCoords.Declination);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace SunCalcNet
             var phi = Constants.Rad * lat;
 
             var dh = SunTime.GetObserverAngle(height);
-            
+
             var d = date.ToDays();
 
             var n = SunTime.GetJulianCycle(d, lw);

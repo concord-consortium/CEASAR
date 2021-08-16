@@ -17,10 +17,22 @@ namespace SunCalcNet.Model
         /// </summary>
         public double Altitude { get; }
 
-        public SunPosition(double azimuth, double altitude)
+        /// <summary>
+        /// Sun RA
+        /// </summary>
+        public double RA { get; }
+
+        /// <summary>
+        /// Sun declination
+        /// </summary>
+        public double Declination { get; }
+
+        public SunPosition(double azimuth, double altitude, double ra, double declination)
         {
             Azimuth = azimuth;
             Altitude = altitude;
+            RA = ra;
+            Declination = declination;
         }
 
         public static bool operator ==(SunPosition lhs, SunPosition rhs)

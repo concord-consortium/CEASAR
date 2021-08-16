@@ -72,7 +72,7 @@ public class InfoPanelController : MonoBehaviour
         updateSelectSunOrMoonText();
     }
 
-    private void starSelectedText(Star starData)
+    private void starSelectedText(Star starData, string playerName, Color playerColor)
     {
         StringBuilder description = new StringBuilder();
         if (starData == null)
@@ -152,7 +152,7 @@ public class InfoPanelController : MonoBehaviour
         }
         else if (textDisplayObject == TextDisplayObject.Star)
         {
-            starSelectedText(currentStarData);
+            starSelectedText(currentStarData, manager.LocalUsername, manager.LocalPlayerColor);
         }
     }
 
