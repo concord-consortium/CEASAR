@@ -94,13 +94,13 @@ public class ConstellationsController : MonoBehaviour
     public void SelectConstellationByName(string constellationName)
     {
         CCDebug.Log("Selected constellation " + constellationName, LogLevel.Info, LogMessageCategory.Interaction);
-        
+
             if (constellationName.ToLower() == SimulationConstants.CONSTELLATIONS_ALL)
             {
                 HighlightAllConstellations(true);
                 manager.CurrentlySelectedStar = null;
                 manager.CurrentlySelectedConstellation = SimulationConstants.CONSTELLATIONS_ALL;
-                SimulationEvents.Instance.StarSelected.Invoke(null);
+                SimulationEvents.Instance.StarSelected.Invoke(null, manager.LocalUsername, manager.LocalPlayerColor);
                 SimulationEvents.Instance.ConstellationSelected.Invoke(SimulationConstants.CONSTELLATIONS_ALL);
             }
             else if (constellationName.ToLower() == SimulationConstants.CONSTELLATIONS_NONE)
@@ -108,7 +108,7 @@ public class ConstellationsController : MonoBehaviour
                 HighlightAllConstellations(false);
                 manager.CurrentlySelectedStar = null;
                 manager.CurrentlySelectedConstellation = SimulationConstants.CONSTELLATIONS_NONE;
-                SimulationEvents.Instance.StarSelected.Invoke(null);
+                SimulationEvents.Instance.StarSelected.Invoke(null, manager.LocalUsername, manager.LocalPlayerColor);
                 SimulationEvents.Instance.ConstellationSelected.Invoke(SimulationConstants.CONSTELLATIONS_NONE);
             }
             else
@@ -119,12 +119,12 @@ public class ConstellationsController : MonoBehaviour
                 {
                     Star brightestStar = allStarsInConstellation.OrderBy(s => s.Mag).FirstOrDefault();
                     CCDebug.Log(brightestStar.ProperName, LogLevel.Info, LogMessageCategory.Interaction);
-                    SimulationEvents.Instance.StarSelected.Invoke(brightestStar);
+                    SimulationEvents.Instance.StarSelected.Invoke(brightestStar, manager.LocalUsername, manager.LocalPlayerColor);
                     DataController dc = manager.DataControllerComponent;
                     StarComponent sc = dc.GetStarById(brightestStar.uniqueId);
                     manager.CurrentlySelectedStar = sc;
                     manager.CurrentlySelectedConstellation = brightestStar.ConstellationFullName;
-                    SimulationEvents.Instance.StarSelected.Invoke(brightestStar);
+                    SimulationEvents.Instance.StarSelected.Invoke(brightestStar, manager.LocalUsername, manager.LocalPlayerColor);
                     SimulationEvents.Instance.ConstellationSelected.Invoke(brightestStar.ConstellationFullName);
                     // broadcast selection
                     InteractionController interactionController = FindObjectOfType<InteractionController>();

@@ -33,7 +33,7 @@ public class SnapshotDeletedEvent: UnityEvent<Pushpin> { }
 public class SnapshotLoadedEvent: UnityEvent<Pushpin> { }
 public class NetworkConnectionEvent: UnityEvent<bool> { }
 public class NetworkConnectionUpdateEvent: UnityEvent<bool> { }
-[System.Serializable] public class StarSelectedEvent: UnityEvent<Star> { }
+[System.Serializable] public class StarSelectedEvent: UnityEvent<Star, string, Color> { }
 [System.Serializable] public class SunSelectedEvent: UnityEvent<bool> { }
 [System.Serializable] public class MoonSelectedEvent: UnityEvent<bool> { }
 [System.Serializable] public class ConstellationSelectedEvent: UnityEvent<string> { }
