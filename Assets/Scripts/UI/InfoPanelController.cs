@@ -11,7 +11,8 @@ public class InfoPanelController : MonoBehaviour
     private SimulationManager manager { get { return SimulationManager.Instance; } }
     private SimulationEvents events { get { return SimulationEvents.Instance; } }
 
-    public GameObject pushPinDetailsText;
+    public GameObject locationDetailsText;
+    public GameObject dateTimeDetailsText;
     public GameObject constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
@@ -61,14 +62,16 @@ public class InfoPanelController : MonoBehaviour
     }
     private void updatePushpinText(Pushpin pin)
     {
-        StringBuilder details = new StringBuilder();
-        details.Append(manager.CurrentSimulationTime.ToShortDateString())
+        StringBuilder dateTimeDetails = new StringBuilder();
+        dateTimeDetails.Append(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
             .Append(manager.CurrentSimulationTime.ToString("HH:mm"))
             .Append(" UTC");
-        details.AppendLine();
-        details.Append(manager.CurrentLocationDisplayName);
-        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
+        dateTimeDetailsText.GetComponent<TextMeshProUGUI>().SetText(dateTimeDetails.ToString());
+
+        StringBuilder locationDetails = new StringBuilder();
+        locationDetails.Append(manager.CurrentLocationDisplayName);
+        locationDetailsText.GetComponent<TextMeshProUGUI>().SetText(locationDetails.ToString());
         updateSelectSunOrMoonText();
     }
 
