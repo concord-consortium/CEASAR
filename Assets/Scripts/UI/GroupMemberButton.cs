@@ -18,7 +18,7 @@ public class GroupMemberButton : MonoBehaviour
    private Player _player;
    private SimulationManager manager { get { return SimulationManager.Instance; } }
    private SimulationEvents events { get { return SimulationEvents.Instance; } }
-   
+
    public void Setup(Player p)
    {
         if (playerName)
@@ -44,7 +44,7 @@ public class GroupMemberButton : MonoBehaviour
         setIconColor(Color.clear, playerIcon, playerSpriteIcon);
         setIconColor(Color.clear, timeIcon, timeSpriteIcon);
         setIconColor(Color.clear, locationIcon, locationSpriteIcon);
- 
+
         if (playerName) playerName.color = Color.clear;
         if (playerName) playerName.SetText("");
         this.name = "playerButton";

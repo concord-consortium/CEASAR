@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using System.Text;
 using SunCalcNet;
+ using UnityEngine.UI;
 
 public class InfoPanelController : MonoBehaviour
 {
@@ -162,7 +163,7 @@ public class InfoPanelController : MonoBehaviour
     private void connectionStatusUpdated(bool isConnected)
     {
         CCDebug.Log("Connection Status: " + isConnected, LogLevel.Info, LogMessageCategory.Networking);
-        string status = isConnected ? "Connected as " + manager.LocalUsername : "Not connected";
+        string status = isConnected ? "Connected" : "Not connected";
         networkStatusText.GetComponent<TextMeshProUGUI>().SetText(status);
         networkGroupText.GetComponent<TextMeshProUGUI>().SetText(manager.GroupName.FirstCharToUpper());
     }
@@ -175,12 +176,12 @@ public class InfoPanelController : MonoBehaviour
             Destroy(t.gameObject);
         }
         // add local user
-        addPlayerToList(manager.LocalUsername);
+        addPlayerToList(manager.LocalUsername, manager.LocalPlayer);
 
         // update network players
         foreach (Player p in manager.AllRemotePlayers)
         {
-            addPlayerToList(p.Name);
+            addPlayerToList(p.Name, p);
         }
 #if UNITY_EDITOR
         if (manager.AllRemotePlayers.Length < 7)
@@ -188,20 +189,19 @@ public class InfoPanelController : MonoBehaviour
             int difference = 7 - manager.AllRemotePlayers.Length;
             for (int i = 0; i < difference; i++)
             {
-                addPlayerToList("GreenTestuser1");
+                addPlayerToList("GreenTestuser1", null);
             }
         }
 #endif
     }
 
-    private void addPlayerToList(string playerName)
+    private void addPlayerToList(string playerName, Player player)
     {
         GameObject networkUserObj = Instantiate(networkUserPrefab);
         networkUserObj.transform.SetParent(networkUserList.transform, false);
         networkUserObj.transform.localPosition = Vector3.zero;
         networkUserObj.transform.localScale = Vector3.one;
-        networkUserObj.GetComponent<TMP_Text>().text = playerName;
-        networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(playerName);
+        networkUserObj.GetComponent<GroupUserButton>().Setup(player, playerName, UserRecord.GetColorForUsername(playerName), manager.LocalUsername == playerName);
         networkUserObj.name = playerName;
     }
 
