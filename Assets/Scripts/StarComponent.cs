@@ -82,7 +82,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     // this is called when another star is selected
     private void StarSelected(Star selectedStarData, string playerName, Color playerColor)
     {
-        if (selectedStarData.Hipparcos != starData.Hipparcos && FloatingInfoPanel)
+        if (selectedStarData != null && selectedStarData.Hipparcos != starData.Hipparcos && FloatingInfoPanel)
         {
             if (FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName == playerName)
                 Destroy(FloatingInfoPanel);
