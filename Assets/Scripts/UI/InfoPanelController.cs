@@ -5,13 +5,15 @@ using TMPro;
 using UnityEngine;
 using System.Text;
 using SunCalcNet;
+ using UnityEngine.UI;
 
 public class InfoPanelController : MonoBehaviour
 {
     private SimulationManager manager { get { return SimulationManager.Instance; } }
     private SimulationEvents events { get { return SimulationEvents.Instance; } }
 
-    public GameObject pushPinDetailsText;
+    public GameObject locationDetailsText;
+    public GameObject dateTimeDetailsText;
     public GameObject constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
@@ -61,14 +63,16 @@ public class InfoPanelController : MonoBehaviour
     }
     private void updatePushpinText(Pushpin pin)
     {
-        StringBuilder details = new StringBuilder();
-        details.Append(manager.CurrentSimulationTime.ToShortDateString())
+        StringBuilder dateTimeDetails = new StringBuilder();
+        dateTimeDetails.Append(manager.CurrentSimulationTime.ToShortDateString())
             .Append(" ")
             .Append(manager.CurrentSimulationTime.ToString("HH:mm"))
             .Append(" UTC");
-        details.AppendLine();
-        details.Append(manager.CurrentLocationDisplayName);
-        pushPinDetailsText.GetComponent<TextMeshProUGUI>().SetText(details.ToString());
+        dateTimeDetailsText.GetComponent<TextMeshProUGUI>().SetText(dateTimeDetails.ToString());
+
+        StringBuilder locationDetails = new StringBuilder();
+        locationDetails.Append(manager.CurrentLocationDisplayName);
+        locationDetailsText.GetComponent<TextMeshProUGUI>().SetText(locationDetails.ToString());
         updateSelectSunOrMoonText();
     }
 
@@ -159,7 +163,7 @@ public class InfoPanelController : MonoBehaviour
     private void connectionStatusUpdated(bool isConnected)
     {
         CCDebug.Log("Connection Status: " + isConnected, LogLevel.Info, LogMessageCategory.Networking);
-        string status = isConnected ? "Connected as " + manager.LocalUsername : "Not connected";
+        string status = isConnected ? "Connected" : "Not connected";
         networkStatusText.GetComponent<TextMeshProUGUI>().SetText(status);
         networkGroupText.GetComponent<TextMeshProUGUI>().SetText(manager.GroupName.FirstCharToUpper());
     }
@@ -172,12 +176,12 @@ public class InfoPanelController : MonoBehaviour
             Destroy(t.gameObject);
         }
         // add local user
-        addPlayerToList(manager.LocalUsername);
+        addPlayerToList(manager.LocalUsername, manager.LocalPlayer);
 
         // update network players
         foreach (Player p in manager.AllRemotePlayers)
         {
-            addPlayerToList(p.Name);
+            addPlayerToList(p.Name, p);
         }
 #if UNITY_EDITOR
         if (manager.AllRemotePlayers.Length < 7)
@@ -185,21 +189,57 @@ public class InfoPanelController : MonoBehaviour
             int difference = 7 - manager.AllRemotePlayers.Length;
             for (int i = 0; i < difference; i++)
             {
-                addPlayerToList("GreenTestuser1");
+                addPlayerToList("GreenTestuser1", null);
             }
         }
 #endif
     }
 
-    private void addPlayerToList(string playerName)
+    private void addPlayerToList(string playerName, Player player)
     {
         GameObject networkUserObj = Instantiate(networkUserPrefab);
         networkUserObj.transform.SetParent(networkUserList.transform, false);
         networkUserObj.transform.localPosition = Vector3.zero;
         networkUserObj.transform.localScale = Vector3.one;
-        networkUserObj.GetComponent<TMP_Text>().text = playerName;
-        networkUserObj.GetComponent<TMP_Text>().color = UserRecord.GetColorForUsername(playerName);
+        networkUserObj.GetComponent<GroupUserButton>().Setup(player, playerName, UserRecord.GetColorForUsername(playerName), manager.LocalUsername == playerName);
         networkUserObj.name = playerName;
+    }
+
+    public void ChangeYear(int yearChange)
+    {
+        // Setting simulation time updates Local User Pin
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddYears(yearChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.SimulationTimeChanged.Invoke();
+    }
+
+    public void ChangeMonth(int monthChange)
+    {
+        // Setting simulation time updates Local User Pin
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMonths(monthChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.SimulationTimeChanged.Invoke();
+    }
+
+    public void ChangeDay(int dayChange)
+    {
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddDays(dayChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.SimulationTimeChanged.Invoke();
+    }
+
+    public void ChangeHour(int hourChange)
+    {
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddHours(hourChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.SimulationTimeChanged.Invoke();
+    }
+
+    public void ChangeMinute(int minuteChange)
+    {
+        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMinutes(minuteChange);
+        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
+        events.SimulationTimeChanged.Invoke();
     }
 
     private void removeAllListeners()
