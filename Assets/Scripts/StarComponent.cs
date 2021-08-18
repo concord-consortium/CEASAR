@@ -79,13 +79,19 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
         StarVisible.transform.localScale = sceneInitialScale;
     }
 
-    // this is called when another star is selected
     private void StarSelected(Star selectedStarData, string playerName, Color playerColor)
     {
-        if (selectedStarData.Hipparcos != starData.Hipparcos && FloatingInfoPanel)
+        if (selectedStarData != null)
         {
-            if (FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName == playerName)
+            if (selectedStarData.Hipparcos != starData.Hipparcos && FloatingInfoPanel &&
+                FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName == playerName)
+            {
                 Destroy(FloatingInfoPanel);
+            }
+            else if (selectedStarData.Hipparcos == starData.Hipparcos && !FloatingInfoPanel)
+            {
+                CreateFloatingInfoPanel(playerName, playerColor);
+            }
         }
     }
     private void SunSelected(bool selected)
@@ -96,10 +102,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     private void MoonSelected(bool selected)
     {
         if (FloatingInfoPanel)
-        {
-            // FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName !=
             Destroy(FloatingInfoPanel);
-        }
     }
 
     public void HandleSelectStar(bool broadcastToNetwork = false)
@@ -132,6 +135,8 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
             SimulationManager.Instance.CurrentlySelectedStar = this;
             SimulationManager.Instance.CurrentlySelectedConstellation = this.starData.ConstellationFullName;
 
+            CreateFloatingInfoPanel(playerName, playerColor);
+
             SimulationEvents.Instance.StarSelected.Invoke(starData, playerName, playerColor);
             if (broadcastToNetwork)
             {
@@ -140,15 +145,19 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
                     starData.Constellation, starData.uniqueId, true);
             }
 
-            // make a new floating info panel that is a child of the star
-            FloatingInfoPanel = Instantiate(FloatingInfoPanelPrefab, new Vector3(0, -8f, 6f), new Quaternion(0, 0, 0, 0), this.transform);
-            FloatingInfoPanel.transform.localPosition = new Vector3(0, -6f, 5f);
-            FloatingInfoPanel.transform.localScale = new Vector3(.8f, .8f, .8f);
-            FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName = playerName;
-            FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerColor = playerColor;
-
-            setStarSelectedText();
         }
+    }
+
+    private void CreateFloatingInfoPanel(string playerName, Color playerColor)
+    {
+        // make a new floating info panel that is a child of the star
+        FloatingInfoPanel = Instantiate(FloatingInfoPanelPrefab, new Vector3(0, -8f, 6f), new Quaternion(0, 0, 0, 0), this.transform);
+        FloatingInfoPanel.transform.localPosition = new Vector3(0, -6f, 5f);
+        FloatingInfoPanel.transform.localScale = new Vector3(.8f, .8f, .8f);
+        FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerName = playerName;
+        FloatingInfoPanel.GetComponent<FloatingInfoPanel>().playerColor = playerColor;
+
+        setStarSelectedText();
     }
 
     private void setStarSelectedText()

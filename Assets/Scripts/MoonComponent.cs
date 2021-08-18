@@ -22,7 +22,6 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     void Start()
     {
         events.StarSelected.AddListener(StarSelected);
-        events.MoonSelected.AddListener(MoonSelected);
         events.SunSelected.AddListener(SunSelected);
         events.PushPinSelected.AddListener(LocationUpdated);
         events.SimulationTimeChanged.AddListener(TimeUpdated);
@@ -38,15 +37,13 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     // this is called when another object is selected
     private void StarSelected(Star selectedStarData, string playerName, Color playerColor)
     {
-        Destroy(FloatingInfoPanel);
+        if (FloatingInfoPanel)
+            Destroy(FloatingInfoPanel);
     }
     private void SunSelected(bool selected)
     {
-        Destroy(FloatingInfoPanel);
-    }
-    private void MoonSelected(bool selected)
-    {
-        Destroy(FloatingInfoPanel);
+        if (FloatingInfoPanel)
+            Destroy(FloatingInfoPanel);
     }
 
     public void HandleSelectMoon(bool broadcastToNetwork = false)
@@ -139,7 +136,6 @@ public class MoonComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
     {
         events.StarSelected.RemoveListener(StarSelected);
         events.SunSelected.RemoveListener(SunSelected);
-        events.MoonSelected.RemoveListener(MoonSelected);
         events.PushPinSelected.RemoveListener(LocationUpdated);
         events.SimulationTimeChanged.RemoveListener(TimeUpdated);
     }
