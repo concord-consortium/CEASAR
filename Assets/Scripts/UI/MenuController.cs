@@ -239,42 +239,6 @@ public class MenuController : MonoBehaviour
             SceneManager.LoadScene("Horizon");
         }
     }
-    public void ChangeYear(int yearChange)
-    {
-        // Setting simulation time updates Local User Pin
-        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddYears(yearChange);
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.SimulationTimeChanged.Invoke();
-    }
-
-    public void ChangeMonth(int monthChange)
-    {
-        // Setting simulation time updates Local User Pin
-        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMonths(monthChange);
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.SimulationTimeChanged.Invoke();
-    }
-
-    public void ChangeDay(int dayChange)
-    {
-        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddDays(dayChange);
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.SimulationTimeChanged.Invoke();
-    }
-
-    public void ChangeHour(int hourChange)
-    {
-        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddHours(hourChange);
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.SimulationTimeChanged.Invoke();
-    }
-
-    public void ChangeMinute(int minuteChange)
-    {
-        manager.CurrentSimulationTime = manager.CurrentSimulationTime.AddMinutes(minuteChange);
-        events.PushPinSelected.Invoke(manager.LocalPlayerPin);
-        events.SimulationTimeChanged.Invoke();
-    }
 
     public void ClearStarSelection()
     {
