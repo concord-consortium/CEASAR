@@ -159,6 +159,8 @@ Constellation Lines from [Stellarium](https://github.com/Stellarium/stellarium/b
   ]}
 
 ```
+## Log Puller interface explained:
+![Log Puller Interface](./docs/log-puller-interface.png "Log Puller Interface")
 
 ## Sample Event Record:
 ```json
