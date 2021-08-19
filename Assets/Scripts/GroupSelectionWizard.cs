@@ -87,7 +87,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void ShowGroups()
     {
-        SetTitleText("Pick a Group");
+        SetTitleText("Select your group");
         foreach (string name in UserRecord.GroupNames)
         {
             Button b = addButton();
@@ -106,7 +106,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void ShowColors()
     {
-        SetTitleText("Pick a Color");
+        SetTitleText("Create a user ID. First, pick a color");
         int index = 0;
         foreach (string name in UserRecord.ColorNames)
         {
@@ -114,16 +114,11 @@ public class GroupSelectionWizard : MonoBehaviour
             Button b = addButton();
             TMPro.TextMeshProUGUI label = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
 
-            ColorBlock c = b.colors;
-            c.normalColor = color;
-            c.highlightedColor = Color.Lerp(color, Color.white, 0.5f);
-            c.pressedColor = Color.Lerp(color, Color.white, 0.5f);
-            c.selectedColor = Color.Lerp(color, Color.black, 0.5f);
-            b.colors = c;
             buttons.Add(b.gameObject);
             if (label != null)
             {
                 label.SetText(name);
+                label.color = color;
             }
             if (b != null)
             {
@@ -135,7 +130,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void ShowAnimals()
     {
-        SetTitleText("Pick an animal name");
+        SetTitleText("Now select an animal");
         foreach (string name in UserRecord.AnimalNames)
         {
             Button b = addButton();
@@ -156,7 +151,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void ShowNumbers()
     {
         int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        SetTitleText("Pick an number");
+        SetTitleText("And lastly, pick a number");
         foreach (int number in numbers)
         {
             string numberString = number.ToString();
