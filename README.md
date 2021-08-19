@@ -134,3 +134,104 @@ Because the switching of build targets is time-intensive, you can set up **multi
 Star data sourced from the [HYG Database](https://astronexus.com/hyg)
 https://github.com/astronexus/HYG-Database
 Constellation Lines from [Stellarium](https://github.com/Stellarium/stellarium/blob/master/skycultures/western/constellationship.fab)
+
+
+# Internal researcher documentation:
+## How to collect anonymous log data from the Concord Log Puller:
+
+1. You will need the HMAC secret from the Portal used by the Log Puller. You can find this key by searching for "Log Puller HMAC Secret from Portal" in the CC 1Password vault called "Shared".
+2. Open a browser to the raw [Log Manager interface](https://apps.concord.org/log-puller/portal-report)
+5. Expand the red help text by clicking on the blue "click here" text. This will give you more information about how to structure your query, and how to use your secret HMAC Token.
+4. Enter your log query. Only search for very limited time-range. 24 hours or less I would suggest. See item 10, or the example below for what your query should look like.
+7. Choose your format, `json` or, more likely `csv`.
+8. Select `Expand Parameters and Extras in CSV` to get additional useful CSV columns.
+7. Enter your HMAC secret into the first wide text field (see screenshot).
+8. Click "Count Logs" to get a sense of how many records will be returned by your query.
+9. When you are satisfied with that number, you can click "Download Logs".
+10. To construct a query, ensure the `application` is set to "CEASAR" and be sure to include a `time` range. You can use this query as a template, but please change the `time` expression.
+
+```
+{
+  "query": [
+    "and",
+    ["=", "application", "CEASAR"],
+    [">=", "time", "2019-12-20"]
+  ]}
+
+```
+## Log Puller interface explained:
+![Log Puller Interface](./docs/log-puller-interface.png "Log Puller Interface")
+
+## Sample Event Record:
+```json
+
+ {
+        "id": 221223835,
+        "session": null,
+        "username": "OrangeOctopus8",
+        "application": "CEASAR",
+        "activity": "alpha, Horizon, Android",
+        "event": "PushPin Updated",
+        "time": "2020-02-06T20:16:00.000Z",
+        "parameters": {},
+        "extras": {
+            "scene": "Horizon",
+            "message": "Pushpin Updated: 32.04145,-64.10922 02/15/2021 23:25:00, (3.3, 92.1, 0.0)",
+            "crashSite": "32.04145,-64.10922 02/15/2021 23:25:00",
+            "groupName": "alpha",
+            "lastHeading": "(3.3, 92.1, 0.0)",
+            "lastLocation": "32.04145,-64.10922",
+            "platformName": "Android",
+            "selectedStar": "",
+            "selectedObject": "Ursa Major",
+            "lastLocationName": "(Custom Location)",
+            "lastCompassHeading": "East",
+            "lastSimulationTime": "02/15/2021 23:25:00"
+        },
+        "event_value": "Pushpin Updated: 32.04145,-64.10922 02/15/2021 23:25:00, (3.3, 92.1, 0.0)",
+        "run_remote_endpoint": null
+    }
+
+```
+
+## Event Fields explained
+* **id:** :  Unique Identifier for the record
+* **session**: Will always be `null` for CEASAR
+* **username**: The _assigned_ username for the student. We must track this manually.  When combined with group it will be a unique identifier for the student for the class trial. _Researchers will need a procedure to align this data_.
+* **application**: will always be `CEASAR` for this project.
+* **activity**: will be comma separated list  of `<group>, <scene>, <platform>`
+* **event**: will be one of the following strings:
+	* "Connected" -- Player connected to the network and room.
+	* 	"Disconnected" -- Player left the room or disconnected from the network.
+	* "Username Set" -- Player Username was changed.
+	* "Scene Loaded"" -- Player switched scene
+	* "Player Moved" -- Players avatar in Earth Interaction mode changed.
+	* "UI Location Selected"" -- Player selected a 'named place' from the Location panel.
+	* "Interaction Marker Added" -- Player selected a celestial object.
+	* "Location Changed" -- Player location or rotation (on earth) changed.
+	* "Annotation Added" -- Player added one drawing line.
+	* "Annotation Deleted" -- Player deleted one drawing line.
+	* "Annotation Cleared" -- Player removed their drawing annotations.
+	* "PushPin Updated" -- Player current pin has changed (time or position)
+	* "PushPin Selected" -- Player selected another players pin to visit that location & time.
+	* "DrawMode Started"" -- Player used the drawing toggle to enable line annotations.
+	* "DrawMode Ended" -- Player used the drawing toggle to disable line annotations.
+	* "Simulation Time Changed"-- Player changed the time using time sliders.
+* **event_value**: Additional values for the event.
+* **time**: The time the event took place (real world time of log ingestion)
+* **parameters**: always empty for us.
+* **extras**: This describes the simulation context in which the event happened. It includes these parameters:
+	* **Scene**: The name of the scene the player is in. Earth, Horizon, or Stars.
+	* **message**: The same as `event_value` details of the last event.
+	* **crashSite**: The location and time of the crash site the Player is trying to find.
+	* **groupName**: The name of the Players group.
+	* **lastHeading**: The horizon-view view-rotation of the player in degrees.
+	* **lastLocation**: The earth coordinates of the Player in Lat/Lng CSV format.
+	* **platformName**: The hardware the Player is running the simulation on. _Android means VR_
+	* **selectedStar**:  The currently selected star (if any)
+	* **selectedObject**: The currently selected constellation (if any)
+	* **lastLocationName**: If the current location is a City, it will be displayed here, otherwise it will be _(custom location)_
+	* **lastCompassHeading**: The ordinal compass bearing the player was last seeing in Horizon View.
+	* **lastSimulationTime**: The current simulation time for the player.
+
+
