@@ -150,6 +150,9 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
     private void CreateFloatingInfoPanel(string playerName, Color playerColor)
     {
+        if (FloatingInfoPanel)
+            Destroy(FloatingInfoPanel);
+
         // make a new floating info panel that is a child of the star
         FloatingInfoPanel = Instantiate(FloatingInfoPanelPrefab, new Vector3(0, -8f, 6f), new Quaternion(0, 0, 0, 0), this.transform);
         FloatingInfoPanel.transform.localPosition = new Vector3(0, -6f, 5f);
