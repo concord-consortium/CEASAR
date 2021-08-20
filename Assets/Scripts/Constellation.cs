@@ -32,7 +32,7 @@ public class Constellation : MonoBehaviour
         // foreach (GameObject starObject in stars)
         foreach (GameObject connectionObject in constellationLines)
         {
-            Utils.SetObjectColor(connectionObject, highlight ? userHighlightColor : neutralColor);
+            connectionObject.GetComponent<MeshRenderer>().material.color = highlight ? userHighlightColor : neutralColor;
         }
     }
     public void Highlight(bool highlight)
