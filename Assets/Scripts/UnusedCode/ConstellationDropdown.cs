@@ -28,7 +28,7 @@ public class ConstellationDropdown : MonoBehaviour
     {
         string constellationName = change.captionText.text;
         CCDebug.Log("Selected constellation " + constellationName, LogLevel.Info, LogMessageCategory.Interaction);
-        
+
         if (constellationsController)
         {
             if (constellationName.ToLower() == "all")
@@ -54,16 +54,16 @@ public class ConstellationDropdown : MonoBehaviour
                     DataController dc = manager.DataControllerComponent;
                     StarComponent sc = dc.GetStarById(brightestStar.uniqueId);
                     manager.CurrentlySelectedStar = sc;
-                    
+
                     // update legacy UI
                    updateStarPanel(true);
-                    
+
                     // broadcast selection
                     InteractionController interactionController = FindObjectOfType<InteractionController>();
                     interactionController.ShowCelestialObjectInteraction(brightestStar.ProperName,
                         brightestStar.Constellation, brightestStar.uniqueId, true);
                 }
-                constellationsController.HighlightSingleConstellation(constellationName, manager.LocalPlayerColor);
+                constellationsController.HighlightSingleConstellation(constellationName, manager.LocalPlayerColor, manager.LocalUsername);
             }
         }
     }
