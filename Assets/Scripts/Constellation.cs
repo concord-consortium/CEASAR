@@ -18,24 +18,27 @@ public class Constellation : MonoBehaviour
 
     public GameObject constellationConnectionPrefab;
 
+    public string playerName;
+
     public void AddStar(GameObject star)
     {
         stars.Add(star);
     }
+
     public void AddConstellationConnection(ConstellationConnection conn)
     {
         constellationConnections.Add(conn);
     }
 
-    public void Highlight(bool highlight, Color userHighlightColor)
+    public void HighlightConstellationLines(bool highlight, Color userHighlightColor)
     {
-        // foreach (GameObject starObject in stars)
         foreach (GameObject connectionObject in constellationLines)
         {
             connectionObject.GetComponent<MeshRenderer>().material.color = highlight ? userHighlightColor : neutralColor;
         }
     }
-    public void Highlight(bool highlight)
+
+    public void HighlightConstellationStars(bool highlight)
     {
         foreach (GameObject starObject in stars)
         {

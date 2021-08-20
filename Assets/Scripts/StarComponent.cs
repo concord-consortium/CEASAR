@@ -128,7 +128,7 @@ public class StarComponent : MonoBehaviour, IPointerDownHandler, IPointerExitHan
 
             if (constellationsController)
             {
-                constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor);
+                constellationsController.HighlightSingleConstellation(starData.ConstellationFullName, playerColor, playerName);
             }
 
             // make sure it's visible

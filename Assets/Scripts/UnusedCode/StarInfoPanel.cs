@@ -8,7 +8,7 @@ public class StarInfoPanel : MonoBehaviour
 {
     private SimulationManager manager;
     public TextMeshProUGUI starInfoText;
-    
+
     public void Setup()
     {
         manager = SimulationManager.Instance;
@@ -23,7 +23,7 @@ public class StarInfoPanel : MonoBehaviour
             ConstellationsController constellationsController = FindObjectOfType<ConstellationsController>();
             if (constellationsController)
             {
-                constellationsController.HighlightSingleConstellation(manager.CurrentlySelectedStar.starData.ConstellationFullName);
+                constellationsController.HighlightSingleConstellation(manager.CurrentlySelectedStar.starData.ConstellationFullName, new Color(0, 0, 0), "");
             }
         }
     }
@@ -48,8 +48,8 @@ public class StarInfoPanel : MonoBehaviour
             // description.Append("Flamsteed Des: ").AppendLine(starData.FlamsteedDesignation.Length > 0 ? starData.FlamsteedDesignation : "N/A");
             description.Append("m: ").AppendLine(starData.Mag.ToString());
             starInfoText.text = description.ToString();
-        } 
-        else 
+        }
+        else
         {
             starInfoText.text = "";
         }
