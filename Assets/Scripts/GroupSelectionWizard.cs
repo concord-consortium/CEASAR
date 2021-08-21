@@ -13,8 +13,10 @@ public class GroupSelectionWizard : MonoBehaviour
     public GameObject smallOrangeButtonPrefab;
     public GameObject NextButton;
     public GameObject FastLoginButton;
+    public GameObject FastLoginLabel;
     public TMPro.TextMeshProUGUI DirectionsText;
-    public GameObject GroupLabel;
+    public TMPro.TextMeshProUGUI GroupLabel;
+    public TMPro.TextMeshProUGUI UserLabel;
     public GameObject NextScreen;
     public GameObject Restart;
 
@@ -62,16 +64,11 @@ public class GroupSelectionWizard : MonoBehaviour
         if (UserRecord.PlayerHasValidPrefs())
         {
             FastLoginButton.SetActive(true);
+            FastLoginLabel.SetActive(true);
             Button b = FastLoginButton.GetComponent<Button>();
             TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            tgui.text = $"{userRecord.Username} {userRecord.group}";
-
-            if (!string.IsNullOrEmpty(userRecord.group))
-            {
-                TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
-                textMesh.text = userRecord.group;
-            }
-
+            string upperGroup = char.ToUpper(userRecord.group[0]) + userRecord.group.Substring(1);
+            tgui.text = $"{upperGroup} {userRecord.Username}";
             b.onClick.AddListener(LaunchScene);
         }
         else
@@ -83,11 +80,12 @@ public class GroupSelectionWizard : MonoBehaviour
     private void DisableFastLogin()
     {
         FastLoginButton.SetActive(false);
+        FastLoginLabel.SetActive(false);
     }
 
     private void ShowGroups()
     {
-        SetTitleText("Select your group");
+        SetTitleText("Select your group:");
         foreach (string name in UserRecord.GroupNames)
         {
             Button b = addButton();
@@ -106,7 +104,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void ShowColors()
     {
-        SetTitleText("Create a user ID. First, pick a color");
+        SetTitleText("Create a user ID. First, pick a color:");
         int index = 0;
         foreach (string name in UserRecord.ColorNames)
         {
@@ -127,10 +125,9 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-
     private void ShowAnimals()
     {
-        SetTitleText("Now select an animal");
+        SetTitleText("Now select an animal:");
         foreach (string name in UserRecord.AnimalNames)
         {
             Button b = addButton();
@@ -151,7 +148,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void ShowNumbers()
     {
         int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        SetTitleText("And lastly, pick a number");
+        SetTitleText("And lastly, pick a number:");
         foreach (int number in numbers)
         {
             string numberString = number.ToString();
@@ -181,40 +178,38 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void HandleGroupClick(string name)
     {
+        string upperName = char.ToUpper(name[0]) + name.Substring(1);
         userRecord.group = name;
-
         if (GroupLabel)
         {
-            TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
-            GroupLabel.SetActive(true);
-            textMesh.text = userRecord.group;
+            GroupLabel.text = upperName;
         }
-        SetTitleText(name);
         EnableNext();
     }
 
 
     private void HandleAnimalClick(string name)
     {
+        string upperName = char.ToUpper(name[0]) + name.Substring(1);
         userRecord.animal = name;
-        SetTitleText(name);
+        UserLabel.text = UserLabel.text + upperName;
         EnableNext();
     }
 
-    private void HandleColorClick(string name, Color color)
+    private void HandleColorClick(string colorName, Color color)
     {
+        string upperColorName = char.ToUpper(colorName[0]) + colorName.Substring(1);
         userRecord.color = color;
-        userRecord.colorName = name;
-        SetTitleText(name);
-        DirectionsText.color = color;
+        userRecord.colorName = colorName;
+        UserLabel.color = color;
+        UserLabel.text = upperColorName;
         EnableNext();
     }
-
 
     private void HandleNumberClick(string number)
     {
         userRecord.number = number;
-        SetTitleText(number);
+        UserLabel.text = UserLabel.text + number;
         EnableNext();
     }
 
@@ -234,14 +229,14 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-
     private void restart()
     {
         currentStep = 0;
-        GroupLabel.SetActive(false);
+        GroupLabel.text = "";
         DisableRestart();
         DisableNext();
         ClearAllButtons();
+        UserLabel.text = "";
         steps[currentStep]();
     }
 
@@ -268,9 +263,9 @@ public class GroupSelectionWizard : MonoBehaviour
         return startPin;
     }
 
-
     public void LaunchScene()
     {
+        SetTitleText("");
         DisableNext();
         DisableRestart();
         DisableFastLogin();
