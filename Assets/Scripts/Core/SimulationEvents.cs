@@ -7,7 +7,7 @@ public class LocationSelectedEvent : UnityEvent<string> { }
 // [System.Serializable]
 // public class LocationChangeEvent : UnityEvent<LatLng, string> { }
 // [System.Serializable]
-public class AnnotationAddedEvent : UnityEvent<Vector3, Quaternion, Vector3, string> { }
+public class AnnotationAddedEvent : UnityEvent<Vector3, Vector3, string> { }
 [System.Serializable]
 public class AnnotationDeletedEvent : UnityEvent<string> { }
 [System.Serializable]

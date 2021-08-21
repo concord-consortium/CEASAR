@@ -91,14 +91,14 @@ public class ColyseusClient : MonoBehaviour
                 networkController.ServerStatusMessage = ex.Message;
             }
         }
-    }   
-    
+    }
+
     public void Disconnect()
     {
         if (IsConnected)
         {
             LeaveRoom();
-            if (players != null)    
+            if (players != null)
             {
                 players.Clear();
             }
@@ -134,11 +134,11 @@ public class ColyseusClient : MonoBehaviour
         PlayerPrefs.SetString("roomId", room.Id);
         PlayerPrefs.SetString("sessionId", room.SessionId);
         PlayerPrefs.Save();
-        
+
         room.OnLeave += (code) => CCDebug.Log($"User leaving room: {code}");
         room.OnError += (code, message) => CCDebug.LogError("Network ERROR, code =>" + code + ", message => " + message);
         room.OnStateChange += OnStateChangeHandler;
-        
+
         room.OnMessage((UpdateMessage message) =>
         {
             if (players.ContainsKey(message.playerId))
@@ -154,7 +154,7 @@ public class ColyseusClient : MonoBehaviour
             }
         });
     }
-    
+
     public NetworkPlayer GetPlayerById(string playerId)
     {
         if (players != null && players.ContainsKey(playerId))
@@ -216,7 +216,7 @@ public class ColyseusClient : MonoBehaviour
     {
         networkController.OnPlayerChange(networkPlayer);
     }
-    
+
     public async void SendNetworkTransformUpdate(Vector3 pos, Quaternion rot, Vector3 scale, string transformName, NetworkMessageType messageType)
     {
         if (IsConnected)
@@ -231,6 +231,24 @@ public class ColyseusClient : MonoBehaviour
         }
     }
 
+    public async void SendNetworkAnnotationUpdate(Vector3 startPos, Vector3 endPos, string transformName, NetworkMessageType messageType)
+    {
+        if (IsConnected)
+        {
+            NetworkTransform t = new NetworkTransform();
+            // This is a hack to use the NetworkTransform class to communicate the start/end positions
+            // of the annotation. The NetworkTransform class is designed to store center, scale, and rotation,
+            // but for now we will store the start and end positions of the annotation in the first two vector3 slots.
+            // Ideally we will clean this up and expand the network communication structures to handle the
+            // annotations properly.
+            t.position = new NetworkVector3 { x = startPos.x, y = startPos.y, z = startPos.z };
+            t.rotation = new NetworkVector3 { x = endPos.x, y = endPos.y, z = endPos.z };
+            t.localScale = new NetworkVector3 {x = 0, y = 0, z = 0};
+            t.name = transformName;
+            await room.Send(messageType.ToString(), t);
+        }
+    }
+
     public async void SendAnnotationDelete(string annotationName)
     {
         if (IsConnected)
@@ -238,7 +256,7 @@ public class ColyseusClient : MonoBehaviour
             await room.Send(NetworkMessageType.DeleteAnnotation.ToString(), annotationName);
         }
     }
-    
+
     public async void SendCelestialInteraction(NetworkCelestialObject celestialObj)
     {
         if (IsConnected)
@@ -267,7 +285,7 @@ public class ColyseusClient : MonoBehaviour
             await room.Send(NetworkMessageType.LocationPin.ToString(), pin);
         }
     }
-    
+
     void OnApplicationQuit()
     {
         Disconnect();

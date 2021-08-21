@@ -16,6 +16,8 @@ public class AnnotationTool : MonoBehaviour
     private GameObject currentAnnotation;
     private List<GameObject> myAnnotations;
 
+    public Material annotationMaterial;
+
     public bool IsMyAnnotation(GameObject annotationLine)
     {
         return myAnnotations.Contains(annotationLine);
@@ -44,7 +46,8 @@ public class AnnotationTool : MonoBehaviour
             {
                 // start
                 startPointForDrawing = nextPoint;
-                currentAnnotation = Instantiate(annotationLinePrefab, startPointForDrawing, Quaternion.identity, this.transform);
+                currentAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
+                currentAnnotation.GetComponent<AnnotationLine>().StartDrawing(startPointForDrawing);
 
             }
             else if (endPointForDrawing == Vector3.zero)
@@ -52,16 +55,7 @@ public class AnnotationTool : MonoBehaviour
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
 
-                Vector3 distance = endPointForDrawing - startPointForDrawing;
-                Vector3 scale = new Vector3(annotationWidth, annotationWidth, distance.magnitude );
-                Vector3 midPosition = startPointForDrawing + (distance / 2.0f);
-
-                currentAnnotation.transform.LookAt(endPointForDrawing);
-                currentAnnotation.transform.position = midPosition;
-                currentAnnotation.transform.localScale = scale;
-
-                currentAnnotation.GetComponent<Renderer>().material.color = SimulationManager.Instance.LocalPlayerColor;
-                currentAnnotation.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.white);
+                AddAnnotationLineRenderer(startPointForDrawing, endPointForDrawing, SimulationManager.Instance.LocalPlayerColor);
 
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
 
@@ -70,17 +64,51 @@ public class AnnotationTool : MonoBehaviour
 
                 // Broadcast adding an annotation
                 SimulationEvents.Instance.AnnotationAdded.Invoke(
-                    currentAnnotation.transform.localPosition,
-                    currentAnnotation.transform.localRotation,
-                    currentAnnotation.transform.localScale,
+                    startPointForDrawing,
+                    endPointForDrawing,
                     currentAnnotation.name);
 
                 startPointForDrawing = Vector3.zero;
                 endPointForDrawing = Vector3.zero;
                 currentAnnotation = null;
+
             }
         }
     }
+
+    private void AddAnnotationLineRenderer(Vector3 startPos, Vector3 endPos, Color playerColor)
+    {
+        currentAnnotation.GetComponent<AnnotationLine>().StartPos = startPos;
+        currentAnnotation.GetComponent<AnnotationLine>().EndPos = endPos;
+        currentAnnotation.GetComponent<AnnotationLine>().RemoveStartPoint();
+
+        int pointCount = 30;
+
+        currentAnnotation.layer = LayerMask.NameToLayer("Marker");
+
+        LineRenderer lineRendererArc = currentAnnotation.AddComponent<LineRenderer>();
+        MeshCollider meshColliderArc = currentAnnotation.AddComponent<MeshCollider>();
+        Mesh mesh = new Mesh();
+        lineRendererArc.useWorldSpace = false;
+        lineRendererArc.startWidth = annotationWidth * 2f;
+        lineRendererArc.endWidth = annotationWidth * 2f;
+        lineRendererArc.material = annotationMaterial;
+
+        lineRendererArc.positionCount = pointCount;
+        lineRendererArc.material.color = playerColor;
+        Vector3[] points = new Vector3[pointCount];
+        for (int i = 0; i < pointCount; i++)
+        {
+            points[i] = Vector3.Slerp(startPos, endPos, (float)i / (pointCount - 1));
+        }
+        lineRendererArc.SetPositions(points);
+        lineRendererArc.BakeMesh(mesh, false);
+        meshColliderArc.sharedMesh = mesh;
+        meshColliderArc.convex = true;
+        meshColliderArc.isTrigger = true;
+    }
+
+
     public void UndoAnnotation()
     {
         if (myAnnotations.Count > 0)
@@ -106,24 +134,23 @@ public class AnnotationTool : MonoBehaviour
     }
     public void AddAnnotation(NetworkTransform lastAnnotation, NetworkPlayer p)
     {
-        Vector3 pos = Utils.NetworkV3ToVector3(lastAnnotation.position);
-        Quaternion rot = Utils.NetworkV3ToQuaternion(lastAnnotation.rotation);
-        Vector3 scale = Utils.NetworkV3ToVector3(lastAnnotation.localScale);
+        // This is a hack to use the NetworkTransform class to communicate the start/end positions
+        // of the annotation. The NetworkTransform class is designed to store center, scale, and rotation,
+        // but for now we will store the start and end positions of the annotation in the first two vector3 slots.
+        // Ideally we will clean this up and expand the network communication structures to handle the
+        // annotations properly.
+        Vector3 startPos = Utils.NetworkV3ToVector3(lastAnnotation.position);
+        Vector3 endPos = Utils.NetworkV3ToVector3(lastAnnotation.rotation);
         string annotationName = lastAnnotation.name;
         Color c = UserRecord.GetColorForUsername(p.username);
-        this.addAnnotation(pos, rot, scale, annotationName, c);
-
+        this.addAnnotation(startPos, endPos, annotationName, c);
     }
-    private void addAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName, Color playerColor)
-    {
-        GameObject currentAnnotation = Instantiate(annotationLinePrefab, this.transform);
-        currentAnnotation.transform.localPosition = pos;
-        currentAnnotation.transform.localRotation = rot;
-        currentAnnotation.transform.localScale = scale;
-        currentAnnotation.name = annotationName;
 
-        currentAnnotation.GetComponent<Renderer>().material.color = playerColor;
-        currentAnnotation.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.white);
+    private void addAnnotation(Vector3 startPos, Vector3 endPos, string annotationName, Color playerColor)
+    {
+        GameObject currentAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
+        currentAnnotation.name = annotationName;
+        AddAnnotationLineRenderer(startPos, endPos, playerColor);
     }
 
     void DeleteAnnotation(string annotationName)
@@ -147,8 +174,8 @@ public class AnnotationTool : MonoBehaviour
     IEnumerator sendAnnotationDelayed(GameObject annotation, float delay)
     {
         yield return new WaitForSeconds(delay);
-        SimulationEvents.Instance.AnnotationAdded.Invoke(annotation.transform.localPosition,
-            annotation.transform.localRotation, annotation.transform.localScale, annotation.transform.name);
+        SimulationEvents.Instance.AnnotationAdded.Invoke(annotation.GetComponent<AnnotationLine>().StartPos,
+            annotation.GetComponent<AnnotationLine>().EndPos, annotation.transform.name);
     }
     public void ClearAnnotations(string playerName)
     {
