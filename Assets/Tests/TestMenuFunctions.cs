@@ -10,7 +10,8 @@ public class TestMenuFunctions
     private SimulationManager manager;
     private SimulationManagerComponent simController;
     private MenuController menuPanel;
-    
+    private InfoPanelController infoPanel;
+
     [UnitySetUp]
     public IEnumerator SetUp()
     {
@@ -27,6 +28,18 @@ public class TestMenuFunctions
             if (menuPanel == null)
             {
                 menuPanel = new GameObject().AddComponent<MenuController>();
+            }
+        }
+    }
+
+    private void setupInfo()
+    {
+        if (infoPanel == null)
+        {
+            infoPanel = GameObject.FindObjectOfType<InfoPanelController>();
+            if (infoPanel == null)
+            {
+                infoPanel = new GameObject().AddComponent<InfoPanelController>();
             }
         }
     }
@@ -53,34 +66,34 @@ public class TestMenuFunctions
         int currentMonth = SimulationManager.Instance.CurrentSimulationTime.Month;
         int currentDay = SimulationManager.Instance.CurrentSimulationTime.DayOfYear;
 
-        if (menuPanel == null)
+        if (infoPanel == null)
         {
-            menuPanel = GameObject.FindObjectOfType<MenuController>();
-            if (menuPanel == null)
+            infoPanel = GameObject.FindObjectOfType<InfoPanelController>();
+            if (infoPanel == null)
             {
-                menuPanel = new GameObject().AddComponent<MenuController>();
+                infoPanel = new GameObject().AddComponent<InfoPanelController>();
             }
         }
 
-        menuPanel.ChangeYear(1);
+        infoPanel.ChangeYear(1);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.Year > currentYear);
-        menuPanel.ChangeYear(-2);
+        infoPanel.ChangeYear(-2);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.Year < currentYear);
 
         if (currentMonth != 12)
         {
-            menuPanel.ChangeMonth(1);
+            infoPanel.ChangeMonth(1);
             Assert.That(SimulationManager.Instance.CurrentSimulationTime.Month > currentMonth);
         }
-        menuPanel.ChangeMonth(-1);
+        infoPanel.ChangeMonth(-1);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.Month <= currentMonth);
 
         if (currentDay != 365)
         {
-            menuPanel.ChangeDay(1);
+            infoPanel.ChangeDay(1);
             Assert.That(SimulationManager.Instance.CurrentSimulationTime.DayOfYear > currentDay);
         }
-        menuPanel.ChangeDay(-1);
+        infoPanel.ChangeDay(-1);
         Assert.That(SimulationManager.Instance.CurrentSimulationTime.DayOfYear <= currentDay);
     }
 

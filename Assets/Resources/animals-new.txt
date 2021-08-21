@@ -1,9 +1,9 @@
 ﻿bear
 crow
+duck
 fox
 goat
-meerkat
-octopus
-platypus
-squirrel
+lion
+otter
+squid
 turtle
