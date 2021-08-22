@@ -14,9 +14,14 @@ public class GroupSelectionWizard : MonoBehaviour
     public GameObject NextButton;
     public GameObject FastLoginButton;
     public GameObject FastLoginLabel;
+    public TMPro.TextMeshProUGUI FastLoginGroupLabel;
+    public GameObject FastLoginUserImage;
+    public TMPro.TextMeshProUGUI FastLoginUserLabel;
     public TMPro.TextMeshProUGUI DirectionsText;
     public TMPro.TextMeshProUGUI GroupLabel;
     public TMPro.TextMeshProUGUI UserLabel;
+    public GameObject UserImage;
+    public GameObject GroupImage;
     public GameObject NextScreen;
     public GameObject Restart;
 
@@ -66,9 +71,11 @@ public class GroupSelectionWizard : MonoBehaviour
             FastLoginButton.SetActive(true);
             FastLoginLabel.SetActive(true);
             Button b = FastLoginButton.GetComponent<Button>();
-            TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             string upperGroup = char.ToUpper(userRecord.group[0]) + userRecord.group.Substring(1);
-            tgui.text = $"{upperGroup} {userRecord.Username}";
+            FastLoginGroupLabel.text = upperGroup;
+            FastLoginUserLabel.text = userRecord.Username;
+            FastLoginUserLabel.color = userRecord.color;
+            FastLoginUserImage.GetComponent<Image>().color = userRecord.color;
             b.onClick.AddListener(LaunchScene);
         }
         else
@@ -183,6 +190,7 @@ public class GroupSelectionWizard : MonoBehaviour
         if (GroupLabel)
         {
             GroupLabel.text = upperName;
+            GroupImage.SetActive(true);
         }
         EnableNext();
     }
@@ -203,6 +211,8 @@ public class GroupSelectionWizard : MonoBehaviour
         userRecord.colorName = colorName;
         UserLabel.color = color;
         UserLabel.text = upperColorName;
+        UserImage.SetActive(true);
+        UserImage.GetComponent<Image>().color = color;
         EnableNext();
     }
 
@@ -233,10 +243,12 @@ public class GroupSelectionWizard : MonoBehaviour
     {
         currentStep = 0;
         GroupLabel.text = "";
+        GroupImage.SetActive(false);
         DisableRestart();
         DisableNext();
         ClearAllButtons();
         UserLabel.text = "";
+        UserImage.SetActive(false);
         steps[currentStep]();
     }
 
