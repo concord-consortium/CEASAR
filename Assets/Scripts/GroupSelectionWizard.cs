@@ -196,11 +196,12 @@ public class GroupSelectionWizard : MonoBehaviour
     }
 
 
-    private void HandleAnimalClick(string name)
+    private void HandleAnimalClick(string animalName)
     {
-        string upperName = char.ToUpper(name[0]) + name.Substring(1);
-        userRecord.animal = name;
-        UserLabel.text = UserLabel.text + upperName;
+        string upperColorName = char.ToUpper(userRecord.colorName[0]) + userRecord.colorName.Substring(1);
+        string upperAnimalName = char.ToUpper(animalName[0]) + animalName.Substring(1);
+        userRecord.animal = animalName;
+        UserLabel.text = upperColorName + upperAnimalName;
         EnableNext();
     }
 
@@ -218,8 +219,10 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void HandleNumberClick(string number)
     {
+        string upperColorName = char.ToUpper(userRecord.colorName[0]) + userRecord.colorName.Substring(1);
+        string upperAnimalName = char.ToUpper(userRecord.animal[0]) + userRecord.animal.Substring(1);
         userRecord.number = number;
-        UserLabel.text = UserLabel.text + number;
+        UserLabel.text = upperColorName + upperAnimalName + number;
         EnableNext();
     }
 
