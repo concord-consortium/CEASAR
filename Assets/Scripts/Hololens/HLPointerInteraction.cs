@@ -19,8 +19,8 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IM
         interactionController = FindObjectOfType<InteractionController>();
         if (!mainUIController) mainUIController = FindObjectOfType<MenuController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
-        
-        
+
+
     }
 
     void OnEnable()
@@ -110,9 +110,9 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IM
                     MoonComponent mc = hitObject.GetComponent<MoonComponent>();
                     SunComponent suc = hitObject.GetComponent<SunComponent>();
                     FloatingInfoPanel fp = hitObject.GetComponent<FloatingInfoPanel>();
-                    if (sc) sc.HandleSelectStar();
-                    if (mc) mc.HandleSelectMoon();
-                    if (suc) suc.HandleSelectSun();
+                    if (sc) sc.HandleSelectStar(true);
+                    if (mc) mc.HandleSelectMoon(true);
+                    if (suc) suc.HandleSelectSun(true);
                     if (fp) fp.HandleClose();
                 }
             }
@@ -122,9 +122,9 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IM
     void addAnnotation(Vector3 pos)
     {
         float r = SimulationManager.Instance.SceneRadius + 2f;
-        
+
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
-        
+
         if (mainUIController && mainUIController.IsDrawing && annotationTool)
         {
             // point outwards for annotating
