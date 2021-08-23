@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.Events;
+using static SimulationConstants;
 
 /// <summary>
 /// This class is for handling setting up the initial celestial sky objects and all the constellations.
@@ -356,7 +357,11 @@ public class DataController : MonoBehaviour
     public void ShowMoreStars()
     {
         float newThreshold = magnitudeThreshold + _magnitudeVisibilityIncrement;
-        if (newThreshold <= MaxMagnitudeValue) SetMagnitudeThreshold(newThreshold);
+        if (newThreshold <= MaxMagnitudeValue)
+        {
+            SetMagnitudeThreshold(newThreshold);
+            CCLogger.Log(LOG_EVENT_SHOW_MORE_STARS, "new threshold:" + newThreshold.ToString());
+        }
     }
 
     public void ShowFewerStars()
@@ -365,6 +370,7 @@ public class DataController : MonoBehaviour
         if (newThreshold >= ((MaxMagnitudeValue - MinMagnitudeValue) / 3))
         {
             SetMagnitudeThreshold(newThreshold);
+            CCLogger.Log(LOG_EVENT_SHOW_FEWER_STARS, "new threshold:" + newThreshold.ToString());
         }
     }
     public void ToggleRunSimulation()

@@ -58,7 +58,7 @@ public class CCLogger
         CCDebug.Log("Logger Events removed.");
     }
 
-   
+
     [RuntimeInitializeOnLoadMethod]
     static void RunOnStart()
     {
@@ -134,7 +134,7 @@ public class CCLogger
     {
         SimulationEvents eventDispatcher = SimulationEvents.Instance;
         eventDispatcher.LocationSelected.AddListener(LocationSelected);
-        // eventDispatcher.LocationChanged.AddListener(LocationChanged); 
+        // eventDispatcher.LocationChanged.AddListener(LocationChanged);
         eventDispatcher.AnnotationAdded.AddListener(AnnotationAdded);
         eventDispatcher.AnnotationDeleted.AddListener(AnnotationDeleted);
         eventDispatcher.AnnotationClear.AddListener(AnnotationClear);
@@ -146,6 +146,10 @@ public class CCLogger
         eventDispatcher.SnapshotCreated.AddListener(SnapshotCreated);
         eventDispatcher.SnapshotLoaded.AddListener(SnapshotLoaded);
         eventDispatcher.SnapshotDeleted.AddListener(SnapshotDeleted);
+        eventDispatcher.StarSelected.AddListener(StarSelected);
+        eventDispatcher.SunSelected.AddListener(SunSelected);
+        eventDispatcher.MoonSelected.AddListener(MoonSelected);
+        eventDispatcher.ConstellationSelected.AddListener(ConstellationSelected);
     }
 
     // Remove all listeners:
@@ -165,6 +169,10 @@ public class CCLogger
         eventDispatcher.SnapshotCreated.RemoveListener(SnapshotCreated);
         eventDispatcher.SnapshotLoaded.RemoveListener(SnapshotLoaded);
         eventDispatcher.SnapshotDeleted.RemoveListener(SnapshotDeleted);
+        eventDispatcher.StarSelected.RemoveListener(StarSelected);
+        eventDispatcher.SunSelected.RemoveListener(SunSelected);
+        eventDispatcher.MoonSelected.RemoveListener(MoonSelected);
+        eventDispatcher.ConstellationSelected.RemoveListener(ConstellationSelected);
     }
 
     /********************* EVENT DISPATCHING SECTION ************************/
@@ -183,7 +191,7 @@ public class CCLogger
         _logAsync(LOG_EVENT_LOCATION_CHANGED, locationString);
     }
 
-    // localPosition, localRotation, localScale, name 
+    // localPosition, localRotation, localScale, name
     private void AnnotationAdded(Vector3 position, Quaternion rotation, Vector3 scale, string name)
     {
         string msg = $"Name:{name}, P:{position.ToString()}, R:{rotation.ToString()}, S:{scale.ToString()}";
@@ -263,7 +271,27 @@ public class CCLogger
         string msg = $"Snapshot Deleted: {pin.ToString()}";
         _logAsync(LOG_EVENT_SNAPSHOT_DELETED, msg);
     }
-    
+
+    private void StarSelected(Star selectedStarData, string playerName, Color playerColor) {
+        if (selectedStarData == null) return;
+        string starName = selectedStarData.ProperName.Length > 0 ? selectedStarData.ProperName : "N/A";
+        string starHip = selectedStarData.Hipparcos.ToString();
+        string msg = $"Name:{starName}, Hipparcos#:{starHip}, Player:{playerName}";
+        _logAsync(LOG_EVENT_STAR_SELECTED, msg);
+    }
+    private void SunSelected(bool selected) {
+        string msg = "Sun selected";
+        _logAsync(LOG_EVENT_SUN_SELECTED, msg);
+    }
+    private void MoonSelected(bool selected) {
+        string msg = "Moon selected";
+        _logAsync(LOG_EVENT_MOON_SELECTED, msg);
+    }
+    private void ConstellationSelected(string constellation) {
+        _logAsync(LOG_EVENT_CONSTELLATION_SELECTED, constellation);
+    }
+
+
     #endregion Event Dispatching:
     /********************* END EVENT DISPATCHING SECTION ********************/
 
@@ -329,7 +357,7 @@ public class CCLogger
         // So as to not stall or interupt play while transmitting log messages.
         Instance._logAsync(eventType, msg);
         #pragma warning restore CS4014
-        
+
     }
     #endregion Public Interface
     /********* End Public interface *****************************************/
