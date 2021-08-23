@@ -13,8 +13,15 @@ public class GroupSelectionWizard : MonoBehaviour
     public GameObject smallOrangeButtonPrefab;
     public GameObject NextButton;
     public GameObject FastLoginButton;
+    public GameObject FastLoginLabel;
+    public TMPro.TextMeshProUGUI FastLoginGroupLabel;
+    public GameObject FastLoginUserImage;
+    public TMPro.TextMeshProUGUI FastLoginUserLabel;
     public TMPro.TextMeshProUGUI DirectionsText;
-    public GameObject GroupLabel;
+    public TMPro.TextMeshProUGUI GroupLabel;
+    public TMPro.TextMeshProUGUI UserLabel;
+    public GameObject UserImage;
+    public GameObject GroupImage;
     public GameObject NextScreen;
     public GameObject Restart;
 
@@ -62,16 +69,13 @@ public class GroupSelectionWizard : MonoBehaviour
         if (UserRecord.PlayerHasValidPrefs())
         {
             FastLoginButton.SetActive(true);
+            FastLoginLabel.SetActive(true);
             Button b = FastLoginButton.GetComponent<Button>();
-            TMPro.TextMeshProUGUI tgui = FastLoginButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            tgui.text = $"{userRecord.Username} {userRecord.group}";
-
-            if (!string.IsNullOrEmpty(userRecord.group))
-            {
-                TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
-                textMesh.text = userRecord.group;
-            }
-
+            string upperGroup = char.ToUpper(userRecord.group[0]) + userRecord.group.Substring(1);
+            FastLoginGroupLabel.text = upperGroup;
+            FastLoginUserLabel.text = userRecord.Username;
+            FastLoginUserLabel.color = userRecord.color;
+            FastLoginUserImage.GetComponent<Image>().color = userRecord.color;
             b.onClick.AddListener(LaunchScene);
         }
         else
@@ -83,11 +87,12 @@ public class GroupSelectionWizard : MonoBehaviour
     private void DisableFastLogin()
     {
         FastLoginButton.SetActive(false);
+        FastLoginLabel.SetActive(false);
     }
 
     private void ShowGroups()
     {
-        SetTitleText("Select your group");
+        SetTitleText("Select your group:");
         foreach (string name in UserRecord.GroupNames)
         {
             Button b = addButton();
@@ -106,7 +111,7 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void ShowColors()
     {
-        SetTitleText("Create a user ID. First, pick a color");
+        SetTitleText("Create a user ID. First, pick a color:");
         int index = 0;
         foreach (string name in UserRecord.ColorNames)
         {
@@ -127,10 +132,9 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-
     private void ShowAnimals()
     {
-        SetTitleText("Now select an animal");
+        SetTitleText("Now select an animal:");
         foreach (string name in UserRecord.AnimalNames)
         {
             Button b = addButton();
@@ -151,7 +155,7 @@ public class GroupSelectionWizard : MonoBehaviour
     private void ShowNumbers()
     {
         int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        SetTitleText("And lastly, pick a number");
+        SetTitleText("And lastly, pick a number:");
         foreach (int number in numbers)
         {
             string numberString = number.ToString();
@@ -181,40 +185,44 @@ public class GroupSelectionWizard : MonoBehaviour
 
     private void HandleGroupClick(string name)
     {
+        string upperName = char.ToUpper(name[0]) + name.Substring(1);
         userRecord.group = name;
-
         if (GroupLabel)
         {
-            TMPro.TextMeshProUGUI textMesh = GroupLabel.GetComponent<TMPro.TextMeshProUGUI>();
-            GroupLabel.SetActive(true);
-            textMesh.text = userRecord.group;
+            GroupLabel.text = upperName;
+            GroupImage.SetActive(true);
         }
-        SetTitleText(name);
         EnableNext();
     }
 
 
-    private void HandleAnimalClick(string name)
+    private void HandleAnimalClick(string animalName)
     {
-        userRecord.animal = name;
-        SetTitleText(name);
+        string upperColorName = char.ToUpper(userRecord.colorName[0]) + userRecord.colorName.Substring(1);
+        string upperAnimalName = char.ToUpper(animalName[0]) + animalName.Substring(1);
+        userRecord.animal = animalName;
+        UserLabel.text = upperColorName + upperAnimalName;
         EnableNext();
     }
 
-    private void HandleColorClick(string name, Color color)
+    private void HandleColorClick(string colorName, Color color)
     {
+        string upperColorName = char.ToUpper(colorName[0]) + colorName.Substring(1);
         userRecord.color = color;
-        userRecord.colorName = name;
-        SetTitleText(name);
-        DirectionsText.color = color;
+        userRecord.colorName = colorName;
+        UserLabel.color = color;
+        UserLabel.text = upperColorName;
+        UserImage.SetActive(true);
+        UserImage.GetComponent<Image>().color = color;
         EnableNext();
     }
-
 
     private void HandleNumberClick(string number)
     {
+        string upperColorName = char.ToUpper(userRecord.colorName[0]) + userRecord.colorName.Substring(1);
+        string upperAnimalName = char.ToUpper(userRecord.animal[0]) + userRecord.animal.Substring(1);
         userRecord.number = number;
-        SetTitleText(number);
+        UserLabel.text = upperColorName + upperAnimalName + number;
         EnableNext();
     }
 
@@ -234,14 +242,16 @@ public class GroupSelectionWizard : MonoBehaviour
         }
     }
 
-
     private void restart()
     {
         currentStep = 0;
-        GroupLabel.SetActive(false);
+        GroupLabel.text = "";
+        GroupImage.SetActive(false);
         DisableRestart();
         DisableNext();
         ClearAllButtons();
+        UserLabel.text = "";
+        UserImage.SetActive(false);
         steps[currentStep]();
     }
 
@@ -268,9 +278,9 @@ public class GroupSelectionWizard : MonoBehaviour
         return startPin;
     }
 
-
     public void LaunchScene()
     {
+        SetTitleText("");
         DisableNext();
         DisableRestart();
         DisableFastLogin();
