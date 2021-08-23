@@ -31,6 +31,7 @@ public class MenuController : MonoBehaviour
     private UIControlCamera cameraControlUI;
     public float rotateSpeed = 10f;
 
+    public GameObject annotateButton;
     public GameObject drawModeIndicator;
     public GameObject drawModeOffIndicator;
     public GameObject showAnnotationsIndicator;
@@ -51,18 +52,7 @@ public class MenuController : MonoBehaviour
             if (showAnnotationsIndicator) showAnnotationsIndicator.SetActive(!_hideAnnotations);
             if (hideAnnotationsIndicator) hideAnnotationsIndicator.SetActive(_hideAnnotations);
             if (annotationsButtonText) annotationsButtonText.SetText(_hideAnnotations ? "Show Drawings" : "Hide Drawings");
-            SceneLoader loader = FindObjectOfType<SceneLoader>();
-            int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
-            if (_hideAnnotations)
-            {
-                LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
-                Camera.main.cullingMask = newLayerMask;
-            }
-            else
-            {
-                LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
-                Camera.main.cullingMask = newLayerMask;
-            }
+            UpdateAnnotationDisplayInCamera();
         }
     }
     private SnapGrid _snapshotGrid;
@@ -158,16 +148,39 @@ public class MenuController : MonoBehaviour
         CheckDisplayNorthPin();
         if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_STARS)
         {
+            annotateButton.SetActive(true);
             annotationDrawButton.SetActive(false);
             annotationUndoButton.SetActive(false);
             annotationNorthPinButton.SetActive(false);
+            if (_hideAnnotations) UpdateAnnotationDisplayInCamera();
+        }
+        else if (SceneManager.GetActiveScene().name == SimulationConstants.SCENE_EARTH)
+        {
+            annotateButton.SetActive(false);
         }
         else
         {
-            ToggleAnnotationsVisibility();
+            annotateButton.SetActive(true);
             annotationDrawButton.SetActive(true);
             annotationUndoButton.SetActive(true);
             annotationNorthPinButton.SetActive(true);
+            if (_hideAnnotations) UpdateAnnotationDisplayInCamera();
+        }
+    }
+
+    void UpdateAnnotationDisplayInCamera()
+    {
+        SceneLoader loader = FindObjectOfType<SceneLoader>();
+        int layerMaskAnnotations = LayerMask.NameToLayer("Annotations"); // should be layer 19
+        if (_hideAnnotations)
+        {
+            LayerMask newLayerMask = loader.DefaultSceneCameraLayers & ~(1 << layerMaskAnnotations);
+            Camera.main.cullingMask = newLayerMask;
+        }
+        else
+        {
+            LayerMask newLayerMask = loader.DefaultSceneCameraLayers | (1 << layerMaskAnnotations);
+            Camera.main.cullingMask = newLayerMask;
         }
     }
 
