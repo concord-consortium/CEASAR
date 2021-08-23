@@ -74673,6 +74673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateSpeed: 10
+  annotateButton: {fileID: 4466863711068896832}
   drawModeIndicator: {fileID: 3730541923119052999}
   drawModeOffIndicator: {fileID: 2636350217345473775}
   showAnnotationsIndicator: {fileID: 8728923586205098852}
