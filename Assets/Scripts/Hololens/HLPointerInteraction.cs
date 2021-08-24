@@ -97,7 +97,7 @@ public class HLPointerInteraction : MonoBehaviour, IMixedRealityFocusHandler, IM
         if (!mainUIController) mainUIController = FindObjectOfType<MenuController>();
         if (mainUIController)
         {
-            if (mainUIController.IsDrawing)
+            if (mainUIController.IsDrawing && Vector3.Magnitude(pos) > 100f)
             {
                 addAnnotation(pos);
             }
