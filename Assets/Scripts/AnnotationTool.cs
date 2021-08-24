@@ -18,6 +18,8 @@ public class AnnotationTool : MonoBehaviour
 
     public Material annotationMaterial;
 
+    public float annotationWidthMultiplier = 1f;
+
     public bool IsMyAnnotation(GameObject annotationLine)
     {
         return myAnnotations.Contains(annotationLine);
@@ -90,8 +92,8 @@ public class AnnotationTool : MonoBehaviour
         MeshCollider meshColliderArc = _currentAnnotation.AddComponent<MeshCollider>();
         Mesh mesh = new Mesh();
         lineRendererArc.useWorldSpace = false;
-        lineRendererArc.startWidth = annotationWidth * 2f;
-        lineRendererArc.endWidth = annotationWidth * 2f;
+        lineRendererArc.startWidth = annotationWidth * annotationWidthMultiplier;
+        lineRendererArc.endWidth = annotationWidth * annotationWidthMultiplier;
         lineRendererArc.material = annotationMaterial;
 
         lineRendererArc.positionCount = pointCount;
