@@ -19,6 +19,7 @@ public class AnnotationTool : MonoBehaviour
     public Material annotationMaterial;
 
     public float annotationWidthMultiplier = 1f;
+    public float scaleFactor = 1f;
 
     public bool IsMyAnnotation(GameObject annotationLine)
     {
@@ -49,7 +50,7 @@ public class AnnotationTool : MonoBehaviour
                 // start
                 startPointForDrawing = nextPoint;
                 currentAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
-                currentAnnotation.GetComponent<AnnotationLine>().StartDrawing(startPointForDrawing);
+                currentAnnotation.GetComponent<AnnotationLine>().StartDrawing(startPointForDrawing * (1 / scaleFactor));
 
             }
             else if (endPointForDrawing == Vector3.zero)
@@ -57,7 +58,7 @@ public class AnnotationTool : MonoBehaviour
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
 
-                AddAnnotationLineRenderer(currentAnnotation, startPointForDrawing, endPointForDrawing, SimulationManager.Instance.LocalPlayerColor);
+                AddAnnotationLineRenderer(currentAnnotation, startPointForDrawing * (1 / scaleFactor), endPointForDrawing * (1 / scaleFactor), SimulationManager.Instance.LocalPlayerColor);
 
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
 
@@ -65,9 +66,10 @@ public class AnnotationTool : MonoBehaviour
                 currentAnnotation.name = getMyAnnotationName(myAnnotations.Count);
 
                 // Broadcast adding an annotation
+                // send this as an annotation with points on a sphere at 100% zoom
                 SimulationEvents.Instance.AnnotationAdded.Invoke(
-                    startPointForDrawing,
-                    endPointForDrawing,
+                    startPointForDrawing * (1 / scaleFactor),
+                    endPointForDrawing * (1 / scaleFactor),
                     currentAnnotation.name);
 
                 startPointForDrawing = Vector3.zero;
@@ -86,7 +88,7 @@ public class AnnotationTool : MonoBehaviour
 
         int pointCount = 30;
 
-        _currentAnnotation.layer = LayerMask.NameToLayer("Marker");
+        _currentAnnotation.layer = LayerMask.NameToLayer("Annotations");
 
         LineRenderer lineRendererArc = _currentAnnotation.AddComponent<LineRenderer>();
         MeshCollider meshColliderArc = _currentAnnotation.AddComponent<MeshCollider>();
@@ -145,6 +147,7 @@ public class AnnotationTool : MonoBehaviour
         Vector3 endPos = Utils.NetworkV3ToVector3(lastAnnotation.rotation);
         string annotationName = lastAnnotation.name;
         Color c = UserRecord.GetColorForUsername(p.username);
+        // We receive this annotation at 100% zoom
         this.addAnnotation(startPos, endPos, annotationName, c);
     }
 
@@ -152,7 +155,7 @@ public class AnnotationTool : MonoBehaviour
     {
         GameObject newAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
         newAnnotation.name = annotationName;
-        AddAnnotationLineRenderer(newAnnotation, startPos, endPos, playerColor);
+        AddAnnotationLineRenderer(newAnnotation, startPos * (1 / scaleFactor), endPos * (1 / scaleFactor), playerColor);
     }
 
     void DeleteAnnotation(string annotationName)
