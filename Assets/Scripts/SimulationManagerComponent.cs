@@ -164,6 +164,7 @@ public class SimulationManagerComponent : MonoBehaviour
             AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
             annotationTool.Init();
             annotationTool.annotationWidthMultiplier = annotationWidthMultiplier;
+            annotationTool.scaleFactor = manager.CurrentScaleFactor(radius);
 
             manager.DataControllerComponent.UpdateOnSceneLoad();
         }
@@ -187,6 +188,7 @@ public class SimulationManagerComponent : MonoBehaviour
             }
             AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
             annotationTool.annotationWidthMultiplier = annotationWidthMultiplier;
+            annotationTool.scaleFactor = manager.CurrentScaleFactor(radius);
         }
         if (!manager.MainMenu)
         {

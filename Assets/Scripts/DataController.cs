@@ -221,8 +221,8 @@ public class DataController : MonoBehaviour
         this.transform.position = new Vector3(0, 0, 0f);
         this.transform.localScale = new Vector3(1, 1, 1) * manager.CurrentScaleFactor(radius);
         this.transform.rotation = Quaternion.identity;
-        AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
-        annotationTool.gameObject.transform.localScale = new Vector3(1, 1, 1) * (1f / manager.CurrentScaleFactor(radius));
+        //AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+        //annotationTool.gameObject.transform.localScale = new Vector3(1, 1, 1) * (1f / manager.CurrentScaleFactor(radius));
         // userSpecifiedDateTime = manager.UseCustomSimulationTime;
         runSimulation = false;
 
