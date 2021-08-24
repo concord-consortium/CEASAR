@@ -130,7 +130,7 @@ public class NetworkController : MonoBehaviour
     {
         /*
          * Get Colyseus endpoint from InputField
-         *  for localhost use ws://localhost:2567/        
+         *  for localhost use ws://localhost:2567/
          */
         if (!IsConnected)
         {
@@ -398,10 +398,10 @@ public class NetworkController : MonoBehaviour
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Movement);
     }
 
-    public void BroadcastAnnotation(Vector3 pos, Quaternion rot, Vector3 scale, string annotationName)
+    public void BroadcastAnnotation(Vector3 startPos, Vector3 endPos, string annotationName)
     {
-        CCDebug.Log("Broadcasting new Annotation event " + pos, LogLevel.Verbose, LogMessageCategory.Networking);
-        colyseusClient.SendNetworkTransformUpdate(pos, rot, scale, annotationName, NetworkMessageType.Annotation);
+        CCDebug.Log("Broadcasting new Annotation event " + startPos + endPos, LogLevel.Verbose, LogMessageCategory.Networking);
+        colyseusClient.SendNetworkAnnotationUpdate(startPos, endPos, annotationName, NetworkMessageType.Annotation);
     }
     public void BroadcastDeleteAnnotation(string annotationName)
     {

@@ -192,9 +192,9 @@ public class CCLogger
     }
 
     // localPosition, localRotation, localScale, name
-    private void AnnotationAdded(Vector3 position, Quaternion rotation, Vector3 scale, string name)
+    private void AnnotationAdded(Vector3 startPos, Vector3 endPos, string name)
     {
-        string msg = $"Name:{name}, P:{position.ToString()}, R:{rotation.ToString()}, S:{scale.ToString()}";
+        string msg = $"Name:{name}, StartP:{startPos.ToString()}, EndP:{endPos.ToString()}";
         _logAsync(LOG_EVENT_ANNOTATION_ADDED, msg);
     }
 
@@ -290,7 +290,6 @@ public class CCLogger
     private void ConstellationSelected(string constellation) {
         _logAsync(LOG_EVENT_CONSTELLATION_SELECTED, constellation);
     }
-
 
     #endregion Event Dispatching:
     /********************* END EVENT DISPATCHING SECTION ********************/
