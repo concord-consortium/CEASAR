@@ -55,7 +55,7 @@ public class AnnotationTool : MonoBehaviour
                 // stretch most recent annotation to the end point
                 endPointForDrawing = nextPoint;
 
-                AddAnnotationLineRenderer(startPointForDrawing, endPointForDrawing, SimulationManager.Instance.LocalPlayerColor);
+                AddAnnotationLineRenderer(currentAnnotation, startPointForDrawing, endPointForDrawing, SimulationManager.Instance.LocalPlayerColor);
 
                 currentAnnotation.GetComponent<AnnotationLine>().FinishDrawing();
 
@@ -76,18 +76,18 @@ public class AnnotationTool : MonoBehaviour
         }
     }
 
-    private void AddAnnotationLineRenderer(Vector3 startPos, Vector3 endPos, Color playerColor)
+    private void AddAnnotationLineRenderer(GameObject _currentAnnotation, Vector3 startPos, Vector3 endPos, Color playerColor)
     {
-        currentAnnotation.GetComponent<AnnotationLine>().StartPos = startPos;
-        currentAnnotation.GetComponent<AnnotationLine>().EndPos = endPos;
-        currentAnnotation.GetComponent<AnnotationLine>().RemoveStartPoint();
+        _currentAnnotation.GetComponent<AnnotationLine>().StartPos = startPos;
+        _currentAnnotation.GetComponent<AnnotationLine>().EndPos = endPos;
+        _currentAnnotation.GetComponent<AnnotationLine>().RemoveStartPoint();
 
         int pointCount = 30;
 
-        currentAnnotation.layer = LayerMask.NameToLayer("Marker");
+        _currentAnnotation.layer = LayerMask.NameToLayer("Marker");
 
-        LineRenderer lineRendererArc = currentAnnotation.AddComponent<LineRenderer>();
-        MeshCollider meshColliderArc = currentAnnotation.AddComponent<MeshCollider>();
+        LineRenderer lineRendererArc = _currentAnnotation.AddComponent<LineRenderer>();
+        MeshCollider meshColliderArc = _currentAnnotation.AddComponent<MeshCollider>();
         Mesh mesh = new Mesh();
         lineRendererArc.useWorldSpace = false;
         lineRendererArc.startWidth = annotationWidth * 2f;
@@ -148,9 +148,9 @@ public class AnnotationTool : MonoBehaviour
 
     private void addAnnotation(Vector3 startPos, Vector3 endPos, string annotationName, Color playerColor)
     {
-        GameObject currentAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
-        currentAnnotation.name = annotationName;
-        AddAnnotationLineRenderer(startPos, endPos, playerColor);
+        GameObject newAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
+        newAnnotation.name = annotationName;
+        AddAnnotationLineRenderer(newAnnotation, startPos, endPos, playerColor);
     }
 
     void DeleteAnnotation(string annotationName)
