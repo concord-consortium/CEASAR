@@ -88,7 +88,7 @@ public class AnnotationTool : MonoBehaviour
 
         int pointCount = 30;
 
-        _currentAnnotation.layer = LayerMask.NameToLayer("Marker");
+        _currentAnnotation.layer = LayerMask.NameToLayer("Annotations");
 
         LineRenderer lineRendererArc = _currentAnnotation.AddComponent<LineRenderer>();
         MeshCollider meshColliderArc = _currentAnnotation.AddComponent<MeshCollider>();
