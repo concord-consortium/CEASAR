@@ -7,16 +7,17 @@ using UnityEngine.EventSystems;
 public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerEnterHandler
 {
     private float hoverSize = 1.5f;
-    private Vector3 initialScale = Vector3.one;
-    private Vector3 hoverScale = Vector3.one;
     private bool isSelected = false;
-    private ParticleSystem selectedParticles;
     private bool isDrawing = true; // annotations are only added when drawing is enabled
     private float holdClickDuration = 0;
     private float holdToDeleteTime = 1f;
-    private float startParticleSpeed = 0.12f;
     private AnnotationTool _annotationTool;
     private Color initialColor;
+    private float initialLineRendererWidth = 0;
+    private float hoverLineRendererWidth = 0;
+    public GameObject StartPoint;
+    public Vector3 StartPos;
+    public Vector3 EndPos;
 
     public bool IsSelected {
         get { return isSelected; }
@@ -28,17 +29,24 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         if (isSelected)
         {
             HoldToDeleteAnnotation(Input.GetMouseButton(0));
-
         }
     }
+    public void StartDrawing(Vector3 startPos)
+    {
+        if (StartPoint) StartPoint.transform.position = startPos;
+    }
+    public void RemoveStartPoint()
+    {
+        Destroy(StartPoint);
+    }
+
     public void FinishDrawing()
     {
-        initialScale = transform.localScale;
-        hoverScale = new Vector3(initialScale.x * hoverSize, initialScale.y * hoverSize, initialScale.z);
-        selectedParticles = GetComponent<ParticleSystem>();
+        initialLineRendererWidth = this.GetComponent<LineRenderer>().startWidth;
+        hoverLineRendererWidth = initialLineRendererWidth * hoverSize;
+        initialColor = this.GetComponent<Renderer>().material.color;
         if (_annotationTool == null) _annotationTool = FindObjectOfType<AnnotationTool>();
         SimulationEvents.Instance.DrawMode.AddListener(HandleDrawModeToggle);
-        initialColor = this.GetComponent<Renderer>().material.color;
     }
 
     private void OnDisable()
@@ -51,8 +59,9 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         if (isDrawing != drawModeActive)
         {
             isSelected = false;
-            transform.localScale = initialScale;
-            this.GetComponent<Renderer>().material.color = initialColor;
+            this.GetComponent<LineRenderer>().startWidth = initialLineRendererWidth;
+            this.GetComponent<LineRenderer>().endWidth = initialLineRendererWidth;
+            this.GetComponent<LineRenderer>().material.color = initialColor;
             GetComponent<Collider>().enabled = !drawModeActive;
             isDrawing = drawModeActive;
         }
@@ -63,13 +72,15 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
         {
             if (showHighlight)
             {
-                transform.localScale = hoverScale;
+                this.GetComponent<LineRenderer>().startWidth = hoverLineRendererWidth;
+                this.GetComponent<LineRenderer>().endWidth = hoverLineRendererWidth;
                 isSelected = true;
             }
             else
             {
-                transform.localScale = initialScale;
-                this.GetComponent<Renderer>().material.color = initialColor;
+                this.GetComponent<LineRenderer>().startWidth = initialLineRendererWidth;
+                this.GetComponent<LineRenderer>().endWidth = initialLineRendererWidth;
+                this.GetComponent<LineRenderer>().material.color = initialColor;
                 isSelected = false;
             }
         }
@@ -94,12 +105,12 @@ public class AnnotationLine : MonoBehaviour, IPointerDownHandler, IPointerExitHa
                 float g = Mathf.Max(0, currentColor.g + Time.deltaTime);
                 float b = Mathf.Max(0, currentColor.b + Time.deltaTime);
                 Color fadeColor = new Color(r, g, b, 1f);
-                this.GetComponent<Renderer>().material.color = fadeColor;
+                this.GetComponent<LineRenderer>().material.color = fadeColor;
             }
             else if (holdClickDuration > 0)
             {
                 holdClickDuration = 0;
-                this.GetComponent<Renderer>().material.color = initialColor;
+               this.GetComponent<LineRenderer>().material.color = initialColor;
             }
         }
     }

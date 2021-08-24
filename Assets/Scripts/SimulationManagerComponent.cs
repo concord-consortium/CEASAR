@@ -51,6 +51,8 @@ public class SimulationManagerComponent : MonoBehaviour
     float markerLineWidth = .1f;
     [SerializeField]
     float markerScale = 1f;
+    [SerializeField]
+    float annotationWidthMultiplier = 1f;
 
     // Settings for constellations
     [SerializeField]
@@ -161,6 +163,7 @@ public class SimulationManagerComponent : MonoBehaviour
 
             AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
             annotationTool.Init();
+            annotationTool.annotationWidthMultiplier = annotationWidthMultiplier;
 
             manager.DataControllerComponent.UpdateOnSceneLoad();
         }
@@ -182,6 +185,8 @@ public class SimulationManagerComponent : MonoBehaviour
             {
                 manager.ConstellationsControllerComponent.SetSceneParameters(lineWidth, showConstellationConnections);
             }
+            AnnotationTool annotationTool = FindObjectOfType<AnnotationTool>();
+            annotationTool.annotationWidthMultiplier = annotationWidthMultiplier;
         }
         if (!manager.MainMenu)
         {
