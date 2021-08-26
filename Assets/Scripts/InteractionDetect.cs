@@ -114,8 +114,8 @@ public class InteractionDetect : MonoBehaviour
     {
         for (int index = 0;  index < eventSystemRaycastResults.Count; index ++)
         {
-            RaycastResult curRaysastResult = eventSystemRaycastResults [index];
-            if (curRaysastResult.gameObject.layer == LayerMask.NameToLayer("UI"))
+            RaycastResult curRaycastResult = eventSystemRaycastResults [index];
+            if (curRaycastResult.gameObject.layer == LayerMask.NameToLayer("UI"))
                 return true;
         }
         return false;
