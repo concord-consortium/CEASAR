@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using System.Text;
-using SunCalcNet;
- using UnityEngine.UI;
 
 public class InfoPanelController : MonoBehaviour
 {
@@ -14,20 +12,10 @@ public class InfoPanelController : MonoBehaviour
 
     public GameObject locationDetailsText;
     public GameObject dateTimeDetailsText;
-    public GameObject constellationText;
     public GameObject networkUserList;
     public GameObject networkUserPrefab;
     public GameObject networkStatusText;
     public GameObject networkGroupText;
-
-    private enum TextDisplayObject {
-        None,
-        Sun,
-        Moon,
-        Star
-    }
-    TextDisplayObject textDisplayObject = TextDisplayObject.None;
-    Star currentStarData;
 
     public TextMeshProUGUI debugText;
 
@@ -43,13 +31,9 @@ public class InfoPanelController : MonoBehaviour
         Debug.Log("wiring up event listeners ");
         Debug.Log(events.PushPinSelected.GetPersistentEventCount());
         events.PushPinSelected.AddListener(updatePushpinText);
-        events.StarSelected.AddListener(starSelectedText);
-        events.SunSelected.AddListener(sunSelectedText);
-        events.MoonSelected.AddListener(moonSelectedText);
         events.PlayerJoined.AddListener(playerListChanged);
         events.PlayerLeft.AddListener(playerListChanged);
         events.NetworkConnection.AddListener(connectionStatusUpdated);
-        events.SimulationTimeChanged.AddListener(simulationTimeChanged);
         playerListChanged(manager.LocalUsername);
         updatePushpinText(manager.LocalPlayerPin);
     }
@@ -73,91 +57,6 @@ public class InfoPanelController : MonoBehaviour
         StringBuilder locationDetails = new StringBuilder();
         locationDetails.Append(manager.CurrentLocationDisplayName);
         locationDetailsText.GetComponent<TextMeshProUGUI>().SetText(locationDetails.ToString());
-        updateSelectSunOrMoonText();
-    }
-
-    private void starSelectedText(Star starData, string playerName, Color playerColor)
-    {
-        StringBuilder description = new StringBuilder();
-        if (starData == null)
-        {
-            description.Append("Now showing constellation: ");
-            description.Append(manager.CurrentlySelectedConstellation);
-            constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
-        }
-        else
-        {
-            double longitudeTimeOffset = manager.CurrentLatLng.Longitude/15d;
-            double lst = manager.CurrentSimulationTime.ToSiderealTime() + longitudeTimeOffset;
-            AltAz altAz = Utils.CalculateAltitudeAzimuthForStar(starData.RA, starData.Dec,
-                lst, manager.CurrentLatLng.Latitude);
-            description.Append("Name: ").AppendLine(starData.ProperName.Length > 0 ? starData.ProperName : "N/A");
-            description.Append("Constellation: ").AppendLine(starData.ConstellationFullName.Length > 0 ? starData.ConstellationFullName : "N/A");
-            description.Append("Alt/Az: ")
-                .Append(altAz.Altitude.ToString("F2"))
-                .Append(", ")
-                .Append(altAz.Azimuth.ToString("F2"))
-                .Append("  Mag: ")
-                .AppendLine(starData.Mag.ToString());
-            description.Append("R.A.: ")
-                .Append(starData.RA.ToString("F2"))
-                .Append("  Dec: ")
-                .Append(starData.Dec.ToString("F2"))
-                // A value of 10000000 indicates missing or dubious (e.g., negative) parallax data in Hipparcos
-                .Append(starData.Dist != 10000000 ?  "  Dist: " + (starData.Dist * 3.262f).ToString("F0") + " ly": "");
-            constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
-        }
-        textDisplayObject = TextDisplayObject.Star;
-        currentStarData = starData;
-    }
-
-    private void sunSelectedText(bool selected)
-    {
-        var solarPosition = SunCalc.GetSunPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
-        double azimuth = 180f + (solarPosition.Azimuth * 180f / Mathf.PI);
-        double altitude = solarPosition.Altitude * 180f / Mathf.PI;
-        StringBuilder description = new StringBuilder();
-        description.AppendLine("The Sun");
-        description.Append("Alt/Az: ")
-            .Append(altitude.ToString("F2"))
-            .Append(", ")
-            .AppendLine(azimuth.ToString("F2"));
-        constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
-        textDisplayObject = TextDisplayObject.Sun;
-    }
-
-    private void moonSelectedText(bool selected)
-    {
-        var lunarPosition = MoonCalc.GetMoonPosition(manager.CurrentSimulationTime, manager.CurrentLatLng.Latitude, manager.CurrentLatLng.Longitude);
-        double azimuth = 180f + (lunarPosition.Azimuth * 180f / Mathf.PI);
-        double altitude = lunarPosition.Altitude * 180f / Mathf.PI;
-        StringBuilder description = new StringBuilder();
-        description.AppendLine("The Moon");
-        description.Append("Alt/Az: ")
-            .Append(altitude.ToString("F2"))
-            .Append(", ")
-            .AppendLine(azimuth.ToString("F2"));
-        constellationText.GetComponent<TextMeshProUGUI>().SetText(description.ToString());
-        textDisplayObject = TextDisplayObject.Moon;
-    }
-
-    private void simulationTimeChanged() {
-        updateSelectSunOrMoonText();
-    }
-
-    private void updateSelectSunOrMoonText() {
-        if (textDisplayObject == TextDisplayObject.Sun)
-        {
-            sunSelectedText(true);
-        }
-        else if (textDisplayObject == TextDisplayObject.Moon)
-        {
-            moonSelectedText(true);
-        }
-        else if (textDisplayObject == TextDisplayObject.Star)
-        {
-            starSelectedText(currentStarData, manager.LocalUsername, manager.LocalPlayerColor);
-        }
     }
 
     private void connectionStatusUpdated(bool isConnected)
@@ -249,17 +148,9 @@ public class InfoPanelController : MonoBehaviour
     {
         Debug.Log("removing listeners ");
         events.PushPinSelected.RemoveListener(updatePushpinText);
-        events.StarSelected.RemoveListener(starSelectedText);
-        events.SunSelected.RemoveListener(sunSelectedText);
-        events.MoonSelected.RemoveListener(moonSelectedText);
         events.PlayerJoined.RemoveListener(playerListChanged);
         events.PlayerLeft.RemoveListener(playerListChanged);
         events.NetworkConnection.RemoveListener(connectionStatusUpdated);
-        events.SimulationTimeChanged.RemoveListener(simulationTimeChanged);
-    }
-    private void OnDisable()
-    {
-        // removeAllListeners();
     }
 
     private void OnDestroy()
