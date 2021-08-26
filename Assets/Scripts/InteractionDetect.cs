@@ -15,6 +15,7 @@ public class InteractionDetect : MonoBehaviour
     SimulationManager manager;
     InteractionController interactionController;
     public AnnotationTool annotationTool;
+    public SmartPointer smartPointer;
     MenuController mainUIController;
     private PushpinComponent lastPin;
 
@@ -28,6 +29,7 @@ public class InteractionDetect : MonoBehaviour
         interactionController = FindObjectOfType<InteractionController>();
         mainUIController = FindObjectOfType<MenuController>();
         if (!annotationTool) annotationTool = FindObjectOfType<AnnotationTool>();
+        if (!smartPointer) smartPointer = FindObjectOfType<SmartPointer>();
     }
 
     void Update()
@@ -101,6 +103,22 @@ public class InteractionDetect : MonoBehaviour
                     annotationTool.Annotate(Vector3.ClampMagnitude(pos, r));
                 }
             }
+        }
+        if (mainUIController && !mainUIController.IsDrawing && smartPointer)
+        {
+            ray = camera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out hit, manager.SceneRadius);
+            if (Input.GetMouseButtonDown(0))
+            {
+                if ((!EventSystem.current.IsPointerOverGameObject() || hit.point != Vector3.zero) && !IsPointerOverUIElement() && hit.transform == null)
+                {
+                    float r = SimulationManager.Instance.SceneRadius; // + 2f;
+                    Vector2 mousePos = Input.mousePosition;
+                    Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, r));
+                    smartPointer.SmartPoint(Vector3.ClampMagnitude(pos, r), r, manager.LocalUsername, manager.LocalPlayerColor);
+                }
+            }
+
         }
     }
 
