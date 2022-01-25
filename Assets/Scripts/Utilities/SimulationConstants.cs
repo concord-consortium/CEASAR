@@ -93,7 +93,7 @@ public static class SimulationConstants
     public static readonly string CONSTELLATIONS_NONE = "none";
 
     // ======== Logging configuration: ====================================================
-    public static readonly string LOG_URL = "http://cc-log-manager.herokuapp.com/api/logs";
+    public static readonly string LOG_URL = "https://cc-log-manager.herokuapp.com/api/logs";
     public static readonly string LOG_APP_NAME = "CEASAR";
 
     public static readonly string LOG_EVENT_DISCONNECT = "Disconnected";
