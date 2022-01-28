@@ -70,6 +70,7 @@ public class AnnotationTool : MonoBehaviour
                 SimulationEvents.Instance.AnnotationAdded.Invoke(
                     startPointForDrawing * (1 / scaleFactor),
                     endPointForDrawing * (1 / scaleFactor),
+                    currentAnnotation.transform.localEulerAngles,
                     currentAnnotation.name);
 
                 startPointForDrawing = Vector3.zero;
@@ -140,20 +141,22 @@ public class AnnotationTool : MonoBehaviour
     {
         // This is a hack to use the NetworkTransform class to communicate the start/end positions
         // of the annotation. The NetworkTransform class is designed to store center, scale, and rotation,
-        // but for now we will store the start and end positions of the annotation in the first two vector3 slots.
+        // but for now we will store the start and end positions of the annotation in the first and third vector3 slots.
         // Ideally we will clean this up and expand the network communication structures to handle the
         // annotations properly.
         Vector3 startPos = Utils.NetworkV3ToVector3(lastAnnotation.position);
-        Vector3 endPos = Utils.NetworkV3ToVector3(lastAnnotation.rotation);
+        Vector3 rotation = Utils.NetworkV3ToVector3(lastAnnotation.rotation);
+        Vector3 endPos = Utils.NetworkV3ToVector3(lastAnnotation.localScale);
         string annotationName = lastAnnotation.name;
         Color c = UserRecord.GetColorForUsername(p.username);
         // We receive this annotation at 100% zoom
-        this.addAnnotation(startPos, endPos, annotationName, c);
+        this.addAnnotation(startPos, endPos, rotation, annotationName, c);
     }
 
-    private void addAnnotation(Vector3 startPos, Vector3 endPos, string annotationName, Color playerColor)
+    private void addAnnotation(Vector3 startPos, Vector3 endPos, Vector3 rotation, string annotationName, Color playerColor)
     {
         GameObject newAnnotation = Instantiate(annotationLinePrefab, new Vector3(0, 0, 0), Quaternion.identity, this.transform);
+        newAnnotation.transform.localEulerAngles = rotation;
         newAnnotation.name = annotationName;
         AddAnnotationLineRenderer(newAnnotation, startPos * (1 / scaleFactor), endPos * (1 / scaleFactor), playerColor);
     }
@@ -180,7 +183,7 @@ public class AnnotationTool : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         SimulationEvents.Instance.AnnotationAdded.Invoke(annotation.GetComponent<AnnotationLine>().StartPos,
-            annotation.GetComponent<AnnotationLine>().EndPos, annotation.transform.name);
+            annotation.GetComponent<AnnotationLine>().EndPos, annotation.transform.localEulerAngles, annotation.transform.name);
     }
     public void ClearAnnotations(string playerName)
     {
