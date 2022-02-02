@@ -238,7 +238,7 @@ public class ColyseusClient : MonoBehaviour
             NetworkTransform t = new NetworkTransform();
             // This is a hack to use the NetworkTransform class to communicate the start/end positions
             // of the annotation. The NetworkTransform class is designed to store center, scale, and rotation,
-            // but for now we will store the start and end positions of the annotation in the first and third vector3 slots.
+            // but for now we will store the start and end positions of the annotation in the position and localScale vector3 slots.
             // Ideally we will clean this up and expand the network communication structures to handle the
             // annotations properly.
             t.position = new NetworkVector3 { x = startPos.x, y = startPos.y, z = startPos.z };
