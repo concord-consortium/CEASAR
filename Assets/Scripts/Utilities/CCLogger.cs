@@ -192,9 +192,9 @@ public class CCLogger
     }
 
     // localPosition, localRotation, localScale, name
-    private void AnnotationAdded(Vector3 startPos, Vector3 endPos, string name)
+    private void AnnotationAdded(Vector3 startPos, Vector3 endPos, Vector3 rotation, string name)
     {
-        string msg = $"Name:{name}, StartP:{startPos.ToString()}, EndP:{endPos.ToString()}";
+        string msg = $"Name:{name}, StartP:{startPos.ToString()}, EndP:{endPos.ToString()} Rot:{rotation.ToString()}";
         _logAsync(LOG_EVENT_ANNOTATION_ADDED, msg);
     }
 
