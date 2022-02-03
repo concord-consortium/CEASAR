@@ -398,10 +398,10 @@ public class NetworkController : MonoBehaviour
         colyseusClient.SendNetworkTransformUpdate(pos, rot, Vector3.one, "", NetworkMessageType.Movement);
     }
 
-    public void BroadcastAnnotation(Vector3 startPos, Vector3 endPos, string annotationName)
+    public void BroadcastAnnotation(Vector3 startPos, Vector3 endPos, Vector3 rotation, string annotationName)
     {
         CCDebug.Log("Broadcasting new Annotation event " + startPos + endPos, LogLevel.Verbose, LogMessageCategory.Networking);
-        colyseusClient.SendNetworkAnnotationUpdate(startPos, endPos, annotationName, NetworkMessageType.Annotation);
+        colyseusClient.SendNetworkAnnotationUpdate(startPos, endPos, rotation, annotationName, NetworkMessageType.Annotation);
     }
     public void BroadcastDeleteAnnotation(string annotationName)
     {
