@@ -258,9 +258,11 @@ namespace Colyseus
 				list.Add(item.Key + "=" + ((item.Value != null) ? Convert.ToString(item.Value) : "null") );
 			}
 
+			// Make sure that server path is not lost while upgrading connection to WebSockets
+			var currentPath = (new UriBuilder(Endpoint.Uri)).Path;
 			UriBuilder uriBuilder = new UriBuilder(Endpoint.Uri)
 			{
-				Path = path,
+				Path = currentPath + path,
 				Query = string.Join("&", list.ToArray())
 			};
 
